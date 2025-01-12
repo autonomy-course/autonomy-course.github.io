@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        
+            <link rel="stylesheet" href="assets/index.css" />
+        
+
+        <title>Sibin&#39;s MKSlides Template Index Page</title>
+        <style>
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid lightgrey;
+                padding: 0.5em 1em 0.5em 1em;
+            }
+
+        #toc_container {
+            background: #f9f9f9 none repeat scroll 0 0;
+            border: 1px solid #aaa;
+            display: table;
+            font-size: 95%;
+            margin-bottom: 1em;
+            padding: 20px;
+            width: auto;
+        }
+
+        .toc_title {
+            font-weight: 700;
+            text-align: left;
+        }
+
+        #toc_container li, #toc_container ul, #toc_container ul li{
+            list-style: outside none none !important;
+        }
+
+        </style>
+    </head>
+
+
+    <body>
+        <h1>Sibin&#39;s MKSlides Template Index Page</h1>
+
+	<!-- All the front matter for the website -->
+	<h3> Instructor: <a href="https://sibin.github.io/sibin">Prof. Sibin Mohan</a>, The George Washington University</h3>
+<h3> CSCI 6907/3907 | Spring 2025 | TR 12:45PM - 02:00PM ET | TOMP 310</h3>
+
+
+	<p>
+    This course will focus on the state-of-the-art on <i>security for autonomous and cyber-physical systems</i>. 
+    The goal is to provide a deep and broad understanding of the design of such systems as they interact with the real world.
+    Autonomous cars, unmanned aerial/ground/water vehicles, robots, etc. are examples of systems that we intend to explore.
+</p>
+
+<br>
+
+<img src="./img/autonomous_systems.png" alt="Autonomous Systems" width="700">
+
+<br>
+<br>
+
+<p>
+    We will cover topics related to:
+    <ul>
+        <li> <i>design</i> of autonomous, cyber-physical and real-time systems
+        <li> <i>sensing</i>, IMU, GPS, Radar, LIDAR, Camera, etc.
+        <li> <i>localization</i>, Simultaneous localization And Mapping (SLAM)
+        <li> Extended Kalman Filter (EKF)
+        <li> <i>attacks</i> and <i>defenses</i> related to all of these topics
+        <li> <i>privacy and ethical issues</i> in the design and deployment of autonomous systems
+    </ul>
+</p>
+
+<p>
+    Hands-on exercises will explore <b>real hardware rovers</b> as well known, <b>open-source simulation and control platforms</b> such as:
+    <ul>
+        <li> Gazebo 
+        <li> VEINS
+    </ul>
+</p>
+
+<p>
+    The course will also include an exploration of the <i>state-of-the-art research papers</i> in these domains. 
+    <br>
+
+    <b>Note:</b> this <i>student-led</i> component is a <b>major</b> component of this course, <i>i.e.</i>, reading papers, critiquing them and learning to present work by other researchers. 
+</p>
+
+<h3>Target Audience</h3>
+Graduate and undergraduate students in CS, ECE, Robotics, AI and even other departments who want to explore topics related to the security, privacy and ethics of autonomous and cyber-physical systems.
+
+	<hr>
+
+<div id="toc_container">
+    <p class="toc_title">Table of Contents</p>
+    <ul class="toc_list">
+        <li>1. <a href="#staff">Course Staff and Course Details</a></li>
+        <li>2. <a href="#lectures">Schedule and Lectures</a></li>
+        <li>3. <a href="#grading">Grading Rubric and Criteria</a></li>
+        <li>4. <a href="#policies">Policies</a></li>
+        <ul>
+            <li>4.1 <a href="#responsibilities">Expectations and Responsibilites (Students and Faculty)</a></li>
+            <li>4.2 <a href="#late-submissions">Late Submission Policies (for MPs)</a></li>
+            <li>4.3 <a href="#academic-integrity">Academic Integrity Issues</a></li>
+            <li>4.4 <a href="#misc-policy">Misc policies, including accommodations</a></li>
+        </ul>
+    </ul>
+</div>
+	<hr>
+
+<h3 id="staff">Course Staff</h3>
+<ul>
+    <li> <u>Instructor:</u> <a href="https://sibin.github.io/sibin">Prof. Sibin Mohan</a>
+    <li> <u>TA:</u> <a href="mailto:sam.ulhaque@gwu.edu">Mohammad Samad</a> [alias: Sam]
+</ul>
+
+
+<h3>Course Details</h3>
+<ul>
+    <li> <u>Time:</u> TUE/THUR 12:45 -- 2:00 PM ET
+    <li> <u>Location:</u> Tompkins Hall [TOMP] 310
+    <li> <u>Prof. Mohan office Hours:</u> TUE/THUR 2:30 -- 3:30 PM ET [SEH 5830] *
+    <li> <u>TA Office Hours:</u> TUE 11:00 -- 12:00 PM, THUR 4:00 -- 5:00 PM ET
+    <li> <u>Location:</u> Outside SEH 4000
+    <li> <u>Contact:</u> please message on <b>Discord</b>
+</ul>
+[* Please message ahead of time and set up alternate slot in case of conflicts for office hours.]
+<br>
+<br>
+<b>Note:</b> Make sure that you're <a href="https://www2.seas.gwu.edu/~gparmer/resources/2021-09-20-Office-Hours-HOWTO.html">properly preparing and presenting yourself</a> at office hours!
+
+
+
+<h3>Communication</h3>
+We will use <b>Discord</b> for all course related communications.
+
+
+    <hr>
+
+    <h3 id="lectures">Schedule and Lectures</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align:center">Chapter</th>
+                    <th style="text-align:left">Topic</th>
+                    <th colspan="2">Links</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td style="text-align:center"> 1 </td>
+                    <td>Usage</td>
+                    <td>
+                        <a href="1.intro.html" target="_blank" title="View slides">online slides</a>
+                    </td>
+                    <!--td>
+                        <a href="1.intro.html?showNotes=true" target="_blank" title="View slides with speaker notes">slides with notes</a>
+                    </td-->
+                    <td>
+                        <a href="1.intro.html?print-pdf&showNotes=separate-page" target="_blank" title="Download as PDF with speaker notes for printing">PDF</a>
+                    </td>
+                </tr>
+            
+                <tr>
+                    <td style="text-align:center"> 2 </td>
+                    <td>Chapter 1 - examples</td>
+                    <td>
+                        <a href="2.examples.html" target="_blank" title="View slides">online slides</a>
+                    </td>
+                    <!--td>
+                        <a href="2.examples.html?showNotes=true" target="_blank" title="View slides with speaker notes">slides with notes</a>
+                    </td-->
+                    <td>
+                        <a href="2.examples.html?print-pdf&showNotes=separate-page" target="_blank" title="Download as PDF with speaker notes for printing">PDF</a>
+                    </td>
+                </tr>
+            
+                <tr>
+                    <td style="text-align:center"> 3 </td>
+                    <td>Chapter 2 - advanced examples</td>
+                    <td>
+                        <a href="3.advanced_examples.html" target="_blank" title="View slides">online slides</a>
+                    </td>
+                    <!--td>
+                        <a href="3.advanced_examples.html?showNotes=true" target="_blank" title="View slides with speaker notes">slides with notes</a>
+                    </td-->
+                    <td>
+                        <a href="3.advanced_examples.html?print-pdf&showNotes=separate-page" target="_blank" title="Download as PDF with speaker notes for printing">PDF</a>
+                    </td>
+                </tr>
+            
+                <tr>
+                    <td style="text-align:center"> 4 </td>
+                    <td>Appendix 1 - debug slides</td>
+                    <td>
+                        <a href="debug/4.debug.html" target="_blank" title="View slides">online slides</a>
+                    </td>
+                    <!--td>
+                        <a href="debug/4.debug.html?showNotes=true" target="_blank" title="View slides with speaker notes">slides with notes</a>
+                    </td-->
+                    <td>
+                        <a href="debug/4.debug.html?print-pdf&showNotes=separate-page" target="_blank" title="Download as PDF with speaker notes for printing">PDF</a>
+                    </td>
+                </tr>
+            
+            </tbody>
+        </table>
+
+        <p>
+		[Slides last built at <i>2025-01-12 22:21:31</i>.]<br />
+	    <!--The PDF link generates a single-page document (including speaker notes) suitable for <a href="https://revealjs.com/pdf-export/" target="_blank">saving as a PDF for printing</a>.-->
+
+        </p>
+
+	<hr>
+
+<h3 id="grading">Grading Rubric and Criteria</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">Component</th>
+            <th style="text-align:left">% Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>MP 1 | Detecting Motions from Sensors</td>
+            <td style="text-align:center"> 15 %</td>
+        </tr>
+
+        <tr>
+            <td>MP 2 | Real-Time Scheduling </td>
+            <td style="text-align:center"> 15 %</td>
+        </tr>
+
+        <tr>
+            <td>MP 3 | EKF</td>
+            <td style="text-align:center"> 20 %</td>
+        </tr>
+
+        <tr>
+            <td>MP 4 | Rover Programming and Control</td>
+            <td style="text-align:center"> 25 %</td>
+        </tr>
+
+        <tr>
+            <td>Lab Assignments</td>
+            <td style="text-align:center"> 15 %</td>
+        </tr>
+
+        <tr>
+            <td>In-Class Participation</td>
+            <td style="text-align:center"> 10 %</td>
+    </tbody>
+</table>
+
+<br>
+<b>Important Note about Grading:</b> We use automated grading scripts. If your code does not pass these scripts, then you will be penalized accordingly.
+<br>
+<br>
+
+<h4>Conversion from numerical to letter grade is as follows:</h4>
+
+
+<table style="width:100%">
+    <thead>
+        <tr>
+            <th>Range</th>
+            <td>95 to 100</th>
+            <td>90 to 94</td>
+            <td>87 to 89</td>
+            <td>83 to 86</td>
+            <td>80 to 82</td>
+            <td>77 to 79</td>
+            <td>73 to 76</td>
+            <td>70 to 72</td>
+            <td>67 to 69</td>
+            <td>60 to 66</td>
+            <td>50 to 59</td>
+            <td>< 50</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Letter Grade</th>
+            <td style="text-align:center">A</td>
+            <td style="text-align:center">A-</td>
+            <td style="text-align:center">B+</td>
+            <td style="text-align:center">B</td>
+            <td style="text-align:center">B-</td>
+            <td style="text-align:center">C+</td>
+            <td style="text-align:center">C</td>
+            <td style="text-align:center">C-</td>
+            <td style="text-align:center">D+</td>
+            <td style="text-align:center">D</td>
+            <td style="text-align:center">D-</td>
+            <td style="text-align:center">F</td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+<b>Note:</b> ONLY talk about your final grade with Prof. Sibin Mohan. None of the other instructional staff have access to grades or the ability to modify them.
+
+<h3>In Class Participation</h3>
+I encourage you to ask questions and ask often. Participate in discussions as well. Take notes since that helps with the learning.
+
+
+	<hr>
+
+<h3 id="policies">Policies</h3>
+	
+<h4 id="responsibilities">Expectations and Responsibilites</h4>
+
+<p>
+    <b>Student Responsibilites:</b> Students must,
+    <ul>
+        <li> Conduct your online behavior in accordance with the class' <a href="https://sibin.github.io/teaching/csci2410-gwu-systems_programming/fall_2024/professional_contract.html">Professional and Social Contract</a></li>
+        <li>Attend all classes and labs unless you are sick or there is an emergency in which cases you must contact the professor via email before class</li>
+        <li>Interact, ask questions, and generally participate in class discussions</li>
+        <li>Do group exercises assigned during lectures and/or labs</li>
+        <li> Be <i>respectful</i> when working in a group, and make sure that everyone's ideas are heard and taken seriously</li>
+        <li>Complete all work in accordance with the academic honesty rules for the university and for the class</li>
+        <li>Work to digest and process all provided material including Blackboard and Discord discussions (you <b>cannot</b> ignore Discord or Blackboard)</li>
+        <li>Contact the Professor if you are worried about completing any responsibilities</li>
+    </ul>
+    We will work with you to come up with a plan to be successful in the class.
+</p>
+
+<p>
+    We also need your feedback for parts of the class that aren't working for you. We do our best in running the class, but certainly make mistakes, or overlook different aspects.
+    Class evaluations are of limited use since they only are given at the end of the class.
+    Please provide feedback using the linked feedback form on Piazza.
+</p>
+
+<h4>Professor and Instructional Staff Responsibilities</h4>
+<p>
+    You should depend on the instructional staff (including Sibin) for the class to:
+    <ul>
+        <li>be clear about student's responsibilities in the class</li>
+        <li>convey the course's materials on this webpage, on Discord and Blackboard, in class, and in lab in a manner that is approachable and understandable to <i>every single</i> student</li>
+        <li> provide an environment in which everyone feels open to ask questions, and seek to remedy any misunderstandings or confusions</li>
+        <li>provide additional material on demand if anyone is curious about knowledge beyond the scope of the class</li>
+    </ul>
+    These can be remembered as "we're here to make it clear what you should do, what you should know, and what to do if you don't feel like you know what you're supposed to do or know". 
+    <br>
+    <br>
+    If at any point, you have concerns about any of these, of if we're dropping the ball on any of them, please let us know and we'll do better.
+    <br>
+    <br>
+    There are trade-offs made in the class (for example, MPs are not formally specified as I don't want them to be 50 pages each), but you always encouraged to ask questions and clarify.
+</p>
+
+<p>
+    Further, it is our intent that students from all diverse backgrounds and perspectives be well-served by this course, that students’ learning needs be addressed both in and out of class, and that the diversity that the students bring to this class be viewed as a resource, strength and benefit.
+    <br>
+    <br>
+    It is our intent to present materials and activities that are respectful of: gender identity, sexuality, disability, age, socioeconomic status, ethnicity, race, nationality, religion, and culture.
+    <br>
+    <br>
+    Your suggestions are encouraged and appreciated.
+    Please let us know ways to improve the effectiveness of the course for you personally, or for other students or student groups.
+</p>
+
+
+<h4 id="late-submissions">Late Submission Policy for MPs</h4>
+
+<p>Submission/due dates are announced along with the MP descriptions.</p>
+
+<p>You have a total of 3 "grace" days to use during the term. You can use those to submit whatever assignment(s) you want late. E.g. you can turn in one assignment 2 days late, the other 1 day late. Or turn in 3 assignments, each 1 day late. If you want to use these late days, indicate so in the comment box when you submit it.</p>
+
+<p>You start losing <b>20% of the points per day</b> after the grace days you use. E.g., if the assignment is due on Tuesday, and you turn it in on Wednesday without saying anything, you lose 20 points. If you use 1 grace day, and turn it in on Wednesday, you don't lose any points; but if you turn it in on Thursday, your final grade will be Your Earned Grade - 20. On Friday, it will be Your Earned Grade - 40.
+</p>
+<p>
+An assignment can be <b>at most three days late</b>: so in our example, if you turn in the assignment Saturday, the grade is 0.
+</p>
+
+<p>The point of this policy is to balance the need to be fair to those who turn in their assignments on time, with the need to recognize that sometimes, stuff happens and you just can't do all that's expected of you. Why have deadlines at all? Because almost everything in life does, and this is a small-stakes environment to practice that. Also, we can't grade everything at once.</p>
+
+<p>
+    Beyond this, the only acceptable excuses for late submissions are medical and family issues (or other exceptions like sports/athletics) but any of these will need confirmation from <a href="https://engineering.gwu.edu/jason-zara">Prof. Jason Zara</a> (Associate Dean of Undergraduate Affairs) or the coach/atheletic departments.
+    <br>
+    <br>
+
+    Generally unacceptable excuses include:
+<ul>
+    <li>your computer failing (we're using github for a reason)</li>
+    <li>lots of midterms/other assignments</li>
+    <li>forgetting to `git add` necessary files, or forgetting to `git push` (proper `git` usage is a <b>requirement</b>
+        for the class)</li>
+    <li>you worked very hard and put a lot of time and effort in, but still aren't quite there yet.
+</ul>
+</p>
+
+<p>You get <b>0 credit</b> for late work that is unexcused.</p>
+
+<h4 id="academic-integrity">Collaboration, the Honor Code and Cheating</h4>
+
+<p>You are encouraged to work together. You may discuss the MPs with other people to understand the problem and reach a solution. However, each student/group must <b>write down the solution independently</b>, without referring to written notes or code from others. Hence, you must understand the solution well enough to discuss it yourself. In addition, each student/group must <b>explicitly mention</b> the names of the people with whom they collaborated. 
+<br>
+<br>
+If I suspect <b>cheating##</b>, I might have the student(s) come and answer questions in my office. If my suspicions are confirmed, I will consider a range of possibilities (depending on the seriousnes of the offence) that includes any/all of the following:
+    <ol>
+        <li>a <b>0</b> on that MP/section,</li>
+        <li>an <b>F</b> for the entire course and</li>
+        <li>report the student to for an academic integrity violation.</li>
+    </ol>
+
+(<b>##</b> we will use a number of methods to detect cheating that includes, automated software, eyeballing the code, talking to the student, etc.)
+</p>
+
+<p>The purpose of problem sets in this class is to help you think about the material, not just give us the right answers. You are encouraged to use online resources for learning more about the material covered in class; however, you should not look for or use found solutions to questions in the problem sets. Specifically, you must not look at any code that has been created to solve the assignment, including solutions found on the internet to questions in the problem sets, code created by a student in a previous class or code created by a current classmate. (Though frankly, I seriously doubt you'll find anything, I regularly change the assignments).</p>
+
+<h4>ChatGPT, Github CoPilot and Other Code Generation Tools</h4>
+
+<p>The use of ChatGPT, GitHub CoPilot and any/all other code generation tools (that currently exist or will be developed
+in the future) is <b>expressly forbidden</b>!
+</p>
+
+<p>If any student is found using such tools then it will be considered a <b>violation of academic integrity</b> and reported appropriately.</p>
+
+<h4>Academic Integrity</h4>
+Academic Integrity is an integral part of the educational process, and GW takes these matters very seriously. Violations of academic integrity occur when students fail to cite research sources properly, engage in unauthorized collaboration, falsify data, and in other ways outlined in the Code of Academic Integrity. Students accused of academic integrity violations should contact the Office of Academic Integrity to learn more about their rights and options in the process. Outcomes can range from failure of assignment to expulsion from the University, including a transcript notation. The Office of Academic Integrity maintains a permanent record of the violation.
+
+<p>Familiarize yourself with the standards set forth in the <a href="studentconduct.gwu.edu/academic-integrity">GWU Code of Student Conduct</a> and specifically the University’s <a href="studentconduct.gwu.edu/guide-academic-integrity-online-learning-environments">“Guide of Academic Integrity in Online Learning Environments"</a>.  If there is any question about whether an act constitutes academic misconduct, it is your responsibility to seek clarification and approval from the instructor prior to acting. When in doubt, ask, or don't do it.
+</p>
+
+Contact information: 
+<ul>
+    <li>rights@gwu.edu</li>
+    <li>202-994-6757</li>
+</ul>
+
+<h4 id="misc-policy">Absence Policy</h4>
+<p>If you miss a class, <i>for whatever reason</i>, you are still responsible for that class' material. Go through the lectures, consult the scribe notes, come to office hours (in that order), and talk to your fellow students, to learn the material. </p>
+
+<h4 id="grade-review">Grade Review Policy</h4>
+<p>You have one week after a grade is released to ask us questions about it and seek a correction. After the week has passed, the grade is finalized. When releasing a grade, we may also post comments where appropriate, explaining where you lost points, made mistakes, etc.</p>
+
+<p>In case you are seeking a correction to the grade, you need a specific reason: e.g., your reasoning on MP 1.a was essentially correct but your written explanation, you now realize, was ambiguous; our comments say that your model had errors and I couldn't run it, but you can run it fine on your machine; etc. I cannot accommodate general requests that are a variation on "I think my grade was too low". Why do you think that? Based on our discussion, we might increase the grade, decrease it, or leave it as is.
+</p>
+
+<p>Of course, you can stop by anytime during the term to <i>ask questions about any part of the material</i>. The one-week deadline applies to grade-specific questions.</p>
+
+<h4>Use of Electronic Course Materials and Class Recordings</h4>
+<p>Students are encouraged to use electronic course materials, including recorded class sessions, for private personal use in connection with their academic program of study. Electronic course materials and recorded class sessions must not be shared and must not be used for non-course related purposes unless express permission has been granted by the instructor. Students who impermissibly share any electronic course materials are subject to discipline under the Student Code of Conduct. Please contact the instructor if you have questions regarding what constitutes permissible or impermissible use of electronic course materials and/or recorded class sessions. Please contact Disability Support Services if you have questions or need assistance in accessing electronic course materials.</p>
+
+<h4>Academic support</h4>
+<h5>Writing Center</h5>
+<p>GW’s Writing Center cultivates confident writers in the University community by facilitating collaborative, critical, and inclusive conversations at all stages of the writing process. Working alongside peer mentors, writers develop strategies to write independently in academic and public settings. 
+
+Appointments can be booked online at: <a href="gwu.mywconline">gwu.mywconline</a>.</p>
+
+<h5>Academic Commons</h5>
+<p>Academic Commons provides tutoring and other academic support resources to students in many courses. Students can schedule virtual one-on-one appointments or attend virtual drop-in sessions. Students may schedule an appointment, review the tutoring schedule, access other academic support resources, or obtain assistance at <a href="academiccommons.gwu.edu">academiccommons.gwu.ed</a>.</p>
+
+<h4>COVID-Related Topics</h4>
+<p>The university's <a href="https://coronavirus.gwu.edu">COVID-19 Safety and Success website</a> serves as the primary communication channel for the GWU regarding COVID-19 logistics and classroom guidelines.</p>
+
+<!--h5>Face Coverings</h5>
+<p>The university has a requirement to use a face covering when in indoor spaces in order to contribute to the health and safety of the GWU community during the ongoing COVID-19 pandemic. Accordingly, you are expected to use a face covering when attending class, including when you speak. I will do the same.
+</p>
+
+<p>Acceptable face coverings include:
+<ul>
+    <li>Cloth garments that cover the nose and mouth </li>
+    <li>Medical-grade disposable masks</li>
+</ul>
+</p>
+
+<p>If you don't have your own, face coverings are available at <a href="https://coronavirus.gwu.edu/face-mask-availability">various campus locations.</a></p>
+
+<p>Requests for exemption from wearing a face covering in indoor spaces require <b>prior</b> approval. Please follow this <a href="https://coronavirus.gwu.edu/top-faqs">link</a> for more information.
+</p-->
+
+<h4>Students with Disabiities [202-994-8250]</h4>
+<p>Accommodations for students with disabilities are determined and approved by <a href="https://disabilitysupport.gwu.edu">Disability Support Services</a>(DSS). If you, as a student, feel that you need accommodations but have not obtained approval please contact DSS immediately at <b>202-994-8250</b> or at <a href="https://disabilitysupport.gwu.edu">https://disabilitysupport.gwu.edu</a>. DSS notifies students and faculty members of approved academic accommodations and coordinates implementation of those accommodations. While not required, students and faculty members are encouraged to discuss details of the implementation of individual accommodations.
+</p>
+
+
+<h4>Ethical and Respectful Behavior</h4>
+<p>We expect all students to act in an respectful and ethical way, both with respect to the treatment of their peers in the classroom during discussion but also in the design and execution of their course projects. Actions should meet the expectations of ethical research and follow the norms and proper behavior of the George Washington University community. We strive for an inclusive classroom, which includes but is not limited to anti-racism, anti-sexism, accessibility, LGBTQ+ inclusivity. If you feel like you are unable to use inclusive language and behave in a non-discriminatory way, please drop the class.</p>
+
+<h4>University policy on observance of religious holidays</h4>
+<p>In accordance with University policy, students should notify faculty during the first week of the semester of their intention to be absent from class on their day(s) of religious observance. For details and policy, see <a href="provost.gwu.edu/policies-procedures-and-guidelines">“Religious Holidays”</a>. </p>
+
+
+<h4>Reach Out for Success/Wellness</h4>
+<p>University students encounter setbacks from time to time. If you encounter difficulties and need assistance, it's important to reach out. Consider discussing the situation with an instructor or academic advisor. Learn about resources that assist with wellness and academic success at <a href="https://students.gwu.edu/health-wellness">Health and Wellness Center</a>. 
+    
+If you or someone you know are in immediate crisis, please contact one of the following resources immediately:
+<ul>
+    <li>Student Counseling : <b>202-994-5300</b></li>
+    <li>National Suicide Prevention Lifeline: <b>1-800-273-8255</b></li>
+</ul>
+ </p>
+
+
+ <h4>Safety and Security</h4>
+ <ul>
+ <li>In an emergency: <b>call GWPD 202-994-6111</b> or <b>911</b></li>
+ <li>For situation-specific actions: review the Emergency Response Handbook at: <a href="safety.gwu.edu/emergency-response-handbook">safety.gwu.edu/emergency-response-handbook</a>
+ <li>In an active violence situation: Get Out, Hide Out, or Take Out. See <a href="go.gwu.edu/shooterpret">go.gwu.edu/shooterpret</a>
+<li>Stay informed: <a href="safety.gwu.edu/stay-informed">safety.gwu.edu/stay-informed</a>
+</ul>
+
+    </body>
+</html>
