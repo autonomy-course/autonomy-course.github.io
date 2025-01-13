@@ -55,8 +55,10 @@
 
 
 	<p>
-    This course will focus on the state-of-the-art on <i>security for autonomous and cyber-physical systems</i>. 
+    This course will take a "<i>full stack</i>" view of designing autonomous systems -- from low-level embedded/sensor programming to real-time/OS scheduling and sensor fusion all the way up to SLAM, object detection/avoidance and planning. Students will work with real hardware (an autonomous rover equipped with embedded processors, sensors and operating systems).
+
     The goal is to provide a deep and broad understanding of the design of such systems as they interact with the real world.
+
     Autonomous cars, unmanned aerial/ground/water vehicles, robots, etc. are examples of systems that we intend to explore.
 </p>
 
@@ -70,40 +72,34 @@
 <p>
     We will cover topics related to:
     <ul>
-        <li> <i>design</i> of autonomous, cyber-physical and real-time systems
-        <li> <i>sensing</i>, IMU, GPS, Radar, LIDAR, Camera, etc.
+        <li> <i>design</i> of autonomous systems
+        <li> <i>embedded systems</i>, designs and architectures</li>
+        <li> <i>real-time</i> operating systems and scheduling, ROS</li>
+        <li> <i>sensing</i> and <i>actuation</i>
+        <li> <i>control algorithms</i>, sensor fusion, Extended Kalman Filter (EKF)
         <li> <i>localization</i>, Simultaneous localization And Mapping (SLAM)
-        <li> Extended Kalman Filter (EKF)
-        <li> <i>attacks</i> and <i>defenses</i> related to all of these topics
-        <li> <i>privacy and ethical issues</i> in the design and deployment of autonomous systems
+        <li><i>path planning</i></li>
+        <li> <i>object detection/avoidance</i>, YOLO</li>
+        <li> safety standards, <i>ethics</i></li>
+        <li> <i>security</i> and <i>privacy</i></li>
+        <li> <i>verification</i></li>
     </ul>
 </p>
 
 <p>
-    Hands-on exercises will explore <b>real hardware rovers</b> as well known, <b>open-source simulation and control platforms</b> such as:
-    <ul>
-        <li> Gazebo 
-        <li> VEINS
-    </ul>
-</p>
-
-<p>
-    The course will also include an exploration of the <i>state-of-the-art research papers</i> in these domains. 
-    <br>
-
-    <b>Note:</b> this <i>student-led</i> component is a <b>major</b> component of this course, <i>i.e.</i>, reading papers, critiquing them and learning to present work by other researchers. 
+    Hands-on exercises will explore <b>real hardware rovers</b>, software simulations and working with real embedded processors and sensors.
 </p>
 
 <h3>Target Audience</h3>
-Graduate and undergraduate students in CS, ECE, Robotics, AI and even other departments who want to explore topics related to the security, privacy and ethics of autonomous and cyber-physical systems.
+Undergraduate and graduate students in CS, ECE, Robotics, AI and even other departments who want to explore topics related to the design of autonomous systems.
 
 	<hr>
 
 <div id="toc_container">
     <p class="toc_title">Table of Contents</p>
     <ul class="toc_list">
-        <li>1. <a href="#staff">Course Staff and Course Details</a></li>
-        <li>2. <a href="#lectures">Schedule and Lectures</a></li>
+        <li>1. <a href="#lectures">Schedule and Lectures</a></li>
+        <li>2. <a href="#staff">Course Staff and Course Details</a></li>
         <li>3. <a href="#grading">Grading Rubric and Criteria</a></li>
         <li>4. <a href="#policies">Policies</a></li>
         <ul>
@@ -114,34 +110,6 @@ Graduate and undergraduate students in CS, ECE, Robotics, AI and even other depa
         </ul>
     </ul>
 </div>
-	<hr>
-
-<h3 id="staff">Course Staff</h3>
-<ul>
-    <li> <u>Instructor:</u> <a href="https://sibin.github.io/sibin">Prof. Sibin Mohan</a>
-    <li> <u>TA:</u> <a href="mailto:sam.ulhaque@gwu.edu">Mohammad Samad</a> [alias: Sam]
-</ul>
-
-
-<h3>Course Details</h3>
-<ul>
-    <li> <u>Time:</u> TUE/THUR 12:45 -- 2:00 PM ET
-    <li> <u>Location:</u> Tompkins Hall [TOMP] 310
-    <li> <u>Prof. Mohan office Hours:</u> TUE/THUR 2:30 -- 3:30 PM ET [SEH 5830] *
-    <li> <u>TA Office Hours:</u> TUE 11:00 -- 12:00 PM, THUR 4:00 -- 5:00 PM ET
-    <li> <u>Location:</u> Outside SEH 4000
-    <li> <u>Contact:</u> please message on <b>Discord</b>
-</ul>
-[* Please message ahead of time and set up alternate slot in case of conflicts for office hours.]
-<br>
-<br>
-<b>Note:</b> Make sure that you're <a href="https://www2.seas.gwu.edu/~gparmer/resources/2021-09-20-Office-Hours-HOWTO.html">properly preparing and presenting yourself</a> at office hours!
-
-
-
-<h3>Communication</h3>
-We will use <b>Discord</b> for all course related communications.
-
 
     <hr>
 
@@ -217,10 +185,84 @@ We will use <b>Discord</b> for all course related communications.
         </table>
 
         <p>
-		[Slides last built at <i>2025-01-12 23:10:13</i>.]<br />
+		[Slides last built at <i>2025-01-13 01:47:49</i>.]<br />
 	    <!--The PDF link generates a single-page document (including speaker notes) suitable for <a href="https://revealjs.com/pdf-export/" target="_blank">saving as a PDF for printing</a>.-->
 
         </p>
+
+	<hr>
+
+<h3 id="staff">Course Staff</h3>
+
+<table>
+    <tr>
+        <th style="text-align: left;">Position</th>
+        <th style="text-align: left;">Name</th>
+        <th style="text-align: left;">Email</th>
+    </tr>
+    <tr>
+        <td>Instructor</td>
+        <td>Prof. Sibin Mohan</td>
+        <td><a href="mailto:sibin.mohan@gwu.edu">sibin.mohan@gwu.edu</a></td>
+    </tr>
+    <tr>
+        <td>Grad TA</td>
+        <td>Indumathi Madhu</td>
+        <td><a href="mailto:indumathi.madhu@gwmail.gwu.edu">indumathi.madhu@gwmail.gwu.edu</a></td>
+    </tr>
+    <tr>
+        <td>Undergrad TA</td>
+        <td>Derek Chen</td>
+        <td><a href="mailto:dchen36@gwmail.gwu.edu">dchen36@gwmail.gwu.edu</a></td>
+    </tr>
+    <tr>
+        <td>Grader</td>
+        <td>Tejaaswini Narendaran</td>
+        <td><a href="mailto:tejaaswini.narendran@email.gwu.edu">tejaaswini.narendran@email.gwu.edu</a></td>
+    </tr>
+</table>
+
+<h3>Course Details</h3>
+<table>
+    <tr>
+        <th style="text-align: left;">Detail</th>
+        <th style="text-align: left;">Information</th>
+    </tr>
+    <tr>
+        <td><u>Time:</u></td>
+        <td>TUE/THUR 12:45 -- 2:00 PM ET</td>
+    </tr>
+    <tr>
+        <td><u>Location:</u></td>
+        <td>Tompkins Hall [TOMP] 310</td>
+    </tr>
+    <tr>
+        <td><u>Prof. Mohan office Hours:</u></td>
+        <td>TUE/THUR 2:30 -- 3:30 PM ET [SEH 5830] *</td>
+    </tr>
+    <tr>
+        <td><u>TA Office Hours:</u></td>
+        <td>Follow this <a href="https://calendar.google.com/calendar/u/3?cid=Y182YWM3YmU0NGM5YjcyNjBmYTExYTYzMTk1MjI1N2Y5YjgwYmIxNDA2YmIwZTczNWFkNmMwZDZkZmZiMWMxZDRhQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">calendar link</a>.</td>
+    </tr>
+    <tr>
+        <td><u>Location:</u></td>
+        <td>Outside SEH 4000</td>
+    </tr>
+    <tr>
+        <td><u>Contact:</u></td>
+        <td>please message on <b>Discord</b></td>
+    </tr>
+</table>
+
+[* Please message ahead of time and set up alternate slot in case of conflicts for office hours.]
+<br>
+<br>
+<b>Note:</b> Make sure that you're <a href="https://www2.seas.gwu.edu/~gparmer/resources/2021-09-20-Office-Hours-HOWTO.html">properly preparing and presenting yourself</a> at office hours!
+
+
+
+<h3>Communication</h3>
+We will use <b>Discord</b> for all course related communications.
 
 	<hr>
 
