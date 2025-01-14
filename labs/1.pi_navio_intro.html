@@ -96,6 +96,8 @@
 
                     ## 5. Find Raspberry Pi IP Address
 
+                    To find the Raspberry Pi IP address, run the following command:
+
                     ```bash
                     ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1
                     ```
