@@ -233,9 +233,10 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 /*font-size: 30px;*
 /* pre code (not mermaid) background: var(--gap-darkslate);*/
 code {
-  background-color: var(--inline-code-bg-color);
+  background-color: var(--gap-darkslate);
+  color: var(--gap-slateaccent) ;
   font-family: "Inconsolata", monospace;
-  ont-size: var(--inset-font-size); 
+  font-size: var(--inset-font-size); 
   padding: 0.2em 0.4em 0.2em 0.4em;
   border-width: 0ch;
   border-style: solid;
@@ -255,7 +256,7 @@ pre code.mermaid {
 }
 
 pre code:not(.mermaid) {
-  background-color: var(--code-bg-color);
+  background-color: var(--gap-darkslate);
   background: var(--gap-darkslate);
   text-align: left;
   font-size: var(--inset-font-size);
