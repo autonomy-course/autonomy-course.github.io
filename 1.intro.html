@@ -306,6 +306,250 @@ hence, they fall under the class of systems &rarr; **cyber-physical** systems
 the **embedded** components &rarr; interactions with the real world
 
 ---
+
+## sensing and actuation in the real world
+
+
+---
+
+## sensing and actuation in the real world
+
+consider the following example of two cars...
+![Two cars, one behind the over, top view](./img/cars_sensing_1.png)
+
+---
+
+## sensing and actuation in the real world
+
+the second car is approaching the first
+![Two cars, one behind the over, top view, an arror to the left on top of the car on the right](./img/cars_sensing_2.png)
+
+---
+
+## sensing and actuation in the real world
+
+**sensors** &rarr; constantly gathering data/sensing
+
+<img src="./img/cars_sensing_3.png">
+
+---
+
+## sensing and actuation in the real world
+
+**sensors** &rarr; constantly gathering data/sensing
+
+<div class="multicolumn">
+<div>
+<ol>
+ <li> periodic sensing </li>
+</ol>
+</div>
+<div>
+<img src="./img/cars_sensing_3.png">
+</div>
+</div>
+
+---
+
+## sensing and actuation in the real world
+
+on detection (of other car) &rarr; quickly **compute** what to do
+
+<img src="./img/cars_sensing_4.png">
+
+---
+
+## sensing and actuation in the real world
+
+on detection (of other car) &rarr; quickly **compute** what to do
+
+<div class="multicolumn">
+<div>
+<ol>
+ <li> periodic sensing </li>
+ <li> computation </li>
+</ol>
+</div>
+<div>
+<img src="./img/cars_sensing_4.png">
+</div>
+</div>
+
+---
+
+## sensing and actuation in the real world
+
+take **physical action** &rarr; say by braking _in time_
+
+<img src="./img/cars_sensing_5.png">
+
+---
+
+## sensing and actuation in the real world
+
+take **physical action** (actuation) &rarr; say by braking _in time_
+
+<div class="multicolumn">
+<div>
+<ol>
+ <li> periodic sensing </li>
+ <li> computation </li>
+ <li> actuation </li>
+</ol>
+</div>
+<div>
+<img src="./img/cars_sensing_5.png">
+</div>
+</div>
+
+---
+
+1. periodic sensing
+2. computation
+3. actuation
+
+---
+
+<div class="multicolumn">
+<div>
+<ol>
+ <li> periodic sensing </li>
+ <li> computation </li>
+ <li> actuation </li>
+</ol>
+</div>
+<div>
+<img src="./img/sense_planning_actuation.png">
+</div>
+</div>
+
+---
+
+<div class="multicolumn">
+<div>
+<ol>
+ <li> periodic sensing </li>
+ <li> computation </li>
+ <li> actuation </li>
+</ol>
+</div>
+<div>
+<img src="./img/sense_planning_actuation.png">
+</div>
+</div>
+
+<br>
+<br>
+
+## "**control**"
+
+---
+
+## remember this?
+
+on detection (of other car) &rarr; quickly **compute** what to do
+
+<img src="./img/cars_sensing_4.png">
+
+---
+
+## remember this?
+
+on detection (of other car) &rarr; <scb>quickly</scb> **compute** what to do
+
+<img src="./img/cars_sensing_4.png">
+
+---
+
+### "quickly" compute
+
+complete computation/actuation &rarr; before a **deadline**
+
+---
+
+### quickly compute
+
+complete computation/actuation &rarr; before a **deadline**
+
+<br>
+<br>
+
+## real-time system
+
+---
+
+### finally, we come back to **sensing**
+
+<img src="./img/cars_sensing_3.png">
+
+---
+
+### finally, we come back to **sensing**
+
+<div class="multicolumn">
+<div>
+<br>
+<ul>
+    <li>we see <i>one</i> sensor (maybe LiDAR)</li>
+<ul>
+</div>
+<div>
+<img src="./img/cars_sensing_3.png">
+</div>
+</div>
+
+---
+
+### finally, we come back to **sensing**
+
+<div class="multicolumn">
+<div>
+<br>
+<ul>
+    <li>we see <i>one</i> sensor (maybe LiDAR)</li>
+    <li>reality &rarr; <b>multiple</b> sensors</li>
+<ul>
+</div>
+<div>
+<img src="./img/cars_sensing_3.png">
+</div>
+</div>
+
+---
+
+### finally, we come back to **sensing**
+
+<div class="multicolumn">
+<div>
+<br>
+<ul>
+    <li>we see <i>one</i> sensor (maybe LiDAR)</li>
+    <li>reality &rarr; <b>multiple</b> sensors</li>
+    <li>cameras, radars, lidar, etc.</li>
+<ul>
+</div>
+<div>
+<img src="./img/autonomous_cars_sensors.png">
+</div>
+</div>
+
+---
+
+<img src="./img/autonomous_cars_sensors.png" height="900">
+
+---
+
+<img src="./img/autonomous_cars_sensors.png" height="700">
+
+multiple sensors in an autonomous vehicle &rarr; need to _combine_ them somehow
+
+---
+
+<img src="./img/autonomous_cars_sensors.png" height="600">
+
+multiple sensors in an autonomous vehicle &rarr; need to _combine_ them somehow
+
+## extended kalman filters (EKF)
                     </textarea>
                 </section>
             </div>
@@ -348,6 +592,8 @@ the **embedded** components &rarr; interactions with the real world
                         transition: "fade",
                     
                         backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
                     
                 
                 plugins: [
