@@ -30,7 +30,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 
   --r-background-color: #f0e2f2; 
   --r-main-font: 'Lato', sans-serif;
-  --r-main-font-size: 50px;
+  --r-main-font-size: 60px;
   --r-main-color: #333;
   --r-block-margin: 20px;
   --r-heading-margin: 0 0 20px 0;
@@ -45,9 +45,9 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   --r-heading-font-weight: normal;
   /*--r-heading-font-weight: bold;*/
   --r-heading1-text-shadow: none;
-  --r-heading1-size: 3.77em;
-  --r-heading2-size: 2.11em;
-  --r-heading3-size: 1.55em;
+  --r-heading1-size: 2.23em;
+  --r-heading2-size: 1.71em;
+  --r-heading3-size: 1.25em;
   --r-heading4-size: 1em;
   --r-code-font: monospace;
   --r-link-color: #3b759e;
@@ -215,7 +215,9 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   margin: var(--r-block-margin) auto;
   padding: 5px;
   font-style: italic;
-  background: rgba(255, 255, 255, 0.05);
+  /*background: rgba(255, 255, 255, 0.05);*/
+  background-color: var(--gap-darkslate);
+  color: var(--gap-slateaccent);
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -236,7 +238,8 @@ code {
   background-color: var(--gap-darkslate);
   color: var(--gap-slateaccent) ;
   font-family: "Inconsolata", monospace;
-  font-size: var(--inset-font-size); 
+  /*font-size: var(--inset-font-size); */
+  font-size: 50px;
   padding: 0.2em 0.4em 0.2em 0.4em;
   border-width: 0ch;
   border-style: solid;
@@ -259,7 +262,8 @@ pre code:not(.mermaid) {
   background-color: var(--gap-darkslate);
   background: var(--gap-darkslate);
   text-align: left;
-  font-size: var(--inset-font-size);
+  /*font-size: var(--inset-font-size);*/
+  font-size: 40px;
   white-space: pre-wrap;
   margin-bottom: var(--content-padding-bottom);
   border-width: 0.1ch;

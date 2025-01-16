@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        # embedded architectures
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+## what is an "embedded system"?
+
+---
+
+## what is an "embedded system"?
+
+- like autonomy, no _exact_ definition
+
+---
+## what is an "embedded system"?
+
+- like autonomy, no _exact_ definition
+- systems created for **specific functionality**
+
+---
+
+## what is an "embedded system"?
+
+- like autonomy, no _exact_ definition
+- systems created for **specific functionality**
+- fixed/operational for **years**, decades even!
+
+---
+
+## tradeoff between 
+<div class="multicolumn">
+<div>
+<br>
+<br>
+
+**performance** vs
+</div>
+</div>
+
+---
+
+## tradeoff between 
+
+<div class="multicolumn">
+<div>
+<br>
+<br>
+
+**performance** vs
+</div>
+<div>
+<ul>
+    <li>power/battery life</li>
+</ul>
+</div>
+</div>
+
+---
+
+## tradeoff between 
+
+<div class="multicolumn">
+<div>
+<br>
+<br>
+
+**performance** vs
+</div>
+<div>
+<ul>
+    <li>power/battery life</li>
+    <li>less memory</li>
+</ul>
+</div>
+</div>
+
+
+---
+
+## tradeoff between 
+
+<div class="multicolumn">
+<div>
+<br>
+<br>
+
+**performance** vs
+</div>
+<div>
+<ul>
+    <li>power/battery life</li>
+    <li>less memory</li>
+    <li>fewer peripherals</li>
+</ul>
+</div>
+</div>
+
+
+---
+
+## tradeoff between 
+
+<div class="multicolumn">
+<div>
+<br>
+<br>
+
+**performance** vs
+</div>
+<div>
+<ul>
+    <li>power/battery life</li>
+    <li>less memory</li>
+    <li>fewer peripherals</li>
+    <li>limited applications</li>
+</ul>
+</div>
+</div>
+
+
+---
+
+## tradeoff between 
+
+<div class="multicolumn">
+<div>
+<br>
+<br>
+
+**performance** vs
+</div>
+<div>
+<ul>
+    <li>power/battery life</li>
+    <li>less memory</li>
+    <li>fewer peripherals</li>
+    <li>limited applications</li>
+    <li>smaller operating systems</li>
+    <li><em>etc.</em></li>
+</ul>
+</div>
+</div>
+
+---
+
+main reason? 
+
+## **predictability**
+
+---
+
+## predictability
+
+**guarantee** the system works,
+
+---
+
+## predictability
+
+**guarantee** the system works,
+- correctly
+- **safely**
+
+
+---
+
+## predictability
+
+**guarantee** the system works,
+- correctly
+- **safely**
+
+essentially &rarr; must be easy to **certify** the system
+
+---
+
+## the **wcet** problem
+
+---
+
+## the **wcet** problem
+
+"worst-case execution time"
+
+---
+
+## the **wcet** problem
+
+"worst-case execution time"
+
+> **longest** execution time for a program <br>
+
+---
+
+## the **wcet** problem
+
+"worst-case execution time"
+
+> **longest** execution time for a program <br>
+> on a **specific hardware platform**
+
+---
+
+## the **wcet** problem
+
+"worst-case execution time"
+
+> **longest** execution time for a program <br>
+> on a **specific hardware platform**
+
+must consider &rarr; **all possible inputs**
+
+---
+
+## wcet | used to ensure...
+
+- "_schedulability_"
+- resource requirements 
+- performance limits 
+
+of embedded and real-time programs
+
+---
+
+## wcet approaches
+
+lots of approaches to computing the WCET, _e.g.,_
+- [dynamic/empirical](https://www.cs.fsu.edu/~whalley/papers/tecs07.pdf) &rarr; run program lots of times  on the platform 
+- [static](https://www.cs.fsu.edu/~whalley/papers/tecs07.pdf) &rarr; _compile time_ analysis to compute the _worst-case paths_ 
+- [hybrid](https://sibin.github.io/papers/2008_NCSU-Dissertation_CheckerMode_SibinMohan.pdf) &rarr; a combination of the two
+- [probabilistic](https://people.ac.upc.edu/fcazorla/articles/jabella_ecrts2014_2.pdf) &rarr; combine dynamic analysis+statistical methods
+- [ML-based methods](https://dl.acm.org/doi/10.1145/3570361.3615740) &rarr; applying machine-learning to the problem
+
+---
+
+## so what's the "problem"?
+
+---
+
+## so what's the "problem"?
+
+at a high-level, the execution time distributions of applications:
+
+<img src="./img/embedded_arch/wcet_wilhelm.png" height="550" style="display: inline-block;" title="https://www.inf.ed.ac.uk/teaching/courses/es/PDFs/lecture_11.pdf" />
+
+Note: we see that the various methods either underestimate or overestime the wcet. the former affects the safety, the latter wastes resources
+
+---
+
+### wcet analysis is a hard problem!
+
+structural problems (in hardware/software) make it more difficult!
+
+---
+
+## consider this example
+
+```c
+void main()
+{
+    int max = 10 ;
+    int sum = 0;
+    for( int i = 0 ; i < max ; ++i)
+        sum += i ;
+}
+```
+
+---
+
+## consider this example
+
+```c
+void main()
+{
+    int max = 10 ;
+    int sum = 0;
+    for( int i = 0 ; i < max ; ++i)
+        sum += i ;
+}
+```
+
+how do you compute the WCET for this code?
+
+---
+
+## need additional information
+
+---
+
+## need additional information
+
+first, define the **processor** it runs on &rarr; say, "**P**"
+
+---
+
+## need additional information
+
+first, define the **processor** it runs on &rarr; say, "**P**"
+- how long each instruction takes to execute on P
+
+---
+
+## need additional information
+
+first, define the **processor** it runs on &rarr; say, "**P**"
+- how long each instruction takes to execute on P
+- how many loop iterations?
+
+---
+
+## need additional information
+
+first, define the **processor** it runs on &rarr; say, "**P**"
+- how long each instruction takes to execute on P
+- how many loop iterations?
+- what is the startup/cleanup times for the program on P?  
+
+---
+
+### adding in all that information, we have...
+
+```c [1|3|4|5-6|7]
+void main()         // startup cost = 100 cycles
+{
+int max = 15 ;  // 10 cycles
+int sum = 0;    // 10 cycles 
+for( int i = 0 ; i < max ; ++i) // 5 cycles, once
+sum += i ; // 20 cycles each iteration
+}                   // cleanup cost = 120 cycles
+```
+
+---
+
+### to calculate the wcet
+
+```c
+1   void main()         // startup cost = 100 cycles
+2   {
+3       int max = 15 ;  // 10 cycles
+4       int sum = 0;    // 10 cycles 
+5       for( int i = 0 ; i < max ; ++i) // 5 cycles, once
+6            sum += i ; // 20 cycles each iteration
+7   }                   // cleanup cost = 120 cycles
+```
+
+
+$$
+wcet = line_1 + line_3 + line_4 + line_5 + (line_6 * max)
+$$ 
+
+---
+
+### to calculate the wcet
+
+```c
+1   void main()         // startup cost = 100 cycles
+2   {
+3       int max = 15 ;  // 10 cycles
+4       int sum = 0;    // 10 cycles 
+5       for( int i = 0 ; i < max ; ++i) // 5 cycles, once
+6            sum += i ; // 20 cycles each iteration
+7   }                   // cleanup cost = 120 cycles
+```
+
+
+$$
+wcet = line_1 + line_3 + line_4 + line_5 + (line_6 * max)
+$$ 
+
+which is fine for this simple example
+
+---
+
+Now consider this slight change to the above code:
+```c [3]
+void main( int argc, char* argv[] )
+{
+    int max = atoi( argv[1] ) ;     // convert the command line arg to max
+    int sum = 0; 
+    for( int i = 0 ; i < max ; ++i) // how many iterations?
+        sum += i ;
+}
+```
+
+---
+
+Now consider this slight change to the above code:
+```c [3]
+void main( int argc, char* argv[] )
+{
+    int max = atoi( argv[1] ) ;     // convert the command line arg to max
+    int sum = 0; 
+    for( int i = 0 ; i < max ; ++i) // how many iterations?
+        sum += i ;
+}
+```
+
+previous equation **fails**!
+
+---
+
+Now consider this slight change to the above code:
+```c [3]
+void main( int argc, char* argv[] )
+{
+    int max = atoi( argv[1] ) ;     // convert the command line arg to max
+    int sum = 0; 
+    for( int i = 0 ; i < max ; ++i) // how many iterations?
+        sum += i ;
+}
+```
+
+previous equation **fails**!
+
+no longer know the value of `max` &rarr; arbitrary wcet!
+
+---
+
+let's make another change to the code:
+```c [1-6|10-16]
+#define VERY_LARGE_ARRAY+SIZE 1>>18
+
+void main()
+{
+    int first_array[VERY_LARGE_ARRAY_SIZE] ;
+    int second_array[VERY_LARGE_ARRAY_SIZE] ;
+
+    int sum_first = 0;
+    int sum_second = 0;
+    for( int i = 0 ; i < VERY_LARGE_ARRAY_SIZE * 2 ; ++i)
+    {
+        if( i%2 )
+            first_sum += first_array[i/2] ;
+        else
+            second_sum += second_array[(int)((i/2)+1)] ;
+    }
+}
+```
+
+---
+
+let's make another change to the code:
+```c [10-16]
+#define VERY_LARGE_ARRAY+SIZE 1>>18
+
+void main()
+{
+    int first_array[VERY_LARGE_ARRAY_SIZE] ;
+    int second_array[VERY_LARGE_ARRAY_SIZE] ;
+
+    int sum_first = 0;
+    int sum_second = 0;
+    for( int i = 0 ; i < VERY_LARGE_ARRAY_SIZE * 2 ; ++i)
+    {
+        if( i%2 )
+            first_sum += first_array[i/2] ;
+        else
+            second_sum += second_array[(int)((i/2)+1)] ;
+    }
+}
+```
+
+can we compute wcet easily (using previous equation)?
+
+**note:** maximum size of loop is known &rarr; `VERY_LARGE_ARRAY_SIZE * 2`
+
+Note: pause and ask students what, if anything can go wrong?
+
+---
+
+### let's see what happens in each iteration
+
+---
+
+### let's see what happens in each iteration
+
+| iter | operation | cache state | reason |
+|--------|----------------------------|-------------------|---------------------------------------------|
+| 1 | `first_array` loaded | miss | evicts whatever was previously in cache |
+
+---
+
+### let's see what happens in each iteration
+
+| iter | operation | cache state | reason |
+|----------------|----------------------------|-------------------|---------------------------------------------|
+| 1 | `first_array` loaded | miss | evicts whatever was previously in cache |
+| 2 | `second_array` loaded | miss | **evicts `first_array`** due to lack of space |
+
+---
+
+### let's see what happens in each iteration
+
+| iter | operation | cache state | reason |
+|----------------|----------------------------|-------------------|---------------------------------------------|
+| 1 | `first_array` loaded | miss | evicts whatever was previously in cache |
+| 2 | `second_array` loaded | miss | **evicts `first_array`** due to lack of space |
+| 3 | `first_array` loaded again | miss | **evicts `second_array`** due to lack of space |
+|...|
+||
+
+---
+
+program will _constantly_ sufffer cache misses!
+
+---
+
+program will _constantly_ sufffer cache misses!
+
+### loop's execution time blows up!
+
+---
+
+program will _constantly_ sufffer cache misses!
+
+### loop's execution time blows up!
+
+<br>
+
+now we need to model &rarr; **cache behavior** for program/data
+
+---
+
+### further complications from
+
+other hardware features, _e.g.,_
+
+- processor pipelining
+- prefetching
+- branch prediction
+- multithreading
+- multicore systems
+- memory buses
+- networks-on-chip
+- and too many others to recount here...
+
+---
+
+processor feature &rarr; improves performance &rarr; *bad for wcet analysis*!
+
+
+---
+
+processor feature &rarr; improves performance &rarr; *bad for wcet analysis*!
+
+### embedded/real-time systems prefer **simpler** processors
+
+---
+
+## embedded processors 
+
+come im myriad shapes and sizes:
+1. Microcontrollers
+2. Digital Signal Processors
+3. Microprocessors
+4. System-on-a-Chip
+5. Embedded accelerators
+6. ASICs and FPGAs
+
+---
+
+## Microcontrollers
+
+
+---
+
+## Microcontrollers
+
+from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
+>   "A microcontroller (MC, UC, or μC) or microcontroller unit (MCU) is a small computer  <br>
+> on a single integrated circuit."
+
+---
+
+## Microcontrollers
+
+- most common type of "processors" in embedded systems
+- **[more than 55%](https://www.embedded.com/the-two-percent-solution/)** of the world's processors!
+
+---
+
+## Microcontrollers
+
+- most common type of "processors" in embedded systems
+- **[more than 55%](https://www.embedded.com/the-two-percent-solution/)** of the world's processors!
+- **small, yet critical**, systems 
+
+---
+
+## Microcontrollers
+
+- most common type of "processors" in embedded systems
+- **[more than 55%](https://www.embedded.com/the-two-percent-solution/)** of the world's processors!
+- **small, yet critical**, systems 
+    - car engine control
+    - implantable medical devices
+    - thermal monitoring
+    - millions (billions?) of other applications!
+
+--- 
+
+## microcontroller hardware features
+
+--- 
+
+## microcontroller hardware features
+
+| component | details |
+|-----------|---------|
+| one CPU core | typically simple `4` or `8` bit chips |
+
+--- 
+
+## microcontroller hardware features
+
+| component | details |
+|-----------|---------|
+| one CPU core | typically simple `4` or `8` bit chips |
+| small pipelined architectues | sometimes `2` or `4` stage pipelines |
+
+--- 
+
+## microcontroller hardware features
+
+| component | details |
+|-----------|---------|
+| one CPU core | typically simple `4` or `8` bit chips |
+| small pipelined architectues | sometimes `2` or `4` stage pipelines |
+| some limited memory | typically a few hundred kilobytes, perhaps in the form of EEPROMs or FLASH |
+
+--- 
+
+## microcontroller hardware features
+
+| component | details |
+|-----------|---------|
+| one CPU core | typically simple `4` or `8` bit chips |
+| small pipelined architectues | sometimes `2` or `4` stage pipelines |
+| some limited memory | typically a few hundred kilobytes, perhaps in the form of EEPROMs or FLASH |
+| programmable I/O | to interact with the real world |
+
+---
+
+## microcontroller hardware features [contd.]
+
+| component | details |
+|-----------|---------|
+| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
+
+---
+
+## microcontroller hardware features [contd.]
+
+| component | details |
+|-----------|---------|
+| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
+| low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
+
+---
+
+## microcontroller hardware features [contd.]
+
+| component | details |
+|-----------|---------|
+| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
+| low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
+| interrupts (some programmable) | often _real-time_ (ficed/low latency) |
+
+---
+
+## microcontroller hardware features [contd.]
+
+| component | details |
+|-----------|---------|
+| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
+| low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
+| interrupts (some programmable) | often _real-time_ (ficed/low latency) |
+| general-purpose I/O (GPIO) pins | for I/O |
+
+---
+
+## microcontroller hardware features [contd.]
+
+| component | details |
+|-----------|---------|
+| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
+| low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
+| interrupts (some programmable) | often _real-time_ (ficed/low latency) |
+| several general-purpose I/O (GPIO) pins | for I/O |
+| timers | e.g., a programmable interval timer (PIT) |
+||
+
+---
+
+### **Additional features** found on some microcontrollers:
+
+---
+
+### **Additional features** found on some microcontrollers:
+
+| component | details |
+|-----------|---------|
+| analog to digital (ADC) convertors | to convert incoming (real-world, sensor) data to a digital form that the uC can operate on |
+
+---
+
+### **Additional features** found on some microcontrollers:
+
+| component | details |
+|-----------|---------|
+| analog to digital (ADC) convertors | to convert incoming (real-world, sensor) data to a digital form that the uC can operate on |
+| digital-to-analog (DAC) convertor | to do the opposite, convert from digital to analog signals to send outputs in that form |
+
+---
+
+### **Additional features** found on some microcontrollers:
+
+| component | details |
+|-----------|---------|
+| analog to digital (ADC) convertors | to convert incoming (real-world, sensor) data to a digital form that the uC can operate on |
+| digital-to-analog (DAC) convertor | to do the opposite, convert from digital to analog signals to send outputs in that form |
+| universal async tx/rx (UART) | to receive/send data over a _serial_ line |
+
+---
+
+### **Additional features** [contd.]:
+
+| component | details |
+|-----------|---------|
+| pulse width modulation (PWM) | so that the CPU can control **motors** (significant for us in autonomous/automotive systems), power systems, resistive loads, etc. |
+
+---
+
+### **Additional features** found on some microcontrollers:
+
+| component | details |
+|-----------|---------|
+| pulse width modulation (PWM) | so that the CPU can control **motors** (significant for us in autonomous/automotive systems), power systems, resistive loads, etc. |
+| JTAG interace | debugging interface |
+||
+
+---
+
+### Microcontroller programs and data
+
+---
+
+### Microcontroller programs and data
+
+- are small &rarr; must fit in (limited) memory
+
+---
+
+### Microcontroller programs and data
+
+- are small &rarr; must fit in (limited) memory
+- often directly programmed in **assembly**!
+
+---
+
+### Microcontroller programs and data
+
+- are small &rarr; must fit in (limited) memory
+- often directly programmed in **assembly**!
+    - assembly code might need _hand tuning_ 
+
+Note: hand-tuning is for both, performance as well as fitting into the limited memory
+
+---
+
+### Microcontroller programs and data
+
+- are small &rarr; must fit in (limited) memory
+- often directly programmed in **assembly**!
+    - assembly code might need _hand tuning_ 
+- **C** is another popular language
+
+---
+
+### Microcontroller programs and data
+
+- are small &rarr; must fit in (limited) memory
+- often directly programmed in **assembly**!
+    - assembly code might need _hand tuning_ 
+- **C** is another popular language
+- **no operating systems** (or very rare)!
+
+---
+
+### Microcontroller programs and data
+
+- are small &rarr; must fit in (limited) memory
+- often directly programmed in **assembly**!
+    - assembly code might need _hand tuning_ 
+- **C** is another popular language
+- **no operating systems** (or very rare)!
+- sometimes use special-purpose programming languages/instructions
+
+
+---
+
+### popular microcontroller families:
+
+|||||
+|----|----|----|----|
+|<center><img src="./img/embedded_arch/ATmega169-MLF.jpg" height="100"><br>Atmel ATmega</center> | <center><img src="./img/embedded_arch/Microchip_PIC24HJ32GP202.jpg" height="100"><br>Microchip Technology</center> | <center><img src="./img/embedded_arch/Motorola_68HC11.jpg" height="100"><br>Motorola (Freescale)<br></center> | <center><img src="./img/embedded_arch/NXP_LPC2387FBD100-5543.jpg" height="100"><br>NXP</center> |
+||
+
+---
+
+## digital signal processor (dsp)
+
+---
+
+## what is a dsp?
+
+- specialized microcontrollers optimized for **digital signal processing**
+
+---
+
+## what is a dsp?
+
+- specialized microcontrollers optimized for digital signal processing
+- widely used in:
+    - audio processing
+    - radar and sonar
+    - speech recognition systems
+    - image processing
+    - satellites
+    - telecommunications
+    - mobile phones
+    - televisions
+
+---
+
+## main goals of dsps
+
+- **isolate**, **measure**, **compress**, filter analog signals in the real world
+- often have **stringent real-time constraints**
+
+---
+
+## example
+
+- texas instruments dsp chip, [tms320 series](https://www.ti.com/lit/ug/spruh79c/spruh79c.pdf?ts=1736945981001)
+- one of the most famous examples of dsp systems
+
+<br>
+<img src="./img/embedded_arch/TI_DSP.jpg" height="300" title="Texas Instruments DSP Chip">
+
+---
+
+## typical digital signal processing
+
+- **repetitive mathematical operations** 
+    - over a large number of samples
+    - in real-time
+
+---
+
+## typical digital signal processing
+
+- **repetitive mathematical operations** 
+    - over a large number of samples
+    - in real-time
+
+---
+
+## steps involved:
+
+- analog to digital conversion
+- manipulation (the core algorithm)
+- digital to analog conversion
+
+---
+
+## real-time constraints
+
+- entire process &rarr; completed with **low latency**, fixed deadline
+- low power requirements &rarr; battery-constrained devices
+
+---
+
+## software implementations exist
+
+- examples of software implementations:
+    - [liquid sdr](https://liquidsdr.org)
+    - matlab's [dsp system toolbox](https://www.mathworks.com/help/dsp/index.html)
+
+Note: hardware is faster, more predictable, low latency/jitter
+
+---
+
+## Typical DSP **architecture**
+
+<img src="./img/embedded_arch/dsp_architecture.png" height="300" title="https://en.wikipedia.org/wiki/Digital_signal_processor">
+
+---
+
+## additional details
+
+---
+
+## additional details
+
+- custom instructions 
+    - _e.g.,_ `saturate`, `ed`, `multiply-and-accumulate`
+
+Note: caps the minimum or maximum value that can be held in a fixed-point representation, euclidian distance, a+b*c
+
+
+---
+
+## additional details
+
+- custom instructions 
+    - _e.g.,_ `saturate`, `ed`, `multiply-and-accumulate`
+- require **optimized memories and caches**
+
+---
+
+## additional details
+
+- custom instructions 
+    - _e.g.,_ `saturate`, `ed`, `multiply-and-accumulate`
+- require **optimized memories and caches**
+- code may need to be aware of, and **explicitly** manipulate caches
+
+---
+
+## additional details
+
+- custom instructions 
+    - _e.g.,_ `saturate`, `ed`, `multiply-and-accumulate`
+- require **optimized memories and caches**
+- code may need to be aware of, and **explicitly** manipulate caches
+- may have rudimentary OS but **no virtual memory**
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal-js/dist/reveal.js"></script>
+        <script src="assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
