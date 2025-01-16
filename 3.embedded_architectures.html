@@ -604,6 +604,12 @@ come im myriad shapes and sizes:
 
 ---
 
+so, we focus on:
+
+<img src="./img/stack_architecture/stack_overview.15.png" height="700">
+
+---
+
 ## Microcontrollers
 
 
@@ -980,6 +986,200 @@ Note: caps the minimum or maximum value that can be held in a fixed-point repres
 - require **optimized memories and caches**
 - code may need to be aware of, and **explicitly** manipulate caches
 - may have rudimentary OS but **no virtual memory**
+
+
+---
+
+## Microprocessors
+
+
+---
+
+## Microprocessors
+
+- **general-purpose** chips (as opposed to microcontrollers and DSPs)
+
+---
+
+## Microprocessors
+
+- **general-purpose** chips (as opposed to microcontrollers and DSPs)
+- more heavy duty computing/memory
+
+---
+
+## Microprocessors
+
+- **general-purpose** chips (as opposed to microcontrollers and DSPs)
+- more heavy duty computing/memory
+- more flexibility &rarr; programming and management of the system
+
+---
+
+## Microprocessors
+
+- **general-purpose** chips (as opposed to microcontrollers and DSPs)
+- more heavy duty computing/memory
+- more flexibility &rarr; programming and management of the system
+- commodity processor architectures (e.g,, ARM, Intel x86)
+
+---
+
+## Main features of microprocessors
+
+---
+
+## Main features of microprocessors
+
+| component | details |
+|-----------|---------|
+| cores | single or multicore; powerful |
+
+---
+
+## Main features of microprocessors
+
+| component | details |
+|-----------|---------|
+| cores | single or multicore; powerful |
+| pipelines | more complex pipelines; better performance, harder to analyze (e.g., wcet) |
+
+---
+
+## Main features of microprocessors
+
+| component | details |
+|-----------|---------|
+| cores | single or multicore; powerful |
+| pipelines | more complex pipelines; better performance, harder to analyze (e.g., wcet) |
+| clock speeds | higher clock speeds; `100s` of khz, or even GHz |
+---
+
+## Main features of microprocessors
+
+| component | details |
+|-----------|---------|
+| cores | single or multicore; powerful |
+| pipelines | more complex pipelines; better performance, harder to analyze (e.g., wcet) |
+| clock speeds | higher clock speeds; `100s` of khz, or even GHz |
+| ISA | common ISA; well understood, not custom |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| memory | significant memory; megabytes, even gigabytes |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| memory | significant memory; megabytes, even gigabytes |
+| cache hierarchies | multiple levels, optimized |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| memory | significant memory; megabytes, even gigabytes |
+| cache hierarchies | multiple levels, optimized |
+| power consumption | much higher, but can be reduced (e.g., via [voltage and frequency scaling](https://developer.arm.com/documentation/ddi0375/a/functional-overview/intelligent-energy-management--iem-/dynamic-voltage-scaling--dvs-)) |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| memory | significant memory; megabytes, even gigabytes |
+| cache hierarchies | multiple levels, optimized |
+| power consumption | much higher, but can be reduced (e.g., via [voltage and frequency scaling](https://developer.arm.com/documentation/ddi0375/a/functional-overview/intelligent-energy-management--iem-/dynamic-voltage-scaling--dvs-)) |
+| size, cost | often higher |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| interrupts, timers | more varied, easily programmable |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| interrupts, timers | more varied, easily programmable |
+| I/O | more interfaces, including commodity ones like USB |
+
+---
+
+## Main features [contd.]
+
+| component | details |
+|-----------|---------|
+| interrupts, timers | more varied, easily programmable |
+| I/O | more interfaces, including commodity ones like USB |
+| security | often includes additional hardware security features, e.g., [ARM TrustZone](https://sefcom.asu.edu/publications/trustzone-explained-cic2016.pdf).
+||
+
+
+---
+
+ARM M-85
+
+<img src="./img/embedded_arch/arm_cortex_m85.png" height="500" title="Arm M-85">
+
+---
+
+most microprpcessors **do not** include &rarr;  DSPs, ADCs, DACs, etc. 
+
+---
+
+most microprpcessors **do not** include &rarr;  DSPs, ADCs, DACs, etc. 
+
+possible to _augment_ microprocessor &rarr; _connecting microcontrollers_!
+
+---
+
+## software &rarr; **most flexibility**
+
+---
+
+## software
+
+- **general purpose** OS (e.g., Linux, Android, Windows, UNIX, etc.)
+
+---
+
+## software
+
+- **general purpose** OS (e.g., Linux, Android, Windows, UNIX, etc.)
+- most programming languages and infrastructures (even Docker!)
+
+---
+
+## software
+
+- **general purpose** OS (e.g., Linux, Android, Windows, UNIX, etc.)
+- most programming languages and infrastructures (even Docker!)
+- large number of tooling, analysis, debugging capabilities
+
+---
+
+## software
+
+- **general purpose** OS (e.g., Linux, Android, Windows, UNIX, etc.)
+- most programming languages and infrastructures (even Docker!)
+- large number of tooling, analysis, debugging capabilities
+- complex code can run, but **increases analysis difficulty**
                     </textarea>
                 </section>
             </div>
