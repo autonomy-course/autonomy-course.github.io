@@ -1180,6 +1180,245 @@ possible to _augment_ microprocessor &rarr; _connecting microcontrollers_!
 - most programming languages and infrastructures (even Docker!)
 - large number of tooling, analysis, debugging capabilities
 - complex code can run, but **increases analysis difficulty**
+
+
+---
+
+## System-on-a-Chip (SoC)
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+- memory and memory interfaces
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+- memory and memory interfaces
+- I/O devices
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+- memory and memory interfaces
+- I/O devices
+- buses &rarr; memory and I/O
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+- memory and memory interfaces
+- I/O devices
+- buses &rarr; memory and I/O
+- storage (e.g., flash) or secondary storage
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+- memory and memory interfaces
+- I/O devices
+- buses &rarr; memory and I/O
+- storage (e.g., flash) or secondary storage
+- radio modems
+
+---
+
+## System-on-a-Chip (SoC)
+
+**integrates** most components in/around a processor &rarr; **single** circuit
+- processor/chip (microcontroller/microprocessor)
+- memory and memory interfaces
+- I/O devices
+- buses &rarr; memory and I/O
+- storage (e.g., flash) or secondary storage
+- radio modems
+- (sometimes) accelerators such as GPUs
+
+---
+
+all placed on a **single substrate**
+
+---
+
+### soc design
+
+---
+
+### soc design
+
+- often designed in `C++`, `MATLAB`, `SystemC`, etc. 
+
+---
+
+### soc design
+
+- often designed in `C++`, `MATLAB`, `SystemC`, etc. 
+- once the hardware architectures defined, 
+
+---
+
+### soc design
+
+- often designed in `C++`, `MATLAB`, `SystemC`, etc. 
+- once the hardware architectures defined, 
+    - additional elements &rarr; hardware description languages
+    - e.g., register transfer levels (`RTL`)
+
+---
+
+additional components could include,
+- DAC
+- ADC
+
+---
+
+additional components could include,
+- DAC
+- ADC
+- radio/signal processing
+- wireless modems
+
+---
+
+additional components could include,
+- DAC
+- ADC
+- radio/signal processing
+- wireless modems
+- _programmable logic_
+
+---
+
+additional components could include,
+- DAC
+- ADC
+- radio/signal processing
+- wireless modems
+- _programmable logic_
+- networks on chip (NoC)
+
+---
+
+examples of modern SoCs:
+
+<div class="multicolumn">
+<div>
+<img src="./img/embedded_arch/broadcom_pi_chip.png" height="300" title="Broadcom SoC for Raspberry Pi">
+
+Broadcom Soc from Raspberry Pi
+</div>
+<div>
+<img src="./img/embedded_arch/Apple_M1.jpg" height="300" title="Apple M1 SoC">
+
+Apple M1 SoC
+</div>
+</div>
+
+---
+
+### side-effects of hardware integration
+
+---
+
+### side-effects of hardware integration
+
+| effect | benefit | problems |
+|----------|---------|----------|
+| tight integration | better performance, fewer latencies | cannot replace individual components |
+
+---
+
+### side-effects of hardware integration
+
+| effect | benefit | problems |
+|----------|---------|----------|
+| tight integration | better performance, fewer latencies | cannot replace individual components |
+| custom code/firmware | better use of hardware | not reusable in other systems |
+
+---
+
+### side-effects of hardware integration
+
+| effect | benefit | problems |
+|----------|---------|----------|
+| tight integration | better performance, fewer latencies | cannot replace individual components |
+| custom code/firmware | better use of hardware | not reusable in other systems |
+| custom sw libraries | easier programming | reduces code reusability in other systems |
+
+---
+
+### side-effects of hardware integration
+
+| effect | benefit | problems |
+|----------|---------|----------|
+| tight integration | better performance, fewer latencies | cannot replace individual components |
+| custom code/firmware | better use of hardware | not reusable in other systems |
+| custom sw libraries | easier programming | reduces code reusability in other systems |
+| low power consumption | better battery/heat | (potentially) slower |
+
+---
+
+## software stack
+
+---
+
+## software stack
+
+can vary &rarr; depends on SoC
+
+---
+
+## software stack
+
+can vary &rarr; depends on SoC
+
+- contemporary operating systems &rarr; optimized for SoC
+    - e.g., Raspbian (a Linux variant)
+
+---
+
+## software stack
+
+can vary &rarr; depends on SoC
+
+- contemporary operating systems &rarr; optimized for SoC
+    - e.g., Raspbian (a Linux variant)
+- common programming languages
+    - e.g., `C`, `C++`, `python`, `java`, even `lisp`!
                     </textarea>
                 </section>
             </div>
