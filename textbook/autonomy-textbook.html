@@ -1,0 +1,1642 @@
+<!doctype html>
+<html >
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!--[if lt IE 9]>
+                <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+        <![endif]-->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <!-- <link rel="stylesheet" type="text/css" href="template.css" /> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/template.css" />
+
+    <link href="https://vjs.zencdn.net/5.4.4/video-js.css" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <!-- <script type='text/javascript' src='menu/js/jquery.cookie.js'></script> -->
+    <!-- <script type='text/javascript' src='menu/js/jquery.hoverIntent.minified.js'></script> -->
+    <!-- <script type='text/javascript' src='menu/js/jquery.dcjqaccordion.2.7.min.js'></script> -->
+
+    <!-- <link href="menu/css/skins/blue.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link href="menu/css/skins/graphite.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link href="menu/css/skins/grey.css" rel="stylesheet" type="text/css" /> -->
+
+    <!-- <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+
+
+    <!-- <script src="script.js"></script> -->
+
+    <!-- <script src="jquery.sticky-kit.js "></script> -->
+    <script type='text/javascript' src='https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/menu/js/jquery.cookie.js'></script>
+    <script type='text/javascript' src='https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/menu/js/jquery.hoverIntent.minified.js'></script>
+    <script type='text/javascript' src='https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/menu/js/jquery.dcjqaccordion.2.7.min.js'></script>
+
+    <link href="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/menu/css/skins/blue.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/menu/css/skins/graphite.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/menu/css/skins/grey.css" rel="stylesheet" type="text/css" />
+    <link href="./elegant_bootstrap.css" rel="stylesheet" type="text/css" />
+    <!-- <link href="https://cdn.rawgit.com/ryangrose/easy-pandoc-templates/948e28e5/css/elegant_bootstrap.css" rel="stylesheet" type="text/css" /> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/script.js"></script>
+
+    <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
+    <meta name="generator" content="pandoc" />
+  <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
+  <meta name="date" content="2025-01-19" />
+  <title>Design of Autonomous Systems</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+
+    <div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <span class="doc-title">Design of Autonomous Systems</span>
+        <ul class="nav pull-right doc-info">
+                    <li><p class="navbar-text">Prof. Sibin Mohan, The
+George Washington University</p></li>
+                              <li><p class="navbar-text">January 19,
+2025</p></li>
+                  </ul>
+      </div>
+    </div>
+  </div>
+    <div class="container">
+    <div class="row">
+            <div id="TOC" class="span3">
+        <div class="well toc">
+
+        <ul>
+        <li><a href="#introduction" id="toc-introduction"><span
+        class="toc-section-number">1</span> introduction</a>
+        <ul>
+        <li><a href="#autonomy" id="toc-autonomy"><span
+        class="toc-section-number">1.1</span> autonomy</a>
+        <ul>
+        <li><a href="#what-are-the-aspects-of-autonomy"
+        id="toc-what-are-the-aspects-of-autonomy"><span
+        class="toc-section-number">1.1.1</span> what are the
+        <em>aspects</em> of autonomy?</a></li>
+        </ul></li>
+        <li><a href="#let-us-define-autonomy"
+        id="toc-let-us-define-autonomy"><span
+        class="toc-section-number">1.2</span> let us define
+        <strong>autonomy</strong></a></li>
+        <li><a href="#autonomous-systems"
+        id="toc-autonomous-systems"><span
+        class="toc-section-number">1.3</span> autonomous
+        systems</a></li>
+        <li><a href="#sensors-and-actuators"
+        id="toc-sensors-and-actuators"><span
+        class="toc-section-number">1.4</span> sensors and
+        actuators…</a></li>
+        <li><a href="#sensing-and-actuation-in-the-real-world"
+        id="toc-sensing-and-actuation-in-the-real-world"><span
+        class="toc-section-number">1.5</span> sensing and actuation in
+        the real world</a>
+        <ul>
+        <li><a href="#come-back-to-sensing"
+        id="toc-come-back-to-sensing"><span
+        class="toc-section-number">1.5.1</span> Come back to
+        <strong>sensing</strong></a></li>
+        </ul></li>
+        <li><a href="#overviewarchitecture-of-autonomous-systems"
+        id="toc-overviewarchitecture-of-autonomous-systems"><span
+        class="toc-section-number">1.6</span> Overview/Architecture of
+        Autonomous Systems</a>
+        <ul>
+        <li><a href="#high-order-functions"
+        id="toc-high-order-functions"><span
+        class="toc-section-number">1.6.1</span> high-order
+        functions</a></li>
+        <li><a href="#slam" id="toc-slam"><span
+        class="toc-section-number">1.6.2</span> slam</a></li>
+        <li><a href="#waypoint-detection"
+        id="toc-waypoint-detection"><span
+        class="toc-section-number">1.6.3</span> waypoint
+        detection</a></li>
+        <li><a href="#yolo" id="toc-yolo"><span
+        class="toc-section-number">1.6.4</span> yolo</a></li>
+        <li><a href="#object-avoidance" id="toc-object-avoidance"><span
+        class="toc-section-number">1.6.5</span> object
+        avoidance</a></li>
+        <li><a href="#path-planning" id="toc-path-planning"><span
+        class="toc-section-number">1.6.6</span> path planning</a></li>
+        <li><a href="#compute-platform" id="toc-compute-platform"><span
+        class="toc-section-number">1.6.7</span> compute
+        platform</a></li>
+        <li><a href="#still-some-non-functional-requirements-remain"
+        id="toc-still-some-non-functional-requirements-remain"><span
+        class="toc-section-number">1.6.8</span> still some
+        <strong>non-functional</strong> requirements remain</a></li>
+        <li><a href="#safety" id="toc-safety"><span
+        class="toc-section-number">1.6.9</span> safety!</a></li>
+        <li><a href="#security" id="toc-security"><span
+        class="toc-section-number">1.6.10</span> security</a></li>
+        </ul></li>
+        </ul></li>
+        <li><a href="#embedded-architectures"
+        id="toc-embedded-architectures"><span
+        class="toc-section-number">2</span> Embedded Architectures</a>
+        <ul>
+        <li><a href="#the-wcet-problem" id="toc-the-wcet-problem"><span
+        class="toc-section-number">2.1</span> The <strong>wcet</strong>
+        problem</a></li>
+        <li><a href="#embedded-processors"
+        id="toc-embedded-processors"><span
+        class="toc-section-number">2.2</span> Embedded Processors</a>
+        <ul>
+        <li><a href="#microcontrollers" id="toc-microcontrollers"><span
+        class="toc-section-number">2.2.1</span>
+        Microcontrollers</a></li>
+        <li><a href="#digital-signal-processors-dsps"
+        id="toc-digital-signal-processors-dsps"><span
+        class="toc-section-number">2.2.2</span> Digital Signal
+        Processors (DSPs)</a></li>
+        <li><a href="#microprocessors" id="toc-microprocessors"><span
+        class="toc-section-number">2.2.3</span> Microprocessors</a></li>
+        <li><a href="#system-on-a-chip-soc"
+        id="toc-system-on-a-chip-soc"><span
+        class="toc-section-number">2.2.4</span> System-on-a-Chip
+        (SoC)</a></li>
+        <li><a href="#embedded-accelarators-e.g.-gpu-enabled-systems"
+        id="toc-embedded-accelarators-e.g.-gpu-enabled-systems"><span
+        class="toc-section-number">2.2.5</span> Embedded Accelarators
+        (e.g. GPU-enabled systems)</a></li>
+        <li><a href="#asics-and-fpgas" id="toc-asics-and-fpgas"><span
+        class="toc-section-number">2.2.6</span> ASICs and FPGAs</a></li>
+        </ul></li>
+        <li><a href="#communication-and-io"
+        id="toc-communication-and-io"><span
+        class="toc-section-number">2.3</span> Communication and
+        I/O</a></li>
+        <li><a href="#references" id="toc-references"><span
+        class="toc-section-number">2.4</span> References</a></li>
+        </ul></li>
+        </ul>
+
+        </div>
+      </div>
+            <div class="span9">
+            <!--link rel="stylesheet" href="./custom.sibin.css"-->
+            <section id="introduction" class="level1" data-number="1">
+            <h1 data-number="1"><span
+            class="header-section-number">1</span> introduction</h1>
+            <section id="autonomy" class="level2" data-number="1.1">
+            <h2 data-number="1.1"><span
+            class="header-section-number">1.1</span> autonomy</h2>
+            <p>what is “<em>autonomy</em>”?</p>
+            <p>we see various examples of it…</p>
+            <p><img src="img/philippine_uav.png" height="100" width = "200" style="display: inline-block; margin-right: 10px;">
+            <img src="img/white_tesla.png" height="100" width = "200"  style="display: inline-block;"></p>
+            <section id="what-are-the-aspects-of-autonomy"
+            class="level3" data-number="1.1.1">
+            <h3 data-number="1.1.1"><span
+            class="header-section-number">1.1.1</span> what are the
+            <em>aspects</em> of autonomy?</h3>
+            <table>
+            <colgroup>
+            <col style="width: 13%" />
+            <col style="width: 86%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><strong>perception</strong></td>
+            <td>how do you “<em>see</em>” the world around you?</td>
+            </tr>
+            <tr>
+            <td><strong>sensing</strong></td>
+            <td>various ways to perceive the world around you
+            (<em>e.g</em>, camera, LiDar)</td>
+            </tr>
+            <tr>
+            <td><strong>compute</strong></td>
+            <td>what do you “<em>do</em>” with the information about the
+            world?</td>
+            </tr>
+            <tr>
+            <td><strong>motion</strong></td>
+            <td>do your computations result in any “<em>physical</em>”
+            changes?</td>
+            </tr>
+            <tr>
+            <td><strong>actuation</strong></td>
+            <td>what “<em>actions</em>”, if any, do you take for said
+            physical changes?</td>
+            </tr>
+            <tr>
+            <td><strong>planning</strong></td>
+            <td>can you do some “<em>higher order</em>” thinking <br>
+            (<em>i.e.,</em> not just your immediate next move)</td>
+            </tr>
+            </tbody>
+            </table>
+            </section>
+            </section>
+            <section id="let-us-define-autonomy" class="level2"
+            data-number="1.2">
+            <h2 data-number="1.2"><span
+            class="header-section-number">1.2</span> let us define
+            <strong>autonomy</strong></h2>
+            <table>
+            <colgroup>
+            <col style="width: 45%" />
+            <col style="width: 54%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td>Autonomy is the ability to <br> <strong>perform given
+            tasks</strong> <br> based on the system’s perception <br>
+            <scb>without</scb> human intervention</td>
+            <td><img src="img/robot_profile_view.jpg" height="275"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            </section>
+            <section id="autonomous-systems" class="level2"
+            data-number="1.3">
+            <h2 data-number="1.3"><span
+            class="header-section-number">1.3</span> autonomous
+            systems</h2>
+            <table>
+            <colgroup>
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><strong>cyber</strong></td>
+            <td><img src="img/cps_software.png" width="275"></td>
+            <td><img src="img/cps_networking.png" height="275"></td>
+            <td><img src="img/cps_ecus.png" height="275"></td>
+            </tr>
+            <tr>
+            <td><strong>physical</strong></td>
+            <td><img src="img/cps_sensors.png" height="275"></td>
+            <td><img src="img/cps_actuators.png" height="275"></td>
+            <td><img src="img/cps_plants.png" height="275"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>hence, they fall under the class of systems →
+            <strong>cyber-physical</strong> systems</p>
+            </section>
+            <section id="sensors-and-actuators" class="level2"
+            data-number="1.4">
+            <h2 data-number="1.4"><span
+            class="header-section-number">1.4</span> sensors and
+            actuators…</h2>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/cps_sensors.png" width="150" style="border: 2px solid purple; display: inline-block; padding: 10px; background-color:rgb(236, 219, 250);"></td>
+            <td><img src="img/cps_actuators.png" width="125" style="border: 2px solid purple; display: inline-block; padding: 10px; background-color:rgb(236, 219, 250);"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>…are <strong>everywhere</strong>!</p>
+            <p>the <strong>embedded</strong> components → interactions
+            with the real world</p>
+            </section>
+            <section id="sensing-and-actuation-in-the-real-world"
+            class="level2" data-number="1.5">
+            <h2 data-number="1.5"><span
+            class="header-section-number">1.5</span> sensing and
+            actuation in the real world</h2>
+            <p>consider the following example of two cars… <img
+            src="img/cars_sensing/cars_sensing_1.png"
+            alt="Two cars, one behind the over, top view" /></p>
+            <p>the second car is approaching the first <img
+            src="img/cars_sensing/cars_sensing_2.png"
+            alt="Two cars, one behind the over, top view, an arror to the left on top of the car on the right" /></p>
+            <p><strong>sensors</strong> → constantly gathering
+            data/sensing</p>
+            <div class="multicolumn">
+            <div>
+            <ol>
+            <li>
+            periodic sensing
+            </li>
+            </ol>
+            </div>
+            <div>
+            <p><img src="img/cars_sensing/cars_sensing_3.png" width="400"></p>
+            </div>
+            </div>
+            <p>on detection (of other car) → quickly
+            <strong>compute</strong> what to do</p>
+            <div class="multicolumn">
+            <div>
+            <ol>
+            <li>
+            periodic sensing
+            </li>
+            <li>
+            computation
+            </li>
+            </ol>
+            </div>
+            <div>
+            <p><img src="img/cars_sensing/cars_sensing_4.png" width="400"></p>
+            </div>
+            </div>
+            <p>take <strong>physical action</strong> (actuation) → say
+            by braking <em>in time</em></p>
+            <div class="multicolumn">
+            <div>
+            <ol>
+            <li>
+            periodic sensing
+            </li>
+            <li>
+            computation
+            </li>
+            <li>
+            actuation
+            </li>
+            </ol>
+            </div>
+            <div>
+            <p><img src="img/cars_sensing/cars_sensing_5.png" width="400"></p>
+            </div>
+            </div>
+            <div class="multicolumn">
+            <div>
+            <ol>
+            <li>
+            periodic sensing
+            </li>
+            <li>
+            computation
+            </li>
+            <li>
+            actuation
+            </li>
+            </ol>
+            </div>
+            <div>
+            <p><img src="img/sense_planning_actuation.png" width="400"></p>
+            </div>
+            </div>
+            <p>“<strong>control</strong>”</p>
+            <p>Remember this → on detection (of other car) →
+            <scb>quickly</scb> <strong>compute</strong> what to do</p>
+            <p><img src="img/cars_sensing/cars_sensing_4.png" width="400"></p>
+            <p>“quickly” compute → complete computation/actuation →
+            before a <strong>deadline</strong></p>
+            <p>This is a <strong>real-time system</strong>.</p>
+            <section id="come-back-to-sensing" class="level3"
+            data-number="1.5.1">
+            <h3 data-number="1.5.1"><span
+            class="header-section-number">1.5.1</span> Come back to
+            <strong>sensing</strong></h3>
+            <!--div class="multicolumn">
+            <div>
+            <br>
+            <ul>
+                <li>we see <i>one</i> sensor (maybe LiDAR)</li>
+                <li>reality &rarr; <b>multiple</b> sensors</li>
+                <li>cameras, radars, lidar, etc.</li>
+            <ul>
+            </div>
+            <div>
+            <img src="img/autonomous_cars_sensors.png">
+            </div>
+            </div-->
+            <p>Multiple sensors in an autonomous vehicle → need to
+            <em>combine</em> them somehow</p>
+            <p><strong>sensor fusion</strong></p>
+            <p>Once we have information from the sensors (fused or
+            otherwise)…</p>
+            <p><img src="img/kalman_statistical_view.png" width="400"></p>
+            <p>We need <strong>state estimation</strong>
+            (<strong>kalman</strong> filter, <strong>ekf</strong>).</p>
+            </section>
+            </section>
+            <section id="overviewarchitecture-of-autonomous-systems"
+            class="level2" data-number="1.6">
+            <h2 data-number="1.6"><span
+            class="header-section-number">1.6</span>
+            Overview/Architecture of Autonomous Systems</h2>
+            <p>So far, we’ve (briefly) talked about…</p>
+            <p>Sensing:</p>
+            <p><img src="img/stack_architecture/stack_overview.2.png" width="200"></p>
+            <p>Actuation:</p>
+            <p><img src="img/stack_architecture/stack_overview.3.png" width="200"></p>
+            <p>But the system includes…an <strong>operating
+            system</strong> (OS) in there</p>
+            <p><img src="img/stack_architecture/stack_overview.4.png" width="300"></p>
+            <p>and it includes <strong>real-time</strong>
+            mechanisms.</p>
+            <p>We have briefly discussed, <strong>EKF</strong>:</p>
+            <p><img src="img/stack_architecture/stack_overview.5.png" width="300"></p>
+            <p><strong>note</strong>: ekf is versatile; can be used for
+            sensor fusion, slam, etc.</p>
+            <p>All of it integrates with…<strong>control</strong>:</p>
+            <p><img src="img/stack_architecture/stack_overview.6.png" width="300"></p>
+            <p>There are some <strong>real-time</strong> functions in
+            there…</p>
+            <p><img src="img/stack_architecture/stack_overview.7.png" width="300"></p>
+            <p>like <em>braking</em>, <em>engine control</em>.</p>
+            <p>Question: if we design such a system…</p>
+            <p><img src="img/stack_architecture/stack_overview.7.png" width="300"></p>
+            <p>is it “<strong>autonomous</strong>”?</p>
+            <p>We are missing some “higher order” functionss from the
+            perspective of the autonomous system:</p>
+            <ul>
+            <li><em>where</em> am I?</li>
+            <li><em>where</em> do I need to go?</li>
+            <li><em>how</em> do I get there?</li>
+            <li><em>what</em> obstacles may I face?</li>
+            <li><em>how</em> do I avoid them?</li>
+            </ul>
+            <p>let’s not forget the most important question of all…</p>
+            <p><img src="img/drax_gamora.avif" width="400"></p>
+            <p><strong>why</strong> is gamora?</p>
+            <section id="high-order-functions" class="level3"
+            data-number="1.6.1">
+            <h3 data-number="1.6.1"><span
+            class="header-section-number">1.6.1</span> high-order
+            functions</h3>
+            In order to answer the following,
+            <div class="multicolumn">
+            <div>
+            <br>
+            <ul>
+            <li>
+            where am I?
+            </li>
+            <li>
+            where do I need to go?
+            </li>
+            <li>
+            how do I get there?
+            </li>
+            <li>
+            what obstacles may I face?
+            </li>
+            <li>
+            how do I avoid them?
+            </li>
+            </ul>
+            </div>
+            <div>
+            <p><img src="img/stack_architecture/stack_overview.7.png" width="300"></p>
+            </div>
+            </div>
+            <p>We need <strong>additional functionality</strong>. Let’s
+            go through what that might be.</p>
+            </section>
+            <section id="slam" class="level3" data-number="1.6.2">
+            <h3 data-number="1.6.2"><span
+            class="header-section-number">1.6.2</span> slam</h3>
+            <p>simultaneous localization and mapping</p>
+            <p><img src="img/stack_architecture/stack_overview.8.png" width="300"></p>
+            <p>figure out <strong>where</strong> we are.</p>
+            </section>
+            <section id="waypoint-detection" class="level3"
+            data-number="1.6.3">
+            <h3 data-number="1.6.3"><span
+            class="header-section-number">1.6.3</span> waypoint
+            detection</h3>
+            <p><img src="img/stack_architecture/stack_overview.9.png" width="300"></p>
+            <p>how to move in the <em>right</em> direction at the
+            <strong>micro</strong> level, <em>i.e.,</em> find
+            <strong>waypoints</strong>.</p>
+            </section>
+            <section id="yolo" class="level3" data-number="1.6.4">
+            <h3 data-number="1.6.4"><span
+            class="header-section-number">1.6.4</span> yolo</h3>
+            <p>Is it “you only live once”? Actually this stands for:
+            “you only <strong>look</strong> once”</p>
+            <p><img src="img/stack_architecture/stack_overview.10.png" width="300"></p>
+            <p>object <strong>detection</strong> model that uses
+            convolutional neural networks (cnns)</p>
+            </section>
+            <section id="object-avoidance" class="level3"
+            data-number="1.6.5">
+            <h3 data-number="1.6.5"><span
+            class="header-section-number">1.6.5</span> object
+            avoidance</h3>
+            <p><img src="img/stack_architecture/stack_overview.11.png" width="300"></p>
+            <p>avoid objects in <strong>immediate path</strong>.</p>
+            </section>
+            <section id="path-planning" class="level3"
+            data-number="1.6.6">
+            <h3 data-number="1.6.6"><span
+            class="header-section-number">1.6.6</span> path
+            planning</h3>
+            <p><img src="img/stack_architecture/stack_overview.12.png" width="300"></p>
+            <p>how to get to <strong>destination</strong> at the
+            <strong>macro</strong> level → uses waypoints</p>
+            </section>
+            <section id="compute-platform" class="level3"
+            data-number="1.6.7">
+            <h3 data-number="1.6.7"><span
+            class="header-section-number">1.6.7</span> compute
+            platform</h3>
+            <p>to run all of these functions</p>
+            <p><img src="img/stack_architecture/stack_overview.13.png" width="300"></p>
+            <p>low power, embedded platforms.</p>
+            </section>
+            <section id="still-some-non-functional-requirements-remain"
+            class="level3" data-number="1.6.8">
+            <h3 data-number="1.6.8"><span
+            class="header-section-number">1.6.8</span> still some
+            <strong>non-functional</strong> requirements remain</h3>
+            <p>note: any guesses what they could be?</p>
+            </section>
+            <section id="safety" class="level3" data-number="1.6.9">
+            <h3 data-number="1.6.9"><span
+            class="header-section-number">1.6.9</span> safety!</h3>
+            <p><img src="img/stack_architecture/stack_overview.14.png" width="300"></p>
+            <p>safety of → operator, other people, the vehicle,
+            environment</p>
+            <p>This is <strong>cross-cutting</strong> issue → affected
+            <scb>by</scb> <strong>all</strong> parts of system.</p>
+            </section>
+            <section id="security" class="level3" data-number="1.6.10">
+            <h3 data-number="1.6.10"><span
+            class="header-section-number">1.6.10</span> security</h3>
+            <p><img src="img/stack_architecture/stack_overview.png" width="300"></p>
+            <p>This is another cross-cutting issue → <scb>can
+            affect</scb> <strong>all</strong> components.</p>
+            <p>Hence thiw figure is a (loose) map of this course:
+            <img src="img/stack_architecture/stack_overview.png" width="300">
+            <!--link rel="stylesheet" href="./custom.sibin.css"--></p>
+            </section>
+            </section>
+            </section>
+            <section id="embedded-architectures" class="level1"
+            data-number="2">
+            <h1 data-number="2"><span
+            class="header-section-number">2</span> Embedded
+            Architectures</h1>
+            <p>Just like “autonomy” describing and “embedded system” is
+            hard. What (typically) distinguishes it from other types of
+            computer systems (e.g., laptops, servers or GPUs even) is
+            that such systems are typically created for
+            <em>specific</em> functionality and often remain fixed and
+            operational for years, decades even.</p>
+            <p>Embedded systems often trade off between performance and
+            other considerations such as power (or battery life), less
+            memory, fewer peripherals, limited applications, smaller
+            operating system (OS) and so on. There are numerous reasons
+            for this – chief among them is <em>predictability</em> –
+            designers need to guarantee that the system works correctly,
+            and remains safe, all the time. Hence, it must be easy to
+            <em>certify</em> <a href="#fn1" class="footnote-ref"
+            id="fnref1" role="doc-noteref"><sup>1</sup></a> the
+            <em>entire</em> system. This process ensures that the system
+            operates <strong>safely</strong>.</p>
+            <section id="the-wcet-problem" class="level2"
+            data-number="2.1">
+            <h2 data-number="2.1"><span
+            class="header-section-number">2.1</span> The
+            <strong>wcet</strong> problem</h2>
+            <p>One piece of information that is required to ensure
+            predictability and guarentee safety is <strong><a
+            href="https://www.cs.fsu.edu/~whalley/papers/tecs07.pdf">worst-case
+            execution time</a></strong> (WCET). The WCET/BCET is the
+            <strong>longest</strong>/shortest execution time possible
+            for a program, <strong>on a specific hardware
+            platform</strong> – and it has to consider <em>all possible
+            inputs</em>. WCET is necessary to ensure the
+            “schedulability”, resource requirements and performance
+            limits of embedded and real-time programs. There are lots of
+            approaches to computing the WCET, <em>e.g.,</em></p>
+            <ul>
+            <li><a
+            href="https://www.cs.fsu.edu/~whalley/papers/tecs07.pdf">dynamic/empirical</a>
+            analysis → run the program lots of times (thousands,
+            millions?) on the platform and measure it</li>
+            <li><a
+            href="https://www.cs.fsu.edu/~whalley/papers/tecs07.pdf">static</a>
+            analysis → analyze the program at <em>compile time</em> to
+            compute the <em>worst-case paths</em> through the
+            program</li>
+            <li><a
+            href="https://sibin.github.io/papers/2008_NCSU-Dissertation_CheckerMode_SibinMohan.pdf">hybrid</a>
+            → a combination of the two</li>
+            <li><a
+            href="https://people.ac.upc.edu/fcazorla/articles/jabella_ecrts2014_2.pdf">probabilistic</a>
+            → a combination of dynamic analysis+statistical methods</li>
+            <li><a
+            href="https://dl.acm.org/doi/10.1145/3570361.3615740">ML-based
+            methods</a> → applying machine-learning to the problem</li>
+            </ul>
+            <p>At a high-level, the execution time distributions of
+            applications look like:</p>
+            <p><img src="./img/embedded_arch/wcet_wilhelm.png" width="400" style="display: inline-block;" title="https://www.inf.ed.ac.uk/teaching/courses/es/PDFs/lecture_11.pdf" /></p>
+            <p>WCET analysis is a very active area of research and
+            hundreds of papers have been written about it, since it
+            directly affects the safety of many critical systems
+            (aircraft, power systems, nuclear reactors, space vehicles
+            and…autonomous systems).</p>
+            <p>There are structural challenges (both in software and
+            hardware) that prevent the computation of <em>proper</em>
+            wcet for anything but trivial examples. For instance,
+            consider,</p>
+            <div class="sourceCode" id="cb1"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> main<span class="op">()</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> max <span class="op">=</span> <span class="dv">10</span> <span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span> <span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span> <span class="op">;</span> i <span class="op">&lt;</span> max <span class="op">;</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        sum <span class="op">+=</span> i <span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p>How do you compute the WCET for this code? Say running on
+            some known processor, P?</p>
+            <p>Well, there’s some information we need,</p>
+            <ul>
+            <li>how long each instruction takes to execute on P</li>
+            <li>how many loop iterations?</li>
+            <li>what is the startup/cleanup times for the program on
+            P?</li>
+            </ul>
+            <p>Let’s assume (from the manual for P), we get the
+            following information,</p>
+            <div class="sourceCode" id="cb2"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span>   <span class="dt">void</span> main<span class="op">()</span>         <span class="co">// startup cost = 100 cycles</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span>   <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span>       <span class="dt">int</span> max <span class="op">=</span> <span class="dv">15</span> <span class="op">;</span>  <span class="co">// 10 cycles</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span>       <span class="dt">int</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// 10 cycles </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span>       <span class="cf">for</span><span class="op">(</span> <span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span> <span class="op">;</span> i <span class="op">&lt;</span> max <span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="co">// 5 cycles, once</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span>            sum <span class="op">+=</span> i <span class="op">;</span> <span class="co">// 20 cycles each iteration</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="dv">7</span>   <span class="op">}</span>                   <span class="co">// cleanup cost = 120 cycles</span></span></code></pre></div>
+            <p>So, based on this, we can calculate the total time to
+            execute this program:</p>
+            <p><span
+            class="math display"><em>w</em><em>c</em><em>e</em><em>t</em> = <em>s</em><em>t</em><em>a</em><em>r</em><em>t</em><em>u</em><em>p</em>_<em>c</em><em>o</em><em>s</em><em>t</em> + <em>l</em><em>i</em><em>n</em><em>e</em>_3 + <em>l</em><em>i</em><em>n</em><em>e</em>_4 + <em>l</em><em>o</em><em>o</em><em>p</em>_<em>s</em><em>t</em><em>a</em><em>r</em><em>t</em><em>u</em><em>p</em>_<em>c</em><em>o</em><em>s</em><em>t</em> + (<em>l</em><em>i</em><em>n</em><em>e</em>_6 * <em>m</em><em>a</em><em>x</em>)  [1]</span></p>
+            <p><span
+            class="math display"><em>w</em><em>c</em><em>e</em><em>t</em> = 100 + 10 + 10 + 5 + (20 * 15)</span></p>
+            <p><span
+            class="math display"><em>w</em><em>c</em><em>e</em><em>t</em> = 425 <em>c</em><em>y</em><em>c</em><em>l</em><em>e</em><em>s</em></span></p>
+            <p>Now consider this slight change to the above code:</p>
+            <div class="sourceCode" id="cb3"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> main<span class="op">(</span> <span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span><span class="op">*</span> argv<span class="op">[]</span> <span class="op">)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> max <span class="op">=</span> atoi<span class="op">(</span> argv<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">)</span> <span class="op">;</span>     <span class="co">// convert the command line arg to max</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span> <span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span> <span class="op">;</span> i <span class="op">&lt;</span> max <span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="co">// how many iterations?</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        sum <span class="op">+=</span> i <span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p>The problem is that equation [1] above fails since we no
+            longer know the value of <code>max</code>. Hence the
+            <em>program can run for any arbitrary amount of time,
+            depending on the given input!</em> Note that
+            <strong>none</strong> of the aforemention wcet methods will
+            help in this case since the input can be completely
+            arbitrary. Hence, the structure of the software code can
+            affect wcet calculations.</p>
+            <p>Another problem is that of <strong>hardware</strong> (and
+            interactions between hardware and software). Now consider if
+            we modify the original code as,</p>
+            <div class="sourceCode" id="cb4"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define VERY_LARGE_ARRAY</span><span class="op">+</span><span class="pp">SIZE </span><span class="dv">1</span><span class="op">&gt;&gt;</span><span class="dv">18</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> main<span class="op">()</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> first_array<span class="op">[</span>VERY_LARGE_ARRAY_SIZE<span class="op">]</span> <span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> second_array<span class="op">[</span>VERY_LARGE_ARRAY_SIZE<span class="op">]</span> <span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> sum_first <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> sum_second <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span> <span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span> <span class="op">;</span> i <span class="op">&lt;</span> VERY_LARGE_ARRAY_SIZE <span class="op">*</span> <span class="dv">2</span> <span class="op">;</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span> i<span class="op">%</span><span class="dv">2</span> <span class="op">)</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            first_sum <span class="op">+=</span> first_array<span class="op">[</span>i<span class="op">/</span><span class="dv">2</span><span class="op">]</span> <span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            second_sum <span class="op">+=</span> second_array<span class="op">[(</span><span class="dt">int</span><span class="op">)((</span>i<span class="op">/</span><span class="dv">2</span><span class="op">)+</span><span class="dv">1</span><span class="op">)]</span> <span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p>Now, while we can compute, using equation [1] the wcet
+            from the code perspective (since we know the loop runs for
+            <code>VERY_LARGE_ARRAY_SIZE * 2</code> iterations), there
+            will be significant non-obvious hardware issues, in the
+            <strong>cache</strong>. Each iteration is accessing a
+            <em>different</em> large array. Hence, it will load the
+            cache with lines from that array and in the <em>very next
+            iteration</em> the other array will be loaded, also missing
+            in the cache. For instance,</p>
+            <table>
+            <colgroup>
+            <col style="width: 14%" />
+            <col style="width: 25%" />
+            <col style="width: 17%" />
+            <col style="width: 41%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>iteration</th>
+            <th>operation</th>
+            <th>cache state</th>
+            <th>reason</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>1</td>
+            <td><code>first_array</code> loaded</td>
+            <td>miss</td>
+            <td>evicts whatever was previously in cache</td>
+            </tr>
+            <tr>
+            <td>2</td>
+            <td><code>second_array</code> loaded</td>
+            <td>miss</td>
+            <td><strong>evicts <code>first_array</code></strong> due to
+            lack of space</td>
+            </tr>
+            <tr>
+            <td>3</td>
+            <td><code>first_array</code> loaded again</td>
+            <td>miss</td>
+            <td><strong>evicts <code>second_array</code></strong> due to
+            lack of space</td>
+            </tr>
+            <tr>
+            <td>…</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Hence, this program will <em>constantly</em> sufffer
+            cache misses and since caches misses (and reloads) are
+            expensive (in terms of time), the loop’s execution time will
+            balloon out of control! Hence, even though we fixed the code
+            issue (upper bound on number of iterations, hardware
+            artifacts can change the wcet calculations). So now, we need
+            to <em>model cache behavior</em> for each program and data
+            variable! This is <a
+            href="https://user.it.uu.se/~wangyi/pdf-files/2015/lgyrw-acm15.pdf">notoriously
+            complicated</a> even for the simplest of programs.</p>
+            <p>Other hardware designs further complicate matters,
+            e.g.,</p>
+            <ul>
+            <li>processor pipelining</li>
+            <li>prefetching</li>
+            <li>branch prediction</li>
+            <li>multithreading</li>
+            <li>multicore systems</li>
+            <li>memory buses</li>
+            <li>networks-on-chip</li>
+            <li>and too many others to recount here…</li>
+            </ul>
+            <p>Any contemporary processor design that improves
+            performance, <em>turns out to be bad for wcet analysis</em>.
+            So, the fewer (or simpler versions of) these features, the
+            better it is for the (eventual) safety and certification of
+            the system.</p>
+            <p>This is one of the main reasons why embedded (and
+            especially real-time) systems <strong>prefer simpler
+            processors</strong> (simple pipelines, fewer complex
+            features, simpler memory/cache architectures, if any) since
+            they’re easier to analyze. In fact, many critical systems
+            (e.g., aircraft, cars, etc.) <strong>use older
+            processors</strong> (often designed in the 1980s and 1990s)
+            – even the ones beind design today!</p>
+            </section>
+            <section id="embedded-processors" class="level2"
+            data-number="2.2">
+            <h2 data-number="2.2"><span
+            class="header-section-number">2.2</span> Embedded
+            Processors</h2>
+            <p>Just as embedded systems are varied, embedded processors
+            come in a myriad of shapes and sizes as well. From the very
+            small and simple (e.g., DSPs) to the very large and complex
+            (modern multicore chips, some with GPUs!). Here is a
+            (non-exhaustive) list of the types of embedded
+            processors/architectures in use today: 1. <a
+            href="#microcontrollers">Microcontrollers</a> 2. <a
+            href="#digital-signal-processors-dsps">Digital Signal
+            Processors</a> (DSPs) 3. <a
+            href="#microprocessors">Microprocessors</a> of various
+            designs and architectures (e.g., ARM, x86) 4. <a
+            href="#system-on-a-chip-soc">System-on-a-Chip</a> (SoC) 5.
+            <a
+            href="#embedded-accelarators-eg-gpu-enabled-systems">Embedded
+            accelerators</a> 6. <a href="#asics-and-fpgas">ASICs and
+            FPGAs</a></p>
+            <section id="microcontrollers" class="level3"
+            data-number="2.2.1">
+            <h3 data-number="2.2.1"><span
+            class="header-section-number">2.2.1</span>
+            Microcontrollers</h3>
+            <p>According to <a
+            href="https://en.wikipedia.org/wiki/Microcontroller">Wikipedia</a>,</p>
+            <blockquote>
+            <p>“A microcontroller (MC, UC, or μC) or microcontroller
+            unit (MCU) is a small computer on a single integrated
+            circuit.”</p>
+            </blockquote>
+            <p>These may be among the most common type of “processors”
+            used in embedded systems. According to many studies,
+            <strong><a
+            href="https://www.embedded.com/the-two-percent-solution/">more
+            than 55%</a></strong> of the world’s processors are
+            microntrollers! Microcontrollers are typically used in
+            small, yet critical, systems such as car engine control,
+            implantable medical devices, thermal monitoring, <a
+            href="https://sibin.github.io/papers/2021_BuildSys_PIRMedic_AshishKashinath.pdf">fault
+            detection and classification</a> among millions of other
+            applications.</p>
+            <p>Microcontrollers hardware features typically include,</p>
+            <table>
+            <colgroup>
+            <col style="width: 55%" />
+            <col style="width: 45%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>component</th>
+            <th>details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>one (sometimes more) CPU cores</td>
+            <td>typically simple <code>4</code> or <code>8</code> bit
+            chips</td>
+            </tr>
+            <tr>
+            <td>small pipelined architectues</td>
+            <td>sometimes <code>2</code> or <code>4</code> stage
+            pipelines</td>
+            </tr>
+            <tr>
+            <td>some limited memory</td>
+            <td>typically a few hundred kilobytes, perhaps in the form
+            of EEPROMs or FLASH</td>
+            </tr>
+            <tr>
+            <td>some programmable I/O</td>
+            <td>to interact with the real world</td>
+            </tr>
+            <tr>
+            <td>low operating frequencies</td>
+            <td>e.g., <code>4 KHz</code>; simpler/older processors, yet
+            more predictable</td>
+            </tr>
+            <tr>
+            <td>low power consumption</td>
+            <td>in the <strong>milliwatts</strong> or
+            <strong>microwatts</strong> ranges; might even be
+            <strong>nanowatts</strong> when the system is
+            <em>sleeping</em></td>
+            </tr>
+            <tr>
+            <td>interrupts (some programmable)</td>
+            <td>often <em>real-time</em> (ficed/low latency)</td>
+            </tr>
+            <tr>
+            <td>several general-purpose I/O (GPIO) pins</td>
+            <td>for I/O</td>
+            </tr>
+            <tr>
+            <td>timers</td>
+            <td>e.g., a programmable interval timer (PIT)</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>There are some <strong>additional features</strong> found
+            on some microcontrollers, viz.,</p>
+            <table>
+            <colgroup>
+            <col style="width: 55%" />
+            <col style="width: 45%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>component</th>
+            <th>details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>analog to digital (ADC) signal convertors</td>
+            <td>to convert incoming (real-world, sensor) data to a
+            digital form that the uC can operate on</td>
+            </tr>
+            <tr>
+            <td>digital-to-analog (DAC) convertor</td>
+            <td>to do the opposite, convert from digital to analog
+            signals to send outputs in that form</td>
+            </tr>
+            <tr>
+            <td>universal asynchronous transmitter/receiver (UART)</td>
+            <td>to receive/send data over a <em>serial</em> line</td>
+            </tr>
+            <tr>
+            <td>pulse width modulation (PWM)</td>
+            <td>so that the CPU can control <strong>motors</strong>
+            (significant for us in autonomous/automotive systems), power
+            systems, resistive loads, etc.</td>
+            </tr>
+            <tr>
+            <td>JTAG interace</td>
+            <td>debugging interface</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>Some examples of popular microcontroller families:</p>
+            <table>
+            <colgroup>
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Microcontroller programs and data,</p>
+            <ul>
+            <li>are small –&gt; must fit in memory (since very little
+            expandable memory exists)</li>
+            <li>often directly programmed in <strong>assembly</strong>!
+            <ul>
+            <li>sometimes the assembly code might need <em>hand
+            tuning</em> –&gt; for both, performance as well as fitting
+            into the limited memory</li>
+            </ul></li>
+            <li><strong>C</strong> is another popular language</li>
+            <li><strong>no operating systems</strong> (or very
+            rare)!</li>
+            <li>sometimes have their own special-purpose programming
+            languages or instructions</li>
+            </ul>
+            </section>
+            <section id="digital-signal-processors-dsps" class="level3"
+            data-number="2.2.2">
+            <h3 data-number="2.2.2"><span
+            class="header-section-number">2.2.2</span> Digital Signal
+            Processors (DSPs)</h3>
+            <p>DSPs are specialized microcontrollers optimized for
+            <em>digital signal processing</em>. They find wide use in
+            audio processing, radar and sonar, speech recognition
+            systems, image processing, satellites, telecommunications,
+            mobile phones, televisions, etc. Their main goals are to
+            isoloate, measure, compress and filter <em>analog</em>
+            signals in the real world. They often have <strong>stringent
+            real-time constraints</strong>.</p>
+            <p>The Texas Instruments DSP chip, <a
+            href="https://www.ti.com/lit/ug/spruh79c/spruh79c.pdf?ts=1736945981001">TMS320
+            Series</a> is one of the most famous example of this type of
+            system:</p>
+            <p><img src="./img/embedded_arch/TI_DSP.jpg" height="100" title="Texas Instruments DSP Chip"></p>
+            <p>Typical digital signal processing (of any kind) requires
+            repetitive mathematical operations over a large number of
+            samples, in real-time, viz., - analog to digital conversion
+            - maniupulation (the core algorithm) - digital to analog
+            conversion</p>
+            <p>Often, the <em>entire</em> process must be completed with
+            low latency, even within a fixed deadline. They also have
+            <strong>low power</strong> requirements since DSPs are often
+            used in battery-constrained devices such as mobile phones.
+            Hence, the proliferation of specialized DSP chips (instead
+            of pure <a href="https://liquidsdr.org">software
+            implementations</a>, which also exist; MATLAB has an entire
+            <a href="https://www.mathworks.com/help/dsp/index.html">DSP
+            System Toolbox</a>).</p>
+            <p><strong>Typical DSP architecture</strong>/flow (credit:
+            <a
+            href="https://en.wikipedia.org/wiki/Digital_signal_processor">Wikipedia</a>):</p>
+            <p><img src="./img/embedded_arch/dsp_architecture.png" height="100" title="https://en.wikipedia.org/wiki/Digital_signal_processor"></p>
+            <p>These types of chips typically have custom instructions
+            for optimizing certain (mathematical) operations (apart from
+            the typical <code>add</code>, <code>subtract</code>,
+            <code>multiply</code> and <code>divide</code>), e.g., -
+            <code>saturate</code>; caps the minimum or maximum value
+            that can be held in a fixed-point representation -
+            <code>ed</code> ; euclidian distance -
+            <code>accumulate</code> instructions ; for <a
+            href="https://skills.microchip.com/dsp-features-of-the-microchip-dspic-dsc/693207"><em>multiply-and-accumulate</em></a>
+            operations, i.e., <span
+            class="math inline"><em>a</em> ← <em>a</em> + (<em>b</em> * <em>c</em>)</span></p>
+            <blockquote>
+            <p>See the <a
+            href="https://ww1.microchip.com/downloads/en/DeviceDoc/sect2.pdf">Microchip
+            instruction set</a> details for more information for a
+            typical DSP ISA.</p>
+            </blockquote>
+            <p>DSPs require <em>optimization of streaming data</em> and
+            hence, - require <strong>optimized memories and
+            caches</strong> → fetch multiple data elements at the same
+            time - code may need to be aware of, and
+            <strong>explicitly</strong> manipulate caches - may have
+            rudimentary OS but <strong>no virtual memory</strong></p>
+            </section>
+            <section id="microprocessors" class="level3"
+            data-number="2.2.3">
+            <h3 data-number="2.2.3"><span
+            class="header-section-number">2.2.3</span>
+            Microprocessors</h3>
+            <p>Microprocessors are, then,
+            <strong>general-purpose</strong> chips (as opposed to
+            microcontrollers and DSPs) that are also used extensively in
+            embedded systems. They are used in systems that need more
+            heavy duty computing/memory and/or more flexibility in terms
+            of programming and management of the system. They use a
+            number of commodity processor architectures (e.g,, ARM,
+            Intel x86).</p>
+            <p>Main features of microprocessors:</p>
+            <table>
+            <colgroup>
+            <col style="width: 55%" />
+            <col style="width: 45%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>component</th>
+            <th>details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>cores</td>
+            <td>single or multicore; powerful</td>
+            </tr>
+            <tr>
+            <td>pipelines</td>
+            <td>more complex pipelines; better performance, harder to
+            analyze (e.g., wcet)</td>
+            </tr>
+            <tr>
+            <td>clock speeds</td>
+            <td>higher clock speeds; <code>100s</code> of khz, or even
+            GHz</td>
+            </tr>
+            <tr>
+            <td>ISA</td>
+            <td>common ISA; well understood, not custom</td>
+            </tr>
+            <tr>
+            <td>memory</td>
+            <td>significant memory; megabytes, even gigabytes</td>
+            </tr>
+            <tr>
+            <td>cache hierarchies</td>
+            <td>multiple levels, optimized</td>
+            </tr>
+            <tr>
+            <td>power consumption</td>
+            <td>much higher, but can be reduced (e.g., via <a
+            href="https://developer.arm.com/documentation/ddi0375/a/functional-overview/intelligent-energy-management--iem-/dynamic-voltage-scaling--dvs-">voltage
+            and frequency scaling</a>)</td>
+            </tr>
+            <tr>
+            <td>size, cost</td>
+            <td>often higher</td>
+            </tr>
+            <tr>
+            <td>interrupts, timers</td>
+            <td>more varied, easily programmable</td>
+            </tr>
+            <tr>
+            <td>I/O</td>
+            <td>more interfaces, including commodity ones like USB</td>
+            </tr>
+            <tr>
+            <td>security</td>
+            <td>often includes additional hardware security features,
+            e.g., <a
+            href="https://sefcom.asu.edu/publications/trustzone-explained-cic2016.pdf">ARM
+            TrustZone</a>.</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>The <a
+            href="https://armkeil.blob.core.windows.net/developer/Files/pdf/product-brief/arm-cortex-m85-product-brief.pdf">ARM
+            M-85</a> Embedded Microprocessor architecture:</p>
+            <p><img src="./img/embedded_arch/arm_cortex_m85.png" width="300" title="Arm M-85"></p>
+            <p>When compared to microcontrollers (or even SoCs), most
+            microprpcessors <strong>do not</strong> include components
+            such as DSPs, ADCs, DACs, etc. It is possible to
+            <em>augment</em> the microprocessor to include this
+            functionality → usually by <em>connecting one or more
+            microcontrollers to it</em>!</p>
+            <p>On the software side, microprocessors typically have the
+            <strong>most flexibility</strong>:</p>
+            <ul>
+            <li>general purpose operating systems (e.g., Linux, Android,
+            Windows, UNIX, etc.)</li>
+            <li>most programming languages and infrastructures (even <a
+            href="https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/">Docker</a>!)</li>
+            <li>large number of tooling, analysis, debugging
+            capabilities</li>
+            <li>complex code can run, but <strong>increases analysis
+            difficulty</strong></li>
+            </ul>
+            <p>Due to their power (and cost) these types of systems are
+            only used when really necessary or in higher-end systems
+            such as mobile phones and autonomous cars.</p>
+            </section>
+            <section id="system-on-a-chip-soc" class="level3"
+            data-number="2.2.4">
+            <h3 data-number="2.2.4"><span
+            class="header-section-number">2.2.4</span> System-on-a-Chip
+            (SoC)</h3>
+            <p>An SoC <strong>integrates</strong> most components in and
+            around a processor into a <strong>single</strong> circuit,
+            viz.,</p>
+            <ul>
+            <li>processor/chip → could be a microcontroller or even a
+            microprocessor</li>
+            <li>memory and memory interfaces</li>
+            <li>I/O devices</li>
+            <li>buses (memory and I/O)</li>
+            <li>storage (e.g., flash) and sometimes even secondary
+            storage</li>
+            <li>radio modems</li>
+            <li>(sometimes) accelerators such as GPUs</li>
+            </ul>
+            <p>All of these are placed on a <strong>single
+            substrate</strong>.</p>
+            <p>SoCs are often designed in <code>C++</code>,
+            <code>MATLAB</code>, <code>SystemC</code>, etc. Once the
+            hardware architectures are defined, additional hardware
+            elements are written in hardware description languages,
+            e.g., register transfer levels (<code>RTL</code>) <a
+            href="#fn2" class="footnote-ref" id="fnref2"
+            role="doc-noteref"><sup>2</sup></a>.</p>
+            <p>Additional components could include,</p>
+            <ul>
+            <li>DAC</li>
+            <li>ADC</li>
+            <li>radio and signal processing</li>
+            <li>wireless modems</li>
+            <li><a
+            href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/soc/zynq-7000.html"><em>programmable
+            logic</em></a>.</li>
+            <li>networks on chip (NoC) <a href="#fn3"
+            class="footnote-ref" id="fnref3"
+            role="doc-noteref"><sup>3</sup></a></li>
+            </ul>
+            <p>In some sense, an SoC is an <em>integration of a
+            processor with peripherals</em>. New hardware elements</p>
+            <p>Some examples of modern SoCs:</p>
+            <div class="multicolumn">
+            <div>
+            <p><img src="./img/embedded_arch/broadcom_pi_chip.png" width="200" title="Broadcom SoC chip used in the Raspberry Pi"></p>
+            <p>Broadcom Soc from Raspberry Pi</p>
+            </div>
+            <div>
+            <p><img src="./img/embedded_arch/Apple_M1.jpg" width="200" title="Apple M1 SoC"></p>
+            <p>Apple M1 SoC</p>
+            </div>
+            </div>
+            <p>The integration of all hardware components has some
+            interesting side-effects:</p>
+            <table>
+            <colgroup>
+            <col style="width: 34%" />
+            <col style="width: 31%" />
+            <col style="width: 34%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>effect</th>
+            <th>benefit</th>
+            <th>problems</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>tight integration</td>
+            <td>better performance, fewer latencies</td>
+            <td>cannot replace individual components</td>
+            </tr>
+            <tr>
+            <td>custom code/firmware</td>
+            <td>better use of hardware</td>
+            <td>not reusable in other systems</td>
+            </tr>
+            <tr>
+            <td>custom software libraries</td>
+            <td>easier programming of SoC</td>
+            <td>reduces code reusability in other systems</td>
+            </tr>
+            <tr>
+            <td>low power consumption</td>
+            <td>better battery life, less heat</td>
+            <td>(potentially) slower</td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Depending on the processor/microcontroller that sits at
+            the center of the SoC, the software stack/capabilities can
+            vary. Many commons SoCs exhibit the following software
+            properties:</p>
+            <ul>
+            <li>usually use contemporary operating systems, though
+            optimized for embedded/SoC systems → e.g., <a
+            href="http://www.raspbian.org">Raspbian</a> aka Rasberry Pi
+            OS. Hence, they can handle multiprocessing, virtual memory,
+            different scheduling policies, etc.</li>
+            <li>can be programmed using most common programming
+            languages → <code>C</code>, <code>C++</code>,
+            <code>python</code>, <code>java</code>, even <a
+            href="https://medium.com/@kenichisasagawa/rediscovering-the-joy-of-hardware-hacking-with-raspberry-pi-and-lisp-574c833ab20e"><code>lisp</code></a>!</li>
+            </ul>
+            <p>The Raspberry Pi is a common example of a system that
+            uses a <a
+            href="https://www.raspberrypi.com/documentation/computers/processors.html">Broadcom
+            BCM series of SoCs</a>. We use the <a
+            href="https://www.raspberrypi.com/documentation/computers/processors.html#bcm2711">BCM2711</a>
+            SoC in our course for the Raspberry Pi 4-B.</p>
+            </section>
+            <section id="embedded-accelarators-e.g.-gpu-enabled-systems"
+            class="level3" data-number="2.2.5">
+            <h3 data-number="2.2.5"><span
+            class="header-section-number">2.2.5</span> Embedded
+            Accelarators (e.g. GPU-enabled systems)</h3>
+            <p>There are hardware platforms that include
+            <strong>accelerators</strong> in embedded systems, e.g., <a
+            href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/">GPUs</a>,
+            <a
+            href="https://www.nature.com/articles/s41928-022-00778-y">AI-enabled
+            silicon</a>, <a
+            href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/soc/zynq-7000.html">extra
+            programmable FPGA fabric</a>, <a
+            href="https://developer.arm.com/documentation/100230/0002/functional-description/external-coprocessors/configuring-which-coprocessors-are-included-in-secure-and-non-secure-states">security
+            features</a>, etc. The main idea is that certain computation
+            can be <em>offloaded</em> to these accelerators while the
+            main CPU continues to process other code/requests. The
+            accelerators are specialized for certain computations (e.g.,
+            parallel matrix multiplications on GPUs, AES encryption).
+            Some chips include FPGA fabric where the designer/user can
+            <em>implement their own custom logic/accelerators</em>.</p>
+            <p>In a loose sense, the <a
+            href="https://navio2.hipi.io">Navio2</a> can be considered
+            as a hardware coprocessor for the Raspbery Pi.</p>
+            <p>The <a
+            href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/">NVidia
+            Jetson Orin</a> is a good example of an AI/GPU focussed
+            embedded processor:</p>
+            <p><img src="./img/embedded_arch/jetson-agx-orin-4c25-d-2x.png" width="300" title="NVIDIA Jetson AGX Orin 64 GB"></p>
+            <p><br></p>
+            <p>This system’s <a
+            href="https://www.techpowerup.com/gpu-specs/jetson-agx-orin-64-gb.c4085">specifications</a>:</p>
+            <ul>
+            <li>1300 MHz clock speeds</li>
+            <li>64 GB Memory</li>
+            <li>256 bit memory bus</li>
+            <li>204 GB/s bandwidth</li>
+            <li>supports a variety of graphics features (DirectX,
+            OpenGL, OpenCL, CUDA, Vulkan and Shader Models )</li>
+            <li>maximum of 60W power</li>
+            <li><strong>275 trillion</strong> operations/s (TOPS)!</li>
+            </ul>
+            <p>These systems are finding a lot of use in autonomous
+            systems since they pack so much processing power into such a
+            small form factor</p>
+            </section>
+            <section id="asics-and-fpgas" class="level3"
+            data-number="2.2.6">
+            <h3 data-number="2.2.6"><span
+            class="header-section-number">2.2.6</span> ASICs and
+            FPGAs</h3>
+            <p>Application-specific integrated circuits (ASICs) and
+            field programmable gate arrays (FPGAs). These platforms
+            combine the advantages of both, hardware (<em>speed</em>)
+            and software (<em>flexibility/programmability</em>). They
+            are similar, yet different. Both are semiconductor devices
+            that include <strong>programmable logic gates</strong> but
+            an ASIC is <em>static</em> – i.e., once the board has been
+            “programmed” it cannot be changed while an FPGA, as the name
+            implies, allows for “reprogramming”.</p>
+            <p>ASICs are <strong>custom-designed</strong> for specific
+            applications and provide high efficiency and performance.
+            FPGAs are <strong>reprogramamble</strong> devices that
+            provide significant flexibility. Many designers also used it
+            for prototyping hardware components (before they are
+            eventually included either in the processors or custom
+            ASICs). The <a
+            href="https://www.wevolver.com/article/asic-vs-fpga">choice
+            between ASICs and FPGAs</a> depends entirely on the
+            application requirements and other factors such as cost.</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <section id="asics" class="level4" data-number="2.2.6.1">
+            <h4 data-number="2.2.6.1"><span
+            class="header-section-number">2.2.6.1</span> ASICs</h4>
+            <p>These are specialized semiconductor devices – to
+            implement a <em>custom</em> function, e.g., cryptocurrency
+            mining, nuclear reactor control, televisions. ASICs are
+            tailored to their specific applications. Once created, it
+            cannot be reprogrammed or modified. ASICs are created using
+            a process known as <a
+            href="https://www.sciencedirect.com/topics/physics-and-astronomy/photolithography">photolithography</a>,
+            a method to prepare nanoparticles, that allows components to
+            be “etched” on to a silicon wafer.</p>
+            <p>The <a
+            href="https://www.wevolver.com/article/the-ultimate-guide-to-asic-design-from-concept-to-production">ASIC
+            design process</a>, while expensive and time consuming,
+            becomes valuable for <em>high-volume</em> products as the
+            per-unit cost decrease when production nunbers increase.</p>
+            <table>
+            <thead>
+            <tr>
+            <th>advantages</th>
+            <th>disadvantages</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>high performance</td>
+            <td>lack of flexibility</td>
+            </tr>
+            <tr>
+            <td>low power consumption</td>
+            <td>high initial costs</td>
+            </tr>
+            <tr>
+            <td>small form factor</td>
+            <td>long development time</td>
+            </tr>
+            <tr>
+            <td>ip protection</td>
+            <td>obsolescence risk</td>
+            </tr>
+            <tr>
+            <td>good for mass production</td>
+            <td>risks with manufacturing yields</td>
+            </tr>
+            <tr>
+            <td>can integrate multiple functions</td>
+            <td>design complexity</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            </section>
+            <section id="fpgas" class="level4" data-number="2.2.6.2">
+            <h4 data-number="2.2.6.2"><span
+            class="header-section-number">2.2.6.2</span> FPGAs</h4>
+            <p>These are also semiconductor devices but they can be
+            <strong>preprogrammed</strong> to implement various circuits
+            and functions. Designers can change the functionality
+            <strong>after</strong> the curcuits have been embossed onto
+            the hardware. Hence, they’re good for systems that might
+            require changes at design time and rapid prototyping. An
+            FPGA is a collection of programmable logic and
+            interconnects. They include lookup tables (LUTs) and other
+            parts that can be used to develop multiple, fairly
+            wide-ranging, functions. The programmable blocks can be
+            connected to each other via the interconnects. Some FPGAs
+            even come with additional flash memory.</p>
+            <p><a href="https://www.wevolver.com/article/fpga">FPGAs are
+            programmed</a> using hardware description languages such as
+            Verilog/VHDL.</p>
+            <table>
+            <thead>
+            <tr>
+            <th>advantages</th>
+            <th>disadvantages</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>flexibility</td>
+            <td>lower performance</td>
+            </tr>
+            <tr>
+            <td>shorter development time</td>
+            <td>higher power consumption</td>
+            </tr>
+            <tr>
+            <td>upgradability</td>
+            <td>high design complexity</td>
+            </tr>
+            <tr>
+            <td>lower (initial) costs</td>
+            <td>higher per-unit costs</td>
+            </tr>
+            <tr>
+            <td>better processing capabilities</td>
+            <td>design complexity</td>
+            </tr>
+            <tr>
+            <td>lower obsolescence risks</td>
+            <td>larger form factor</td>
+            </tr>
+            </tbody>
+            </table>
+            </section>
+            </section>
+            </section>
+            <section id="communication-and-io" class="level2"
+            data-number="2.3">
+            <h2 data-number="2.3"><span
+            class="header-section-number">2.3</span> Communication and
+            I/O</h2>
+            <p>Embedded systems need to <strong>communicate</strong>
+            and/or <strong>interface</strong> with various elements:</p>
+            <ul>
+            <li>the physical world via sensors and actuators</li>
+            <li>computers for programming (of the embedded system) or
+            for data transfer</li>
+            <li>with other embedded systems/nodes</li>
+            <li>with the internet (either public or to access back end
+            servers)</li>
+            <li>satellites?</li>
+            </ul>
+            <p>Hence a large number of communication standards and I/O
+            interfaces have been developed over the years. Let’s look at
+            a few of them:</p>
+            <ol type="1">
+            <li>serial → e.g., RS 232</li>
+            <li>synchronous → I2C, SPI</li>
+            <li>universal connectivity &amp; rarr; USB</li>
+            <li>embedded internal communication → CAN</li>
+            <li>general-purpose I/O → GPIO</li>
+            <li>debugging interface → JTAG</li>
+            <li>signal processing → ADC/DAC</li>
+            <li>network → ethernet/WiFi</li>
+            <li>others → radio, Bluetooth</li>
+            </ol>
+            <p><br> <br> <br> <br></p>
+            <p>Talk about: - wcet (and why it matters) –&gt; simpler
+            processors, older ones - types of embedded processors –&gt;
+            microcontrollers, microprocessors, dsp, SoCs (include
+            Broadcom chip on Pi), ARM, NVidia Jetson, ASIC, FPGA -
+            Should we talk about pipelines and memory (?) -
+            Communication standards –&gt; Serial (<em>e.g.,</em> RS
+            232). Synchronous (I2C?), USB, Network (Ethernet, WiFi),
+            CAN, GPIO, ADC/DAC, JTAG - Drill into Raspberry Pi and Navio
+            –&gt; their architecture and communication interfaces</p>
+            </section>
+            <section id="references" class="level2" data-number="2.4">
+            <h2 data-number="2.4"><span
+            class="header-section-number">2.4</span> References</h2>
+            </section>
+            </section>
+            <section id="footnotes"
+            class="footnotes footnotes-end-of-document"
+            role="doc-endnotes">
+            <hr />
+            <ol>
+            <li id="fn1"><p>TBD<a href="#fnref1" class="footnote-back"
+            role="doc-backlink">↩︎</a></p></li>
+            <li
+            id="fn2"><p>https://dl.acm.org/doi/10.5555/244522.244548<a
+            href="#fnref2" class="footnote-back"
+            role="doc-backlink">↩︎</a></p></li>
+            <li
+            id="fn3"><p>https://www.cecs.uci.edu/~papers/compendium94-03/papers/2002/date02/pdffiles/05a_1.pdf<a
+            href="#fnref3" class="footnote-back"
+            role="doc-backlink">↩︎</a></p></li>
+            </ol>
+            </section>
+            </div>
+    </div>
+  </div>
+  <!--script src="https://vjs.zencdn.net/5.4.4/video.js"></script-->
+
+</body>
+</html>
