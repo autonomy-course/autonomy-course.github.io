@@ -432,6 +432,7 @@ This is one of the main reasons why embedded (and especially real-time) systems 
 ## Embedded Processors
 
 Just as embedded systems are varied, embedded processors come in a myriad of shapes and sizes as well. From the very small and simple (e.g., DSPs) to the very large and complex (modern multicore chips, some with GPUs!). Here is a (non-exhaustive) list of the types of embedded processors/architectures in use today:
+
 1. [Microcontrollers](#microcontrollers)
 2. [Digital Signal Processors](#digital-signal-processors-dsps) (DSPs)
 3. [Microprocessors](#microprocessors) of various designs and architectures (e.g., ARM, x86)
@@ -706,12 +707,12 @@ Embedded systems need to **communicate** and/or **interface** with various eleme
 
 Hence a large number of communication standards and I/O interfaces have been developed over the years. Let's look at a few of them:
 
-1. serial (UART) &rarr; e.g., [RS 232](https://www.analog.com/en/resources/technical-articles/fundamentals-of-rs232-serial-communications.html)
-2. synchronous &rarr; I2C, SPI
-3. universal connectivity &rarr; USB
-4. embedded internal communication &rarr; CAN
-5. general-purpose I/O &rarr; GPIO
-6. debugging interface &rarr; JTAG
+1. [serial (UART)](#uart--rs-232) &rarr; e.g., RS 232
+2. [synchronous](#synchronous--i2c-and-spi) &rarr; I2C, SPI
+3. [general-purpose I/O](#general-purpose-io-gpio) &rarr; GPIO
+4. debugging interface &rarr; JTAG
+5. embedded internal communication &rarr; CAN
+6. universal connectivity &rarr; USB
 7. signal processing &rarr; ADC/DAC
 8. network &rarr; ethernet/WiFi
 9. others &rarr; radio, Bluetooth
@@ -898,6 +899,54 @@ In fact, using a different SPI configuration ("**daisy-chain**"), we can optimiz
 <img src="img/embedded_arch/comms/spi_adg_example5.svg" width="300" height="250">
 
 You can read more about [SPI here](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html).
+
+
+#### General-Purpose I/O (GPIO)
+
+A GPIO is a **signal pin** on an integrated circuit or board that can be used to perform _digital I/O operations_. By design, it **has no predefined purpose** &rarr; can be used by hardware/software developers to perform functions _they choose_, _e.g.,_
+
+- GPIO pins can be enabled or disabled.
+- GPIO pins can be configured to be input or output.
+- input values are readable, often with a 1 representing a high voltage, and a 0 representing a low voltage.
+- input GPIO pins can be used as "interrupt" lines, which allow a peripheral board connected via multiple pins to signal to the primary embedded board that it requires attention.
+- output pin values are both readable and writable.
+
+GPIOs can be implemented in a variety of ways,
+
+- as a _primary_ function of the microcontrollers, _e.g._, [Intel 8255](https://www.geeksforgeeks.org/programmable-peripheral-interface-8255/)
+- as an _accessory_ to the chip
+
+While microcontrollers may use GPIOs are their primary external interface, many a time the pins may be capable of other functions as well. In such instances, it may be necessary to configure the pins using other functions. 
+
+Some examples of chips with GPIO pins:
+
+|Intel 8255|PIC microchip|ASUS Tinker|
+|------|-------|---------|
+|<img src="img/embedded_arch/comms/gpio_Ic-photo-Intel--D8255.JPG" width="250"> |<img src="img/embedded_arch/comms/gpio_microchip_PIC18F8720.jpg" width="150"> | <img src="img/embedded_arch/comms/gpio_Asus_Tinker_Board.jpg" width ="200"> |
+|24 GPIO pins |29 GPIO pins| 28 GPIO pins|
+||
+
+
+GPIOs are used in a diverse variety of applications, limited only by the electrical and timing specifications of the GPIO interface and the ability of software to interact with GPIOs in a sufficiently timely manner.
+
+Some "properties"/applications of GPIOs:
+
+- GPIOs use standard logic levels and cannot supply significant current to output loads
+- high-current output buffers or relays can be used to control high-power devices
+- input buffers, relays, or opto-isolators translate incompatible signals to GPIO logic levels
+- GPIOs can control or monitor other circuitry on a board, such as enabling/disabling circuits, reading switch states, and driving LEDs
+- multiple GPIOs can implement bit banging communication interfaces like I²C or SPI
+- GPIOs can control analog processes via PWM, adjusting motor speed, light intensity, or temperature
+- PWM signals from GPIOs can be converted to analog control voltages using RC filters
+
+GPIO interfaces vary widely. Most commonly, they're simple _groups of pins_ that can switch between input/output. On the other hand, each pin can be set up differently &rarr; set up/accept/source different voltages/drive strengths/pull ups and downs. 
+
+Programming the GPIO:
+
+- usually pin states are exposed via different interfaces, _e.g.,_ **memory-mapped I/O** peripherals or dedicated I/O port instructions 
+- input values can be used as interrupts (IRQs)
+
+For more information on programming/using GPIOs, read these: [GPIO setup and use](https://docs.oracle.com/javame/8.0/me-dev-guide/gpio.htm), [Python scripting the GPIO in Raspberry Pis](https://www.instructables.com/Raspberry-Pi-Python-scripting-the-GPIO/), [general purpose I/O](https://docs.nordicsemi.com/bundle/ps_nrf52810/page/gpio.html), [GPIO setup in Raspberry Pi](https://projects.raspberrypi.org/en/projects/physical-computing/1).
 
 <br>
 <br>
