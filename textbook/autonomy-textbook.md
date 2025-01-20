@@ -211,89 +211,89 @@ let's not forget the most important question of all...
 
 ### high-order functions
 
-In order to answer the following,
-<div class="multicolumn">
-<div>
-<br>
-<ul>
-    <li>where am I?</li>
-    <li>where do I need to go?</li>
-    <li>how do I get there?</li>
-    <li>what obstacles may I face?</li>
-    <li>how do I avoid them?</li>
-</ul>
-</div>
-<div>
-<img src="img/stack_architecture/stack_overview.7.png" width="300">
-</div>
-</div>
+In order to answer the following, we need **additional functionality**. Let's go through what that might be.
 
-We need **additional functionality**. Let's go through what that might be.
+|||
+|-----|------|
+| <ul><li>where am I?</li> <li>where do I need to go?</li> <li>how do I get there?</li> <li>what obstacles may I face?</li> <li>how do I avoid them?</li></ul> | <img src="img/stack_architecture/stack_overview.7.png" width="300">|
+||
+
+
 
 ### slam
 
-simultaneous localization and mapping
+Simultaneous localization and mapping &rarr; figure out **where** we are.
 
 <img src="img/stack_architecture/stack_overview.8.png" width="300">
 
-figure out **where** we are.
+
 
 ### waypoint detection
 
+Understand how to move in the _right_ direction at the **micro** level, _i.e.,_ find **waypoints**.
+
 <img src="img/stack_architecture/stack_overview.9.png" width="300">
 
-how to move in the _right_ direction at the **micro** level, _i.e.,_ find **waypoints**.
+
 
 ### yolo
 
-Is it "you only live once"? Actually this stands for: "you only **look** once"
+Is it "you only live once"? Actually this stands for: "you only **look** once". It is an object **detection** model that uses convolutional neural networks (cnns)
 
 <img src="img/stack_architecture/stack_overview.10.png" width="300">
 
-object **detection** model that uses convolutional neural networks (cnns)
+
 
 ### object avoidance
 
+The objective is to avoid objects in the **immediate path**.
+
 <img src="img/stack_architecture/stack_overview.11.png" width="300">
 
-avoid objects in **immediate path**.
+
 
 ### path planning
 
+i.e., how to get to **destination** at the **macro** level &rarr; uses waypoints.
+
 <img src="img/stack_architecture/stack_overview.12.png" width="300">
 
-how to get to **destination** at the **macro** level &rarr; uses waypoints
+
 
 ### compute platform
 
-to run all of these functions
+To run all of these functions, we need low power, embedded platforms.
 
 <img src="img/stack_architecture/stack_overview.13.png" width="300">
-
-low power, embedded platforms.
 
 
 ### still some **non-functional** requirements remain
 
-note: any guesses what they could be?
+any guesses what they could be?
 
 ### safety!
 
+Essentially safety of &rarr; operator, other people, the vehicle, environment This is **cross-cutting** issue &rarr; affected <scb>by</scb> **all** parts of system.
+
 <img src="img/stack_architecture/stack_overview.14.png" width="300">
 
-safety of &rarr; operator, other people, the vehicle, environment
 
-
-This is **cross-cutting** issue &rarr; affected <scb>by</scb> **all** parts of system.
 
 ### security
 
+Security is another cross-cutting issue &rarr; <scb>can affect</scb> **all** components.
+
 <img src="img/stack_architecture/stack_overview.png" width="300">
 
-This is another cross-cutting issue &rarr; <scb>can affect</scb> **all** components.
+### Course Structure
 
-Hence thiw figure is a (loose) map of this course:
+Hence this figure is a (loose) map of this course:
+
 <img src="img/stack_architecture/stack_overview.png" width="300">
+
+
+
+
 <!--link rel="stylesheet" href="./custom.sibin.css"-->
 
 
@@ -482,7 +482,7 @@ Some examples of popular microcontroller families:
 
 |||||
 |----|----|----|----|
-|<center><img src="./img/embedded_arch/ATmega169-MLF.jpg" height="100"><br>Atmel ATmega</center> | <center><img src="./img/embedded_arch/Microchip_PIC24HJ32GP202.jpg" height="100"><br>Microchip Technology</center> | <center><img src="./img/embedded_arch/Motorola_68HC11.jpg" height="100">Motorola (Freescale)<br></center> | <center><img src="./img/embedded_arch/NXP_LPC2387FBD100-5543.jpg" height="100"><br>NXP</center> |
+|<img src="./img/embedded_arch/ATmega169-MLF.jpg" height="100"><br>Atmel ATmega | <img src="./img/embedded_arch/Microchip_PIC24HJ32GP202.jpg" height="100"> <br> Microchip Technology | <img src="./img/embedded_arch/Motorola_68HC11.jpg" height="100"> <br> Motorola (Freescale) | <img src="./img/embedded_arch/NXP_LPC2387FBD100-5543.jpg" height="100"> <br> NXP |
 ||
 
 Microcontroller programs and data,

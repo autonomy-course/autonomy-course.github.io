@@ -46,7 +46,7 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-19" />
+  <meta name="date" content="2025-01-20" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 19,
+                              <li><p class="navbar-text">January 20,
 2025</p></li>
                   </ul>
       </div>
@@ -205,6 +205,9 @@ George Washington University</p></li>
         class="toc-section-number">1.6.9</span> safety!</a></li>
         <li><a href="#security" id="toc-security"><span
         class="toc-section-number">1.6.10</span> security</a></li>
+        <li><a href="#course-structure" id="toc-course-structure"><span
+        class="toc-section-number">1.6.11</span> Course
+        Structure</a></li>
         </ul></li>
         </ul></li>
         <li><a href="#embedded-architectures"
@@ -550,112 +553,110 @@ George Washington University</p></li>
             <h3 data-number="1.6.1"><span
             class="header-section-number">1.6.1</span> high-order
             functions</h3>
-            In order to answer the following,
-            <div class="multicolumn">
-            <div>
-            <br>
-            <ul>
-            <li>
-            where am I?
-            </li>
-            <li>
-            where do I need to go?
-            </li>
-            <li>
-            how do I get there?
-            </li>
-            <li>
-            what obstacles may I face?
-            </li>
-            <li>
-            how do I avoid them?
-            </li>
-            </ul>
-            </div>
-            <div>
-            <p><img src="img/stack_architecture/stack_overview.7.png" width="300"></p>
-            </div>
-            </div>
-            <p>We need <strong>additional functionality</strong>. Let’s
-            go through what that might be.</p>
+            <p>In order to answer the following, we need
+            <strong>additional functionality</strong>. Let’s go through
+            what that might be.</p>
+            <table>
+            <colgroup>
+            <col style="width: 45%" />
+            <col style="width: 54%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td></td>
+            <td><img src="img/stack_architecture/stack_overview.7.png" width="300"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             </section>
             <section id="slam" class="level3" data-number="1.6.2">
             <h3 data-number="1.6.2"><span
             class="header-section-number">1.6.2</span> slam</h3>
-            <p>simultaneous localization and mapping</p>
+            <p>Simultaneous localization and mapping → figure out
+            <strong>where</strong> we are.</p>
             <p><img src="img/stack_architecture/stack_overview.8.png" width="300"></p>
-            <p>figure out <strong>where</strong> we are.</p>
             </section>
             <section id="waypoint-detection" class="level3"
             data-number="1.6.3">
             <h3 data-number="1.6.3"><span
             class="header-section-number">1.6.3</span> waypoint
             detection</h3>
-            <p><img src="img/stack_architecture/stack_overview.9.png" width="300"></p>
-            <p>how to move in the <em>right</em> direction at the
-            <strong>micro</strong> level, <em>i.e.,</em> find
+            <p>Understand how to move in the <em>right</em> direction at
+            the <strong>micro</strong> level, <em>i.e.,</em> find
             <strong>waypoints</strong>.</p>
+            <p><img src="img/stack_architecture/stack_overview.9.png" width="300"></p>
             </section>
             <section id="yolo" class="level3" data-number="1.6.4">
             <h3 data-number="1.6.4"><span
             class="header-section-number">1.6.4</span> yolo</h3>
             <p>Is it “you only live once”? Actually this stands for:
-            “you only <strong>look</strong> once”</p>
+            “you only <strong>look</strong> once”. It is an object
+            <strong>detection</strong> model that uses convolutional
+            neural networks (cnns)</p>
             <p><img src="img/stack_architecture/stack_overview.10.png" width="300"></p>
-            <p>object <strong>detection</strong> model that uses
-            convolutional neural networks (cnns)</p>
             </section>
             <section id="object-avoidance" class="level3"
             data-number="1.6.5">
             <h3 data-number="1.6.5"><span
             class="header-section-number">1.6.5</span> object
             avoidance</h3>
+            <p>The objective is to avoid objects in the
+            <strong>immediate path</strong>.</p>
             <p><img src="img/stack_architecture/stack_overview.11.png" width="300"></p>
-            <p>avoid objects in <strong>immediate path</strong>.</p>
             </section>
             <section id="path-planning" class="level3"
             data-number="1.6.6">
             <h3 data-number="1.6.6"><span
             class="header-section-number">1.6.6</span> path
             planning</h3>
+            <p>i.e., how to get to <strong>destination</strong> at the
+            <strong>macro</strong> level → uses waypoints.</p>
             <p><img src="img/stack_architecture/stack_overview.12.png" width="300"></p>
-            <p>how to get to <strong>destination</strong> at the
-            <strong>macro</strong> level → uses waypoints</p>
             </section>
             <section id="compute-platform" class="level3"
             data-number="1.6.7">
             <h3 data-number="1.6.7"><span
             class="header-section-number">1.6.7</span> compute
             platform</h3>
-            <p>to run all of these functions</p>
+            <p>To run all of these functions, we need low power,
+            embedded platforms.</p>
             <p><img src="img/stack_architecture/stack_overview.13.png" width="300"></p>
-            <p>low power, embedded platforms.</p>
             </section>
             <section id="still-some-non-functional-requirements-remain"
             class="level3" data-number="1.6.8">
             <h3 data-number="1.6.8"><span
             class="header-section-number">1.6.8</span> still some
             <strong>non-functional</strong> requirements remain</h3>
-            <p>note: any guesses what they could be?</p>
+            <p>any guesses what they could be?</p>
             </section>
             <section id="safety" class="level3" data-number="1.6.9">
             <h3 data-number="1.6.9"><span
             class="header-section-number">1.6.9</span> safety!</h3>
+            <p>Essentially safety of → operator, other people, the
+            vehicle, environment This is <strong>cross-cutting</strong>
+            issue → affected <scb>by</scb> <strong>all</strong> parts of
+            system.</p>
             <p><img src="img/stack_architecture/stack_overview.14.png" width="300"></p>
-            <p>safety of → operator, other people, the vehicle,
-            environment</p>
-            <p>This is <strong>cross-cutting</strong> issue → affected
-            <scb>by</scb> <strong>all</strong> parts of system.</p>
             </section>
             <section id="security" class="level3" data-number="1.6.10">
             <h3 data-number="1.6.10"><span
             class="header-section-number">1.6.10</span> security</h3>
-            <p><img src="img/stack_architecture/stack_overview.png" width="300"></p>
-            <p>This is another cross-cutting issue → <scb>can
+            <p>Security is another cross-cutting issue → <scb>can
             affect</scb> <strong>all</strong> components.</p>
-            <p>Hence thiw figure is a (loose) map of this course:
-            <img src="img/stack_architecture/stack_overview.png" width="300">
-            <!--link rel="stylesheet" href="./custom.sibin.css"--></p>
+            <p><img src="img/stack_architecture/stack_overview.png" width="300"></p>
+            </section>
+            <section id="course-structure" class="level3"
+            data-number="1.6.11">
+            <h3 data-number="1.6.11"><span
+            class="header-section-number">1.6.11</span> Course
+            Structure</h3>
+            <p>Hence this figure is a (loose) map of this course:</p>
+            <p><img src="img/stack_architecture/stack_overview.png" width="300"></p>
+            <!--link rel="stylesheet" href="./custom.sibin.css"-->
             </section>
             </section>
             </section>
@@ -1060,10 +1061,14 @@ George Washington University</p></li>
             </colgroup>
             <tbody>
             <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td><img src="./img/embedded_arch/ATmega169-MLF.jpg" height="100"><br>Atmel
+            ATmega</td>
+            <td><img src="./img/embedded_arch/Microchip_PIC24HJ32GP202.jpg" height="100">
+            <br> Microchip Technology</td>
+            <td><img src="./img/embedded_arch/Motorola_68HC11.jpg" height="100">
+            <br> Motorola (Freescale)</td>
+            <td><img src="./img/embedded_arch/NXP_LPC2387FBD100-5543.jpg" height="100">
+            <br> NXP</td>
             </tr>
             <tr>
             <td></td>
