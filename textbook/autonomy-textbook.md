@@ -895,7 +895,7 @@ Using an SPI-enabled microcontroller reduces the number of GPIOs required and an
 
 In fact, using a different SPI configuration ("**daisy-chain**"), we can optimize the GPIO count even further!
 
-<img src="img/embedded_arch/comms/spi_adg_example5.svg" width="300">
+<img src="img/embedded_arch/comms/spi_adg_example5.svg" width="300" height="250">
 
 You can read more about [SPI here](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html).
 
