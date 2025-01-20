@@ -243,8 +243,15 @@ George Washington University</p></li>
         </ul></li>
         <li><a href="#communication-and-io"
         id="toc-communication-and-io"><span
-        class="toc-section-number">2.3</span> Communication and
-        I/O</a></li>
+        class="toc-section-number">2.3</span> Communication and I/O</a>
+        <ul>
+        <li><a href="#uart-rs-232" id="toc-uart-rs-232"><span
+        class="toc-section-number">2.3.1</span> UART | RS-232</a></li>
+        <li><a href="#synchronous-i2c-and-spi"
+        id="toc-synchronous-i2c-and-spi"><span
+        class="toc-section-number">2.3.2</span> Synchronous |
+        I<sup>2</sup>C and SPI</a></li>
+        </ul></li>
         <li><a href="#references" id="toc-references"><span
         class="toc-section-number">2.4</span> References</a></li>
         </ul></li>
@@ -1587,6 +1594,7 @@ George Washington University</p></li>
             <li>computers for programming (of the embedded system) or
             for data transfer</li>
             <li>with other embedded systems/nodes</li>
+            <li>handheld devices</li>
             <li>with the internet (either public or to access back end
             servers)</li>
             <li>satellites?</li>
@@ -1595,9 +1603,11 @@ George Washington University</p></li>
             interfaces have been developed over the years. Let’s look at
             a few of them:</p>
             <ol type="1">
-            <li>serial → e.g., RS 232</li>
+            <li>serial (UART) → e.g., <a
+            href="https://www.analog.com/en/resources/technical-articles/fundamentals-of-rs232-serial-communications.html">RS
+            232</a></li>
             <li>synchronous → I2C, SPI</li>
-            <li>universal connectivity &amp; rarr; USB</li>
+            <li>universal connectivity → USB</li>
             <li>embedded internal communication → CAN</li>
             <li>general-purpose I/O → GPIO</li>
             <li>debugging interface → JTAG</li>
@@ -1605,6 +1615,251 @@ George Washington University</p></li>
             <li>network → ethernet/WiFi</li>
             <li>others → radio, Bluetooth</li>
             </ol>
+            <section id="uart-rs-232" class="level3"
+            data-number="2.3.1">
+            <h3 data-number="2.3.1"><span
+            class="header-section-number">2.3.1</span> UART |
+            RS-232</h3>
+            <p>Serial communication standards are used extensively
+            across many domains, mainly due to their
+            <strong>simplicity</strong> and <strong>low hardware
+            overheads</strong>. The most common among these are the
+            <em>asynchronous serial communication systems</em>.</p>
+            <p>From <a
+            href="https://en.wikipedia.org/wiki/Asynchronous_serial_communication">Wikipedia</a>:</p>
+            <blockquote>
+            <p>Asynchronous serial communication is a form of serial
+            communication in which the communicating endpoints’
+            interfaces are not continuously synchronized by a common
+            clock signal. Instead of a common synchronization signal,
+            the data stream contains synchronization information in form
+            of start and stop signals, before and after each unit of
+            transmission, respectively. The start signal prepares the
+            receiver for arrival of data and the stop signal resets its
+            state to enable triggering of a new sequence.</p>
+            </blockquote>
+            <p>The following figure shows a communication sample that
+            demonstrates these principles:</p>
+            <p><img src="img/embedded_arch/comms/Puerto_serie_Rs232.png" width="300"></p>
+            <p>We see that each byte has a <code>start</code> bit,
+            <code>stop</code> bit and eight <code>data</code> bits. The
+            last bit is often used as a <code>parity</code> bit. All of
+            these “standards” (i.e., the start/stop/parity bits) must be
+            <em>agreed upon ahead of time</em>.</p>
+            <p>A <strong>universal asynchronous
+            receiver-transmitter</strong> (<strong>UART</strong>) then
+            is a peripheral device for such asynchronous commnication;
+            the data format and transmission speeds are configurable. It
+            sends data bits <em>one-by-one</em> (from least significant
+            to most). The precise timing is handlded by the
+            communication channel.</p>
+            <p>The electric <em>signalling levels</em> are handled by an
+            external driver circuit. Common signal levels:</p>
+            <ul>
+            <li><a
+            href="https://www.analog.com/en/resources/technical-articles/fundamentals-of-rs232-serial-communications.html">RS
+            232</a></li>
+            <li><a
+            href="https://www.renkeer.com/what-is-rs485/">RS-485</a></li>
+            <li>raw <a
+            href="https://www.seeedstudio.com/blog/2019/12/11/rs232-vs-ttl-beginner-guide-to-serial-communication">TTL</a></li>
+            </ul>
+            <p>Here we will focus on the <strong>RS-232</strong>
+            standard since it is most widely used UART signaling level
+            standard today. The full name of the standard is:
+            “EIA/TIA-232-E Interface Between Data Terminal Equipment and
+            Data Circuit-Termination Equipment Employing Serial Binary
+            Data Interchange” (“EIA/TIA” stands for the Electronic
+            Industry Association and the Telecommunications Industry
+            Association). It was introduced in 1962 and has since been
+            updated <em>four</em> times to meet evolving needs.</p>
+            <p>The RS-232 is a <em>complete</em> standard in that it
+            specifies,</p>
+            <ul>
+            <li>(common) voltage and signal levels</li>
+            <li>(common) pin and wiring configurations</li>
+            <li>(minimal) control information between
+            host/peripherals</li>
+            </ul>
+            <p>The RS-232 specifies the electrical, functional and
+            mechanical characteristics to meet all of the above
+            criteria.</p>
+            <p>For instance, the <em>electrical</em> characteristics are
+            defined in the following figure:</p>
+            <p><img src="img/embedded_arch/comms/rs232-electrical.gif" width="400"></p>
+            <p>Details:</p>
+            <ul>
+            <li><strong>high</strong> level [<strong>logical
+            <code>0</code></strong>] (aka “marking”) → <code>+5V</code>
+            to <code>+15V</code> (realistically <code>+3V</code> to
+            <code>+15V</code>)</li>
+            <li><strong>low</strong> level [<strong>logical
+            <code>1</code></strong>] (aka “spacing”) → <code>-5V</code>
+            to <code>-15V</code> (realistically <code>-3V</code> to
+            <code>-15V</code>)</li>
+            </ul>
+            <p>Other properties also defined, <em>e.g.</em>, “<a
+            href="https://en.wikipedia.org/wiki/Slew_rate">slew
+            rate</a>”, impedance, capacitive loads, etc.</p>
+            <p>The standard also defines the mechanical interfaces,
+            i.e., the <em>pin connector</em>:</p>
+            <p><img src="img/embedded_arch/comms/rs232_pins.gif" width="400"></p>
+            <p>While the official standard calls for a 25-pin connector,
+            it is rarely used. Instead, the <strong>9-pin</strong>
+            connector (shown on the right in the above figure) is in
+            common use.</p>
+            <p>You can read more details about the standard here: <a
+            href="https://www.analog.com/en/resources/technical-articles/fundamentals-of-rs232-serial-communications.html">RS
+            232</a></p>
+            </section>
+            <section id="synchronous-i2c-and-spi" class="level3"
+            data-number="2.3.2">
+            <h3 data-number="2.3.2"><span
+            class="header-section-number">2.3.2</span> Synchronous |
+            I<sup>2</sup>C and SPI</h3>
+            <p>Synchronous Serial Interfaces (SSIs) are a widely used in
+            industrial applications between a master device
+            (e.g. controller) and a slave device (e.g. sensor). It is
+            based on the <a
+            href="https://www.analog.com/media/en/technical-documentation/tech-articles/guide-to-selecting-and-using-rs232-rs422-and-rs485-serial-data-standards--maxim-integrated.pdf">RS-422</a>
+            standards and has a high protocol efficiency as well
+            multiple hardware implementations.</p>
+            <p>SSI properties:</p>
+            <ul>
+            <li><a
+            href="https://en.wikipedia.org/wiki/Differential_signalling">differential
+            signalling</a></li>
+            <li>simplex (i.e., unidirectional communication only)</li>
+            <li>non-multiplexed</li>
+            <li>point-to-point and</li>
+            <li>uses time-outs to frame the data.</li>
+            </ul>
+            <section id="i2c" class="level4" data-number="2.3.2.1">
+            <h4 data-number="2.3.2.1"><span
+            class="header-section-number">2.3.2.1</span>
+            I<sup>2</sup>C</h4>
+            <p>The <a
+            href="https://www.ti.com/lit/an/sbaa565/sbaa565.pdf">Inter-Integrated
+            Circuit</a> (I<sup>2</sup>C, IIC, I2C) is a synchronous,
+            multi-controller/multi-target (historically termed as
+            multi-master/multi-slave), single-ended, serial
+            communication bus. I2C systems are used for <em>attaching
+            low-power integrated circuits to processors and
+            microcontrollers</em> – usually for short distance or
+            <em>intra-board communication</em>.</p>
+            <p>I2C components are found in a wide variety of products,
+            <em>e.g.,</em></p>
+            <ul>
+            <li>EEPROMs</li>
+            <li>VGA/DVI/HDMI connectors</li>
+            <li>NVRAM chips</li>
+            <li>real-time clocks</li>
+            <li>reading hardware monitors and sensors</li>
+            <li>controlling actuators</li>
+            <li>DAC/ADC</li>
+            <li>controlling LCD/OLDEs displays</li>
+            <li>changing computer display settings (contrast,
+            brightness, etc.)</li>
+            <li>controlling speaker volume</li>
+            <li>and many many more</li>
+            </ul>
+            <p>The main advantage of I2C is that a microcontroller can
+            control a <em>network</em> of chips with just
+            <strong>two</strong> general-purpose I/O pins (serial data
+            line and a serial clock line) and software. A controller
+            device can communicate with any target device through a
+            unique I2C address sent through the serial data line. Hence
+            the two signals are:</p>
+            <table style="width:100%;">
+            <colgroup>
+            <col style="width: 30%" />
+            <col style="width: 35%" />
+            <col style="width: 35%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>line</th>
+            <th>voltage</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>serial data line (SDL)</td>
+            <td><code>+5V</code></td>
+            <td>transmit data to or from target devices</td>
+            </tr>
+            <tr>
+            <td>serial clock line (SCL)</td>
+            <td><code>+3V</code></td>
+            <td>synchronously clock data in or out of the target
+            device</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Both are bidirectional and pulled up with resistors.</p>
+            <p>Here is a typical implementation of I2C:</p>
+            <p><img src="img/embedded_arch/comms/i2c_implementation.png" width="400"></p>
+            <p>An I2C chip example (used for controlling certain TV
+            signals):</p>
+            <p><img src="img/embedded_arch/comms/i2c_tv_control.jpg" width="100"></p>
+            <p>I2C is half-duplex communication where only a single
+            controller or a target device is sending data on the bus at
+            a time. In comparison, the serial peripheral interface (SPI)
+            is a full-duplex protocol where data can be sent to and
+            received back at the same time. An I2C controller device
+            starts and stops communication, which removes the potential
+            problem of bus contention. Communication with a target
+            device is sent through a unique address on the bus. This
+            allows for both multiple controllers and multiple target
+            devices on the I2C bus.</p>
+            <p>I2C communication details (initiated from the controller
+            device):</p>
+            <table>
+            <colgroup>
+            <col style="width: 70%" />
+            <col style="width: 29%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>condition</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>I2C <code>START</code></td>
+            <td>the controller device first pulls the SDA low and then
+            pulls the SCL low</td>
+            </tr>
+            <tr>
+            <td>I2C <code>STOP</code></td>
+            <td>the SCL releases high and then SDA releases high</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/embedded_arch/comms/i2c_start_stop.png" width="300"></p>
+            <p><br></p>
+            <p>I2C communication is split into: <strong>frames</strong>.
+            Communciation starts when one controller sends an
+            <code>address frame</code> after a <code>START</code>. This
+            is followed by one or more <code>data frames</code>, each
+            consisting of <strong>one byte</strong>. Each frame also has
+            an <code>acknowledgement</code> bit. An example of two I2C
+            communication frames:</p>
+            <p><img src="img/embedded_arch/comms/i2c_frames.png"></p>
+            <p><br></p>
+            <p>You can read more at: <a
+            href="https://www.ti.com/lit/an/sbaa565/sbaa565.pdf">I2C</a>.</p>
             <p><br> <br> <br> <br></p>
             <p>Talk about: - wcet (and why it matters) –&gt; simpler
             processors, older ones - types of embedded processors –&gt;
@@ -1615,6 +1870,8 @@ George Washington University</p></li>
             232). Synchronous (I2C?), USB, Network (Ethernet, WiFi),
             CAN, GPIO, ADC/DAC, JTAG - Drill into Raspberry Pi and Navio
             –&gt; their architecture and communication interfaces</p>
+            </section>
+            </section>
             </section>
             <section id="references" class="level2" data-number="2.4">
             <h2 data-number="2.4"><span
