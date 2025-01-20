@@ -901,7 +901,7 @@ In fact, using a different SPI configuration ("**daisy-chain**"), we can optimiz
 You can read more about [SPI here](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html).
 
 
-#### General-Purpose I/O (GPIO)
+### General-Purpose I/O (GPIO)
 
 A GPIO is a **signal pin** on an integrated circuit or board that can be used to perform _digital I/O operations_. By design, it **has no predefined purpose** &rarr; can be used by hardware/software developers to perform functions _they choose_, _e.g.,_
 
