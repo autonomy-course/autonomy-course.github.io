@@ -582,6 +582,324 @@ multiple ways to implement GPIO:
 |<img src="img/embedded_arch/comms/gpio_Ic-photo-Intel--D8255.JPG" width="350"> |<img src="img/embedded_arch/comms/gpio_microchip_PIC18F8720.jpg" width="200"> | <img src="img/embedded_arch/comms/gpio_Asus_Tinker_Board.jpg" width ="200"> |
 |24 GPIO pins |29 GPIO pins| 28 GPIO pins|
 ||
+
+---
+
+## CAN
+
+controller area network
+
+---
+
+## CAN
+
+controller area network
+
+- vehicle bus standard
+
+---
+
+## CAN
+
+controller area network
+
+- vehicle bus standard
+- efficient communication between ECUs
+
+---
+
+## CAN | properties
+
+- broadcast-based
+- message-oriented
+- arbitration &rarr; data integrity/prioritization
+- **does not** need host controller
+
+Note: 
+- a "message" is discrete data that can be moved from one node to another
+- NOT a sequence of bytes
+
+---
+
+## CAN | physical setup
+
+two-wire bus:
+
+|||
+|-----|------|
+|CAN high| yellow| 
+|CAN low | green|
+||
+
+
+---
+
+## CAN | physical setup
+
+|||
+|------|--------|
+| <img src="img/embedded_arch/comms/can-twisted-can-bus-wiring-harness-high-low-green-yellow.svg" width="400"> | |
+|CAN wiring ||
+||
+
+
+---
+
+## CAN | physical setup
+
+|||
+|------|--------|
+| <img src="img/embedded_arch/comms/can-twisted-can-bus-wiring-harness-high-low-green-yellow.svg" width="400"> | <img src="img/embedded_arch/comms/CAN-bus_basic.svg" width="500"> |
+|CAN wiring | multi-ecu CAN setup|
+||
+
+---
+
+## CAN | ECU
+
+
+---
+
+## CAN | ECU
+
+<table>
+    <tr>
+        <th>internal architecture</th>
+    </tr>
+    <tr>
+        <td>
+            <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="950">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+
+---
+
+## CAN | ECU
+
+<table>
+    <tr>
+        <th>components</th>
+        <th>internal architecture</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>microcontroller</b> to interpret/send out CAN messages</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="950">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+
+---
+
+## CAN | ECU
+
+<table>
+    <tr>
+        <th>components</th>
+        <th>internal architecture</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>microcontroller</b> to interpret/send out CAN messages</li>
+                <li><b>CAN controller</b> ensures all communication adheres to CAN protocols</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="950">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+---
+
+## CAN | ECU
+
+<table>
+    <tr>
+        <th>components</th>
+        <th>internal architecture</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>microcontroller</b> to interpret/send out CAN messages</li>
+                <li><b>CAN controller</b> ensures all communication adheres to CAN protocols</li>
+                <li><b>CAN transceiver</b> connects CAN controller to the physical wires</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="950">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+---
+
+## CAN | ECU
+
+- **any** ECU can broadcast on the CAN bus
+
+---
+
+## CAN | ECU
+
+- **any** ECU can broadcast on the CAN bus
+- accepted by **all** ECUs
+
+---
+
+## CAN | ECU
+
+- **any** ECU can broadcast on the CAN bus
+- accepted by **all** ECUs
+- **each** ECU &rarr; act/ignore message
+
+---
+
+## CAN | ECU
+
+- **any** ECU can broadcast on the CAN bus
+- accepted by **all** ECUs
+- **each** ECU &rarr; act/ignore message
+
+> **security** implications?
+
+---
+
+## CAN | connectors
+
+- no "standard" CAN connector
+
+---
+
+## CAN | connectors
+
+- no "standard" CAN connector
+- **CAN Bus DB9** &rarr; _de facto_ standard
+
+<br>
+
+<img src="img/embedded_arch/comms/can-bus-db9-connector-pinout-d-sub.svg" width="750">
+
+---
+
+## CAN | communication protocols
+
+---
+
+## CAN | communication protocols
+
+
+<table>
+    <tr>
+        <th>relation to OSI stack</th>
+    </tr>
+    <tr>
+        <td>
+            <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="750">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+
+---
+
+## CAN | communication protocols
+
+
+<table>
+    <tr>
+        <th>layer</th>
+        <th>relation to OSI stack</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>data link</b>: CAN frame formats, <br>error handling, data transmission, <br>data integrity</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="750">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+
+---
+
+## CAN | communication protocols
+
+
+<table>
+    <tr>
+        <th>layer</th>
+        <th>relation to OSI stack</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>data link</b>: CAN frame formats, <br>error handling, data transmission, <br>data integrity</li>
+                <li><b>physical</b>: cable types, <br>electrical signal levels, <br>node requirements, <br>cable impedance, etc.</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="750">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+---
+
+## CAN | frames
+
+**all** communication &rarr; **CAN frames**
+
+<img src="img/embedded_arch/comms/CAN-bus-frame-standard-message-SOF-ID-RTR-Control-Data-CRC-ACK-EOF.svg" width="1100">
+
+Note:
+- RTR: The Remote Transmission Request indicates whether a node sends data or requests dedicated data from another node
+- Control: The Control contains the Identifier Extension Bit (IDE) which is a 'dominant 0' for 11-bit. It also contains the 4 bit Data Length Code (DLC) that specifies the length of the data bytes to be transmitted (0 to 8 bytes)
+
+---
+
+## CAN | higher-order protocols
+
+for various applications/domains
+
+---
+
+## CAN | higher-order protocols
+
+for various applications/domains
+
+|protocol|description|
+|--------|-----------|
+|[OBD2](https://www.csselectronics.com/pages/obd2-explained-simple-intro) | on-board diagnostics in cars/trucks|
+|[UDS](https://www.csselectronics.com/pages/uds-protocol-tutorial-unified-diagnostic-services) | Unified Diagnostic Services (UDS) in automotive ECUs|
+|[CCP/XCP](https://www.csselectronics.com/pages/ccp-xcp-on-can-bus-calibration-protocol) | embedded control/industrial automation _interoperability_|
+|[J1939](https://www.csselectronics.com/pages/j1939-explained-simple-intro-tutorial) | for heavy-duty vehicles |
+|[2000](https://www.csselectronics.com/pages/nmea-2000-n2k-intro-tutorial )| maritime industry to connect engines, instruments, sensors|
+|[ISOBUS](https://www.csselectronics.com/pages/isobus-introduction-tutorial-iso-11783)| agriculture/forestry machinery, plug and play integration |
+||
+
+Note:
+- CCP/XCP: interoperability between CAN devices
+- ISOBUS: between vehicles/implements, _across brands_
                     </textarea>
                 </section>
             </div>
