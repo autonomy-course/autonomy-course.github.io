@@ -900,6 +900,208 @@ for various applications/domains
 Note:
 - CCP/XCP: interoperability between CAN devices
 - ISOBUS: between vehicles/implements, _across brands_
+
+---
+
+### embedded communications | others
+
+|protocol|links|
+|--------|------|
+|USB | How USB works: [part 1](https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1), [part2](https://www.circuitbread.com/tutorials/how-usb-works-communication-protocol-part-2), [part 3](https://www.circuitbread.com/tutorials/how-usb-works-enumeration-and-configuration-part-3); [USB in a Nutshell (very detailed)](https://www.beyondlogic.org/usbnutshell/usb1.shtml).|
+|Ethernet | [Reliable Embedded Ethernet](https://www.embedded.com/implement-reliable-embedded-ethernet-connectivity/), [Embedded Ethernet and Internet (book, online)](https://www.google.com/books/edition/_/3ZPPBgAAQBAJ?hl=en&gbpv=1&pg=PA1)|
+|WiFi | [WiFi Sensing on the Edge (paper)](https://ebulutvcu.github.io/COMST22_WiFi_Sensing_Survey.pdf) |
+|Bluetooth| [Bluetooth Basics](https://learn.sparkfun.com/tutorials/bluetooth-basics/all), [Bluetooth Low Energy](https://novelbits.io/bluetooth-low-energy-ble-complete-guide/) |
+|Radio| [Embedded Development with GNU Radio](https://wiki.gnuradio.org/index.php/Embedded_Development_with_GNU_Radio)|
+||
+
+---
+
+## embedded communications
+
+read [**online textbook**](https://autonomy-course.github.io/textbook/autonomy-textbook.html#communication-and-io) for details on these and others (_e.g.,_ JTAG) 
+
+---
+
+## putting it all together...
+
+---
+
+## putting it all together...
+
+...Raspberry Pi and Navio2
+
+---
+
+## raspberry Pi
+
+includes many components/standards discussed so far...
+
+<img src="img/embedded_arch/pi-4-architectural_features.png" width="1100">
+
+---
+
+## raspberry Pi | components
+
+---
+
+## raspberry Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> **Quad core** Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+
+---
+
+## raspberry Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+
+---
+
+## raspberry Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+|network | Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE|
+
+---
+
+## raspberr Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+|network | Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE|
+|I/O |   40 pin GPIO, USB 3.0/2.0/C|
+
+---
+
+## raspberry Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+|network | Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE|
+|I/O |   40 pin GPIO, USB 3.0/2.0/C|
+|storage | Micro-SD Card |
+
+
+---
+
+## raspberry Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+|network | Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE|
+|I/O |   40 pin GPIO, USB 3.0/2.0/C|
+|storage | Micro-SD Card |
+|misc | micro-hdmi, stereo a/v, displayport, camera port, power|
+---
+
+## raspberry Pi | components
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, <br> Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+|network | Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE|
+|I/O |   40 pin GPIO, USB 3.0/2.0/C|
+|storage | Micro-SD Card |
+|misc | micro-hdmi, stereo a/v, displayport, camera port, power|
+|os | [Raspberry Pi OS](https://www.raspberrypi.com/software/) (formerly called Raspbian)|
+||
+
+---
+
+## navio2
+
+---
+
+## navio2
+
+a "hat" &rarr; adds to Pi:
+
+- autopilot functionality
+- multiple sensors
+
+---
+
+## navio2 | architecture
+
+<img src="img/embedded_arch/navio2_features.jpeg" width="800">
+
+---
+
+## navio2 | architecture
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+
+---
+
+## navio2 | architecture
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+|high-precision barometer| for measuring pressure (and altitude)|
+
+---
+
+## navio2 | architecture
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+|high-precision barometer| for measuring pressure (and altitude)|
+|(dual) IMU | two 9 DOF with gyroscope, accelerometer, magnetometer, each|
+
+---
+
+## navio2 | architecture
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+|high-precision barometer| for measuring pressure (and altitude)|
+|(dual) IMU | two 9 DOF with gyroscope, accelerometer, magnetometer, each|
+|RC I/O co-processor | PWM, ADC, SBUS, PPM |
+
+---
+
+## navio2 | architecture
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+|high-precision barometer| for measuring pressure (and altitude)|
+|(dual) IMU | two 9 DOF with gyroscope, accelerometer, magnetometer, each|
+|RC I/O co-processor | PWM, ADC, SBUS, PPM |
+|extension ports | ADC, I2C, UART |
+
+---
+
+## navio2 | architecture
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+|high-precision barometer| for measuring pressure (and altitude)|
+|(dual) IMU | two 9 DOF with gyroscope, accelerometer, magnetometer, each|
+|RC I/O co-processor | PWM, ADC, SBUS, PPM |
+|extension ports | ADC, I2C, UART |
+|power supply | triple redundant |
+||
                     </textarea>
                 </section>
             </div>
