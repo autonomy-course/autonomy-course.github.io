@@ -259,6 +259,10 @@ George Washington University</p></li>
         id="toc-jtag-debugging-interface"><span
         class="toc-section-number">2.3.4</span> JTAG Debugging
         Interface</a></li>
+        <li><a href="#controller-area-network-can"
+        id="toc-controller-area-network-can"><span
+        class="toc-section-number">2.3.5</span> Controller Area Network
+        (CAN)</a></li>
         </ul></li>
         <li><a href="#references" id="toc-references"><span
         class="toc-section-number">2.4</span> References</a></li>
@@ -1622,7 +1626,8 @@ George Washington University</p></li>
             I/O</a> → GPIO</li>
             <li><a href="#jtag-debugging-interface">debugging
             interface</a> → JTAG</li>
-            <li>embedded internal communication → CAN</li>
+            <li><a href="#controller-area-network-can">embedded internal
+            communication</a> → CAN</li>
             <li>universal connectivity → USB</li>
             <li>signal processing → ADC/DAC</li>
             <li>network → ethernet/WiFi</li>
@@ -2260,6 +2265,195 @@ George Washington University</p></li>
             Guide to JTAG</a> and the <a
             href="https://en.wikipedia.org/wiki/JTAG">JTAG Wikipedia
             Entry</a> is quite detailed.</p>
+            </section>
+            <section id="controller-area-network-can" class="level3"
+            data-number="2.3.5">
+            <h3 data-number="2.3.5"><span
+            class="header-section-number">2.3.5</span> Controller Area
+            Network (CAN)</h3>
+            <p>CAN is a vehicle bus standard to enable efficient
+            communication between electronic control units (ECUs). CAN
+            is,</p>
+            <ul>
+            <li>broadcast-based</li>
+            <li>message-oriented</li>
+            <li>uses arbitration → for data
+            integrity/prioritization</li>
+            </ul>
+            <p>CAN <strong>does not</strong> need a a host controller.
+            ECUs connected via the CAN bus can easily share information
+            with each other. all ECUs are connected on a two-wire bus
+            consisting of a twisted pair: CAN high and CAN low. The
+            wires are often color coded:</p>
+            <table>
+            <tbody>
+            <tr>
+            <td>CAN high</td>
+            <td>yellow</td>
+            </tr>
+            <tr>
+            <td>CAN low</td>
+            <td>green</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <table>
+            <colgroup>
+            <col style="width: 42%" />
+            <col style="width: 57%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/embedded_arch/comms/can-twisted-can-bus-wiring-harness-high-low-green-yellow.svg" width="200"></td>
+            <td><img src="img/embedded_arch/comms/CAN-bus_basic.svg" width="300"></td>
+            </tr>
+            <tr>
+            <td>CAN wiring</td>
+            <td>multi-ecu CAN setup</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>An ECU in a vehicle consists of:</p>
+            <table>
+            <colgroup>
+            <col style="width: 46%" />
+            <col style="width: 53%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td></td>
+            <td><img src="img/embedded_arch/comms/can_ecu_internals.svg" width="250"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><em>Any</em> ECU can broadcast on the CAN bus and the
+            messages are accepted by <em>all</em> ECUs connected to it.
+            Each ECU can either choose to ignore the message or act on
+            it.</p>
+            <blockquote>
+            <p>what are the implications for
+            <strong>security</strong>?</p>
+            </blockquote>
+            <p>While there is no “standard” CAN connector (each vehicle
+            may use different ones), the <strong>CAN Bus DB9</strong>
+            connector has becomem the de facto standard:</p>
+            <p><img src="img/embedded_arch/comms/can-bus-db9-connector-pinout-d-sub.svg" width="350"></p>
+            <p>The figure shows the various pins and their signals.</p>
+            <p><strong>CAN Communication Protocols</strong>: CAN is
+            split into:</p>
+            <table>
+            <colgroup>
+            <col style="width: 46%" />
+            <col style="width: 53%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>layer</th>
+            <th>relation to OSI stack</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td></td>
+            <td><img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="350"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>All communication over the CAN bus is done via the
+            <strong>CAN frames</strong>. The <em>standard</em> CAN frame
+            (with an <code>11-bit</code> identifier) is shown below:</p>
+            <p><img src="img/embedded_arch/comms/CAN-bus-frame-standard-message-SOF-ID-RTR-Control-Data-CRC-ACK-EOF.svg" width="400"></p>
+            <p><br></p>
+            <p>While the lower-level CAN protocols described so far work
+            on the two lowest layers of the OSI networking stack, it is
+            still limiting. For instance, the CAN standard doesn’t
+            discuss how to,</p>
+            <ul>
+            <li>decode RAW data</li>
+            <li>handle larger data (more than 8 bytes)</li>
+            </ul>
+            <p>Hence, some <strong>higher-order</strong> protocols have
+            been developed, <em>viz.,</em></p>
+            <table>
+            <colgroup>
+            <col style="width: 42%" />
+            <col style="width: 57%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>protocol</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><a
+            href="https://www.csselectronics.com/pages/obd2-explained-simple-intro">OBD2</a></td>
+            <td>on-board diagnostics in cars/trucks for diagnostics,
+            maintenance, emissions tests</td>
+            </tr>
+            <tr>
+            <td><a
+            href="https://www.csselectronics.com/pages/uds-protocol-tutorial-unified-diagnostic-services">UDS</a></td>
+            <td>Unified Diagnostic Services (UDS) used in automotive
+            ECUs for diagnostics, firmware updates, routine testing</td>
+            </tr>
+            <tr>
+            <td><a
+            href="https://www.csselectronics.com/pages/ccp-xcp-on-can-bus-calibration-protocol">CCP/XCP</a></td>
+            <td>used in embedded control/industrial automation for
+            <em>off-the-shelf interoperability</em> between CAN
+            devices</td>
+            </tr>
+            <tr>
+            <td><a
+            href="https://www.csselectronics.com/pages/j1939-explained-simple-intro-tutorial">SAE
+            J1939</a></td>
+            <td>for heavy-duty vehicles</td>
+            </tr>
+            <tr>
+            <td><a
+            href="https://www.csselectronics.com/pages/nmea-2000-n2k-intro-tutorial">NMEA
+            2000</a></td>
+            <td> used in maritime industry for connecting e.g. engines,
+            instruments, sensors on boats</td>
+            </tr>
+            <tr>
+            <td><a
+            href="https://www.csselectronics.com/pages/isobus-introduction-tutorial-iso-11783">ISOBUS</a></td>
+            <td>used in agriculture and forestry machinery to enable
+            plug and play integration between vehicles/implements,
+            <em>across brands</em></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>There also exist other higher-order protocols (numbering
+            in the thousands) the most prominent of which are: ARINC,
+            UAVCAN, DeviceNet, SafetyBUS p, MilCAN, HVAC CAN.</p>
+            <p><br></p>
+            <p>More details about CAN and its variants: <a
+            href="https://www.csselectronics.com/pages/can-bus-simple-intro-tutorial">CAN
+            Bus Explained</a>.</p>
             <p><br> <br> <br> <br></p>
             <p>Talk about: - Communication standards –&gt; Serial
             (<em>e.g.,</em> RS 232). Synchronous (I2C?), USB, Network

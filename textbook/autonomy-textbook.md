@@ -711,7 +711,7 @@ Hence a large number of communication standards and I/O interfaces have been dev
 2. [synchronous](#synchronous--i2c-and-spi) &rarr; I2C, SPI
 3. [general-purpose I/O](#general-purpose-io-gpio) &rarr; GPIO
 4. [debugging interface](#jtag-debugging-interface) &rarr; JTAG
-5. embedded internal communication &rarr; CAN
+5. [embedded internal communication](#controller-area-network-can) &rarr; CAN
 6. universal connectivity &rarr; USB
 7. signal processing &rarr; ADC/DAC
 8. network &rarr; ethernet/WiFi
@@ -1022,6 +1022,83 @@ To use the JTAG interface,
 For more information about JTAG, read: [Intel JTAG Overview](https://web.archive.org/web/20170830070123/http://www.intel.com/content/dam/www/public/us/en/documents/white-papers/jtag-101-ieee-1149x-paper.pdf), [Raspberry Pi JTAG programming](https://forums.raspberrypi.com/viewtopic.php?t=286115), [Technical Guide to JTAG](https://www.xjtag.com/about-jtag/jtag-a-technical-overview/) and the [JTAG Wikipedia Entry](https://en.wikipedia.org/wiki/JTAG) is quite detailed.
 
 
+### Controller Area Network (CAN)
+
+CAN is a vehicle bus standard to enable efficient communication between electronic control units (ECUs). CAN is,
+
+- broadcast-based
+- message-oriented
+- uses arbitration &rarr; for data integrity/prioritization
+
+CAN **does not** need a a host controller. ECUs connected via the CAN bus can easily share information with each other. all ECUs are connected on a two-wire bus consisting of a twisted pair: CAN high and CAN low. The wires are often color coded: 
+
+|||
+|-----|------|
+|CAN high| yellow| 
+|CAN low | green|
+||
+
+|||
+|------|--------|
+| <img src="img/embedded_arch/comms/can-twisted-can-bus-wiring-harness-high-low-green-yellow.svg" width="200"> | <img src="img/embedded_arch/comms/CAN-bus_basic.svg" width="300"> |
+|CAN wiring | multi-ecu CAN setup|
+||
+
+An ECU in a vehicle consists of:
+
+|||
+|-------|--------|
+| <ul> <li><b>microcontroller</b> to interpret/send out CAN messages</li> <li><b>CAN controller</b> ensures all communication adheres to CAN protocols</li> <li><b>CAN transciever</b> connects CAN controller to the physical wires</li> </ul>| <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="250">|
+||
+
+_Any_ ECU can broadcast on the CAN bus and the messages are accepted by _all_ ECUs connected to it. Each ECU can either choose to ignore the message or act on it.
+
+> what are the implications for **security**?
+
+While there is no "standard" CAN connector (each vehicle may use different ones), the **CAN Bus DB9** connector has becomem the de facto standard:
+
+<img src="img/embedded_arch/comms/can-bus-db9-connector-pinout-d-sub.svg" width="350">
+
+The figure shows the various pins and their signals.
+
+**CAN Communication Protocols**: CAN is split into:
+
+|layer|relation to OSI stack|
+|-------|--------|
+| <ul> <li><b>data link</b>: CAN frame formats, <br>error handling, data transmission, <br>data integrity </li> <li><b>physical</b>: cable types, <br>electrical signal levels, <br>node requirements, <br>cable impedance, etc.</li> | <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="350">|
+||
+
+All communication over the CAN bus is done via the **CAN frames**. The _standard_ CAN frame (with an `11-bit` identifier) is shown below:
+
+<img src="img/embedded_arch/comms/CAN-bus-frame-standard-message-SOF-ID-RTR-Control-Data-CRC-ACK-EOF.svg" width="400">
+
+<br>
+
+While the lower-level CAN protocols described so far work on the two lowest layers of the OSI networking stack, it is still limiting. For instance, the CAN standard doesn't discuss how to,
+
+- decode RAW data
+- handle larger data (more than 8 bytes)
+
+
+Hence, some **higher-order** protocols have been developed, _viz.,_
+
+|protocol|description|
+|--------|-----------|
+|[OBD2](https://www.csselectronics.com/pages/obd2-explained-simple-intro) | on-board diagnostics in cars/trucks for diagnostics, maintenance, emissions tests |
+|[UDS](https://www.csselectronics.com/pages/uds-protocol-tutorial-unified-diagnostic-services) | Unified Diagnostic Services (UDS) used in automotive ECUs for diagnostics, firmware updates, routine testing|
+|[CCP/XCP](https://www.csselectronics.com/pages/ccp-xcp-on-can-bus-calibration-protocol) | used in embedded control/industrial automation for _off-the-shelf interoperability_ between CAN devices|
+|[SAE J1939](https://www.csselectronics.com/pages/j1939-explained-simple-intro-tutorial) | for heavy-duty vehicles |
+|[NMEA 2000](https://www.csselectronics.com/pages/nmea-2000-n2k-intro-tutorial )| used in maritime industry for connecting e.g. engines, instruments, sensors on boats|
+|[ISOBUS](https://www.csselectronics.com/pages/isobus-introduction-tutorial-iso-11783)| used in agriculture and forestry machinery to enable plug and play integration between vehicles/implements, _across brands_|
+||
+
+There also exist other higher-order protocols (numbering in the thousands) the most prominent of which are: ARINC, UAVCAN, DeviceNet, SafetyBUS p, MilCAN, HVAC CAN. 
+
+<br>
+
+More details about CAN and its variants: [CAN Bus Explained](https://www.csselectronics.com/pages/can-bus-simple-intro-tutorial).
+
+
 <br>
 <br>
 <br>
@@ -1030,6 +1107,7 @@ For more information about JTAG, read: [Intel JTAG Overview](https://web.archive
 Talk about:
 - Communication standards --> Serial (_e.g.,_ RS 232). Synchronous (I2C?), USB, Network (Ethernet, WiFi), CAN, GPIO, ADC/DAC, JTAG
 - Drill into Raspberry Pi and Navio --> their architecture and communication interfaces
+
 
 
 ## References
