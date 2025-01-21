@@ -479,6 +479,114 @@ communication split into **frames**
 example:
 
 <img src="img/embedded_arch/comms/i2c_frames.png" width="1200">
+
+---
+
+## GPIO
+
+general-purpose I/O pins
+
+---
+
+## GPIO
+
+general-purpose I/O pins
+
+- **signal pins**
+
+---
+
+## GPIO
+
+general-purpose I/O pins
+
+- **signal pins**
+- digital I/O operations
+
+---
+
+## GPIO
+
+general-purpose I/O pins
+
+- **signal pins**
+- digital I/O operations
+- **no predefined purpose** &rarr; by design!
+- developers can **customize** them
+
+---
+
+## GPIO
+
+GPIO pins can,
+- be enabled or disabled
+- configured to be input or output
+- be used as "interrupt" lines
+
+Note: 
+- input values are readable, often with a 1 representing a high voltage, and a 0 representing a low voltage.
+- input GPIO pins can be used as "interrupt" lines, which allow a peripheral board connected via multiple pins to signal to the primary embedded board that it requires attention.
+- output pin values are both readable and writable
+
+---
+
+## GPIO | implementation
+
+multiple ways to implement GPIO:
+
+---
+
+## GPIO | implementation
+
+multiple ways to implement GPIO:
+
+- as a **primary** function of the microcontrollers
+
+---
+
+## GPIO | implementation
+
+multiple ways to implement GPIO:
+
+- as a **primary** function of the microcontrollers
+- as an **accessory** to the chip
+
+---
+
+### GPIO | programming
+
+---
+
+### GPIO | programming
+
+- pin states &rarr; exposed via different interfaces
+
+---
+
+### GPIO | programming
+
+- pin states &rarr; exposed via different interfaces, _e.g.,_
+    - **memory-mapped I/O** peripherals 
+    - dedicated I/O port instructions 
+
+---
+
+### GPIO | programming
+
+- pin states &rarr; exposed via different interfaces, _e.g.,_
+    - **memory-mapped I/O** peripherals 
+    - dedicated I/O port instructions 
+- input values can be used as interrupts (**IRQs**)
+
+---
+
+## GPIO | examples
+
+|Intel 8255|PIC microchip|ASUS Tinker|
+|------|-------|---------|
+|<img src="img/embedded_arch/comms/gpio_Ic-photo-Intel--D8255.JPG" width="350"> |<img src="img/embedded_arch/comms/gpio_microchip_PIC18F8720.jpg" width="200"> | <img src="img/embedded_arch/comms/gpio_Asus_Tinker_Board.jpg" width ="200"> |
+|24 GPIO pins |29 GPIO pins| 28 GPIO pins|
+||
                     </textarea>
                 </section>
             </div>
