@@ -658,7 +658,8 @@ ASICs are **custom-designed** for specific applications and provide high efficie
 
 |||
 |----|----|
-|<center><img src="./img/embedded_arch/asic.webp" width="200"><br>An FPGA</center> | <center><img src="./img/embedded_arch/xilinx_spartan_fpga.webp" width="200"><br>Xilinx Spartan FPGA</center> | 
+|<img src="./img/embedded_arch/asic.webp" width="200">| <img src="./img/embedded_arch/xilinx_spartan_fpga.webp" width="200">| 
+| An ASIC | Xilinx Spartan FPGA|
 ||
 
 #### ASICs
@@ -1176,6 +1177,9 @@ In particular, the Pi has,
 ||
 
 <br>
+
+Read more about the Raspberry Pi: [Raspberry PI -- A Look Under the Hood](https://www.electronics-lab.com/project/raspberry-pi-4-look-hood-make/)
+
 <br>
 
 The **Navio2** is a "hat" that adds the following to a Raspberry Pi:
