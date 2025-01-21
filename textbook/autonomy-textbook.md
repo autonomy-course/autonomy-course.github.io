@@ -1141,7 +1141,8 @@ Here are some of the well known communication protocols, also used in embedded s
 
 |protocol|links|
 |--------|------|
-|USB | How USB works: [art 1](https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1), [part2](https://www.circuitbread.com/tutorials/how-usb-works-communication-protocol-part-2), [part 3](https://www.circuitbread.com/tutorials/how-usb-works-enumeration-and-configuration-part-3); [USB in a Nutshell (very detailed)](https://www.beyondlogic.org/usbnutshell/usb1.shtml).|
+|USB | How USB works: [p:w
+art 1](https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1), [part2](https://www.circuitbread.com/tutorials/how-usb-works-communication-protocol-part-2), [part 3](https://www.circuitbread.com/tutorials/how-usb-works-enumeration-and-configuration-part-3); [USB in a Nutshell (very detailed)](https://www.beyondlogic.org/usbnutshell/usb1.shtml).|
 |Ethernet | [Reliable Embedded Ethernet](https://www.embedded.com/implement-reliable-embedded-ethernet-connectivity/), [Embedded Ethernet and Internet (book, online)](https://www.google.com/books/edition/_/3ZPPBgAAQBAJ?hl=en&gbpv=1&pg=PA1)|
 |WiFi | [WiFi Sensing on the Edge (paper)](https://ebulutvcu.github.io/COMST22_WiFi_Sensing_Survey.pdf) |
 |Bluetooth| [Bluetooth Basics](https://learn.sparkfun.com/tutorials/bluetooth-basics/all), [Bluetooth Low Energy](https://novelbits.io/bluetooth-low-energy-ble-complete-guide/) |
@@ -1149,15 +1150,61 @@ Here are some of the well known communication protocols, also used in embedded s
 ||
 
 
-<br>
-<br>
+## Raspberry Pi and Navio2
+
+Let us look at the two architectures we use extensively in this course: 
+
+- [Raspberry Pi](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/) model 4(b)
+- [Navio2](https://navio2.hipi.io) &rarr; autopilot hat for the Raspberry Pi
+
+
+The high-level architecture of the Pi shows many of the components we have discussed so far:
+
+<img src="img/embedded_arch/pi-4-architectural_features.png" width="400">
+
+In particular, the Pi has,
+
+|component | description/details|
+|----------|--------------------|
+|processor | Broadcomm **BCM2711**, Quad core Cortex-A72 (ARM v8) 64-bit SoC at 1.8GHz|
+|memory | 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM|
+|network | Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE|
+|I/O |   40 pin GPIO, USB 3.0/2.0/C|
+|storage | Micro-SD Card |
+|misc | micro-hdmi, stereo audio/video, displayport, camera port, power|
+|os | [Raspberry Pi OS](https://www.raspberrypi.com/software/) (formerly called Raspbian)|
+||
+
 <br>
 <br>
 
-Talk about:
-- Communication standards --> Serial (_e.g.,_ RS 232). Synchronous (I2C?), USB, Network (Ethernet, WiFi), CAN, GPIO, ADC/DAC, JTAG
-- Drill into Raspberry Pi and Navio --> their architecture and communication interfaces
+The **Navio2** is a "hat" that adds the following to a Raspberry Pi:
 
+- autopilot functionality
+- multiple sensors
+
+The high-level architecture,
+
+<img src="img/embedded_arch/navio2_features.jpg" width="400">
+
+As the figure shows, the Navio2 adds the following components:
+
+|component|description/details|
+|---------|-------------------|
+|GNSS receiver | for GPS signals|
+|high-precision barometer| for measuring pressure (and altitude)|
+|(dual) IMU | two 9 DOF with gyroscope, accelerometer, magnetometer, each|
+|RC I/O co-processor | PWM, ADC, SBUS, PPM |
+|extension ports | ADC, I2C, UART |
+|power supply | triple redundant |
+||
+
+<br>
+
+More details about the Navio2 and how to program it: [Navio2 Documentation](https://docs.emlid.com/navio2/).
+
+<br>
+<br>
 
 
 ## References

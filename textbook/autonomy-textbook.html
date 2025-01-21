@@ -268,8 +268,12 @@ George Washington University</p></li>
         class="toc-section-number">2.3.6</span> Other Broadly Used
         Protocols</a></li>
         </ul></li>
+        <li><a href="#raspberry-pi-and-navio2"
+        id="toc-raspberry-pi-and-navio2"><span
+        class="toc-section-number">2.4</span> Raspberry Pi and
+        Navio2</a></li>
         <li><a href="#references" id="toc-references"><span
-        class="toc-section-number">2.4</span> References</a></li>
+        class="toc-section-number">2.5</span> References</a></li>
         </ul></li>
         </ul>
 
@@ -2521,15 +2525,19 @@ George Washington University</p></li>
             <tbody>
             <tr>
             <td>USB</td>
-            <td>How USB works: <a
-            href="https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1">art
-            1</a>, <a
+            <td>How USB works: [p:w</td>
+            </tr>
+            <tr>
+            <td>art
+            1](https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1),
+            <a
             href="https://www.circuitbread.com/tutorials/how-usb-works-communication-protocol-part-2">part2</a>,
             <a
             href="https://www.circuitbread.com/tutorials/how-usb-works-enumeration-and-configuration-part-3">part
             3</a>; <a
             href="https://www.beyondlogic.org/usbnutshell/usb1.shtml">USB
             in a Nutshell (very detailed)</a>.</td>
+            <td></td>
             </tr>
             <tr>
             <td>Ethernet</td>
@@ -2565,17 +2573,139 @@ George Washington University</p></li>
             </tr>
             </tbody>
             </table>
-            <p><br> <br> <br> <br></p>
-            <p>Talk about: - Communication standards –&gt; Serial
-            (<em>e.g.,</em> RS 232). Synchronous (I2C?), USB, Network
-            (Ethernet, WiFi), CAN, GPIO, ADC/DAC, JTAG - Drill into
-            Raspberry Pi and Navio –&gt; their architecture and
-            communication interfaces</p>
             </section>
             </section>
-            <section id="references" class="level2" data-number="2.4">
+            <section id="raspberry-pi-and-navio2" class="level2"
+            data-number="2.4">
             <h2 data-number="2.4"><span
-            class="header-section-number">2.4</span> References</h2>
+            class="header-section-number">2.4</span> Raspberry Pi and
+            Navio2</h2>
+            <p>Let us look at the two architectures we use extensively
+            in this course:</p>
+            <ul>
+            <li><a
+            href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/">Raspberry
+            Pi</a> model 4(b)</li>
+            <li><a href="https://navio2.hipi.io">Navio2</a> → autopilot
+            hat for the Raspberry Pi</li>
+            </ul>
+            <p>The high-level architecture of the Pi shows many of the
+            components we have discussed so far:</p>
+            <p><img src="img/embedded_arch/pi-4-architectural_features.png" width="400"></p>
+            <p>In particular, the Pi has,</p>
+            <table>
+            <colgroup>
+            <col style="width: 33%" />
+            <col style="width: 66%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>component</th>
+            <th>description/details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>processor</td>
+            <td>Broadcomm <strong>BCM2711</strong>, Quad core Cortex-A72
+            (ARM v8) 64-bit SoC at 1.8GHz</td>
+            </tr>
+            <tr>
+            <td>memory</td>
+            <td>1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM</td>
+            </tr>
+            <tr>
+            <td>network</td>
+            <td>Wifi (2.4/5.0 GHz), Gigabit ethernet, Bluetooth/BLE</td>
+            </tr>
+            <tr>
+            <td>I/O</td>
+            <td>40 pin GPIO, USB 3.0/2.0/C</td>
+            </tr>
+            <tr>
+            <td>storage</td>
+            <td>Micro-SD Card</td>
+            </tr>
+            <tr>
+            <td>misc</td>
+            <td>micro-hdmi, stereo audio/video, displayport, camera
+            port, power</td>
+            </tr>
+            <tr>
+            <td>os</td>
+            <td><a
+            href="https://www.raspberrypi.com/software/">Raspberry Pi
+            OS</a> (formerly called Raspbian)</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br> <br></p>
+            <p>The <strong>Navio2</strong> is a “hat” that adds the
+            following to a Raspberry Pi:</p>
+            <ul>
+            <li>autopilot functionality</li>
+            <li>multiple sensors</li>
+            </ul>
+            <p>The high-level architecture,</p>
+            <p><img src="img/embedded_arch/navio2_features.jpg" width="400"></p>
+            <p>As the figure shows, the Navio2 adds the following
+            components:</p>
+            <table>
+            <colgroup>
+            <col style="width: 32%" />
+            <col style="width: 67%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>component</th>
+            <th>description/details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>GNSS receiver</td>
+            <td>for GPS signals</td>
+            </tr>
+            <tr>
+            <td>high-precision barometer</td>
+            <td>for measuring pressure (and altitude)</td>
+            </tr>
+            <tr>
+            <td>(dual) IMU</td>
+            <td>two 9 DOF with gyroscope, accelerometer, magnetometer,
+            each</td>
+            </tr>
+            <tr>
+            <td>RC I/O co-processor</td>
+            <td>PWM, ADC, SBUS, PPM</td>
+            </tr>
+            <tr>
+            <td>extension ports</td>
+            <td>ADC, I2C, UART</td>
+            </tr>
+            <tr>
+            <td>power supply</td>
+            <td>triple redundant</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>More details about the Navio2 and how to program it: <a
+            href="https://docs.emlid.com/navio2/">Navio2
+            Documentation</a>.</p>
+            <p><br> <br></p>
+            </section>
+            <section id="references" class="level2" data-number="2.5">
+            <h2 data-number="2.5"><span
+            class="header-section-number">2.5</span> References</h2>
             </section>
             </section>
             <section id="footnotes"
