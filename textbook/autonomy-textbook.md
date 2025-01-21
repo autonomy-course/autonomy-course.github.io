@@ -794,7 +794,7 @@ I2C components are found in a wide variety of products, _e.g.,_
 - reading hardware monitors and sensors
 - controlling actuators 
 - DAC/ADC
-- controlling LCD/OLDEs displays 
+- controlling LCD/OLEDs displays 
 - changing computer display settings (contrast, brightness, etc.)
 - controlling speaker volume
 - and many many more
@@ -1070,7 +1070,7 @@ _Any_ ECU can broadcast on the CAN bus and the messages are accepted by _all_ EC
 
 > what are the implications for **security**?
 
-While there is no "standard" CAN connector (each vehicle may use different ones), the **CAN Bus DB9** connector has becomem the de facto standard:
+While there is no "standard" CAN connector (each vehicle may use different ones), the **CAN Bus DB9** connector has become the de facto standard:
 
 <img src="img/embedded_arch/comms/can-bus-db9-connector-pinout-d-sub.svg" width="350">
 
@@ -1142,8 +1142,7 @@ Here are some of the well known communication protocols, also used in embedded s
 
 |protocol|links|
 |--------|------|
-|USB | How USB works: [p:w
-art 1](https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1), [part2](https://www.circuitbread.com/tutorials/how-usb-works-communication-protocol-part-2), [part 3](https://www.circuitbread.com/tutorials/how-usb-works-enumeration-and-configuration-part-3); [USB in a Nutshell (very detailed)](https://www.beyondlogic.org/usbnutshell/usb1.shtml).|
+|USB | How USB works: [part 1](https://www.circuitbread.com/tutorials/how-usb-works-introduction-part-1), [part2](https://www.circuitbread.com/tutorials/how-usb-works-communication-protocol-part-2), [part 3](https://www.circuitbread.com/tutorials/how-usb-works-enumeration-and-configuration-part-3); [USB in a Nutshell (very detailed)](https://www.beyondlogic.org/usbnutshell/usb1.shtml).|
 |Ethernet | [Reliable Embedded Ethernet](https://www.embedded.com/implement-reliable-embedded-ethernet-connectivity/), [Embedded Ethernet and Internet (book, online)](https://www.google.com/books/edition/_/3ZPPBgAAQBAJ?hl=en&gbpv=1&pg=PA1)|
 |WiFi | [WiFi Sensing on the Edge (paper)](https://ebulutvcu.github.io/COMST22_WiFi_Sensing_Survey.pdf) |
 |Bluetooth| [Bluetooth Basics](https://learn.sparkfun.com/tutorials/bluetooth-basics/all), [Bluetooth Low Energy](https://novelbits.io/bluetooth-low-energy-ble-complete-guide/) |
