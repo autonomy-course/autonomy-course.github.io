@@ -40,7 +40,7 @@
                 
                 >
                     <textarea data-template>
-                        ## **Lab 2** | Raspberry Pi + Navio2 Sensors
+                        ## **Lab 2** | Working with Sensors on Raspberry Pi
 
 ### Design of Autonomous Systems  
 ### CSCI 6907/4907 - Section 86  
@@ -48,118 +48,148 @@
 
 ---
 
-## Objectives
+## Objectives  
 
-- Interact with onboard sensors using the Navio2 shield.  
-- Learn basic Linux shell commands to navigate and interact with Raspberry Pi.  
 - Understand how sensors communicate with Raspberry Pi.  
-- Integrate and use an external ultrasonic sensor to measure distance.  
+- Work with onboard Navio2 sensors.  
+- Integrate and test an external ultrasonic sensor.  
 
 ---
 
-## Equipment Required
-
+## Equipment Required  
 - Raspberry Pi 4B (or similar)  
-- Navio2 Shield  
+- Navio2 Shield (with header pins, spacers, and screws)  
 - MicroSD Card (32GB or larger)  
-- USB to UART Cable
+- USB to UART Cable  
 - Power Supply (USB-C)  
 - HC-SR04 Ultrasonic Sensor  
 - Jumper Wires  
-- A Computer  
-- Wi-Fi Network (GW network)  
 
 ---
 
-## Raspberry Pi GPIO Overview
+## Basic Linux Shell Commands  
 
-<img src="../img/hw/pi_gpio.png" height="300">
+### General Commands  
+- `ls`, `cd`, `pwd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `nano`  
 
-- **40 GPIO Pins:**  
-  - **Power Pins (5V, 3.3V):** Power external devices.  
-  - **Ground Pins (GND):** Reference voltage.  
-  - **Data Pins:** Used for I2C, SPI, UART, and digital input/output.  
+### Raspberry Pi-Specific  
+- `raspi-config`: Configure SSH, Wi-Fi, etc.  
 
-- **Interfaces:**  
-  - **I2C:** For communication with Navio2 sensors.  
-  - **SPI:** For high-speed devices.  
-  - **UART:** For serial communication.  
+### Navio2-Specific  
+- `emlidtool`: Check the status of Navio2 sensors.  
 
 ---
 
-## Navio2 Sensors Overview
+## How Devices Communicate  
 
-<img src="../img/hw/navio2.png" height="300">
+### GPIO Overview  
+- General-purpose input/output pins for connecting devices.  
+- Protocols:  
+  - **I2C**: Used for Navio2 sensors.  
+  - **SPI, UART**: For high-speed or serial communication.  
 
-### Key Sensors:
-- **IMU (Accelerometer, Gyroscope, Magnetometer):** Motion and orientation tracking.  
-- **Barometer:** Measures altitude.  
-- **GPS:** Provides geolocation data.  
-- **PWM Outputs:** Drives motors and servos.  
-
----
-
-## Understanding Communication Protocols
-
-- **GPIO:** Connects external devices to Raspberry Pi.  
-- **I2C:** Communicates with onboard sensors like IMU.  
-- **SPI/UART:** Used for high-speed or serial communication.  
-- **Linux Device Files:** Sensors are accessed as `/dev` files in Linux.  
-
-Example:  
-- Accelerometer → `/dev/i2c-1`  
-- Ultrasonic Sensor → GPIO pins `/dev/gpioXX`
+### Devices in Linux  
+- Devices represented as files (e.g., `/dev/gpio`).  
+- Interact via libraries or directly through shell commands.  
 
 ---
 
-## Setup Steps
+## Navio2 Sensors Overview  
 
-### 1. Verify Raspberry Pi + Navio2 Setup  
-- Assemble Navio2 shield on Raspberry Pi.  
-- Secure using spacers and screws.  
-- Run `sudo emlidtool` to verify Navio2 functionality.  
-
--v-
-
-### 2. Read Onboard Sensor Data  
-- Use libraries to interact with sensors (e.g., IMU).  
-- Commands:
-  - **Check sensors:** `sudo emlidtool`  
-  - **Access data files:** `/dev/i2c-1`  
-
--v-
-
-### 3. Integrate External Ultrasonic Sensor  
-- **Connections:**  
-  - `VCC` → `5V`  
-  - `GND` → `GND`  
-  - `TRIG` → GPIO18  
-  - `ECHO` → GPIO24  
+### Key Features  
+- **Accelerometer**: Measures acceleration.  
+- **Gyroscope**: Tracks rotation/tilt.  
+- **Magnetometer**: Compass for magnetic north.  
+- **Barometer**: Measures altitude.  
+- **GPS**: Tracks location.  
+- **PWM Outputs**: Drives motors and servos.  
 
 ---
 
-## Testing Sensor Communication
+## Onboard Sensor Testing  
 
-### Onboard Sensors
-- **Data Verification**: Confirm data output from the accelerometer, gyroscope, and GPS.
-- **Command for Testing**:  
-  ```bash
-  sudo emlidtool
-  ```
-
----
-
-### External Ultrasonic Sensor
-- **Measurement**: Use a Python script to measure distances.
-- **Validation**: Ensure real-time output values align with expected distances.
+1. Assemble Navio2 shield on Raspberry Pi.  
+2. Verify functionality using:  
+   ```bash
+   sudo emlidtool
+   ```  
 
 ---
 
-### Summary
-- Explored and tested **Navio2 onboard sensors** (e.g., IMU, GPS).
-- Configured and validated **Raspberry Pi GPIO communication**.
-- Integrated and utilized an **external ultrasonic sensor** for distance measurement.
-- Successfully verified **real-time data collection** from both onboard and external sensors.
+## Explanation of Accelerometer Code  
+
+- **Library Imports**:  
+  - `navio2.mpu9250`: Interacts with the accelerometer.  
+  - `time`: Adds delays for consistent data collection.  
+
+- **Initialization**:  
+  - `imu = navio2.mpu9250.MPU9250()`: Creates a sensor instance.  
+  - `imu.initialize()`: Prepares the sensor for data collection.  
+
+- **Data Collection**:  
+  - `imu.getMotion9()`: Reads acceleration in X, Y, and Z axes.  
+
+- **Output**:  
+  - Prints acceleration values in a readable format.  
+  - Adds a 1-second delay for clarity between readings.  
+
+---
+
+## Using an External Ultrasonic Sensor  
+
+### Connections  
+- `VCC` → `5V`  
+- `GND` → `GND`  
+- `TRIG` → GPIO18  
+- `ECHO` → GPIO24  
+
+### Validation  
+- Measure distances using Python scripts.  
+- Real-time output to verify accuracy.  
+
+---
+
+## Explanation of Ultrasonic Sensor Code  
+
+- **Pin Setup**:  
+  - `TRIG` → GPIO18: Trigger pin to send sound waves.  
+  - `ECHO` → GPIO24: Receives the reflected echo.  
+
+- **Working Principle**:  
+  - **Trigger Pulse**: Sends a short ultrasonic pulse (10 μs).  
+  - **Echo Measurement**: Measures the time taken for the echo to return.  
+
+- **Distance Calculation**:  
+  - Time (duration) × Speed of Sound (343 m/s) ÷ 2.  
+  - Divided by 2 because the wave travels to the object and back.  
+
+- **Real-Time Output**:  
+  - Continuously measures and prints distance in centimeters.  
+
+---
+
+## Assignment Question: Understanding Ultrasonic Sensors
+
+Write a detailed paragraph explaining how an ultrasonic sensor works. Your explanation should include:  
+
+- The basic principle behind ultrasonic sensing.  
+- The role of the **trigger** and **echo** pins.  
+- How distance is calculated using the time taken for sound waves to travel.  
+- Any real-world applications where ultrasonic sensors are commonly used.  
+
+## Submission Guidelines:  
+
+- Write your response in your own words.  
+- Submit as a typed document (**markdown**) by **12 PM tomorrow**.  
+- Ensure clarity and conciseness (**150-200 words**).  
+
+---
+
+## Summary  
+
+- Configured and tested **Navio2 onboard sensors**.  
+- Integrated an **external ultrasonic sensor**.  
+- Verified real-time data collection from all sensors.
                     </textarea>
                 </section>
             </div>

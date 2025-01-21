@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        title: "Embedded Communications"
+textbook: "#communication-and-io"
+---
+
+
+# embedded communications
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+embedded systems need to,
+
+- **communicate** 
+- **interface** 
+
+with various elements
+
+---
+
+## communications and I/O
+
+
+---
+
+## communications and I/O
+
+- the **physical** world &rarr; sensors and actuators
+
+---
+
+## communications and I/O
+
+- the **physical** world &rarr; sensors and actuators
+- **computers** for programming 
+    - of the embedded system or 
+    - for data transfer
+
+---
+
+## communications and I/O
+
+- the **physical** world &rarr; sensors and actuators
+- **computers** 
+    - programming embedded system 
+    - for data transfer
+- with **other** embedded systems/nodes
+
+---
+
+## communications and I/O
+
+- the **physical** world &rarr; sensors and actuators
+- **computers** 
+    - programming embedded system 
+    - for data transfer
+- with **other** embedded systems/nodes
+- **handheld** devices
+
+---
+
+## communications and I/O
+
+- the **physical** world &rarr; sensors and actuators
+- **computers** 
+    - programming embedded system 
+    - for data transfer
+- with **other** embedded systems/nodes
+- **handheld** devices
+- with the **internet** 
+    - either public or
+    - access back end servers
+
+---
+
+## communications and I/O
+
+- the **physical** world &rarr; sensors and actuators
+- **computers** 
+    - programming embedded system 
+    - for data transfer
+- with **other** embedded systems/nodes
+- **handheld** devices
+- with the **internet** 
+    - either public or
+    - access back end servers
+- **satellites**?
+
+---
+
+large number of communication standards and I/O interfaces!
+
+---
+
+## communication standards & I/O interfaces
+
+1. serial (UART) &rarr; e.g., RS 232
+---
+
+## communication standards & I/O interfaces
+
+1. serial (UART) &rarr; e.g., RS 232
+2. synchronous &rarr; I2C, SPI
+
+---
+
+## communication standards & I/O interfaces
+
+1. serial (UART) &rarr; e.g., RS 232
+2. synchronous &rarr; I2C, SPI
+3. general-purpose I/O &rarr; GPIO
+
+---
+
+## communication standards & I/O interfaces
+
+1. serial (UART) &rarr; e.g., RS 232
+2. synchronous &rarr; I2C, SPI
+3. general-purpose I/O &rarr; GPIO
+4. debugging interface &rarr; JTAG
+
+---
+
+## communication standards & I/O interfaces
+
+1. serial (UART) &rarr; e.g., RS 232
+2. synchronous &rarr; I2C, SPI
+3. general-purpose I/O &rarr; GPIO
+4. debugging interface &rarr; JTAG
+5. internal communication &rarr; CAN
+
+---
+
+## communication standards & I/O interfaces
+
+1. [serial (UART)](#uart--rs-232) &rarr; e.g., RS 232
+2. synchronous &rarr; I2C, SPI
+3. general-purpose I/O &rarr; GPIO
+4. debugging interface &rarr; JTAG
+5. internal communication &rarr; CAN
+6. others &rarr; USB, Ethernet/WiFi, Radio, Bluetooth
+
+---
+
+### uart | rs-232
+
+**serial** communication
+
+---
+
+### uart | rs-232
+
+**serial** communication
+
+- simplicity
+- low hardware 
+
+---
+
+### uart | rs-232
+
+**serial** communication
+
+- simplicity
+- low hardware 
+
+common &rarr; _asynchronous serial communication systems_
+
+---
+
+### asynchronous serial communication
+
+- communication endpoints &rarr; **not** sync'ed by common clock
+- data stream &rarr; synchronization information (start/stop signals)
+
+---
+
+### asynchronous serial communication
+
+consider the following example:
+
+<img src="img/embedded_arch/comms/Puerto_serie_Rs232.png" width="800">
+
+---
+
+### asynchronous serial communication
+
+consider the following example:
+
+<img src="img/embedded_arch/comms/Puerto_serie_Rs232.png" width="800">
+
+each byte has,
+- `start` bit
+- `stop` bit
+- eight `data` bits
+- last bit &rarr; `parity` bit
+
+---
+
+### uart 
+
+**universal asynchronous receiver-transmitter** (**UART**)
+
+---
+
+### uart 
+
+**universal asynchronous receiver-transmitter** (**UART**)
+
+- peripheral device for asynchronous communication
+
+---
+
+### uart 
+
+**universal asynchronous receiver-transmitter** (**UART**)
+
+- peripheral device for asynchronous communication
+- data format and transmission speeds &rarr; configurable
+
+---
+
+### uart 
+
+**universal asynchronous receiver-transmitter** (**UART**)
+
+- peripheral device for asynchronous communication
+- data format and transmission speeds &rarr; configurable
+- can also use different (electric) **signalling levels**
+    - e.g., RS-232, RS-485, raw TTL
+
+---
+
+## rs-232 
+
+most widely used UART signalling standard
+
+
+---
+
+## rs-232 
+
+a _complete_ standard in that it specifies,
+
+- (common) voltage and signal levels
+- (common) pin and wiring configurations
+- (minimal) control information between host/peripherals 
+
+---
+
+_electrical_ characteristics:
+
+<img src="img/embedded_arch/comms/rs232-electrical.gif" width="700">
+
+
+---
+
+_electrical_ characteristics:
+
+<img src="img/embedded_arch/comms/rs232-electrical.gif" width="700">
+
+- **high** level [**logical `0`**] ("marking") &rarr; `+5V` to `+15V`
+- **low** level [**logical `1`**] ("spacing") &rarr; `-5V` to `-15V` 
+
+---
+
+_electrical_ characteristics:
+
+<img src="img/embedded_arch/comms/rs232-electrical.gif" width="700">
+
+- **high** level [**logical `0`**] ("marking") &rarr; `+5V` to `+15V` (`+3V` to `+15V`)
+- **low** level [**logical `1`**] ("spacing") &rarr; `-5V` to `-15V` (`-3V` to `-15V`)
+
+---
+
+_mechanical_ interfaces, i.e., the _pin connector_:
+
+<img src="img/embedded_arch/comms/rs232_pins.gif" width="800">
+
+---
+
+## synchronous
+
+communication between &rarr; **master** (or **main**) and a **slave** (or **sub**)
+
+---
+
+## synchronous | I<sup>2</sup>C
+
+Inter-Integrated Circuit (I<sup>2</sup>C/I2C/IIC)
+
+---
+
+## synchronous | I<sup>2</sup>C
+
+Inter-Integrated Circuit (I<sup>2</sup>C/I2C/IIC)
+
+- synchronous
+- multi-controller/multi-target
+- single-ended
+- serial communication bus
+
+---
+
+## I<sup>2</sup>C
+
+- connecting low-power integrated circuits &rarr; microcontrollers
+- for short distances or _intra-board communication_
+
+---
+
+## I<sup>2</sup>C
+
+- connecting low-power integrated circuits &rarr; microcontrollers
+- for short distances or _intra-board communication_
+- can control a **network** of chips &rarr; only **two** pins
+    - serial data line
+    - serial clock line
+
+---
+
+## I<sup>2</sup>C
+
+- connecting low-power integrated circuits &rarr; microcontrollers
+- for short distances or _intra-board communication_
+- can control a **network** of chips &rarr; only **two** pins
+    - serial data line
+    - serial clock line
+- **unique** I2C address &rarr; serial data line
+
+---
+
+## I<sup>2</sup>C | signals
+
+---
+
+## I<sup>2</sup>C | signals
+
+|line|voltage| description|
+|------|-------|-------|
+| serial data line (SDL) | `+5V` | transmit data to or from target devices |
+
+---
+
+## I<sup>2</sup>C | signals
+
+|line|voltage| description|
+|------|-------|-------|
+| serial data line (SDL) | `+5V` | transmit data to or from target devices |
+| serial clock line (SCL) | `+3V` | synchronously clock data in or out <br> of the target device |
+||
+
+---
+
+## I<sup>2</sup>C | signals
+
+<img src="img/embedded_arch/comms/i2c_implementation.png" width="900">
+
+---
+
+## I<sup>2</sup>C | communication details
+
+| condition | description |
+|-----------------|-------|
+| I2C `START`| controller first pulls SDA low, then pulls SCL low |
+| I2C `STOP` | SCL releases high, then SDA releases high |
+||
+
+
+---
+
+## I<sup>2</sup>C | communication details
+
+| condition | description |
+|-----------------|-------|
+| I2C `START`| controller first pulls SDA low, then pulls SCL low |
+| I2C `STOP` | SCL releases high, then SDA releases high |
+||
+
+<img src="img/embedded_arch/comms/i2c_start_stop.png" width="700">
+
+---
+
+## I<sup>2</sup>C | frames
+
+communication split into **frames**
+
+---
+
+## I<sup>2</sup>C | frames
+
+communication split into **frames**
+- first &rarr; `START`
+
+---
+
+## I<sup>2</sup>C | frames
+
+communication split into **frames**
+- first &rarr; `START`
+- communciation start &rarr; controller sends `ADDRESS_FRAME`
+
+---
+
+## I<sup>2</sup>C | frames
+
+communication split into **frames**
+- first &rarr; `START`
+- communciation start &rarr; controller sends `ADDRESS_FRAME`
+- followed by &rarr; one/more `DATA_FRAME`s
+
+---
+
+## I<sup>2</sup>C | frames
+
+communication split into **frames**
+- first &rarr; `START`
+- communciation start &rarr; controller sends `ADDRESS_FRAME`
+- followed by &rarr; one/more `DATA_FRAME`s
+- each frame gets &rarr; `ack` bit
+
+---
+
+## I<sup>2</sup>C | frames
+
+communication split into **frames**
+- first &rarr; `START`
+- communciation start &rarr; controller sends `ADDRESS_FRAME`
+- followed by &rarr; one/more `DATA_FRAME`s
+- each frame gets &rarr; `ack` bit
+
+<br>
+<br>
+
+example:
+
+<img src="img/embedded_arch/comms/i2c_frames.png" width="1200">
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal-js/dist/reveal.js"></script>
+        <script src="assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
