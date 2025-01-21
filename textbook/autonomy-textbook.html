@@ -46,7 +46,7 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-20" />
+  <meta name="date" content="2025-01-21" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 20,
+                              <li><p class="navbar-text">January 21,
 2025</p></li>
                   </ul>
       </div>
@@ -255,6 +255,10 @@ George Washington University</p></li>
         id="toc-general-purpose-io-gpio"><span
         class="toc-section-number">2.3.3</span> General-Purpose I/O
         (GPIO)</a></li>
+        <li><a href="#jtag-debugging-interface"
+        id="toc-jtag-debugging-interface"><span
+        class="toc-section-number">2.3.4</span> JTAG Debugging
+        Interface</a></li>
         </ul></li>
         <li><a href="#references" id="toc-references"><span
         class="toc-section-number">2.4</span> References</a></li>
@@ -1616,7 +1620,8 @@ George Washington University</p></li>
             I2C, SPI</li>
             <li><a href="#general-purpose-io-gpio">general-purpose
             I/O</a> → GPIO</li>
-            <li>debugging interface → JTAG</li>
+            <li><a href="#jtag-debugging-interface">debugging
+            interface</a> → JTAG</li>
             <li>embedded internal communication → CAN</li>
             <li>universal connectivity → USB</li>
             <li>signal processing → ADC/DAC</li>
@@ -2116,16 +2121,151 @@ George Washington University</p></li>
             purpose I/O</a>, <a
             href="https://projects.raspberrypi.org/en/projects/physical-computing/1">GPIO
             setup in Raspberry Pi</a>.</p>
+            </section>
+            <section id="jtag-debugging-interface" class="level3"
+            data-number="2.3.4">
+            <h3 data-number="2.3.4"><span
+            class="header-section-number">2.3.4</span> JTAG Debugging
+            Interface</h3>
+            <p>The JTAG standard (named after the “Joint Test Action
+            Group”), technically the <a
+            href="https://web.archive.org/web/20170830070123/http://www.intel.com/content/dam/www/public/us/en/documents/white-papers/jtag-101-ieee-1149x-paper.pdf">IEEE
+            Std 1149.1-1990 IEEE Standard Test Access Port and
+            Boundary-Scan Architecture</a>, is an industry standard for
+            <strong>testing and verification of printed circuit
+            boards</strong>, <em>after manufacture</em>.</p>
+            <p>“JTAG”, depending on the context, could stand for one or
+            more of the following:</p>
+            <ul>
+            <li>implementation of IEEE 1149.x for Board Test, or
+            Boundary Scan testing</li>
+            <li>appliance used to program on board flash or eeprom
+            devices on a circuit board</li>
+            <li>hardware device used to debug microprocessor
+            software</li>
+            <li>hardware device used to test a board using Boundary
+            Scan</li>
+            </ul>
+            <p>The basic building block of a JTAG OCD is the
+            <strong>Test Access Point</strong> or <strong>TAP
+            controller</strong>. This allows access to all the custom
+            features within a specific processor, and must support a
+            minimum set of commands. On-chip debugging is a
+            <em>combination of hardware and software</em>.</p>
+            <table>
+            <thead>
+            <tr>
+            <th>type</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>hardaware</td>
+            <td><strong>on chip debug</strong> (OCD)</td>
+            </tr>
+            <tr>
+            <td>software</td>
+            <td><strong>in-circuit-emulator</strong> (ICE)/JTAG
+            emulator</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>The off-chip parts are actually PC peripherals that need
+            corresponding drivers running on a separate computer. On
+            most systems, JTAG-based debugging is available from the
+            very first instruction after CPU reset, letting it assist
+            with development of early boot software which runs before
+            anything is set up. The JTAG emulator allows developers to
+            access the embedded system at the <strong>machine code
+            level</strong> if needed! Many silicon architectures (Intel,
+            ARM, PowerPC, etc.) have built entire infrastructures and
+            extensions around JTAG.</p>
+            <p>A high-level overview of the JTAG architecture/use:</p>
+            <p><img src="img/embedded_arch/comms/jtag_high_level.png" width="400"></p>
+            <p><br></p>
+            <p>JTAG now allows for,</p>
+            <ul>
+            <li>processors can not be <em>halted</em>,
+            <em>single-stepped</em> or <em>run freely</em></li>
+            <li>can set code <em>breakpoints</em> for both, code in RAM
+            as well as ROM/flash</li>
+            <li><em>data breakpoints</em> are available</li>
+            <li><em>bulk data download</em> to RAM</li>
+            <li><em>access to registers and buses</em>, even without
+            halting the processors!</li>
+            <li><em>complex logic routines</em>, <em>e.g.,</em> ignore
+            the first seven accesses to a register from one particular
+            subroutine</li>
+            </ul>
+            <p>JTAG allows for <em>device programmer hardware</em>
+            allows for transfering data into internal,
+            <em>non-volatile</em> memory of the system! Hence, we can
+            use JTAGs to <strong>program</strong> devices such as FPGAs.
+            In fact, many memory chips also have JTAG interfaces. Some
+            modern chips also allow access to the the (internal and
+            external) data buses via JTAG.</p>
+            <p><strong>JTAG interface</strong>: depending on the actual
+            interface, JTAG has 2/4/5 pins. The 4/5 pin versions are
+            designed so that <em>multiple chips</em> on a board can have
+            their JTAG lines <strong>daisy-chained</strong> together if
+            specific conditions are met.</p>
+            <p>Schematic Diagram of a JTAG enabled device:</p>
+            <p><img src="img/embedded_arch/comms/jtag_schematic_diagram.gif" width="300"></p>
+            <p>The various pins signals in the JTAG TAP are: | signal |
+            description | |——–|————-| | <code>TCK</code> | synchronizes
+            the internal state machine operations | | <code>TMS</code> |
+            sampled at the rising edge of <code>TCK</code> to determine
+            the next state | | <code>TDI</code> | data shifted into the
+            device’s test or programming logic; sampled at the rising
+            edge of <code>TCK</code> when the internal state machine is
+            in the correct state | | <code>TDO</code> | represents the
+            data shifted out of the device’s test or programming logic
+            and is valid on the falling edge of <code>TCK</code> when
+            the internal state machine is in the correct state | |
+            <code>TRST</code> | optional pin which, when available, can
+            reset the tap controller’s state machine | ||</p>
+            <p>The TAP controller implements the following state
+            machine:</p>
+            <p><img src="img/embedded_arch/comms/jtag_tap_state_machine.gif" width="300"></p>
+            <p><br></p>
+            <p>To use the JTAG interface,</p>
+            <ul>
+            <li>host is connected to the target’s JTAG signals
+            (<code>TMS</code>, <code>TCK</code>, <code>TDI</code>,
+            <code>TDO</code>, etc.) through some kind of JTAG
+            adapter</li>
+            <li>adapter connects to the host using some interface such
+            as USB, PCI, Ethernet, etc.</li>
+            <li>host communicates with the TAPs by manipulating
+            <code>TMS</code> and <code>TDI</code> in conjunction with
+            <code>TCK</code></li>
+            <li>host reads results through <code>TDO</code> (which is
+            the only standard host-side input)</li>
+            <li><code>TMS</code>/<code>TDI</code>/<code>TCK</code>
+            output transitions create the basic JTAG communication
+            primitive on which higher layer protocols build</li>
+            </ul>
+            <p><br></p>
+            <p>For more information about JTAG, read: <a
+            href="https://web.archive.org/web/20170830070123/http://www.intel.com/content/dam/www/public/us/en/documents/white-papers/jtag-101-ieee-1149x-paper.pdf">Intel
+            JTAG Overview</a>, <a
+            href="https://forums.raspberrypi.com/viewtopic.php?t=286115">Raspberry
+            Pi JTAG programming</a>, <a
+            href="https://www.xjtag.com/about-jtag/jtag-a-technical-overview/">Technical
+            Guide to JTAG</a> and the <a
+            href="https://en.wikipedia.org/wiki/JTAG">JTAG Wikipedia
+            Entry</a> is quite detailed.</p>
             <p><br> <br> <br> <br></p>
-            <p>Talk about: - wcet (and why it matters) –&gt; simpler
-            processors, older ones - types of embedded processors –&gt;
-            microcontrollers, microprocessors, dsp, SoCs (include
-            Broadcom chip on Pi), ARM, NVidia Jetson, ASIC, FPGA -
-            Should we talk about pipelines and memory (?) -
-            Communication standards –&gt; Serial (<em>e.g.,</em> RS
-            232). Synchronous (I2C?), USB, Network (Ethernet, WiFi),
-            CAN, GPIO, ADC/DAC, JTAG - Drill into Raspberry Pi and Navio
-            –&gt; their architecture and communication interfaces</p>
+            <p>Talk about: - Communication standards –&gt; Serial
+            (<em>e.g.,</em> RS 232). Synchronous (I2C?), USB, Network
+            (Ethernet, WiFi), CAN, GPIO, ADC/DAC, JTAG - Drill into
+            Raspberry Pi and Navio –&gt; their architecture and
+            communication interfaces</p>
             </section>
             </section>
             <section id="references" class="level2" data-number="2.4">
