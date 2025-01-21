@@ -263,6 +263,10 @@ George Washington University</p></li>
         id="toc-controller-area-network-can"><span
         class="toc-section-number">2.3.5</span> Controller Area Network
         (CAN)</a></li>
+        <li><a href="#other-broadly-used-protocols"
+        id="toc-other-broadly-used-protocols"><span
+        class="toc-section-number">2.3.6</span> Other Broadly Used
+        Protocols</a></li>
         </ul></li>
         <li><a href="#references" id="toc-references"><span
         class="toc-section-number">2.4</span> References</a></li>
@@ -1628,10 +1632,9 @@ George Washington University</p></li>
             interface</a> → JTAG</li>
             <li><a href="#controller-area-network-can">embedded internal
             communication</a> → CAN</li>
-            <li>universal connectivity → USB</li>
-            <li>signal processing → ADC/DAC</li>
-            <li>network → ethernet/WiFi</li>
-            <li>others → radio, Bluetooth</li>
+            <li><a href="#other-broadly-used-protocols">other broadly
+            used protocols</a> → USB, Ethernet/WiFi, Radio,
+            Bluetooth</li>
             </ol>
             <section id="uart-rs-232" class="level3"
             data-number="2.3.1">
@@ -2321,22 +2324,43 @@ George Washington University</p></li>
             </tr>
             </tbody>
             </table>
+            <p><br></p>
             <p>An ECU in a vehicle consists of:</p>
             <table>
-            <colgroup>
-            <col style="width: 46%" />
-            <col style="width: 53%" />
-            </colgroup>
-            <tbody>
             <tr>
-            <td></td>
-            <td><img src="img/embedded_arch/comms/can_ecu_internals.svg" width="250"></td>
+            <th>
+            components
+            </th>
+            <th>
+            internal architecture
+            </th>
             </tr>
             <tr>
-            <td></td>
-            <td></td>
+            <td>
+            <ul>
+            <li>
+            <b>microcontroller</b> to interpret/send out CAN messages
+            </li>
+            <li>
+            <b>CAN controller</b> ensures all communication adheres to
+            CAN protocols
+            </li>
+            <li>
+            <b>CAN transceiver</b> connects CAN controller to the
+            physical wires
+            </li>
+            </ul>
+            </td>
+            <td>
+            <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="250">
+            </td>
             </tr>
-            </tbody>
+            <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            </tr>
             </table>
             <p><em>Any</em> ECU can broadcast on the CAN bus and the
             messages are accepted by <em>all</em> ECUs connected to it.
@@ -2350,31 +2374,45 @@ George Washington University</p></li>
             may use different ones), the <strong>CAN Bus DB9</strong>
             connector has becomem the de facto standard:</p>
             <p><img src="img/embedded_arch/comms/can-bus-db9-connector-pinout-d-sub.svg" width="350"></p>
-            <p>The figure shows the various pins and their signals.</p>
+            <p>The above figure shows the various pins and their
+            signals.</p>
+            <p><br></p>
             <p><strong>CAN Communication Protocols</strong>: CAN is
             split into:</p>
             <table>
-            <colgroup>
-            <col style="width: 46%" />
-            <col style="width: 53%" />
-            </colgroup>
-            <thead>
             <tr>
-            <th>layer</th>
-            <th>relation to OSI stack</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td></td>
-            <td><img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="350"></td>
+            <th>
+            layer
+            </th>
+            <th>
+            relation to OSI stack
+            </th>
             </tr>
             <tr>
-            <td></td>
-            <td></td>
+            <td>
+            <ul>
+            <li>
+            <b>data link</b>: CAN frame formats, <br>error handling,
+            data transmission, <br>data integrity
+            </li>
+            <li>
+            <b>physical</b>: cable types, <br>electrical signal levels,
+            <br>node requirements, <br>cable impedance, etc.
+            </li>
+            </ul>
+            </td>
+            <td>
+            <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="350">
+            </td>
             </tr>
-            </tbody>
+            <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            </tr>
             </table>
+            <p><br></p>
             <p>All communication over the CAN bus is done via the
             <strong>CAN frames</strong>. The <em>standard</em> CAN frame
             (with an <code>11-bit</code> identifier) is shown below:</p>
@@ -2454,6 +2492,12 @@ George Washington University</p></li>
             <p>More details about CAN and its variants: <a
             href="https://www.csselectronics.com/pages/can-bus-simple-intro-tutorial">CAN
             Bus Explained</a>.</p>
+            </section>
+            <section id="other-broadly-used-protocols" class="level3"
+            data-number="2.3.6">
+            <h3 data-number="2.3.6"><span
+            class="header-section-number">2.3.6</span> Other Broadly
+            Used Protocols</h3>
             <p><br> <br> <br> <br></p>
             <p>Talk about: - Communication standards –&gt; Serial
             (<em>e.g.,</em> RS 232). Synchronous (I2C?), USB, Network

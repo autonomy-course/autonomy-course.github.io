@@ -712,10 +712,7 @@ Hence a large number of communication standards and I/O interfaces have been dev
 3. [general-purpose I/O](#general-purpose-io-gpio) &rarr; GPIO
 4. [debugging interface](#jtag-debugging-interface) &rarr; JTAG
 5. [embedded internal communication](#controller-area-network-can) &rarr; CAN
-6. universal connectivity &rarr; USB
-7. signal processing &rarr; ADC/DAC
-8. network &rarr; ethernet/WiFi
-9. others &rarr; radio, Bluetooth
+6. [other broadly used protocols](#other-broadly-used-protocols) &rarr; USB, Ethernet/WiFi, Radio, Bluetooth
 
 
 ### UART | RS-232
@@ -1044,12 +1041,29 @@ CAN **does not** need a a host controller. ECUs connected via the CAN bus can ea
 |CAN wiring | multi-ecu CAN setup|
 ||
 
+<br>
+
 An ECU in a vehicle consists of:
 
-|||
-|-------|--------|
-| <ul> <li><b>microcontroller</b> to interpret/send out CAN messages</li> <li><b>CAN controller</b> ensures all communication adheres to CAN protocols</li> <li><b>CAN transciever</b> connects CAN controller to the physical wires</li> </ul>| <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="250">|
-||
+<table>
+    <tr>
+        <th>components</th>
+        <th>internal architecture</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>microcontroller</b> to interpret/send out CAN messages</li>
+                <li><b>CAN controller</b> ensures all communication adheres to CAN protocols</li>
+                <li><b>CAN transceiver</b> connects CAN controller to the physical wires</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can_ecu_internals.svg" width="250">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
 
 _Any_ ECU can broadcast on the CAN bus and the messages are accepted by _all_ ECUs connected to it. Each ECU can either choose to ignore the message or act on it.
 
@@ -1059,14 +1073,32 @@ While there is no "standard" CAN connector (each vehicle may use different ones)
 
 <img src="img/embedded_arch/comms/can-bus-db9-connector-pinout-d-sub.svg" width="350">
 
-The figure shows the various pins and their signals.
+The above figure shows the various pins and their signals.
+
+<br>
 
 **CAN Communication Protocols**: CAN is split into:
 
-|layer|relation to OSI stack|
-|-------|--------|
-| <ul> <li><b>data link</b>: CAN frame formats, <br>error handling, data transmission, <br>data integrity </li> <li><b>physical</b>: cable types, <br>electrical signal levels, <br>node requirements, <br>cable impedance, etc.</li> | <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="350">|
-||
+<table>
+    <tr>
+        <th>layer</th>
+        <th>relation to OSI stack</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                <li><b>data link</b>: CAN frame formats, <br>error handling, data transmission, <br>data integrity</li>
+                <li><b>physical</b>: cable types, <br>electrical signal levels, <br>node requirements, <br>cable impedance, etc.</li>
+            </ul>
+        </td>
+        <td>
+            <img src="img/embedded_arch/comms/can-bus-osi-model-7-layer-iso-11898-physical-data.svg" width="350">
+        </td>
+    </tr>
+    <tr> <td></td> <td></td></tr>
+</table>
+
+<br>
 
 All communication over the CAN bus is done via the **CAN frames**. The _standard_ CAN frame (with an `11-bit` identifier) is shown below:
 
@@ -1098,6 +1130,8 @@ There also exist other higher-order protocols (numbering in the thousands) the m
 
 More details about CAN and its variants: [CAN Bus Explained](https://www.csselectronics.com/pages/can-bus-simple-intro-tutorial).
 
+
+### Other Broadly Used Protocols 
 
 <br>
 <br>
