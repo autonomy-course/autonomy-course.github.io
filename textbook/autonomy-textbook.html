@@ -297,6 +297,18 @@ George Washington University</p></li>
         <li><a href="#errors-in-sensing"
         id="toc-errors-in-sensing"><span
         class="toc-section-number">3.2</span> Errors in Sensing</a></li>
+        <li><a href="#analog-to-digital-convertors-adcs"
+        id="toc-analog-to-digital-convertors-adcs"><span
+        class="toc-section-number">3.3</span> Analog to Digital
+        Convertors (ADCs)</a>
+        <ul>
+        <li><a href="#adc-sampling-rate"
+        id="toc-adc-sampling-rate"><span
+        class="toc-section-number">3.3.1</span> ADC Sampling
+        Rate</a></li>
+        <li><a href="#adc-resolution" id="toc-adc-resolution"><span
+        class="toc-section-number">3.3.2</span> ADC Resolution</a></li>
+        </ul></li>
         </ul></li>
         </ul>
 
@@ -3326,15 +3338,19 @@ George Washington University</p></li>
             obstacles</li>
             </ul>
             <p><br></p>
+            <p><strong>Resources</strong>:</p>
             <p>For a more detailed description of mmWave RADAR, read: <a
             href="https://www.design-reuse.com/articles/55851/mmwave-radar-principle-applications.html">Understanding
             mmWave RADAR, its Principle &amp; Applications</a></p>
+            <p>For programming a LiDAR, see: <a
+            href="h.ttps://www.engineersgarage.com/how-to-use-a-lidar-sensor-with-arduino/">how
+            to program a LiDAR with an Arduino</a>.</p>
             </section>
             </section>
             <section id="ultrasonic" class="level3" data-number="3.1.3">
             <h3 data-number="3.1.3"><span
             class="header-section-number">3.1.3</span> Ultrasonic</h3>
-            <p>[SAM]</p>
+            <p>[TBD]</p>
             </section>
             </section>
             <section id="errors-in-sensing" class="level2"
@@ -3344,32 +3360,64 @@ George Washington University</p></li>
             Sensing</h2>
             <p>Since sensors deal with and measure the <em>physical</em>
             world, <strong>errors</strong> will creep in over time.</p>
-            <p>Some typical errors in the use of physical sensors: |
-            error type | description | |—————-|————-| | <strong>sensor
-            drift</strong> | over time the sensor measurements will
-            “drift”, i.e., a gradual change in its output → away from
-            average values (e.g., due to wear and tear) | |
-            <strong>constant bias</strong> | bias of an accelerometer is
-            the offset of its output signal from the actual acceleration
-            value. A constant bias error causes an error in position
-            which grows with time | | <strong>calibration
-            errors</strong> | ‘calibration errors’ refers to errors in
-            the scale factors, alignments and linearities of the gyros.
-            Such errors tend to produce errors when the device is
-            turning. These errors can result in additional drift | |
-            <strong>scale factor</strong> | scale factor is the relation
-            of the accelerometer input to the actual sensor output for
-            the measurement. Scale factor, expressed in ppm, is
-            therefore the linear growth of input variation to actual
-            measurement | | <strong>vibration rectification
-            errors</strong> | vibration rectification error (VRE) is the
-            response of an accelerometer to current rectification in the
-            sensor, causing a shift in the offset of the accelerometer.
-            This can be a significant cumulative error, which propagates
-            with time and can lead to over compensation in stabilization
-            | | <strong>noise</strong> | random variations in the sensor
-            output that do not correspond to the actual measured value |
-            ||</p>
+            <p>Some typical errors in the use of physical sensors:</p>
+            <table>
+            <colgroup>
+            <col style="width: 55%" />
+            <col style="width: 44%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>error type</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>sensor drift</strong></td>
+            <td>over time the sensor measurements will “drift”, i.e., a
+            gradual change in its output → away from average values
+            (e.g., due to wear and tear)</td>
+            </tr>
+            <tr>
+            <td><strong>constant bias</strong></td>
+            <td>bias of an accelerometer is the offset of its output
+            signal from the actual acceleration value. A constant bias
+            error causes an error in position which grows with time</td>
+            </tr>
+            <tr>
+            <td><strong>calibration errors</strong></td>
+            <td>‘calibration errors’ refers to errors in the scale
+            factors, alignments and linearities of the gyros. Such
+            errors tend to produce errors when the device is turning.
+            These errors can result in additional drift</td>
+            </tr>
+            <tr>
+            <td><strong>scale factor</strong></td>
+            <td>scale factor is the relation of the accelerometer input
+            to the actual sensor output for the measurement. Scale
+            factor, expressed in ppm, is therefore the linear growth of
+            input variation to actual measurement</td>
+            </tr>
+            <tr>
+            <td><strong>vibration rectification errors</strong></td>
+            <td>vibration rectification error (VRE) is the response of
+            an accelerometer to current rectification in the sensor,
+            causing a shift in the offset of the accelerometer. This can
+            be a significant cumulative error, which propagates with
+            time and can lead to over compensation in stabilization</td>
+            </tr>
+            <tr>
+            <td><strong>noise</strong></td>
+            <td>random variations in the sensor output that do not
+            correspond to the actual measured value</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             <p><br></p>
             <p>Each error type must be dealt with in different ways
             though one of the commomn ways to prevent sensor errors from
@@ -3378,17 +3426,342 @@ George Washington University</p></li>
             <strong>multiple sensors</strong> before making any
             decisions. We will dicuss sensor fusion later in this
             course.</p>
-            <p><br> <br> <br> <br></p>
-            <p>Structure:</p>
+            </section>
+            <section id="analog-to-digital-convertors-adcs"
+            class="level2" data-number="3.3">
+            <h2 data-number="3.3"><span
+            class="header-section-number">3.3</span> Analog to Digital
+            Convertors (ADCs)</h2>
+            <p>As <a href="#sensors-and-sensing">mentioned earlier</a>,
+            a sensor maps a physical quantity from the time domain to
+            the value domain,</p>
+            <p><span
+            class="math display"><em>s</em> : <em>D</em><sub><em>t</em></sub> ↦ <em>D</em><sub><em>v</em></sub></span></p>
+            <p>where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>D</em><sub><em>t</em></sub></span></td>
+            <td>continuous or discrete <strong>time</strong> domain</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>D</em><sub><em>v</em></sub></span></td>
+            <td>continuous or discrete <strong>value</strong>
+            domain</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Remember that computers require <strong>discrete</strong>
+            sequences of physical values since <strong>microcontrollers
+            cannot read values unless it is digital data</strong>.
+            Microcontrollers can only see “levels” of voltage, which
+            depends on the resolution of the ADC and the system
+            voltage.</p>
+            <p>Hence, we need to <strong>convert</strong> the above into
+            the discrete domain, <em>i.e.,</em> we require <span
+            class="math inline"><em>D</em><sub><em>v</em></sub></span>
+            to be composed of discrete values.</p>
+            <p>According to <a
+            href="https://en.wikipedia.org/wiki/Discrete_time_and_continuous_time#">Wikipedia</a>,</p>
+            <blockquote>
+            <p>A discrete signal or discrete-time signal is a time
+            series consisting of a sequence of quantities. Unlike a
+            continuous-time signal, a discrete-time signal is not a
+            function of a continuous argument; however, it may have been
+            obtained by sampling from a continuous-time signal. When a
+            discrete-time signal is obtained by sampling a sequence at
+            uniformly spaced times, it has an associated
+            <strong>sampling rate</strong>.</p>
+            </blockquote>
+            <p><br></p>
+            <p>A visual respresentation of the sampling rate and how it
+            correlates to the sampling of an analog signal:</p>
+            <table>
+            <colgroup>
+            <col style="width: 38%" />
+            <col style="width: 38%" />
+            <col style="width: 23%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>analog signal</th>
+            <th>sampling rate</th>
+            <th>sampling</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><img src="img/sensors/adc_analog_signal.png"></td>
+            <td><img src="img/sensors/adc_sampling_rate.png"></td>
+            <td><img src="img/sensors/adc_sampling.png"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Hence, a device that converts analog signals to digital
+            data values is called → an <strong>analog-to-digital
+            convertor</strong> (<strong>ADC</strong>). This is one of
+            the most common circuits/microcontrollers in embedded (and
+            hence, autonomous) systems. <em>Any</em> sensor that
+            measures a physical property must pass its values through an
+            ADC so that the sensor values can be used by the system (the
+            embedded processor/microcontroller, really).</p>
+            <p>This is best described using an example:</p>
+            <p><img src="img/sensors/adc_example.jpg" width="400"></p>
+            <p>The <font color="blue"><b>analog</b></font> signal is
+            <strong>discretized</strong> into the
+            <font color="red"><b>digital</b></font> signal after passing
+            through an ADC.</p>
+            <p>ADCs follow a sequence:</p>
             <ul>
-            <li>types of sensors, sensor plan</li>
-            <li>IMU, Cameras, Radar/LiDar, mmwave</li>
-            <li>errors in sensing</li>
-            <li>sensing data acquisition → ADC, aliasing, Nyquist,
-            etc.</li>
-            <li>how does LiDar work?</li>
-            <li>others? Infrared (Sam?)</li>
+            <li><strong>sample</strong> the signal</li>
+            <li><strong>quantify</strong> it to determine the resolution
+            of the signal</li>
+            <li>set <strong>binary values</strong></li>
+            <li><strong>send it to the system</strong> to read the
+            digital signal</li>
             </ul>
+            <p>Hence, two important aspects of an ADC are:</p>
+            <ul>
+            <li><a href="#adc-sampling-rate">sampling rate</a></li>
+            <li><a href="#adc-resolution">resolution</a></li>
+            </ul>
+            <section id="adc-sampling-rate" class="level3"
+            data-number="3.3.1">
+            <h3 data-number="3.3.1"><span
+            class="header-section-number">3.3.1</span> ADC Sampling
+            Rate</h3>
+            <p>The sampling rate (aka Sampling Frequency) is measured in
+            <strong>samples per second</strong> (SPS or S/s). It
+            dictates <em>how many samples</em> (data points) are taken
+            in one second. If an ADC records more samples, then it can
+            handle higher frequencies.</p>
+            <p>The sample rate, <span
+            class="math inline"><em>f</em><sub><em>s</em></sub></span>
+            is defined as,</p>
+            <p><span class="math display">$$
+            f_s = \frac{1}{T}
+            $$</span></p>
+            <p>where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>definition</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>f</em><sub><em>s</em></sub></span></td>
+            <td>sampling rate/frequency</td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>T</em></span></td>
+            <td>period of the sample</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Hence, in the previous example,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>f</em><sub><em>s</em></sub></span></td>
+            <td><code>20 Hz</code></td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>T</em></span></td>
+            <td><code>50 ms</code></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>While this looks slow (<code>20 Hz</code>), the digital
+            signal tracks the original analog signal quite faithfully →
+            the original signal itself is quite slow
+            (<code>1 Hz</code>).</p>
+            <p>Now, if the sampling signal is <em>considerably
+            slower</em> than the analog signal, then it loses fidelity
+            and we see <strong>aliasing</strong>, where the
+            reconstructed signal (the digital one in the case)
+            <strong>differs from the original</strong>. Consider the
+            following example of such a case:</p>
+            <p><img src="img/sensors/adc_aliasing_example.jpg" width="400"></p>
+            <p>As we see from the above figure, the digital output is
+            <strong>nothing</strong> like the original. Hence, this
+            (digital) output will not be of much use to the system.</p>
+            <p><br></p>
+            <p><a
+            href="https://fab.cba.mit.edu/classes/S62.12/docs/Shannon_noise.pdf"><strong>Nyquist-Shannon
+            Sampling Theorem</strong></a>:</p>
+            <blockquote>
+            <p>to accurately reconstruct a signal from its samples, the
+            sampling rate must be <strong>at least twice the highest
+            frequency component</strong> present in the signal</p>
+            </blockquote>
+            <p>If the sampling frequency is less than the Nyquist rate,
+            then aliasing starts to creep in.</p>
+            <p>Hence,</p>
+            <p><span
+            class="math display"><em>f</em><sub><em>N</em><em>y</em><em>q</em><em>u</em><em>i</em><em>s</em><em>t</em></sub> = 2 * <em>f</em><sub><em>m</em><em>a</em><em>x</em></sub></span></p>
+            <p>where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>definition</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>f</em><sub><em>N</em><em>y</em><em>q</em><em>u</em><em>i</em><em>s</em><em>t</em></sub></span></td>
+            <td>Nyquist sampling rate/frequency</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>f</em><sub><em>m</em><em>a</em><em>x</em></sub></span></td>
+            <td>the maximum frequency that appears in the signal</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>For instance, if your analog signal has a maximum
+            frequency of <code>50 Hz</code> then your sampling frequency
+            must be <em>at least</em>, <code>100 Hz</code>. If this
+            principle is followed, then it is possible to
+            <strong>accurately reconstruct</strong> the original signal
+            and its values.</p>
+            <p>Note that sometimes <em>noise</em> can introduce
+            additonal (high) frequencies into the system but we don’t
+            want to sample those (for obvious purposes). Hence, it is a
+            good idea to add <a
+            href="https://www.analog.com/en/resources/technical-articles/guide-to-antialiasing-filter-basics.html">anti-aliasing
+            fitlers</a> to the analog signal <em>before</em> it is
+            passed to the ADC.</p>
+            </section>
+            <section id="adc-resolution" class="level3"
+            data-number="3.3.2">
+            <h3 data-number="3.3.2"><span
+            class="header-section-number">3.3.2</span> ADC
+            Resolution</h3>
+            <p>An ADC’s resolution is directly related to the
+            <strong>precision</strong> of the ADC, determined by its
+            <strong>bit length</strong>. The following examples shows
+            the fidelity of the reconstruction, based on various bit
+            lengths:</p>
+            <p><img src="img/sensors/adc_resolution_example.jpg" width="400"></p>
+            <p>Increasing bit lengths the digital signal more closely
+            represents the analog one.</p>
+            <p>There exists a correlation between the bit length and the
+            <strong>voltage</strong> of the signal. Hence, the
+            <strong>true resolution</strong> of the ADC is calculated
+            using the bit length <strong>and</strong> the voltage as
+            follows:</p>
+            <p><span class="math display">$$
+            Step Size = \frac{V_{ref}}{N}
+            $$</span></p>
+            <p>where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>definition</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>S</em><em>t</em><em>e</em><em>p</em><em>S</em><em>i</em><em>z</em><em>e</em></span></td>
+            <td>resolution of each level in terms of voltage</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>V</em><sub><em>r</em><em>e</em><em>f</em></sub></span></td>
+            <td>voltage reference/range of voltages</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>N</em> = 2<sup><em>n</em></sup></span></td>
+            <td>total “size” of the ADC</td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>n</em></span></td>
+            <td>bit size</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>This is easier to understand with a concrete example:</p>
+            <blockquote>
+            <p>consider a sine wave with a voltage, <code>5 V</code>
+            that must be digitized. <br> If our ADC resolution is
+            <code>12 bits</code>, then we get <br> <span
+            class="math inline"><em>N</em> = 2<sup>12</sup> = 4096</span>
+            <br> <br> Hence, <span
+            class="math inline"><em>S</em><em>t</em><em>e</em><em>p</em><em>S</em><em>i</em><em>z</em><em>e</em> = 5<em>V</em>/ 4096</span>
+            which is <code>0.00122V</code> (or <code>1.22mV</code>)<br>
+            <br> Hence, the system can tell when a voltage level changes
+            by <code>1.22 mV</code>!</p>
+            </blockquote>
+            <p>(Repeat the exercise for say, bit length, <span
+            class="math inline"><em>n</em> = 4</span>)</p>
+            <p>Hence, we see that <strong>sampling frequency</strong>
+            and <strong>resolution</strong> determine the quality of
+            output we get from an ADC.</p>
+            <p><strong>Resources</strong></p>
+            <ul>
+            <li>for more details about ADC, read: <a
+            href="https://www.arrow.com/en/research-and-events/articles/engineering-resource-basics-of-analog-to-digital-converters">Analog-to-Digital
+            Convertor Basics</a></li>
+            <li>an <strong>in-depth</strong> explanation of how ADCs
+            work: <a
+            href="http://class.ece.iastate.edu/cpre288/lectures/lect12_13.pdf">Iowa
+            State CpreE 288 Course Slides</a></li>
+            <li>more details with videos: <a
+            href="https://users.ece.utexas.edu/~valvano/Volume1/E-Book/C14_ADCdataAcquisition.htm">Analog
+            to Digital Conversion, EE319K Univ. of Texas</a></li>
+            <li>Programming an ADC: <a
+            href="https://blog.embeddedexpert.io/?p=68">1</a>, <a
+            href="https://labs.dese.iisc.ac.in/embeddedlab/tm4c123-adc-programming/">2</a></li>
+            </ul>
+            </section>
             </section>
             </section>
             <section id="footnotes"

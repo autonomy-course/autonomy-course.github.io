@@ -1475,16 +1475,18 @@ mmWave is also used for **in-cabin monitoring of drivers**!
 
 <br>
 
+**Resources**:
+
 For a more detailed description of mmWave RADAR, read: [Understanding mmWave RADAR, its Principle & Applications](https://www.design-reuse.com/articles/55851/mmwave-radar-principle-applications.html)
 
-
+For programming a LiDAR, see: [how to program a LiDAR with an Arduino](h.ttps://www.engineersgarage.com/how-to-use-a-lidar-sensor-with-arduino/).
 
 
 
 
 ### Ultrasonic 
 
-[SAM]
+[TBD]
 
 
 
@@ -1494,6 +1496,7 @@ For a more detailed description of mmWave RADAR, read: [Understanding mmWave RAD
 Since sensors deal with and measure the _physical_ world, **errors** will creep in over time. 
 
 Some typical errors in the use of physical sensors:
+
 | error type | description |
 |----------------|-------------|
 | **sensor drift** | over time the sensor measurements will "drift", i.e., a gradual change in its output &rarr; away from average values (e.g., due to wear and tear) |
@@ -1508,16 +1511,164 @@ Some typical errors in the use of physical sensors:
 
 Each error type must be dealt with in different ways though one of the commomn ways to prevent sensor errors from causing harm to autonomous systems &rarr; **sensor fusion**, _i.e.,_ use information from **multiple sensors** before making any decisions. We will dicuss sensor fusion later in this course.
 
-<br>
-<br>
-<br>
+
+## Analog to Digital Convertors (ADCs)
+
+As [mentioned earlier](#sensors-and-sensing), a sensor maps a physical quantity from the time domain to the value domain,
+
+$$
+s: D_t \mapsto D_v
+$$
+
+where,
+
+| symbol | description                              |
+|--------|------------------------------------------|
+| $D_t$  | continuous or discrete **time** domain   |
+| $D_v$  | continuous or discrete **value** domain  |
+||
+
+Remember that computers require **discrete** sequences of physical values since **microcontrollers cannot read values unless it is digital data**. Microcontrollers can only see “levels” of voltage, which depends on the resolution of the ADC and the system voltage.
+
+Hence, we need to **convert** the above into the discrete domain, _i.e.,_ we require $D_v$ to be composed of discrete values. 
+
+According to [Wikipedia](https://en.wikipedia.org/wiki/Discrete_time_and_continuous_time#),
+
+> A discrete signal or discrete-time signal is a time series consisting of a sequence of quantities. Unlike a continuous-time signal, a discrete-time signal is not a function of a continuous argument; however, it may have been obtained by sampling from a continuous-time signal. When a discrete-time signal is obtained by sampling a sequence at uniformly spaced times, it has an associated **sampling rate**.
+
 <br>
 
-Structure:
+A visual respresentation of the sampling rate and how it correlates to the sampling of an analog signal:
 
-- types of sensors, sensor plan
-- IMU, Cameras, Radar/LiDar, mmwave
-- errors in sensing
-- sensing data acquisition &rarr; ADC, aliasing, Nyquist, etc.
-- how does LiDar work?
-- others? Infrared (Sam?)
+|analog signal|sampling rate|sampling|
+|-------------|-------------|--------|
+|<img src="img/sensors/adc_analog_signal.png">|<img src="img/sensors/adc_sampling_rate.png">|<img src="img/sensors/adc_sampling.png">|
+||
+
+
+Hence, a device that converts analog signals to digital data values is called &rarr; an **analog-to-digital convertor** (**ADC**). This is one of the most common circuits/microcontrollers in embedded (and hence, autonomous) systems. _Any_ sensor that measures a physical property must pass its values through an ADC so that the sensor values can be used by the system (the embedded processor/microcontroller, really).
+
+This is best described using an example:
+
+<img src="img/sensors/adc_example.jpg" width="400">
+
+The <font color="blue"><b>analog</b></font> signal is **discretized** into the <font color="red"><b>digital</b></font> signal after passing through an ADC.
+
+ADCs follow a sequence:
+
+- **sample** the signal
+- **quantify** it to determine the resolution of the signal
+- set **binary values**
+- **send it to the system** to read the digital signal
+
+Hence, two important aspects of an ADC are:
+
+- [sampling rate](#adc-sampling-rate)
+- [resolution](#adc-resolution)
+
+### ADC Sampling Rate 
+
+The sampling rate (aka Sampling Frequency) is measured in **samples per second** (SPS or S/s). It dictates _how many samples_ (data points) are taken in one second. If an ADC records more samples, then it can handle higher frequencies. 
+
+The sample rate, $f_s$ is defined as,
+
+$$
+f_s = \frac{1}{T}
+$$
+
+where,
+
+|symbol|definition|
+|------|----------|
+|$f_s$ | sampling rate/frequency|
+|$T$ | period of the sample |
+||
+
+Hence, in the previous example, 
+
+|symbol|value|
+|------|----------|
+|$f_s$ | `20 Hz` |
+|$T$ | `50 ms` |
+||
+
+While this looks slow (`20 Hz`), the digital signal tracks the original analog signal quite faithfully &rarr; the original signal itself is quite slow (`1 Hz`).
+
+Now, if the sampling signal is _considerably slower_ than the analog signal, then it loses fidelity and we see **aliasing**, where the reconstructed signal (the digital one in the case) **differs from the original**. Consider the following example of such a case:
+
+<img src="img/sensors/adc_aliasing_example.jpg" width="400">
+
+As we see from the above figure, the digital output is **nothing** like the original. Hence, this (digital) output will not be of much use to the system. 
+
+<br>
+
+[**Nyquist-Shannon Sampling Theorem**](https://fab.cba.mit.edu/classes/S62.12/docs/Shannon_noise.pdf):
+
+> to accurately reconstruct a signal from its samples, the sampling rate must be **at least twice the highest frequency component** present in the signal
+
+If the sampling frequency is less than the Nyquist rate, then aliasing starts to creep in.
+
+Hence, 
+
+$$
+f_{Nyquist} = 2* f_{max}
+$$
+
+where,
+
+|symbol|definition|
+|------|----------|
+|$f_{Nyquist}$ | Nyquist sampling rate/frequency|
+|$f_{max}$ | the maximum frequency that appears in the signal |
+||
+
+For instance, if your analog signal has a maximum frequency of `50 Hz` then your sampling frequency must be _at least_, `100 Hz`. If this principle is followed, then it is possible to **accurately reconstruct** the original signal and its values.
+
+Note that sometimes _noise_ can introduce additonal (high) frequencies into the system but we don't want to sample those (for obvious purposes). Hence, it is a good idea to add [anti-aliasing fitlers](https://www.analog.com/en/resources/technical-articles/guide-to-antialiasing-filter-basics.html) to the analog signal _before_ it is passed to the ADC.
+
+### ADC Resolution
+
+An ADC's resolution is directly related to the **precision** of the ADC, determined by its **bit length**. The following examples shows the fidelity of the reconstruction, based on various bit lengths:
+
+<img src="img/sensors/adc_resolution_example.jpg" width="400">
+
+Increasing bit lengths the digital signal more closely represents the analog one.
+
+There exists a correlation between the bit length and the **voltage** of the signal. Hence, the **true resolution** of the ADC is calculated using the bit length **and** the voltage as follows:
+
+$$
+Step Size = \frac{V_{ref}}{N}
+$$
+
+where,
+
+|symbol|definition|
+|------|----------|
+|$Step Size$| resolution of each level in terms of voltage|
+|$V_{ref}$ |voltage reference/range of voltages|
+|$N = 2^n$ | total "size" of the ADC|
+|$n$ | bit size|
+||
+
+This is easier to understand with a concrete example:
+
+> consider a sine wave with a voltage, `5 V` that must be digitized. <br>
+> If our ADC resolution is `12 bits`, then we get <br>
+> $N = 2^{12} = 4096$ <br>
+> <br>
+> Hence, $Step Size = 5V /\ 4096$ which is `0.00122V` (or `1.22mV`)<br>
+> <br>
+> Hence, the system can tell when a voltage level changes by `1.22 mV`!
+
+(Repeat the exercise for say, bit length, $n = 4$)
+
+Hence, we see that **sampling frequency** and **resolution** determine the quality of output we get from an ADC.
+
+
+**Resources**
+
+- for more details about ADC, read: [Analog-to-Digital Convertor Basics](https://www.arrow.com/en/research-and-events/articles/engineering-resource-basics-of-analog-to-digital-converters)
+- an **in-depth** explanation of how ADCs work: [Iowa State CpreE 288 Course Slides](http://class.ece.iastate.edu/cpre288/lectures/lect12_13.pdf)
+- more details with videos: [Analog to Digital Conversion, EE319K Univ. of Texas](https://users.ece.utexas.edu/~valvano/Volume1/E-Book/C14_ADCdataAcquisition.htm)
+- Programming an ADC: [1](https://blog.embeddedexpert.io/?p=68), [2](https://labs.dese.iisc.ac.in/embeddedlab/tm4c123-adc-programming/)
+
