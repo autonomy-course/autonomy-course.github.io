@@ -1429,7 +1429,61 @@ The LiDAR _struggles_ to isolate the main subject with very _high_ false positiv
 
 In spite of these issues, LiDAR is one of the most popular sensors used in autonomous vehicles. They're getting smaller and more precise by the day; also decreasing costs means that we will see a proliferation of these types of sensors in many autonomous systems. 
 
+For an in-depth study on LiDARs, check this out: [Stanford EE 259 LiDAR Lecture](https://web.stanford.edu/class/ee259/lectures/ee259_05_lidar.pdf).
+
+
+#### Millimeter Wave Radar [mmWave]
+
+Short wavelengths like the *millimeter wave** (**mmWave**) in the electromagnetic spectrum allows for:
+
+- smaller antennae
+- integration of entire RADAR circuitry in a single chip!
+- spectrum of 10 millimeters (`30 GHz`) to 1 millimeter (`300 GHz`)
+
+|||
+|-----|------|
+| <img src="img/sensors/mmwave.jpg" width="300"> | <img src="img/sensors/mmwave_ucsdavif.avif" width="300">
+||
+
+As we see from the above images, the sensors can be **very small**, yet **very precise** &rarr; some can detect movements up to _4 millionths of a meter_!
+
+**Advantages** of mmWave:
+
+| Advantage | Description |
+|-----------|-------------|
+| small antenna caliber | narrow beam gives high tracking, accuracy; high-level resolution, high-resistance interference performance of narrow beam; high antenna gain; smaller object detection |
+| large bandwidth | high information rate, details structural features of the target; reduces multipath, and enhances anti-interference ability; overcomes mutual interference; high-distance resolution |
+| high doppler frequency | good detection and recognition ability of slow objectives and vibration targets; can work in snow conditions |
+| good anti-blanking performance | works on the most used stealth material |
+| robustness to atmospheric conditions | such as dust, smoke, and fog compared to other sensors |
+| operation under different lights | radar can operate under bright lights, dazzling lights, or no lights |
+| insusceptible to ground clutter | allowing for close-range observations; the low reflectivity can be measured using mmwave radar |
+| fine spatial resolution | for the same range, mmwave radar offers finer spatial resolution than microwave radar >
+||
+
+<br>
+
+mmWave is also used for **in-cabin monitoring of drivers**!
+
+<br>
+
+**Limitations**:
+
+- line of sight operations
+- affected by water content, gases in environments
+- affected by contaminated environment and physical obstacles
+
+<br>
+
+For a more detailed description of mmWave RADAR, read: [Understanding mmWave RADAR, its Principle & Applications](https://www.design-reuse.com/articles/55851/mmwave-radar-principle-applications.html)
+
+
+
+
+
+
 ### Ultrasonic 
+
 [SAM]
 
 <br>
