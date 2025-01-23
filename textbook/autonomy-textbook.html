@@ -46,7 +46,7 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-21" />
+  <meta name="date" content="2025-01-23" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 21,
+                              <li><p class="navbar-text">January 23,
 2025</p></li>
                   </ul>
       </div>
@@ -274,6 +274,26 @@ George Washington University</p></li>
         Navio2</a></li>
         <li><a href="#references" id="toc-references"><span
         class="toc-section-number">2.5</span> References</a></li>
+        </ul></li>
+        <li><a href="#sensors-and-sensing"
+        id="toc-sensors-and-sensing"><span
+        class="toc-section-number">3</span> Sensors and Sensing</a>
+        <ul>
+        <li><a href="#types-of-sensors" id="toc-types-of-sensors"><span
+        class="toc-section-number">3.1</span> Types of Sensors</a>
+        <ul>
+        <li><a href="#inertial-measurement-units-imu"
+        id="toc-inertial-measurement-units-imu"><span
+        class="toc-section-number">3.1.1</span> Inertial Measurement
+        Units (IMU)</a></li>
+        <li><a
+        href="#bouncing-of-electromagnetic-waves-lidar-and-mmwave"
+        id="toc-bouncing-of-electromagnetic-waves-lidar-and-mmwave"><span
+        class="toc-section-number">3.1.2</span> Bouncing of
+        Electromagnetic Waves | LiDAR and mmWave</a></li>
+        <li><a href="#ultrasonic" id="toc-ultrasonic"><span
+        class="toc-section-number">3.1.3</span> Ultrasonic</a></li>
+        </ul></li>
         </ul></li>
         </ul>
 
@@ -2712,6 +2732,503 @@ George Washington University</p></li>
             class="header-section-number">2.5</span> References</h2>
             </section>
             </section>
+            <section id="sensors-and-sensing" class="level1"
+            data-number="3">
+            <h1 data-number="3"><span
+            class="header-section-number">3</span> Sensors and
+            Sensing</h1>
+            <p>An embedded/autonomous system <em>perceives</em> the
+            physical world via sensors – either to gather information
+            about its environment or to model its <em>own</em> state.
+            Hence it is a critical component in the <em>sensing →
+            planning → actuation</em> loop and a critical component in
+            the design of embedded and autonomous systems.</p>
+            <table>
+            <colgroup>
+            <col style="width: 46%" />
+            <col style="width: 53%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/sense_planning_actuation.png" width="400"></td>
+            <td><img src="img/stack_architecture/stack_overview.2.png" width="300"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Modern autonomous systems used a <em>wide array</em> of
+            sensors. This is necessary due to:</p>
+            <ul>
+            <li>there is a need to measure <strong>different</strong>
+            quantities, <em>e.g.,</em> GPS, velocity, objects,
+            <em>etc.</em></li>
+            <li>sensor measurements often have <strong>errors</strong> →
+            hence, we need multiple sensors, often using
+            <strong>different physical properties</strong> to measure
+            the <em>same thing</em>; <em>e.g.,</em> LiDar and cameras
+            can both be used to detect objects in front of, and around,
+            an autonomous vehicle.</li>
+            </ul>
+            <p>At its core,</p>
+            <blockquote>
+            <p>a sensor captures a physical/chemical/environmental
+            quantity and <strong>converts it to a physical
+            quantity</strong>.</p>
+            </blockquote>
+            <p>(hence the need for an Analog-to-Digital Convertor (ADC)
+            as we shall see later)</p>
+            <p>By definition, sensors generate <strong>signals</strong>.
+            A signal, <code>s</code>, is defined as a mapping from the
+            <em>time</em> domain to a <em>value</em> domain:</p>
+            <p><span
+            class="math display"><em>s</em> : <em>D</em><sub><em>t</em></sub> ↦ <em>D</em><sub><em>v</em></sub></span></p>
+            <p>where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>D</em><sub><em>t</em></sub></span></td>
+            <td>continuous or discrete <strong>time</strong> domain</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>D</em><sub><em>v</em></sub></span></td>
+            <td>continuous or discrete <strong>value</strong>
+            domain</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><strong>Note:</strong> remember that computers require
+            <strong>discrete</strong> sequences of physical values.
+            Hence, we need to <strong>convert</strong> the above into
+            the discrete domain. The way to achieve this:
+            <strong>sampling</strong>:</p>
+            <p><img src="img/sensors/discretization_sampled.signal.svg" title="Sampling image from Wikipedia" width="300"></p>
+            <p>The figure shows a continuous signal being sampled (in
+            <font color="red"><b>red</b></font> arrows). We will discuss
+            sampling and related issues later in this topic.</p>
+            <section id="types-of-sensors" class="level2"
+            data-number="3.1">
+            <h2 data-number="3.1"><span
+            class="header-section-number">3.1</span> Types of
+            Sensors</h2>
+            <p>Sensors come in various shapes and sizes. Usually
+            designers of autonomous systems will develop a
+            “<strong>sensor plan</strong> that will consider,</p>
+            <ul>
+            <li>required functionality</li>
+            <li>sensor range(s)</li>
+            <li>cost</li>
+            </ul>
+            <p>Hence, each autonomous system will likely have its own
+            set of sensors (or sensor plan). <em>Typical</em> sensors
+            found on modern autonomous systems can be classified based
+            on the underlying physics used:</p>
+            <table>
+            <colgroup>
+            <col style="width: 70%" />
+            <col style="width: 29%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>physical property</th>
+            <th>sensor</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><a
+            href="#inertial-measurement-units-imu"><em>internal</em>
+            measurements</a></td>
+            <td>IMU</td>
+            </tr>
+            <tr>
+            <td><em>external</em> measurements</td>
+            <td>GPS</td>
+            </tr>
+            <tr>
+            <td><a
+            href="#bouncing-of-electromagnetic-waves--lidar-and-mmwave">“bouncing”
+            electromagnetic waves</a></td>
+            <td>LiDAR, RADAR, mmWave Radar</td>
+            </tr>
+            <tr>
+            <td>optical</td>
+            <td>cameras, infrared sensors</td>
+            </tr>
+            <tr>
+            <td><a href="#ultrasonic">accoustic</a></td>
+            <td>ultrasonic sensors</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Some of the above can be combined to generate other
+            sensing patterns, <em>e.g.,</em> <strong>stereo
+            vision</strong> using multiple cameras or camera+LiDAR.</p>
+            <p>We will go over <strong>some</strong> of these sensors
+            and their underlying physical principles.</p>
+            <section id="inertial-measurement-units-imu" class="level3"
+            data-number="3.1.1">
+            <h3 data-number="3.1.1"><span
+            class="header-section-number">3.1.1</span> Inertial
+            Measurement Units (IMU)</h3>
+            <p>These sensors define the <strong>movement of a
+            vehicle</strong>, along the three axes, in addition to other
+            behaviors like acceleration. An IMU typically includes the
+            following sensors:</p>
+            <table>
+            <colgroup>
+            <col style="width: 24%" />
+            <col style="width: 21%" />
+            <col style="width: 24%" />
+            <col style="width: 29%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/sensors/imu_exploded_view.jpg" width="600"></td>
+            <td><img src="img/sensors/imu_accelerometer.png" width="400"></td>
+            <td><img src="img/sensors/imu_gyro.png" width="400"></td>
+            <td><img src="img/sensors/imu_magnetometer.png" width="400"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>As we see from the first picture above, an IMU also has a
+            CPU (typically a microcontroller) to manage/collect/process
+            the data from the sensors.</p>
+            <p>The functions of the three sensors are:</p>
+            <ol type="1">
+            <li><strong>gyroscope</strong>: is an inertial sensor that
+            measure an object’s angular rate with respect to an inertial
+            reference frame. It measures the following movements:</li>
+            </ol>
+            <table>
+            <colgroup>
+            <col style="width: 29%" />
+            <col style="width: 37%" />
+            <col style="width: 33%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/sensors/imu_yaw.gif"></td>
+            <td><img src="img/sensors/imu_pitch.gif"></td>
+            <td><img src="img/sensors/imu_roll.gif"></td>
+            </tr>
+            <tr>
+            <td>“yaw”</td>
+            <td>“pitch”</td>
+            <td>“roll”</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>IMUs come in all shapes and sizes. These days they’re
+            very small but the original IMU’s ver really large, as
+            evidenced by the one used in the <a
+            href="http://klabs.org/history/history_docs/mit_docs/1690.pdf">Apollo
+            space missions</a>:</p>
+            <p><img src="img/sensors/imu_apollo.jpg" width="300"></p>
+            <p><br></p>
+            <ol start="2" type="1">
+            <li><p><strong>accelerometer</strong>: is the primary sensor
+            responsible for measuring inertial acceleration, or the
+            change in velocity over time.</p></li>
+            <li><p><strong>magnetometer</strong>: measures the strength
+            and direction of a magnetic field – to find the magnetic
+            north</p></li>
+            </ol>
+            </section>
+            <section
+            id="bouncing-of-electromagnetic-waves-lidar-and-mmwave"
+            class="level3" data-number="3.1.2">
+            <h3 data-number="3.1.2"><span
+            class="header-section-number">3.1.2</span> Bouncing of
+            Electromagnetic Waves | LiDAR and mmWave</h3>
+            <p>A very common principle for measuring surroundings is to
+            bounce electromagnetic waves off nearby objects and
+            measuring the round trip times. Shorter times indicate
+            closer objects while longer times indicate objects that are
+            farther away. <a
+            href="https://www.noaa.gov/jetstream/doppler/how-radar-works">RADAR</a>
+            is a classic example of this type of sensor and its (basic)
+            operation is shown in the following image (courtesy
+            NOAA):</p>
+            <p><img src="img/sensors/radar_doppler_ani.gif" width="400"></p>
+            <p>While many autonomous vehicles use RADAR, we will focus
+            on other technologies that are more prevalent and provide
+            much higher precision, <em>viz.,</em></p>
+            <ol type="1">
+            <li><a
+            href="#light-detection-and-ranging-lidar">LiDAR</a></li>
+            <li>millimeter Wave RADAR (mmWave)</li>
+            </ol>
+            <section id="light-detection-and-ranging-lidar"
+            class="level4" data-number="3.1.2.1">
+            <h4 data-number="3.1.2.1"><span
+            class="header-section-number">3.1.2.1</span> Light Detection
+            and Ranging (LiDAR)</h4>
+            <p><a
+            href="https://web.stanford.edu/class/ee259/lectures/ee259_05_lidar.pdf">LiDAR</a>
+            is a sensor that uses (<em>eye safe</em>) <strong>laser
+            beams</strong> for mapping surroundings and creating
+            <strong>3D representation</strong> of the environment. So
+            lasers are used for,</p>
+            <ul>
+            <li>imaging</li>
+            <li>detection</li>
+            <li>ranging</li>
+            </ul>
+            <p>We can use LiDAR to distance, angle as well as the
+            <em>radial velocity</em> of some objects – all relative to
+            the autonomous system (rather the sensor). So, in practice,
+            this is how it operates:</p>
+            <p><img src="img/sensors/lidar_principle_operation.png" width="400"></p>
+            <p>We define a <strong>roundtrip time</strong>, <span
+            class="math inline"><em>τ</em></span>, as the time between
+            when a pulse is sent out from the transmitter
+            (<code>TX</code>) to when light reflected from the object is
+            detected at the receiver (<code>RX</code>).</p>
+            <p>So, the <strong>target range</strong> (<em>i.e.,</em> the
+            distance to te object), <span
+            class="math inline"><em>R</em></span>, is measured as:</p>
+            <p><span class="math display">$$
+            R = \frac{c\tau}{2}
+            $$</span></p>
+            <p>where, <code>c</code> is the speed of light.</p>
+            <p>More details (from <a
+            href="https://web.stanford.edu/class/ee259/lectures/ee259_05_lidar.pdf">Mahalati</a>):
+            &gt; Lasers used in lidars have frequencies in the <span
+            class="math inline">100<em>s</em></span> of Terahetrz.
+            Compared to RF waves, lasers have significantly smaller
+            wavelengths and can hence be easily collected into narrow
+            beams using lenses. This makes DOA estimation almost trivial
+            in lidar and gives it significantly better reso- lution than
+            MIMO imaging radar.</p>
+            <p>The <em>end product</em> of LiDAR is essentially a
+            <strong>point cloud</strong>, defined as:</p>
+            <blockquote>
+            <p>a collection of points generated by a sensor. Such
+            collections can be very dense and contain billions of
+            points, which enables the creation of highly detailed 3D
+            representations of an area.</p>
+            </blockquote>
+            <p><img src="img/sensors/lidar_point_cloud_torus.gif" title="3D point cloud of a Torus. Courtesy Wikipedia"></p>
+            <p>In reality, point cloud representations around autonomous
+            vehicles end up looking like:</p>
+            <video controls width="500">
+            <source src="https://sibin.github.io/teaching/csci6907_88-gwu-secure_autonomous/fall_2022/other_docs/What-is-Lidar-video.mp4">
+            </video>
+            <p><a
+            href="https://www.yellowscan.com/knowledge/lidar-point-cloud-basics/">Point
+            clouds</a> provide valuable information, <em>viz.,</em></p>
+            <ul>
+            <li>3D coordinates, <span
+            class="math inline">(<em>x</em>, <em>y</em>, <em>z</em>)</span></li>
+            <li><strong>strength</strong> of returned signal → provides
+            valuable information about the <strong>density</strong> of
+            the object (or even material composition)!</li>
+            <li>additional attributes: return number, scan angle, scan
+            direction, point density, RGB color values, and time stamps
+            → each can be used for refining the scan.</li>
+            </ul>
+            <p>There are <strong>two types</strong> of <em>scene
+            illumination</em> techniques for LiDAR:</p>
+            <table>
+            <colgroup>
+            <col style="width: 20%" />
+            <col style="width: 52%" />
+            <col style="width: 27%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>type</th>
+            <th>illumination method</th>
+            <th>detector</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>flash lidar</td>
+            <td><em>entire</em> scene using wide laser</td>
+            <td>receives all echoes on a photodetector array</td>
+            </tr>
+            <tr>
+            <td>scanning lidar</td>
+            <td>very narrow laser beams, scan illumination spot with
+            laser beam scanner</td>
+            <td>single photodetector to sequentially estimate <span
+            class="math inline"><em>τ</em></span> for each spot</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <table>
+            <colgroup>
+            <col style="width: 28%" />
+            <col style="width: 28%" />
+            <col style="width: 42%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th></th>
+            <th>flash lidar</th>
+            <th>scan lidar</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>architecture</strong></td>
+            <td><img src="img/sensors/lidar_flash.png" width="400"></td>
+            <td><img src="img/sensors/lidar_scan.png" width="400"></td>
+            </tr>
+            <tr>
+            <td><strong>resolution</strong> determined by</td>
+            <td>photodetector array pizel size (like camera)</td>
+            <td>laser beam size and spot fixing</td>
+            </tr>
+            <tr>
+            <td><strong>frame rates</strong></td>
+            <td>higher (up to <code>100 fps</code>)</td>
+            <td>lower (&lt; <code>30 fps</code>)</td>
+            </tr>
+            <tr>
+            <td><strong>range</strong></td>
+            <td>shorter (quick beam divergence, like photography)</td>
+            <td>longer (<code>100m+</code>)</td>
+            </tr>
+            <tr>
+            <td><strong>use</strong></td>
+            <td>less common</td>
+            <td><strong>most common</strong></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>Now, consider the following scene (captured by a
+            camera):</p>
+            <p><img src="img/sensors/lidar_camera_image.png" width="400"></p>
+            <p><br> <br></p>
+            <p>Compare this to the LiDAR images captured by the two
+            methods:</p>
+            <table>
+            <colgroup>
+            <col style="width: 30%" />
+            <col style="width: 30%" />
+            <col style="width: 38%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>flash lidar</th>
+            <th>scan lidar (16 scan lines)</th>
+            <th>scan lidar (32 scan lines)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><img src="img/sensors/lidar_flash.png" width="400"></td>
+            <td><img src="img/sensors/lidar_scan_16.png" width="400"></td>
+            <td><img src="img/sensors/lidar_scan_32.png" width="400"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <blockquote>
+            <p>A “LiDAR scan line” refers to a <strong>single horizontal
+            line</strong> of laser pulses emitted by a LiDAR sensor,
+            essentially capturing a cross-section of the environment at
+            a specific angle as the sensor rotates, creating a 3D point
+            cloud by combining multiple scan lines across the field of
+            view; it’s the basic building block of a LiDAR scan, similar
+            to how a single horizontal line is a building block of an
+            image.</p>
+            </blockquote>
+            <p><strong>Potential Problems</strong>:</p>
+            <p>Atmospheric/environmental conditions can
+            <strong>negatively</strong> affect the quality of the data
+            captured by the LiDAR. For instance, <strong>fog</strong>
+            can scatter the laser photons resulting in <strong>false
+            positives</strong>.</p>
+            <p><img src="img/sensors/lidar_fog.png" width="400"></p>
+            <p>As we see from the above image, the scattering due to the
+            fog results in the system “identifying” multiple objects
+            even though there is only <em>one</em> person in the
+            scene.</p>
+            <p>Here are additional examples from the <a
+            href="https://www.mapix.com/lidar-scanner-sensors/velodyne/velodyne-vlp-32c/">Velodyne
+            VLP-32C</a> sensor:</p>
+            <ol type="1">
+            <li><strong>light</strong> fog (camera vs LiDAR)</li>
+            </ol>
+            <p><img src="img/sensors/lidar_veoldyne_lightfog.png" width="600"></p>
+            <p>The LiDAR does a good job isolating the main subject with
+            very few false positives.</p>
+            <ol start="2" type="1">
+            <li><strong>heavy</strong> fog (camera vs LiDAR)</li>
+            </ol>
+            <p><img src="img/sensors/lidar_velodyne_heavyfog.png" width="600"></p>
+            <p>The LiDAR <em>struggles</em> to isolate the main subject
+            with very <em>high</em> false positives.</p>
+            <p>In spite of these issues, LiDAR is one of the most
+            popular sensors used in autonomous vehicles. They’re getting
+            smaller and more precise by the day; also decreasing costs
+            means that we will see a proliferation of these types of
+            sensors in many autonomous systems.</p>
+            </section>
+            </section>
+            <section id="ultrasonic" class="level3" data-number="3.1.3">
+            <h3 data-number="3.1.3"><span
+            class="header-section-number">3.1.3</span> Ultrasonic</h3>
+            <p>[SAM]</p>
+            <p><br> <br> <br> <br></p>
+            <p>Structure:</p>
+            <ul>
+            <li>types of sensors, sensor plan</li>
+            <li>IMU, Cameras, Radar/LiDar, mmwave</li>
+            <li>errors in sensing</li>
+            <li>sensing data acquisition → ADC, aliasing, Nyquist,
+            etc.</li>
+            <li>how does LiDar work?</li>
+            <li>others? Infrared (Sam?)</li>
+            </ul>
+            </section>
+            </section>
+            </section>
             <section id="footnotes"
             class="footnotes footnotes-end-of-document"
             role="doc-endnotes">
@@ -2724,7 +3241,7 @@ George Washington University</p></li>
             href="#fnref2" class="footnote-back"
             role="doc-backlink">↩︎</a></p></li>
             <li
-            id="fn3"><p>https://www.cecs.uci.edu/~papers/compendium94-03/papers/2002/date02/pdffiles/05a_1.pdf<a
+            id="fn3"><p>https://www.cecs.uci.edu/~papers/compendium94-03/papers/2002/date02/pdffiles/05a_1.pdf<!--link rel="stylesheet" href="./custom.sibin.css"--><a
             href="#fnref3" class="footnote-back"
             role="doc-backlink">↩︎</a></p></li>
             </ol>

@@ -1214,4 +1214,234 @@ More details about the Navio2 and how to program it: [Navio2 Documentation](http
 
 [^1]: TBD
 [^2]: https://dl.acm.org/doi/10.5555/244522.244548
-[^3]: https://www.cecs.uci.edu/~papers/compendium94-03/papers/2002/date02/pdffiles/05a_1.pdf
+[^3]: https://www.cecs.uci.edu/~papers/compendium94-03/papers/2002/date02/pdffiles/05a_1.pdf<!--link rel="stylesheet" href="./custom.sibin.css"-->
+
+
+# Sensors and Sensing
+
+An embedded/autonomous system _perceives_ the physical world via sensors -- either to gather information about its environment or to model its _own_ state. Hence it is a critical component in the _sensing &rarr; planning &rarr; actuation_ loop and a critical component in the design of embedded and autonomous systems.
+
+|||
+|------|-------|
+|<img src="img/sense_planning_actuation.png" width="400">|<img src="img/stack_architecture/stack_overview.2.png" width="300">|
+||
+
+Modern autonomous systems used a _wide array_ of sensors. This is necessary due to:
+
+- there is a need to measure **different** quantities, _e.g.,_ GPS, velocity, objects, _etc._
+- sensor measurements often have **errors** &rarr; hence, we need multiple sensors, often using **different physical properties** to measure the _same thing_; _e.g.,_ LiDar and cameras can both be used to detect objects in front of, and around, an autonomous vehicle.
+
+At its core, 
+
+> a sensor captures a physical/chemical/environmental quantity and **converts it to a physical quantity**.
+
+(hence the need for an Analog-to-Digital Convertor (ADC) as we shall see later)
+
+By definition, sensors generate **signals**. A signal, `s`, is defined as a mapping from the _time_ domain to a _value_ domain:
+
+$$
+s: D_t \mapsto D_v
+$$
+
+where,
+
+| symbol | description                              |
+|--------|------------------------------------------|
+| $D_t$  | continuous or discrete **time** domain   |
+| $D_v$  | continuous or discrete **value** domain  |
+||
+
+**Note:** remember that computers require **discrete** sequences of physical values. Hence, we need to **convert** the above into the discrete domain. The way to achieve this: **sampling**:
+
+<img src="img/sensors/discretization_sampled.signal.svg" title="Sampling image from Wikipedia" width="300">
+
+The figure shows a continuous signal being sampled (in <font color="red"><b>red</b></font> arrows). We will discuss sampling and related issues later in this topic.
+
+
+## Types of Sensors
+
+Sensors come in various shapes and sizes. Usually designers of autonomous systems will develop a "**sensor plan** that will consider,
+
+- required functionality
+- sensor range(s)
+- cost
+
+Hence, each autonomous system will likely have its own set of sensors (or sensor plan). _Typical_ sensors found on modern autonomous systems can be classified based on the underlying physics used:
+
+|physical property|sensor|
+|-----------------|-------|
+|[_internal_ measurements](#inertial-measurement-units-imu)| IMU |
+|_external_ measurements| GPS |
+|["bouncing" electromagnetic waves](#bouncing-of-electromagnetic-waves--lidar-and-mmwave)| LiDAR, RADAR, mmWave Radar|
+|optical| cameras, infrared sensors|
+|[accoustic](#ultrasonic)| ultrasonic sensors|
+||
+
+Some of the above can be combined to generate other sensing patterns, _e.g.,_ **stereo vision** using multiple cameras or camera+LiDAR.
+
+We will go over **some** of these sensors and their underlying physical principles. 
+
+### Inertial Measurement Units (IMU)
+
+These sensors define the **movement of a vehicle**, along the three axes, in addition to other behaviors like acceleration. An IMU typically includes the following sensors:
+
+|||||
+|---------|--------|---------|-----------|
+|<img src="img/sensors/imu_exploded_view.jpg" width="600">|<img src="img/sensors/imu_accelerometer.png" width="400">|<img src="img/sensors/imu_gyro.png" width="400">|<img src="img/sensors/imu_magnetometer.png" width="400">|
+||
+
+As we see from the first picture above, an IMU also has a CPU (typically a microcontroller) to manage/collect/process the data from the sensors.
+
+The functions of the three sensors are:
+
+1. **gyroscope**: is an inertial sensor that measure an object's angular rate with respect to an inertial reference frame. It measures the following movements:
+
+||||
+|--------|----------|---------|
+|<img src="img/sensors/imu_yaw.gif">|<img src="img/sensors/imu_pitch.gif">|<img src="img/sensors/imu_roll.gif">|
+| "yaw" | "pitch" | "roll" |
+||
+
+IMUs come in all shapes and sizes. These days they're very small but the original IMU's ver really large, as evidenced by the one used in the [Apollo space missions](http://klabs.org/history/history_docs/mit_docs/1690.pdf):
+
+<img src="img/sensors/imu_apollo.jpg" width="300">
+
+<br>
+
+
+2. **accelerometer**: is the primary sensor responsible for measuring inertial acceleration, or the change in velocity over time.
+
+3. **magnetometer**: measures the strength and direction of a magnetic field – to find the magnetic north
+
+
+### Bouncing of Electromagnetic Waves | LiDAR and mmWave
+
+A very common principle for measuring surroundings is to bounce electromagnetic waves off nearby objects and measuring the round trip times. Shorter times indicate closer objects while longer times indicate objects that are farther away. [RADAR](https://www.noaa.gov/jetstream/doppler/how-radar-works) is a classic example of this type of sensor and its (basic) operation is shown in the following image (courtesy NOAA):
+
+<img src="img/sensors/radar_doppler_ani.gif" width="400">
+
+While many autonomous vehicles use RADAR, we will focus on other technologies that are more prevalent and provide much higher precision, _viz.,_
+
+1. [LiDAR](#light-detection-and-ranging-lidar)
+2. millimeter Wave RADAR (mmWave)
+
+
+#### Light Detection and Ranging (LiDAR)
+
+[LiDAR](https://web.stanford.edu/class/ee259/lectures/ee259_05_lidar.pdf) is a sensor that uses (_eye safe_) **laser beams** for mapping surroundings and creating **3D representation** of the environment. So lasers are used for,
+
+- imaging
+- detection 
+- ranging
+
+We can use LiDAR to distance, angle as well as the _radial velocity_ of some objects -- all relative to the autonomous system (rather the sensor). So, in practice, this is how it operates:
+
+<img src="img/sensors/lidar_principle_operation.png" width="400">
+
+We define a **roundtrip time**, $\tau$, as the time between when a pulse is sent out from the transmitter (`TX`) to when light reflected from the object is detected at the receiver (`RX`). 
+
+So, the **target range** (_i.e.,_ the distance to te object), $R$, is measured as:
+
+$$
+R = \frac{c\tau}{2}
+$$
+
+where, `c` is the speed of light. 
+
+More details (from [Mahalati](https://web.stanford.edu/class/ee259/lectures/ee259_05_lidar.pdf)):
+> Lasers used in lidars have frequencies in the $100s$ of Terahetrz. Compared to RF waves, lasers have significantly smaller wavelengths and can hence be easily collected into narrow beams using lenses. This makes DOA estimation almost trivial in lidar and gives it significantly better reso- lution than MIMO imaging radar.
+
+The _end product_ of LiDAR is essentially a **point cloud**, defined as:
+
+> a collection of points generated by a sensor. Such collections can be very dense and contain billions of points, which enables the creation of highly detailed 3D representations of an area.
+
+<img src="img/sensors/lidar_point_cloud_torus.gif" title="3D point cloud of a Torus. Courtesy Wikipedia">
+
+In reality, point cloud representations around autonomous vehicles end up looking like:
+
+<video controls width="500"> <source src="https://sibin.github.io/teaching/csci6907_88-gwu-secure_autonomous/fall_2022/other_docs/What-is-Lidar-video.mp4"></video>
+
+[Point clouds](https://www.yellowscan.com/knowledge/lidar-point-cloud-basics/) provide valuable information, _viz.,_
+
+- 3D coordinates, $(x, y, z)$
+- **strength** of returned signal &rarr; provides valuable information about the **density** of the object (or even material composition)!
+- additional attributes: return number, scan angle, scan direction, point density, RGB color values, and time stamps &rarr; each can be used for refining the scan.
+
+There are **two types** of _scene illumination_ techniques for LiDAR:
+
+| type | illumination method  | detector |
+|--------|---------------------|-----------|
+| flash lidar | _entire_ scene using wide laser  | receives all echoes on a photodetector array |
+| scanning lidar | very narrow laser beams, scan illumination spot with laser beam scanner | single photodetector to sequentially estimate $\tau$ for each spot |
+||
+
+<br>
+
+| | flash lidar | scan lidar |
+|----|----|------|
+| **architecture** | <img src="img/sensors/lidar_flash.png" width="400"> | <img src="img/sensors/lidar_scan.png" width="400"> |
+| **resolution** determined by | photodetector array pizel size (like camera) | laser beam size and spot fixing |
+| **frame rates** | higher (up to `100 fps`) | lower (< `30 fps`) |
+| **range** | shorter (quick beam divergence, like photography) | longer (`100m+`) |
+| **use**   | less common | **most common** |
+||
+
+<br>
+
+Now, consider the following scene (captured by a camera):
+
+<img src="img/sensors/lidar_camera_image.png" width="400">
+
+<br>
+<br>
+
+Compare this to the LiDAR images captured by the two methods:
+
+|flash lidar | scan lidar (16 scan lines)| scan lidar (32 scan lines)|
+|----|----|-----|
+| <img src="img/sensors/lidar_flash.png" width="400"> | <img src="img/sensors/lidar_scan_16.png" width="400"> | <img src="img/sensors/lidar_scan_32.png" width="400">|
+
+<br>
+
+> A "LiDAR scan line" refers to a **single horizontal line** of laser pulses emitted by a LiDAR sensor, essentially capturing a cross-section of the environment at a specific angle as the sensor rotates, creating a 3D point cloud by combining multiple scan lines across the field of view; it's the basic building block of a LiDAR scan, similar to how a single horizontal line is a building block of an image. 
+
+**Potential Problems**:
+
+Atmospheric/environmental conditions can **negatively** affect the quality of the data captured by the LiDAR. For instance, **fog** can scatter the laser photons resulting in **false positives**. 
+
+<img src="img/sensors/lidar_fog.png" width="400">
+
+As we see from the above image, the scattering due to the fog results in the system "identifying" multiple objects even though there is only _one_ person in the scene.
+
+Here are additional examples from the [Velodyne VLP-32C](https://www.mapix.com/lidar-scanner-sensors/velodyne/velodyne-vlp-32c/) sensor:
+
+1. **light** fog (camera vs LiDAR)
+
+<img src="img/sensors/lidar_veoldyne_lightfog.png" width="600">
+
+The LiDAR does a good job isolating the main subject with very few false positives.
+
+2. **heavy** fog (camera vs LiDAR)
+
+<img src="img/sensors/lidar_velodyne_heavyfog.png" width="600">
+
+The LiDAR _struggles_ to isolate the main subject with very _high_ false positives.
+
+In spite of these issues, LiDAR is one of the most popular sensors used in autonomous vehicles. They're getting smaller and more precise by the day; also decreasing costs means that we will see a proliferation of these types of sensors in many autonomous systems. 
+
+### Ultrasonic 
+[SAM]
+
+<br>
+<br>
+<br>
+<br>
+
+Structure:
+
+- types of sensors, sensor plan
+- IMU, Cameras, Radar/LiDar, mmwave
+- errors in sensing
+- sensing data acquisition &rarr; ADC, aliasing, Nyquist, etc.
+- how does LiDar work?
+- others? Infrared (Sam?)
