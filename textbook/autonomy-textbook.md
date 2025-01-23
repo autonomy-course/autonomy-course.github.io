@@ -1486,6 +1486,28 @@ For a more detailed description of mmWave RADAR, read: [Understanding mmWave RAD
 
 [SAM]
 
+
+
+
+## Errors in Sensing
+
+Since sensors deal with and measure the _physical_ world, **errors** will creep in over time. 
+
+Some typical errors in the use of physical sensors:
+| error type | description |
+|----------------|-------------|
+| **sensor drift** | over time the sensor measurements will "drift", i.e., a gradual change in its output &rarr; away from average values (e.g., due to wear and tear) |
+| **constant bias** | bias of an accelerometer is the offset of its output signal from the actual acceleration value. A constant bias error causes an error in position which grows with time |
+| **calibration errors** | ‘calibration errors’ refers to errors in the scale factors, alignments and linearities of the gyros. Such errors tend to produce errors when the device is turning. These errors can result in additional drift |
+| **scale factor** | scale factor is the relation of the accelerometer input to the actual sensor output for the measurement. Scale factor, expressed in ppm, is therefore the linear growth of input variation to actual measurement |
+| **vibration rectification errors** | vibration rectification error (VRE) is the response of an accelerometer to current rectification in the sensor, causing a shift in the offset of the accelerometer. This can be a significant cumulative error, which propagates with time and can lead to over compensation in stabilization |
+| **noise** | random variations in the sensor output that do not correspond to the actual measured value |
+||
+
+<br>
+
+Each error type must be dealt with in different ways though one of the commomn ways to prevent sensor errors from causing harm to autonomous systems &rarr; **sensor fusion**, _i.e.,_ use information from **multiple sensors** before making any decisions. We will dicuss sensor fusion later in this course.
+
 <br>
 <br>
 <br>

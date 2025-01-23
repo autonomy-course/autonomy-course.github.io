@@ -294,6 +294,9 @@ George Washington University</p></li>
         <li><a href="#ultrasonic" id="toc-ultrasonic"><span
         class="toc-section-number">3.1.3</span> Ultrasonic</a></li>
         </ul></li>
+        <li><a href="#errors-in-sensing"
+        id="toc-errors-in-sensing"><span
+        class="toc-section-number">3.2</span> Errors in Sensing</a></li>
         </ul></li>
         </ul>
 
@@ -3332,6 +3335,49 @@ George Washington University</p></li>
             <h3 data-number="3.1.3"><span
             class="header-section-number">3.1.3</span> Ultrasonic</h3>
             <p>[SAM]</p>
+            </section>
+            </section>
+            <section id="errors-in-sensing" class="level2"
+            data-number="3.2">
+            <h2 data-number="3.2"><span
+            class="header-section-number">3.2</span> Errors in
+            Sensing</h2>
+            <p>Since sensors deal with and measure the <em>physical</em>
+            world, <strong>errors</strong> will creep in over time.</p>
+            <p>Some typical errors in the use of physical sensors: |
+            error type | description | |—————-|————-| | <strong>sensor
+            drift</strong> | over time the sensor measurements will
+            “drift”, i.e., a gradual change in its output → away from
+            average values (e.g., due to wear and tear) | |
+            <strong>constant bias</strong> | bias of an accelerometer is
+            the offset of its output signal from the actual acceleration
+            value. A constant bias error causes an error in position
+            which grows with time | | <strong>calibration
+            errors</strong> | ‘calibration errors’ refers to errors in
+            the scale factors, alignments and linearities of the gyros.
+            Such errors tend to produce errors when the device is
+            turning. These errors can result in additional drift | |
+            <strong>scale factor</strong> | scale factor is the relation
+            of the accelerometer input to the actual sensor output for
+            the measurement. Scale factor, expressed in ppm, is
+            therefore the linear growth of input variation to actual
+            measurement | | <strong>vibration rectification
+            errors</strong> | vibration rectification error (VRE) is the
+            response of an accelerometer to current rectification in the
+            sensor, causing a shift in the offset of the accelerometer.
+            This can be a significant cumulative error, which propagates
+            with time and can lead to over compensation in stabilization
+            | | <strong>noise</strong> | random variations in the sensor
+            output that do not correspond to the actual measured value |
+            ||</p>
+            <p><br></p>
+            <p>Each error type must be dealt with in different ways
+            though one of the commomn ways to prevent sensor errors from
+            causing harm to autonomous systems → <strong>sensor
+            fusion</strong>, <em>i.e.,</em> use information from
+            <strong>multiple sensors</strong> before making any
+            decisions. We will dicuss sensor fusion later in this
+            course.</p>
             <p><br> <br> <br> <br></p>
             <p>Structure:</p>
             <ul>
@@ -3343,7 +3389,6 @@ George Washington University</p></li>
             <li>how does LiDar work?</li>
             <li>others? Infrared (Sam?)</li>
             </ul>
-            </section>
             </section>
             </section>
             <section id="footnotes"
