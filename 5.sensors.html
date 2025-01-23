@@ -663,6 +663,380 @@ consider the following "scene" (taken using camera)
 atmospheric/environmental conditions &rarr; **false positives**
 
 <img src="img/sensors/lidar_fog.png" width="1300">
+
+
+---
+
+look up the [textbook chapter on sensing](https://autonomy-course.github.io/textbook/autonomy-textbook.html#sensors-and-sensing) 
+- for more information about LiDAR 
+- also the mmWave RADAR sensor
+
+---
+
+## Errors in Sensing
+
+---
+
+## Errors in Sensing
+
+- sensors deal with &rarr; physical world
+- **errors** creep up over time!
+
+
+---
+
+## Errors in Sensing | types
+
+- sensor **drift**
+- **constant bias**
+- **calibration** errors
+- **scale factor**
+- **vibration rectification** errors
+- **noise**
+
+Note:
+| error type | description |
+|----------------|-------------|
+| **sensor drift** | over time the sensor measurements will "drift", i.e., a gradual change in its output &rarr; away from average values (e.g., due to wear and tear) |
+| **constant bias** | bias of an accelerometer is the offset of its output signal from the actual acceleration value. A constant bias error causes an error in position which grows with time |
+| **calibration errors** | ‘calibration errors’ refers to errors in the scale factors, alignments and linearities of the gyros. Such errors tend to produce errors when the device is turning. These errors can result in additional drift |
+| **scale factor** | scale factor is the relation of the accelerometer input to the actual sensor output for the measurement. Scale factor, expressed in ppm, is therefore the linear growth of input variation to actual measurement |
+| **vibration rectification errors** | vibration rectification error (VRE) is the response of an accelerometer to current rectification in the sensor, causing a shift in the offset of the accelerometer. This can be a significant cumulative error, which propagates with time and can lead to over compensation in stabilization |
+| **noise** | random variations in the sensor output that do not correspond to the actual measured value |
+||
+
+---
+
+## Errors in Sensing
+
+each error &rarr; dealt with differently
+
+---
+
+## Errors in Sensing
+
+each error &rarr; dealt with differently
+
+can use **sensor fusion** to mitigate some errors
+
+---
+
+## analog-to-digital convertor (ADC)
+
+---
+
+## analog-to-digital convertor (ADC)
+
+$$s: D_t \mapsto D_v$$
+
+---
+
+## analog-to-digital convertor (ADC)
+
+$$s: D_t \mapsto D_v$$
+
+microcontrollers **cannot** read values &rarr; unless it is **digital**
+
+---
+
+need to **convert** signals into **discrete** values
+
+---
+
+$$s: D_t \mapsto D_v$$
+
+$D_v$ must be **discrete**
+
+Note:
+A discrete signal or discrete-time signal is a time series consisting of a sequence of quantities. Unlike a continuous-time signal, a discrete-time signal is not a function of a continuous argument; however, it may have been obtained by sampling from a continuous-time signal. When a discrete-time signal is obtained by sampling a sequence at uniformly spaced times, it has an associated **sampling rate**.
+
+---
+
+## sampling
+
+**convert analog &rarr; digital**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## sampling
+
+**convert analog &rarr; digital**
+
+|analog signal|||
+|-------------|-------------|--------|
+|<img src="img/sensors/adc_analog_signal.png">|||
+||
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## sampling
+
+**convert analog &rarr; digital**
+
+|analog signal|sampling rate||
+|-------------|-------------|--------|
+|<img src="img/sensors/adc_analog_signal.png" width="700">|<img src="img/sensors/adc_sampling_rate.png" width="700">||
+||
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## sampling
+
+**convert analog &rarr; digital**
+
+|analog signal|sampling rate|sampling|
+|-------------|-------------|--------|
+|<img src="img/sensors/adc_analog_signal.png" width="500">|<img src="img/sensors/adc_sampling_rate.png" width="500">|<img src="img/sensors/adc_sampling.png" width="600">|
+||
+
+---
+
+## adc
+
+- device that converts analog &rarr; digital
+- very common circuit/microcontroller
+- any _physical_ sensor signal &rarr; pass through ADC
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## adc | example
+
+<img src="img/sensors/adc_example.jpg" width="1100">
+
+<font color="blue"><b>analog</b></font> signal is **discretized** into the <font color="red"><b>digital</b></font> signal 
+
+---
+
+## adc | sequence
+
+- **sample** the signal
+- **quantify** &rarr; determine resolution
+- set **binary values**
+- **send to system** read digital signal
+
+---
+
+### adc | important aspects
+
+1. sampling rate
+2. resolution
+
+---
+
+## ADC | **Sampling Rate**
+
+- samples per second (SPS or S/s)
+- **how many samples** (data points) are taken
+- more samples &rarr; higher frequencies
+
+---
+
+## sample rate: $ f_s = \frac{1}{T} $
+
+---
+
+## sample rate: $ f_s = \frac{1}{T} $
+
+
+|symbol|definition|
+|------|----------|
+|$f_s$ | sampling rate/frequency|
+|$T$ | period of the sample |
+||
+
+---
+
+<!-- .slide: data-background="white" -->
+
+<img src="img/sensors/adc_example.jpg" width="1100">
+
+|symbol|value|
+|------|----------|
+|$f_s$ | `20 Hz` |
+|$T$ | `50 ms` |
+||
+
+---
+
+<!-- .slide: data-background="white" -->
+
+<img src="img/sensors/adc_example.jpg" width="1100">
+
+|symbol|value|
+|------|----------|
+|$f_s$ | `20 Hz` |
+|$T$ | `50 ms` |
+||
+
+this is _slow_ but, signal frequency: `1 Hz`
+
+---
+
+what if,
+
+sampling frequency << signal frequency?
+
+---
+
+what if,
+
+sampling frequency << signal frequency?
+
+## aliasing!
+
+---
+
+## aliasing!
+
+reconstructed signal &rarr; differs from input!
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## aliasing!
+
+reconstructed signal &rarr; differs from input!
+
+<img src="img/sensors/adc_aliasing_example.jpg" width="900">
+
+---
+
+## **Nyquist-Shannon Sampling Theorem**
+
+---
+
+## **Nyquist-Shannon Sampling Theorem**
+
+> sampling rate = **at least twice the highest frequency component**
+
+---
+
+## **Nyquist-Shannon Sampling Theorem**
+
+> sampling rate = **at least twice the highest frequency component**
+
+if less &rarr; aliasing creeps in!
+
+---
+
+## $f_{Nyquist} = 2* f_{max}$
+
+---
+
+## $f_{Nyquist} = 2* f_{max}$
+
+<br>
+
+|symbol|definition|
+|------|----------|
+|$f_{Nyquist}$ | Nyquist sampling rate/frequency|
+|$f_{max}$ | the maximum frequency that appears in the signal |
+||
+
+---
+
+## adc | **resolution**
+
+---
+
+## adc | **resolution**
+
+- directly related to precision
+- determined by **bit length**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## adc | **bit length**
+
+<img src="img/sensors/adc_resolution_example.jpg" width="900">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## adc | **bit length**
+
+<img src="img/sensors/adc_resolution_example.jpg" width="900">
+
+increasing bit lengths &rarr; digital signal better representation
+
+---
+
+## adc | **true** resolution
+
+---
+
+## adc | **true** resolution
+
+$$
+Step Size = \frac{V_{ref}}{N}
+$$
+
+---
+
+## adc | **true** resolution
+
+$$
+Step Size = \frac{V_{ref}}{N}
+$$
+
+|symbol|definition|
+|------|----------|
+|$Step Size$| resolution of each level in terms of voltage|
+|$V_{ref}$ |voltage reference/range of voltages|
+|$N = 2^n$ | total "size" of the ADC|
+|$n$ | bit size|
+||
+
+---
+
+## numerical example
+
+- sine wave, voltage = `5V`
+- ADC chip precision = `12 bits`
+
+---
+
+## numerical example
+
+- sine wave, voltage = `5V`
+- ADC chip precision = `12 bits`
+- $N = 2^{12} = $ `4096`
+
+---
+
+## numerical example
+
+- sine wave, voltage = `5V`
+- ADC chip precision = `12 bits`
+- $N = 2^{12} = $ `4096`
+
+
+- $Step Size = 5V /\ 4096$ = `0.00122V` (or `1.22mV`)
+
+---
+
+system can tell &rarr; voltage level changes by `1.22 mV`!
+
+---
+
+what happens if, $n=4$?
+
+---
+
+sampling **frequency** and **resolution** &rarr; **quality** of ADC output
                     </textarea>
                 </section>
             </div>

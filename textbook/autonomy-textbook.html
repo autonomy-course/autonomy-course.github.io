@@ -2267,19 +2267,52 @@ George Washington University</p></li>
             specific conditions are met.</p>
             <p>Schematic Diagram of a JTAG enabled device:</p>
             <p><img src="img/embedded_arch/comms/jtag_schematic_diagram.gif" width="300"></p>
-            <p>The various pins signals in the JTAG TAP are: | signal |
-            description | |——–|————-| | <code>TCK</code> | synchronizes
-            the internal state machine operations | | <code>TMS</code> |
-            sampled at the rising edge of <code>TCK</code> to determine
-            the next state | | <code>TDI</code> | data shifted into the
-            device’s test or programming logic; sampled at the rising
-            edge of <code>TCK</code> when the internal state machine is
-            in the correct state | | <code>TDO</code> | represents the
-            data shifted out of the device’s test or programming logic
-            and is valid on the falling edge of <code>TCK</code> when
-            the internal state machine is in the correct state | |
-            <code>TRST</code> | optional pin which, when available, can
-            reset the tap controller’s state machine | ||</p>
+            <p>The various pins signals in the JTAG TAP are:</p>
+            <table>
+            <colgroup>
+            <col style="width: 38%" />
+            <col style="width: 61%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>signal</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><code>TCK</code></td>
+            <td>synchronizes the internal state machine operations</td>
+            </tr>
+            <tr>
+            <td><code>TMS</code></td>
+            <td>sampled at the rising edge of <code>TCK</code> to
+            determine the next state</td>
+            </tr>
+            <tr>
+            <td><code>TDI</code></td>
+            <td>data shifted into the device’s test or programming
+            logic; sampled at the rising edge of <code>TCK</code> when
+            the internal state machine is in the correct state</td>
+            </tr>
+            <tr>
+            <td><code>TDO</code></td>
+            <td>represents the data shifted out of the device’s test or
+            programming logic and is valid on the falling edge of
+            <code>TCK</code> when the internal state machine is in the
+            correct state</td>
+            </tr>
+            <tr>
+            <td><code>TRST</code></td>
+            <td>optional pin which, when available, can reset the tap
+            controller’s state machine</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             <p>The TAP controller implements the following state
             machine:</p>
             <p><img src="img/embedded_arch/comms/jtag_tap_state_machine.gif" width="300"></p>
@@ -2790,7 +2823,7 @@ George Washington University</p></li>
             <p>At its core,</p>
             <blockquote>
             <p>a sensor captures a physical/chemical/environmental
-            quantity and <strong>converts it to a physical
+            quantity and <strong>converts it to a digital
             quantity</strong>.</p>
             </blockquote>
             <p>(hence the need for an Analog-to-Digital Convertor (ADC)
@@ -2906,8 +2939,8 @@ George Washington University</p></li>
             Measurement Units (IMU)</h3>
             <p>These sensors define the <strong>movement of a
             vehicle</strong>, along the three axes, in addition to other
-            behaviors like acceleration. An IMU typically includes the
-            following sensors:</p>
+            behaviors like acceleration and directionality. An IMU
+            typically includes the following sensors:</p>
             <table>
             <colgroup>
             <col style="width: 24%" />
@@ -2975,7 +3008,7 @@ George Washington University</p></li>
             responsible for measuring inertial acceleration, or the
             change in velocity over time.</p></li>
             <li><p><strong>magnetometer</strong>: measures the strength
-            and direction of a magnetic field – to find the magnetic
+            and direction of magnetic field – to find the magnetic
             north</p></li>
             </ol>
             </section>
@@ -3176,7 +3209,7 @@ George Washington University</p></li>
             </thead>
             <tbody>
             <tr>
-            <td><img src="img/sensors/lidar_flash.png" width="400"></td>
+            <td><img src="img/sensors/lidar_flash_image.png" width="400"></td>
             <td><img src="img/sensors/lidar_scan_16.png" width="400"></td>
             <td><img src="img/sensors/lidar_scan_32.png" width="400"></td>
             </tr>
@@ -3731,7 +3764,7 @@ George Washington University</p></li>
             <p>This is easier to understand with a concrete example:</p>
             <blockquote>
             <p>consider a sine wave with a voltage, <code>5 V</code>
-            that must be digitized. <br> If our ADC resolution is
+            that must be digitized. <br> If our ADC precision is
             <code>12 bits</code>, then we get <br> <span
             class="math inline"><em>N</em> = 2<sup>12</sup> = 4096</span>
             <br> <br> Hence, <span

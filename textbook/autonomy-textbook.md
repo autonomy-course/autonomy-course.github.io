@@ -992,6 +992,7 @@ JTAG allows for _device programmer hardware_ allows for transfering data into in
  <img src="img/embedded_arch/comms/jtag_schematic_diagram.gif" width="300">
 
  The various pins signals in the JTAG TAP are:
+
 | signal | description |
 |--------|-------------|
 | `TCK` | synchronizes the internal state machine operations |
@@ -1233,7 +1234,7 @@ Modern autonomous systems used a _wide array_ of sensors. This is necessary due 
 
 At its core, 
 
-> a sensor captures a physical/chemical/environmental quantity and **converts it to a physical quantity**.
+> a sensor captures a physical/chemical/environmental quantity and **converts it to a digital quantity**.
 
 (hence the need for an Analog-to-Digital Convertor (ADC) as we shall see later)
 
@@ -1245,7 +1246,7 @@ $$
 
 where,
 
-| symbol | description                              |
+| symbol | description  |
 |--------|------------------------------------------|
 | $D_t$  | continuous or discrete **time** domain   |
 | $D_v$  | continuous or discrete **value** domain  |
@@ -1283,7 +1284,7 @@ We will go over **some** of these sensors and their underlying physical principl
 
 ### Inertial Measurement Units (IMU)
 
-These sensors define the **movement of a vehicle**, along the three axes, in addition to other behaviors like acceleration. An IMU typically includes the following sensors:
+These sensors define the **movement of a vehicle**, along the three axes, in addition to other behaviors like acceleration and directionality. An IMU typically includes the following sensors:
 
 |||||
 |---------|--------|---------|-----------|
@@ -1311,7 +1312,7 @@ IMUs come in all shapes and sizes. These days they're very small but the origina
 
 2. **accelerometer**: is the primary sensor responsible for measuring inertial acceleration, or the change in velocity over time.
 
-3. **magnetometer**: measures the strength and direction of a magnetic field – to find the magnetic north
+3. **magnetometer**: measures the strength and direction of magnetic field – to find the magnetic north
 
 
 ### Bouncing of Electromagnetic Waves | LiDAR and mmWave
@@ -1399,7 +1400,7 @@ Compare this to the LiDAR images captured by the two methods:
 
 |flash lidar | scan lidar (16 scan lines)| scan lidar (32 scan lines)|
 |----|----|-----|
-| <img src="img/sensors/lidar_flash.png" width="400"> | <img src="img/sensors/lidar_scan_16.png" width="400"> | <img src="img/sensors/lidar_scan_32.png" width="400">|
+| <img src="img/sensors/lidar_flash_image.png" width="400"> | <img src="img/sensors/lidar_scan_16.png" width="400"> | <img src="img/sensors/lidar_scan_32.png" width="400">|
 
 <br>
 
@@ -1653,7 +1654,7 @@ where,
 This is easier to understand with a concrete example:
 
 > consider a sine wave with a voltage, `5 V` that must be digitized. <br>
-> If our ADC resolution is `12 bits`, then we get <br>
+> If our ADC precision is `12 bits`, then we get <br>
 > $N = 2^{12} = 4096$ <br>
 > <br>
 > Hence, $Step Size = 5V /\ 4096$ which is `0.00122V` (or `1.22mV`)<br>
