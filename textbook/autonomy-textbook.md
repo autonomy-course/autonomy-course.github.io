@@ -1654,6 +1654,7 @@ where,
 This is easier to understand with a concrete example:
 
 > consider a sine wave with a voltage, `5 V` that must be digitized. <br>
+> <br>
 > If our ADC precision is `12 bits`, then we get <br>
 > $N = 2^{12} = 4096$ <br>
 > <br>
@@ -1663,7 +1664,47 @@ This is easier to understand with a concrete example:
 
 (Repeat the exercise for say, bit length, $n = 4$)
 
-Hence, we see that **sampling frequency** and **resolution** determine the quality of output we get from an ADC.
+<br>
+
+**Visual Example:**
+
+The above maybe intuitively understood as follows:
+
+Consider the following signal:
+
+<img src="img/sensors/adc_bits/adc_bits.1.png" width="300">
+
+Now, if we want to sample this signal, we can obtain measurements at:
+
+<img src="img/sensors/adc_bits/adc_bits.2.png" width="300">
+
+<br>
+
+The figure shows `9` measurements. 
+
+Suppose, the ADC registers have a width of: `2 bits`. Hence it can store at most: `4 values`.
+
+Since is is **not** possible to store `9` values &rarr; `2` bits, we must select **only `4` values** omn the digital side. 
+
+We then get the following representation:
+
+<img src="img/sensors/adc_bits/adc_bits.3.png" width="300">
+
+<br>
+
+which, to be honest, is not really a good representation of the original signal!
+
+Now, consider the case where the ADC registers have a bit width: **`4 bits`** &rarr; `16 values`! Hence, we can easily store **all `9 values`** easily. 
+
+So, we can get a digital representation as follows:
+
+<img src="img/sensors/adc_bits/adc_bits.4.png" width="300">
+
+<br>
+
+We see that this is a better representation, *but still not exact*. We can increase the bit length but at this point we are limited by the sampling as well. Since we only have `9` samples, adding more bits won't help. 
+
+Hence, to get a better fidelity representation of the original signal, we see that **sampling frequency** and **resolution** need to be increased, since they determine the quality of output we get from an ADC.
 
 
 **Resources**

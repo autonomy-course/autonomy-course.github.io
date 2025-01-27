@@ -46,7 +46,7 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-23" />
+  <meta name="date" content="2025-01-26" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 23,
+                              <li><p class="navbar-text">January 26,
 2025</p></li>
                   </ul>
       </div>
@@ -3764,7 +3764,7 @@ George Washington University</p></li>
             <p>This is easier to understand with a concrete example:</p>
             <blockquote>
             <p>consider a sine wave with a voltage, <code>5 V</code>
-            that must be digitized. <br> If our ADC precision is
+            that must be digitized. <br> <br> If our ADC precision is
             <code>12 bits</code>, then we get <br> <span
             class="math inline"><em>N</em> = 2<sup>12</sup> = 4096</span>
             <br> <br> Hence, <span
@@ -3775,9 +3775,45 @@ George Washington University</p></li>
             </blockquote>
             <p>(Repeat the exercise for say, bit length, <span
             class="math inline"><em>n</em> = 4</span>)</p>
-            <p>Hence, we see that <strong>sampling frequency</strong>
-            and <strong>resolution</strong> determine the quality of
-            output we get from an ADC.</p>
+            <p><br></p>
+            <p><strong>Visual Example:</strong></p>
+            <p>The above maybe intuitively understood as follows:</p>
+            <p>Consider the following signal:</p>
+            <p><img src="img/sensors/adc_bits/adc_bits.1.png" width="300"></p>
+            <p>Now, if we want to sample this signal, we can obtain
+            measurements at:</p>
+            <p><img src="img/sensors/adc_bits/adc_bits.2.png" width="300"></p>
+            <p><br></p>
+            <p>The figure shows <code>9</code> measurements.</p>
+            <p>Suppose, the ADC registers have a width of:
+            <code>2 bits</code>. Hence it can store at most:
+            <code>4 values</code>.</p>
+            <p>Since is is <strong>not</strong> possible to store
+            <code>9</code> values → <code>2</code> bits, we must select
+            <strong>only <code>4</code> values</strong> omn the digital
+            side.</p>
+            <p>We then get the following representation:</p>
+            <p><img src="img/sensors/adc_bits/adc_bits.3.png" width="300"></p>
+            <p><br></p>
+            <p>which, to be honest, is not really a good representation
+            of the original signal!</p>
+            <p>Now, consider the case where the ADC registers have a bit
+            width: <strong><code>4 bits</code></strong> →
+            <code>16 values</code>! Hence, we can easily store
+            <strong>all <code>9 values</code></strong> easily.</p>
+            <p>So, we can get a digital representation as follows:</p>
+            <p><img src="img/sensors/adc_bits/adc_bits.4.png" width="300"></p>
+            <p><br></p>
+            <p>We see that this is a better representation, <em>but
+            still not exact</em>. We can increase the bit length but at
+            this point we are limited by the sampling as well. Since we
+            only have <code>9</code> samples, adding more bits won’t
+            help.</p>
+            <p>Hence, to get a better fidelity representation of the
+            original signal, we see that <strong>sampling
+            frequency</strong> and <strong>resolution</strong> need to
+            be increased, since they determine the quality of output we
+            get from an ADC.</p>
             <p><strong>Resources</strong></p>
             <ul>
             <li>for more details about ADC, read: <a
