@@ -1036,6 +1036,111 @@ what happens if, $n=4$?
 
 ---
 
+let's **visualize** this issue
+
+---
+
+consider the following signal:
+
+<img src="img/sensors/adc_bits/adc_bits.1.png" width="700">
+
+---
+
+we sample the signal,
+
+<img src="img/sensors/adc_bits/adc_bits.2.png" width="700">
+
+---
+
+we sample the signal,
+
+<img src="img/sensors/adc_bits/adc_bits.2.png" width="700">
+
+we get &rarr; <scb>9</scb> measurements
+
+---
+
+if **ADC bit width** &rarr; <scb>2 bits</scb>
+
+---
+
+if **ADC bit width** &rarr; <scb>2 bits</scb>
+<br>
+we can store &rarr; <scb>4 values</scb>
+
+---
+
+if **ADC bit width** &rarr; <scb>2 bits</scb>
+<br>
+we can store &rarr; <scb>4 values</scb>
+<br>
+hence, we **cannot** store <scb>9</scb> values!
+
+---
+
+if we pick the <scb>4</scb> _best_ values
+
+---
+
+if we pick the <scb>4</scb> _best_ values
+
+the _digital_ recreation looks like,
+
+<img src="img/sensors/adc_bits/adc_bits.3.png" width="700">
+
+---
+
+if we pick the <scb>4</scb> _best_ values
+
+the _digital_ recreation looks like,
+
+<img src="img/sensors/adc_bits/adc_bits.3.png" width="700">
+
+<br>
+
+this is **not** a good recreation of original signal!
+
+---
+
+what if ADC bit length &rarr; <scb>4</scb> bits?
+
+---
+
+ADC bit length &rarr; <scb>4</scb> bits &rarr; <scb>16 values</scb>
+<br>
+can **easily fit** all <scb>9</scb> values!
+
+---
+
+_digital_ representation:
+ 
+<img src="img/sensors/adc_bits/adc_bits.4.png" width="700">
+
+---
+
+_digital_ representation &rarr; not _quite_ the same as original!
+ 
+<img src="img/sensors/adc_bits/adc_bits.1.png" width="500">
+<img src="img/sensors/adc_bits/adc_bits.4.png" width="500">
+
+---
+
+_digital_ representation &rarr; not _quite_ the same as original!
+ 
+<img src="img/sensors/adc_bits/adc_bits.1.png" width="500">
+<img src="img/sensors/adc_bits/adc_bits.4.png" width="500">
+
+but still better than the previous situation 
+
+---
+
+to get higher fidelity, we need:
+
+1. more samples and
+2. higher bit widths
+
+---
+
 sampling **frequency** and **resolution** &rarr; **quality** of ADC output
                     </textarea>
                 </section>
