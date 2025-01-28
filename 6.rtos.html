@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        # rtos
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+what makes a **real-time operating system** "special"?
+
+---
+
+what makes a **real-time operating system** "special"?
+
+_different_ from a general-purpose OS?
+
+---
+
+## predictability!
+
+---
+
+## predictability?
+
+<img src="img/rtos/predict_computers.gif" width="700">
+
+---
+
+## predictability
+
+tasks complete &rarr; in a **timely** manner
+
+---
+
+## predictability
+
+tasks complete &rarr; in a **timely** manner
+
+<br>
+
+## <scb>deadlines!</scb>
+
+---
+
+## real-time systems _correctness_ criteria
+
+
+---
+
+## real-time systems _correctness_ criteria
+
+| | |
+|------------------------|-----------------------------------------------------------------------------|
+| **functional** correctness | the system should work as expected|
+
+
+---
+
+## real-time systems _correctness_ criteria
+
+| | |
+|------------------------|-----------------------------------------------------------------------------|
+| **functional** correctness | the system should work as expected <br> _i.e._, carry out intended function without errors |
+
+
+---
+
+## real-time systems _correctness_ criteria
+
+| | |
+|------------------------|-----------------------------------------------------------------------------|
+| **functional** correctness | the system should work as expected <br> _i.e._, carry out intended function without errors |
+| **temporal** correctness   | completed within a predefined timing constraint (**deadline**) |
+||
+
+---
+
+in the context of this course,
+
+<img src="img/stack_architecture/stack_overview.4.png" width="700">
+
+---
+
+in the context of this course,
+
+<img src="img/stack_architecture/stack_overview.4.png" width="700">
+
+<br>
+
+(we will come back to **actuation**)
+
+---
+
+in the context of this course,
+
+<img src="img/stack_architecture/stack_overview.4.png" width="700">
+
+<br>
+
+(we will come back to **actuation**...I promise)
+
+---
+
+**desirable characteristics** of an RTOS?
+
+---
+
+**desirable characteristics** of an RTOS?
+
+- determinism
+
+Note:
+
+| **determinism** | primary feature of an RTOS is its ability to perform tasks within guaranteed time frames; this predictability ensures that high-priority tasks are executed without delay, even under varying system loads |
+
+---
+
+**desirable characteristics** of an RTOS?
+
+- determinism
+- scheduling 
+
+Note: 
+
+| **task scheduling** | RTOS uses advanced scheduling algorithms (e.g., priority-based, round-robin or earliest-deadline-first) to manage task execution; RT tasks are often assigned priorities and the scheduler ensures that higher-priority tasks preempt lower-priority ones when necessary |
+
+---
+
+**desirable characteristics** of an RTOS?
+
+- determinism
+- scheduling 
+- low latency
+
+Note:
+
+| **low latency** | RTOS minimizes interrupt response times and context-switching overhead, enabling rapid task execution and efficient handling of time-sensitive operations (_e.g._, Linux spends **many milliseconds** handling interrupts such as disk access!) |
+
+---
+
+**desirable characteristics** of an RTOS?
+
+- determinism
+- scheduling 
+- low latency
+- resource management
+
+Note:
+
+| **resource management** | RTOS provides mechanisms for efficient allocation and management of system resources, such as memory, CPU and peripherals, to ensure optimal performance |
+
+---
+
+**desirable characteristics** of an RTOS?
+
+- determinism
+- scheduling 
+- low latency
+- resource management
+- scalability
+
+Note: 
+
+| **scalability** | RTOS is often lightweight and modular, making it suitable for resource-constrained environments like microcontrollers and embedded systems |
+
+---
+
+**desirable characteristics** of an RTOS?
+
+- determinism
+- scheduling 
+- low latency
+- resource management
+- scalability
+- reliability/fault tolerance
+
+Note:
+
+| **reliability and fault tolerance** | many RTOS implementations include features to enhance system stability, such as error detection, recovery mechanisms and redundancy |
+
+---
+
+# kernel
+
+provides **essential services** for RTOS
+
+---
+
+what kernel aspects matter in RTOS?
+
+---
+
+## RTOS kernel deals with,
+
+1. [task management](#tasks-jobs-threads)
+2. [communication and synchronization](#inter-task-communication-and-synchronization)
+3. [memory management](#memory-management)
+4. [timer and interrupt handling](#timer-and-interrupt-management)
+5. [performance metrics](#kernel-performance-metrics)
+
+
+---
+
+### Tasks, Jobs, Threads
+
+design of RTOS deals with &rarr; **tasks**, **jobs**
+
+for implementation-specific details &rarr; **threads**
+
+---
+
+real-time **task**,
+
+---
+
+real-time **task**, $\tau_i$ = $(\phi_i, p_i, c_i, d_i)$ 
+
+---
+
+real-time **task**, $\tau_i$ = $(\phi_i, p_i, c_i, d_i)$ 
+
+<br>
+
+| | |
+| ------ | ----------- |
+| $\phi_i$ | Phase (offset for first job) |
+| $p_i$    | Period |
+| $c_i$    | Worst-case execution time |
+| $d_i$    | Deadline |
+||
+
+---
+
+real-time task **set**, $\tau = {\tau_1, \tau_2, ... \tau_n}$
+
+a **collection** of $n$ tasks
+
+---
+
+we use task set information to check &rarr; task set is **schedulable**?
+
+---
+
+we use task set information to check &rarr; task set is **schedulable**?
+
+- check if **all** _jobs_ of a task &rarr; meet their deadlines
+
+---
+
+we use task set information to check &rarr; task set is **schedulable**?
+
+- check if **all** _jobs_ of a task &rarr; meet their deadlines
+- **job** &rarr; an _instance_ of a task
+
+---
+
+we use task set information to check &rarr; task set is **schedulable**?
+
+- check if **all** _jobs_ of a task &rarr; meet their deadlines
+- **job** &rarr; an _instance_ of a task
+
+multiple **schedulability tests** &rarr; depending on scheduling algorithms
+
+---
+
+### threads
+
+---
+
+### threads
+
+- an **implementation** of a task/job
+
+---
+
+### threads
+
+- an **implementation** of a task/job
+- depending on the OS, could be either or both
+
+---
+
+## task vs job vs thread
+
+---
+
+## task vs job vs thread
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **definition** | **unit of work** &rarr; a function in RTOS | **specific instance** of task &rarr; event | **smallest unit of execution** in task|
+
+
+---
+
+## task vs job vs thread
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **definition** | **unit of work** &rarr; a function in RTOS | **specific instance** of task &rarr; event | **smallest unit of execution** in task|
+| **granularity** | **coarse** &rarr; complete function/program | **fine** &rarr; single execution of task | **fine** &rarr; single execution flow in task |
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **resource ownership** | **owns** resources (stack, memory) | doesn't own | **shares** resources with other threads in task |
+
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **resource ownership** | **owns** resources (stack, memory) | doesn't own | **shares** resources with other threads in task |
+| **scheduling** | by RTOS kernel **scheduler** | not explicitly scheduled| scheduled by RTOS kernel, within task |
+
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **concurrency** | **concurrent**, managed by scheduler | **sequential** within a task, may overlap across tasks | **concurrent** |
+| **state management** | maintains **own state** | **transient** state tied to task execution | maintains **own state**, shares task context|
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **isolation** | **high**, tasks do not share resources | **none**, jobs part of task execution | **low**, threads share memory/resources within task |
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **isolation** | **high**, tasks do not share resources | **none**, jobs part of task execution | **low**, threads share memory/resources within task |
+| **overhead** | **high**, separate stacks \& contexts | **minimal**, relies on task resources | **moderate**, threads share resources but require context switching |
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **use case** | model **independent** functions or processes | **one** task execution | **parallelize** work within a task |
+
+---
+
+## task vs job vs thread [contd.]
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **use case** | model **independent** functions or processes | **one** task execution | **parallelize** work within a task |
+| **example** | controlling a motor | process one motor command | one thread to read sensors, one for logging data |
+||
+
+
+---
+
+### task control block (TCB)
+
+to describe/implement a task
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_1.png" height="800">
+
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_2.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_3.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_4.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_5.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_6.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_7.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_8.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_9.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_10.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_11.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_12.png" height="800">
+
+---
+
+### task control block (TCB)
+
+<img src="img/rtos/tcb_sequence_png/tcb_12.png" height="800">
+
+usually managed as part of **kernel queues**
+
+---
+
+### task **states**
+
+tasks cycle through a set of states:
+
+<img src="img/rtos/free_rtos/freertos_taskstate.gif" width="500">
+
+example from [FreeRTOS](https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/01-Tasks-and-co-routines/02-Task-states) real-time OS
+
+---
+
+### task **states**
+
+tasks cycle through a set of states:
+
+|||
+|-------|--------|
+|<img src="img/rtos/free_rtos/freertos_taskstate.gif">| <ul> <li>`READY`, `RUNNING` and `BLOCKED` &rarr; GPOS</li></ul>|
+||
+
+---
+
+### task **states**
+
+tasks cycle through a set of states:
+
+|||
+|-------|--------|
+|<img src="img/rtos/free_rtos/freertos_taskstate.gif">| <ul> <li>`READY`, `RUNNING` and `BLOCKED` &rarr; GPOS</li> <li>**`IDLE`** or **`SUSPENDED`** &rarr; RTOS</li></ul>|
+||
+
+---
+
+### task **states**
+
+tasks cycle through a set of states:
+
+|||
+|-------|--------|
+|<img src="img/rtos/free_rtos/freertos_taskstate.gif">| <ul> <li>`READY`, `RUNNING` and `BLOCKED` &rarr; GPOS</li> <li>**`IDLE`** or **`SUSPENDED`** &rarr; RTOS</li> <li>when periodic task completes **one** job</li></ul>|
+||
+
+---
+
+### task **states**
+
+tasks cycle through a set of states:
+
+|||
+|-------|--------|
+|<img src="img/rtos/free_rtos/freertos_taskstate.gif">| <ul> <li>`READY`, `RUNNING` and `BLOCKED` &rarr; GPOS</li> <li>**`IDLE`** or **`SUSPENDED`** &rarr; RTOS</li> <li>when periodic task completes **one** job</li> <li>awakened by timer when next job is ready</li></ul>|
+||
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal-js/dist/reveal.js"></script>
+        <script src="assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
