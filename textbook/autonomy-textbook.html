@@ -46,7 +46,7 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-26" />
+  <meta name="date" content="2025-01-28" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 26,
+                              <li><p class="navbar-text">January 28,
 2025</p></li>
                   </ul>
       </div>
@@ -308,6 +308,40 @@ George Washington University</p></li>
         Rate</a></li>
         <li><a href="#adc-resolution" id="toc-adc-resolution"><span
         class="toc-section-number">3.3.2</span> ADC Resolution</a></li>
+        </ul></li>
+        </ul></li>
+        <li><a href="#real-time-operating-systems"
+        id="toc-real-time-operating-systems"><span
+        class="toc-section-number">4</span> Real-Time Operating
+        Systems</a>
+        <ul>
+        <li><a href="#key-characteristics-for-rtos"
+        id="toc-key-characteristics-for-rtos"><span
+        class="toc-section-number">4.0.1</span> Key characteristics for
+        RTOS</a></li>
+        <li><a href="#kernels-in-rtos" id="toc-kernels-in-rtos"><span
+        class="toc-section-number">4.1</span> Kernels in RTOS</a>
+        <ul>
+        <li><a href="#tasks-jobs-threads"
+        id="toc-tasks-jobs-threads"><span
+        class="toc-section-number">4.1.1</span> Tasks, Jobs,
+        Threads</a></li>
+        <li><a href="#inter-task-communication-and-synchronization"
+        id="toc-inter-task-communication-and-synchronization"><span
+        class="toc-section-number">4.1.2</span> (Inter-Task)
+        Communication and Synchronization</a></li>
+        <li><a href="#memory-management"
+        id="toc-memory-management"><span
+        class="toc-section-number">4.1.3</span> Memory
+        Management</a></li>
+        <li><a href="#timer-and-interrupt-management"
+        id="toc-timer-and-interrupt-management"><span
+        class="toc-section-number">4.1.4</span> Timer and Interrupt
+        Management</a></li>
+        <li><a href="#kernel-performance-metrics"
+        id="toc-kernel-performance-metrics"><span
+        class="toc-section-number">4.1.5</span> Kernel Performance
+        Metrics</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -3383,7 +3417,44 @@ George Washington University</p></li>
             <section id="ultrasonic" class="level3" data-number="3.1.3">
             <h3 data-number="3.1.3"><span
             class="header-section-number">3.1.3</span> Ultrasonic</h3>
-            <p>[TBD]</p>
+            <p>Much like lidars, we can use reflected sounds waves to
+            detect objects. They work by emitting high-frequency sound
+            waves, typically above human hearing, and then listening for
+            the echoes that bounce back from nearby objects. The sensor
+            calculates the distance based on the time it takes for the
+            echo to return, using the speed of sound. Popular modules
+            like the HC-SR04 (Used in Lab#2) are easy to integrate with
+            microcontrollers such as Arduino and Raspberry Pi. These
+            sensors are widely used in robotics for obstacle avoidance,
+            automated navigation, and liquid level sensing.</p>
+            <p>However, unlike optical (electromagnetic waves)
+            detectors, ultrasonic sensors, while useful for basic
+            distance measurements, cannot replicate the functionalities
+            of LiDAR systems due to several key limitations. Unlike
+            LiDAR, which employs laser beams to generate
+            high-resolution, three-dimensional point clouds, ultrasonic
+            sensors emit sound waves that provide only limited,
+            single-point distance data with lower precision. LiDAR
+            offers greater accuracy and longer range, enabling detailed
+            mapping and object recognition essential for applications
+            like autonomous vehicles and advanced robotics.
+            Additionally, LiDAR systems can cover a wider field of view
+            and operate effectively in diverse environments by rapidly
+            scanning multiple directions, whereas ultrasonic sensors
+            typically have a narrow detection cone and struggle with
+            complex or cluttered scenes. Furthermore, LiDAR’s ability to
+            capture data at high speeds allows for real-time processing
+            and dynamic obstacle detection, which ultrasonics cannot
+            match. This is because comparitively, it sounds waves take a
+            lot of time to return since they’re much slower in speed
+            compared to light waves (360m/s vs 299,792,458m/s). These
+            differences in data richness, accuracy, and versatility make
+            ultrasonic sensors unsuitable substitutes for the
+            sophisticated capabilities offered by LiDAR technology.</p>
+            <p>We’ll be using ultrasonic distance finders in futures MPs
+            to stop our rovers from colliding into objects. Since our
+            rovers don’t moove to fast and complexity is relatively low,
+            only a ultrasonic sensor would suffice.</p>
             </section>
             </section>
             <section id="errors-in-sensing" class="level2"
@@ -3830,6 +3901,966 @@ George Washington University</p></li>
             href="https://blog.embeddedexpert.io/?p=68">1</a>, <a
             href="https://labs.dese.iisc.ac.in/embeddedlab/tm4c123-adc-programming/">2</a></li>
             </ul>
+            <!--link rel="stylesheet" href="./custom.sibin.css"-->
+            </section>
+            </section>
+            </section>
+            <section id="real-time-operating-systems" class="level1"
+            data-number="4">
+            <h1 data-number="4"><span
+            class="header-section-number">4</span> Real-Time Operating
+            Systems</h1>
+            <p>Real-Time Operating Systems (RTOS) are specialized
+            operating systems designed to manage hardware resources,
+            execute applications and process data in a
+            <strong>predictable</strong> manner. The main aim of this
+            focus on “predictability” is to ensure that critical tasks
+            complete in a <strong>timely</strong> fashion. Unlike
+            general-purpose operating systems (GPOS) like Windows or
+            Linux, which prioritize multitasking and user experience,
+            RTOS focuses on meeting strict timing constraints, ensuring
+            that tasks are completed within defined
+            <strong>deadlines</strong>. This makes RTOS essential for
+            systems where timing accuracy and reliability are critical,
+            such as in embedded systems, autonomous driving, industrial
+            automation, automotive systems, medical devices and
+            aerospace applications, among others.</p>
+            <p>Hence, real-time systems (RTS), and RTOSes in general,
+            have <em>two</em> criteria for “correctness”:</p>
+            <table>
+            <colgroup>
+            <col style="width: 23%" />
+            <col style="width: 76%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>criteria</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>functional</strong> correctness</td>
+            <td>the system should work as expected, <em>i.e.</em>, carry
+            out its intended function without errors</td>
+            </tr>
+            <tr>
+            <td><strong>temporal</strong> correctness</td>
+            <td>the functionally correct operations must be completed
+            within a predefined timing const</td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>To place ourselves in the context of this course, this is
+            where we are:</p>
+            <p><img src="img/stack_architecture/stack_overview.4.png" width="300"></p>
+            <p><br></p>
+            <p>We haven’t looked at the actuation part but we will come
+            back to it later.</p>
+            <section id="key-characteristics-for-rtos" class="level3"
+            data-number="4.0.1">
+            <h3 data-number="4.0.1"><span
+            class="header-section-number">4.0.1</span> Key
+            characteristics for RTOS</h3>
+            <table>
+            <colgroup>
+            <col style="width: 55%" />
+            <col style="width: 44%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>characteristic</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>determinism</strong></td>
+            <td>primary feature of an RTOS is its ability to perform
+            tasks within guaranteed time frames; this predictability
+            ensures that high-priority tasks are executed without delay,
+            even under varying system loads</td>
+            </tr>
+            <tr>
+            <td><strong>task scheduling</strong></td>
+            <td>RTOS uses advanced scheduling algorithms (e.g.,
+            priority-based, round-robin or earliest-deadline-first) to
+            manage task execution; RT tasks are often assigned
+            priorities and the scheduler ensures that higher-priority
+            tasks preempt lower-priority ones when necessary</td>
+            </tr>
+            <tr>
+            <td><strong>low latency</strong></td>
+            <td>RTOS minimizes interrupt response times and
+            context-switching overhead, enabling rapid task execution
+            and efficient handling of time-sensitive operations
+            (<em>e.g.</em>, Linux spends <strong>many
+            milliseconds</strong> handling interrupts such as disk
+            access!)</td>
+            </tr>
+            <tr>
+            <td><strong>resource management</strong></td>
+            <td>RTOS provides mechanisms for efficient allocation and
+            management of system resources, such as memory, CPU and
+            peripherals, to ensure optimal performance</td>
+            </tr>
+            <tr>
+            <td><strong>scalability</strong></td>
+            <td>RTOS is often lightweight and modular, making it
+            suitable for resource-constrained environments like
+            microcontrollers and embedded systems</td>
+            </tr>
+            <tr>
+            <td><strong>reliability and fault tolerance</strong></td>
+            <td>many RTOS implementations include features to enhance
+            system stability, such as error detection, recovery
+            mechanisms and redundancy</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            </section>
+            <section id="kernels-in-rtos" class="level2"
+            data-number="4.1">
+            <h2 data-number="4.1"><span
+            class="header-section-number">4.1</span> Kernels in
+            RTOS</h2>
+            <p>As with most operating systems, the kernel provides the
+            essential services in an RTOS. In hard real-time systems,
+            the kernel must guarantee predictable and deterministic
+            behavior to ensure that all tasks meet their deadlines. In
+            this chapter we focus on kernel aspects that are
+            <em>specific to RTS</em>.</p>
+            <p>The RTOS kernel deals with,</p>
+            <ol type="1">
+            <li><a href="#tasks-jobs-threads">task management</a></li>
+            <li><a
+            href="#inter-task-communication-and-synchronization">communication
+            and synchronization</a></li>
+            <li><a href="#memory-management">memory management</a></li>
+            <li><a href="#timer-and-interrupt-management">timer and
+            interrupt handling</a></li>
+            <li><a href="#kernel-performance-metrics">performance
+            metrics</a></li>
+            </ol>
+            <section id="tasks-jobs-threads" class="level3"
+            data-number="4.1.1">
+            <h3 data-number="4.1.1"><span
+            class="header-section-number">4.1.1</span> Tasks, Jobs,
+            Threads</h3>
+            <p>The design of RTOSes (and RTS in general) deal with
+            <strong>tasks</strong>, <strong>jobs</strong> and, for
+            implementation-specific details,
+            <strong>threads</strong>.</p>
+            <p>A real-time <strong>task</strong>, <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>
+            is defined using the following parameters: <span
+            class="math inline">(<em>ϕ</em><sub><em>i</em></sub>, <em>p</em><sub><em>i</em></sub>, <em>c</em><sub><em>i</em></sub>, <em>d</em><sub><em>i</em></sub>)</span>
+            where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>Symbol</th>
+            <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>ϕ</em><sub><em>i</em></sub></span></td>
+            <td>Phase (offset for the first job of a task)</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>p</em><sub><em>i</em></sub></span></td>
+            <td>Period</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>c</em><sub><em>i</em></sub></span></td>
+            <td>Worst-case execution time</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>d</em><sub><em>i</em></sub></span></td>
+            <td>Deadline</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Hence, a real-time tast <em>set</em> (of size
+            ‘<em>n</em>’) is collection of such tasks, <em>i.e.,</em>
+            <span
+            class="math inline"><em>τ</em> = <em>τ</em><sub>1</sub>, <em>τ</em><sub>2</sub>, ...<em>τ</em><sub><em>n</em></sub></span>.
+            Given a real-time task set, the <em>first</em> step is to
+            check if the task set is <strong>schedulable</strong>,
+            <em>i.e.,</em> check whether all <strong>jobs</strong> of a
+            task will meet their deadlines (a <strong>job</strong> is an
+            <strong>instance</strong> of a task).For this purpose,
+            multiple <strong>schedulability tests</strong> have been
+            developed, each depending on the scheduling algorithm being
+            used.</p>
+            <blockquote>
+            <ul>
+            <li>remember that task is a set of parameters.</li>
+            <li>We “release” multiple “<em>jobs</em>” of each task, each
+            with its own deadline</li>
+            <li>if all jobs of all tasks meet their deadlines, then the
+            system remains <em>safe</em>.</li>
+            </ul>
+            </blockquote>
+            <p>A <strong>thread</strong>, then, is an
+            <strong>implementation</strong> of task/job – depending on
+            the actual OS, it could be either, or both.</p>
+            <p>At a high level, here is a comparison between tasks, jobs
+            and threads (<strong>note:</strong> these details may vary
+            depending on the <em>specific</em> RTOS):</p>
+            <table>
+            <colgroup>
+            <col style="width: 30%" />
+            <col style="width: 20%" />
+            <col style="width: 18%" />
+            <col style="width: 30%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th><strong>aspect</strong></th>
+            <th><strong>task</strong></th>
+            <th><strong>job</strong></th>
+            <th><strong>thread</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>definition</strong></td>
+            <td>a task is a <strong>unit of work</strong> that
+            represents a program or function executing in the RTOS</td>
+            <td>a job is a <strong>specific instance</strong> or
+            execution of a task, often tied to a particular event or
+            trigger</td>
+            <td>a thread is the <strong>smallest unit of
+            execution</strong> within a task, sharing the task’s
+            resources</td>
+            </tr>
+            <tr>
+            <td><strong>granularity</strong></td>
+            <td>coarse-grained; represents a complete function or
+            program</td>
+            <td>fine-grained; represents a single execution of a
+            task</td>
+            <td>fine-grained; represents a single flow of execution
+            within a task</td>
+            </tr>
+            <tr>
+            <td><strong>resource ownership</strong></td>
+            <td>owns its resources (e.g., stack, memory, state)</td>
+            <td>does not own resources; relies on the task’s
+            resources</td>
+            <td>shares resources (e.g., memory, address space) with
+            other threads in the same task</td>
+            </tr>
+            <tr>
+            <td><strong>scheduling</strong></td>
+            <td>scheduled by the RTOS kernel based on priority or
+            scheduling algorithm</td>
+            <td>not directly scheduled; executed as part of a task’s
+            execution</td>
+            <td>scheduled by the RTOS kernel, often within the context
+            of a task</td>
+            </tr>
+            <tr>
+            <td><strong>concurrency</strong></td>
+            <td>tasks run concurrently, managed by the RTOS
+            scheduler</td>
+            <td>jobs are sequential within a task but may overlap across
+            tasks</td>
+            <td>threads run concurrently, even within the same task</td>
+            </tr>
+            <tr>
+            <td><strong>state management</strong></td>
+            <td>maintains its own state (e.g., ready, running,
+            blocked)</td>
+            <td>state is transient and tied to the task’s execution</td>
+            <td>maintains its own state but shares the task’s overall
+            context</td>
+            </tr>
+            <tr>
+            <td><strong>use case</strong></td>
+            <td>used to model independent functions or processes (e.g.,
+            control loops)</td>
+            <td>used to represent a single execution of a task (e.g.,
+            processing a sensor reading)</td>
+            <td>used to parallelize work within a task (e.g., handling
+            multiple i/o operations)</td>
+            </tr>
+            <tr>
+            <td><strong>example</strong></td>
+            <td>a task for controlling a motor</td>
+            <td>a job for processing a specific motor command</td>
+            <td>a thread for reading sensor data while another thread
+            logs the data</td>
+            </tr>
+            <tr>
+            <td><strong>overhead</strong></td>
+            <td>higher overhead due to separate stacks and contexts</td>
+            <td>minimal overhead, as it relies on the task’s
+            resources</td>
+            <td>moderate overhead, as threads share resources but
+            require context switching</td>
+            </tr>
+            <tr>
+            <td><strong>isolation</strong></td>
+            <td>high isolation; tasks do not share memory or resources
+            by default <strong>++</strong></td>
+            <td>no isolation; jobs are part of a task’s execution</td>
+            <td>low isolation; threads share memory and resources within
+            a task</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>(<strong>++</strong> sometimes tasks <strong>do</strong>
+            contend for resources, so we need to mitigate access to
+            them, via locks, semaphores, etc. and then have to deal with
+            thorny issues such as <strong>priority
+            inversions</strong>)</p>
+            <p>A task is often described using a <strong>task control
+            block</strong> (TCB):</p>
+            <p><img src="img/rtos/tcb_sequence_png/tcb_12.png"></p>
+            <p>Tasks typically cycle through a set of states, for
+            instance (taken from the <a
+            href="https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/01-Tasks-and-co-routines/02-Task-states">FreeRTOS</a>
+            real-time OS):</p>
+            <p><img src="img/rtos/free_rtos/freertos_taskstate.gif" width="300"></p>
+            <p><br></p>
+            <p>While the <code>READY</code>, <code>RUNNING</code> and
+            <code>BLOCKED</code> states are similar to those in
+            general-purpose operating systems (GPOS), <em>periodic</em>
+            RTOSes must introduce an additional state:
+            <strong><code>IDLE</code></strong> or
+            <strong><code>SUSPENDED</code></strong>:</p>
+            <ul>
+            <li>periodic task enters this state when it (rather one
+            ‘job’) completes its execution → has to wait for the
+            beginning of the next period</li>
+            <li>to be awakened by the timer (<em>i.e.,</em> to launch
+            the next instance/job), the task must notify the end of its
+            cycle by executing a specific system call,
+            <code>end cycle</code> → puts the job in the IDLE state and
+            assigns the processor to another ready job</li>
+            <li>at the right time, each periodic task in IDLE state →
+            awakened by kernel and inserted in the ready queue</li>
+            </ul>
+            <p>This operation is carried out by a routine
+            <strong>activated by a timer</strong> → verifies, at each
+            tick, whether some task(job) has to be awakened.</p>
+            <p>TCBs are usually managed in kernel
+            <strong>queues</strong> (the implementation details may vary
+            depending on the particular RTOS).</p>
+            <p><strong>Context Switch Overheads</strong>:</p>
+            <p>One of the main issues with multitasking and preepmtion
+            is that of <strong>context switch overheads</strong>,
+            <em>i.e.,</em> the time and resources required to switch
+            from one task to another. For instance, consider this
+            example of two tasks running on an ARM Cortex-M4:</p>
+            <div class="sourceCode" id="cb5"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> Task1<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Task 1 operations</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        LED_Toggle<span class="op">();</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        delay_ms<span class="op">(</span><span class="dv">100</span><span class="op">);</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p>and</p>
+            <div class="sourceCode" id="cb6"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> Task2<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Task 2 operations</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        ReadSensor<span class="op">();</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        delay_ms<span class="op">(</span><span class="dv">200</span><span class="op">);</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p>When switching between Task1 and Task2, an RTOS might
+            need to:</p>
+            <ul>
+            <li>save <code>16</code> general-purpose registers</li>
+            <li>save the program counter and stack pointer</li>
+            <li>update the memory protection unit settings</li>
+            <li>load the new task’s context (program into memory,
+            registers, cache, <em>etc.</em>)</li>
+            </ul>
+            <p>So, on the ARM Cortex-M4,</p>
+            <table>
+            <colgroup>
+            <col style="width: 38%" />
+            <col style="width: 61%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>effect</th>
+            <th>cost</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>basic context switch</td>
+            <td><code>200-400</code> CPU cycles</td>
+            </tr>
+            <tr>
+            <td>cache and pipeline effects, total overhead</td>
+            <td><code>1000+</code> cycles</td>
+            </tr>
+            <tr>
+            <td>frequent switching (e.g., every <code>1 ms</code>)</td>
+            <td>could consume <code>1-2%</code> of CPU time!</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>These costs can add up, especially if the system has,</p>
+            <ul>
+            <li>many RT tasks and frequent
+            <strong>preemption</strong></li>
+            <li>high-frequency/short period jobs that execute
+            frequently</li>
+            <li>if tasks contend with each other for shared
+            resources</li>
+            </ul>
+            <p>Hence and RTOS must not only be cognizant of such
+            overheads but also <strong>actively manage/mitigate</strong>
+            them. Some strategies could include:</p>
+            <ol type="1">
+            <li><strong>better task/schedule design</strong>:
+            <em>e.g.,</em> group related operations to reduce context
+            switches</li>
+            </ol>
+            <div class="sourceCode" id="cb7"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> Task_Sensors<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Handle multiple sensors in one task</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        ReadTemperature<span class="op">();</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        ReadPressure<span class="op">();</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        ReadHumidity<span class="op">();</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        delay_ms<span class="op">(</span><span class="dv">500</span><span class="op">);</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <ol start="2" type="1">
+            <li><strong>priority-based scheduling</strong>:
+            <em>e.g.,</em> high priority task gets more CPU</li>
+            </ol>
+            <div class="sourceCode" id="cb8"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> CriticalTask<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Set high priority</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    setPriority<span class="op">(</span>HIGH_PRIORITY<span class="op">);</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        ProcessCriticalData<span class="op">();</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        delay_ms<span class="op">(</span><span class="dv">50</span><span class="op">);</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <ol start="3" type="1">
+            <li><strong>optimizing memory layouts</strong>:
+            <em>e.g.</em>, align task stacks to cache line
+            boundaries</li>
+            </ol>
+            <div class="sourceCode" id="cb9"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define STACK_SIZE </span><span class="dv">1024</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> __attribute__<span class="op">((</span>aligned<span class="op">(</span><span class="dv">32</span><span class="op">)))</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> task1_stack<span class="op">[</span>STACK_SIZE<span class="op">];</span></span></code></pre></div>
+            <p><strong>Note:</strong> these are not comprehensive and
+            other strategies could be followed, for instance
+            <strong>avoiding multitasking altogether</strong>! All
+            functions could be implemented in a <strong>single</strong>
+            process that runs a giant, infinite loop known as a <a
+            href="https://my.eng.utah.edu/~cs5785/slides-f10/22-1up.pdf"><strong>cyclic
+            executive</strong></a>. Newer RTOSes shun ths cyclic
+            executive in favor of the multitasking model since the
+            latter provides more flexibility, control and adaptability
+            but many critical systems (especially older, long-running
+            ones) still use the cyclic executive. For instance, nuclear
+            reactors, chemical plants, <em>etc.</em></p>
+            <p>In any case, a <strong>precise</strong> understanding of
+            these overheads is crucial for:</p>
+            <ul>
+            <li>setting appropriate task priorities</li>
+            <li>determining minimum task periods</li>
+            <li>calculating worst-case execution times</li>
+            <li>meeting real-time deadlines</li>
+            <li>optimizing system performance</li>
+            </ul>
+            <p>There is significant (ongoing) work, both in industry as
+            well as academia, on how to get a handle on context switch
+            overheads while still allowing for flexibility and
+            modularity in the development of RTS.</p>
+            </section>
+            <section id="inter-task-communication-and-synchronization"
+            class="level3" data-number="4.1.2">
+            <h3 data-number="4.1.2"><span
+            class="header-section-number">4.1.2</span> (Inter-Task)
+            Communication and Synchronization</h3>
+            <p>RTOSes use various mechanisms like semaphores, mutexes,
+            message queues and event flags for communication and
+            synchronization between tasks. Here are some examples:</p>
+            <ol type="1">
+            <li><strong>Semaphores</strong>:</li>
+            </ol>
+            <ul>
+            <li>binary semaphores: work like a mutex, with values 0 or
+            1</li>
+            <li>counting semaphores: can have multiple values, useful
+            for managing resource pools</li>
+            </ul>
+            <div class="sourceCode" id="cb10"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example of binary semaphore usage</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>semaphore_t sem<span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sem_init<span class="op">(&amp;</span>sem<span class="op">,</span> <span class="dv">1</span><span class="op">);</span>  <span class="co">// Initialize with 1</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> TaskA<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        sem_wait<span class="op">(&amp;</span>sem<span class="op">);</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Critical section</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        accessSharedResource<span class="op">();</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        sem_post<span class="op">(&amp;</span>sem<span class="op">);</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <ol start="2" type="1">
+            <li><strong>Mutexes</strong> (mutual exclusion):</li>
+            </ol>
+            <ul>
+            <li>mutexes provide exclusive access to shared
+            resources</li>
+            <li>they include <strong>priority inheritance</strong> to
+            prevent <strong>priority inversion</strong></li>
+            </ul>
+            <div class="sourceCode" id="cb11"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mutex_t mutex<span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>mutex_init<span class="op">(&amp;</span>mutex<span class="op">);</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> TaskB<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    mutex_lock<span class="op">(&amp;</span>mutex<span class="op">);</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Protected shared resource access</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    updateSharedData<span class="op">();</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    mutex_unlock<span class="op">(&amp;</span>mutex<span class="op">);</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <ol start="3" type="1">
+            <li><strong>Message Queues</strong>:</li>
+            </ol>
+            <ul>
+            <li>they allow <strong>ordered data transfer</strong>
+            between tasks</li>
+            <li>provide for buffering capabilities</li>
+            </ul>
+            <div class="sourceCode" id="cb12"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>queue_t msgQueue<span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>queue_create<span class="op">(&amp;</span>msgQueue<span class="op">,</span> MSG_SIZE<span class="op">,</span> MAX_MSGS<span class="op">);</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> SenderTask<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    message_t msg <span class="op">=</span> prepareMessage<span class="op">();</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    queue_send<span class="op">(&amp;</span>msgQueue<span class="op">,</span> <span class="op">&amp;</span>msg<span class="op">,</span> TIMEOUT<span class="op">);</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> ReceiverTask<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    message_t msg<span class="op">;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    queue_receive<span class="op">(&amp;</span>msgQueue<span class="op">,</span> <span class="op">&amp;</span>msg<span class="op">,</span> TIMEOUT<span class="op">);</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    processMessage<span class="op">(&amp;</span>msg<span class="op">);</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <ol start="4" type="1">
+            <li><strong>Event Flags</strong>:</li>
+            </ol>
+            <ul>
+            <li>enable <strong>multiple tasks</strong> to wait for one
+            or more events</li>
+            <li>support <code>AND</code>/<code>OR</code> conditions for
+            event combinations</li>
+            </ul>
+            <div class="sourceCode" id="cb13"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>event_flags_t events<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define EVENT_SENSOR_DATA </span><span class="bn">0x01</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#define EVENT_USER_INPUT  </span><span class="bn">0x02</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> TaskC<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Wait for both events</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    event_wait<span class="op">(&amp;</span>events<span class="op">,</span> EVENT_SENSOR_DATA <span class="op">|</span> EVENT_USER_INPUT<span class="op">,</span> </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>               EVENT_ALL<span class="op">,</span> TIMEOUT<span class="op">);</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    processEvents<span class="op">();</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <ol start="5" type="1">
+            <li><strong>Condition Variables</strong>:</li>
+            </ol>
+            <ul>
+            <li>tasks can wait for <strong>specific
+            conditions</strong></li>
+            <li>used with mutexes for complex synchronization</li>
+            </ul>
+            <div class="sourceCode" id="cb14"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mutex_t mutex<span class="op">;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cond_t condition<span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> ConsumerTask<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    mutex_lock<span class="op">(&amp;</span>mutex<span class="op">);</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span>bufferEmpty<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        cond_wait<span class="op">(&amp;</span>condition<span class="op">,</span> <span class="op">&amp;</span>mutex<span class="op">);</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    processData<span class="op">();</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    mutex_unlock<span class="op">(&amp;</span>mutex<span class="op">);</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p><br></p>
+            <p>Each mechanism has specific use cases:</p>
+            <table>
+            <thead>
+            <tr>
+            <th>mechanism</th>
+            <th>use case</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>semaphores</strong></td>
+            <td>resource management and simple synchronization</td>
+            </tr>
+            <tr>
+            <td><strong>mutexes</strong></td>
+            <td>exclusive access to shared resources</td>
+            </tr>
+            <tr>
+            <td><strong>message queues</strong></td>
+            <td>data exchange and task communication</td>
+            </tr>
+            <tr>
+            <td><strong>event flags</strong></td>
+            <td>multiple event synchronization</td>
+            </tr>
+            <tr>
+            <td><strong>condition variables</strong></td>
+            <td>complex state-dependent synchronization</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Common considerations:</p>
+            <ol type="1">
+            <li>Priority Inversion Prevention: a high-priority (HP) task
+            is <strong>indirectly preempted</strong> by a lower-priority
+            (LP) task; HP → needs resource (R); R held by → LP, LP
+            preempted by medium-priority (MP) task. So <strong>HP waits
+            for MP</strong> → inversion of priorities! We will discuss
+            solutions (priority inheritance/priority ceiling)
+            later.</li>
+            <li>Deadlock Avoidance: tasks are *permanently blocked**
+            waiting on resources from each other; <span
+            class="math inline"><em>τ</em><sub>1</sub></span> holds
+            resource <span
+            class="math inline"><em>R</em><sub><em>A</em></sub></span>
+            and waits for <span
+            class="math inline"><em>R</em><sub><em>B</em></sub></span>;
+            <span class="math inline"><em>τ</em><sub>2</sub></span>
+            holds resource <span
+            class="math inline"><em>R</em><sub><em>B</em></sub></span>
+            and waits for <span
+            class="math inline"><em>R</em><sub><em>A</em></sub></span>.</li>
+            <li>Timeout Handling: <em>every</em> synchronization
+            mechanism should have a <strong>timeout</strong> to avoid
+            indefinite blocking of critical tasks.</li>
+            <li>Error Handling: detecting errors and handling them in a
+            <strong>robust</strong> manner is critical to maintain
+            system reliability; RTOSes use <em>retry mechanisms</em>,
+            <em>logging</em> and, most importantly, have <strong>clear
+            recovery procedures</strong> for failure scenarios.</li>
+            </ol>
+            <p>These considerations are crucial for ensuring system
+            reliability, maintaining real-time performance, preventing
+            system deadlocks, managing system resources effectively and
+            handling error conditions gracefully.</p>
+            </section>
+            <section id="memory-management" class="level3"
+            data-number="4.1.3">
+            <h3 data-number="4.1.3"><span
+            class="header-section-number">4.1.3</span> Memory
+            Management</h3>
+            <p>Real-time systems require <strong>predictable memory
+            allocation and deallocation</strong> to avoid delays or
+            fragmentation. Hence, they often use <strong>limited memory
+            management techniques</strong> often eschewing even the use
+            of dynamic memory allocation in favor of <strong>static
+            memory allocation</strong>. For instance, many RTS don’t
+            even use <code>malloc()</code> or <code>new</code>
+            (<em>i.e.,</em> no heap allocated memory) and very often
+            avoid garbage collection. The main goal is for tight control
+            of the memory management → this makes <em>timing behavior
+            more predictable</em>. Hence, the following become
+            easier:</p>
+            <ul>
+            <li>wcet analysis</li>
+            <li>schedulability and other analyses</li>
+            <li>runtime monitoring and management</li>
+            <li>recovery/restart</li>
+            </ul>
+            <p>Some <strong>goals</strong> for memory management in
+            RTOSes:</p>
+            <ol type="1">
+            <li>predictable execution times for memory operations</li>
+            <li>fast allocation/deallocation</li>
+            <li>minimal fragmentation, if any</li>
+            <li>protection mechanisms between tasks</li>
+            </ol>
+            <p>In fact, to achieve these goals, many RTSes <strong>don’t
+            even use caches</strong> since they can be a major source of
+            non-determinism in terms of timing behavior,
+            <em>e.g.,</em></p>
+            <blockquote>
+            <p>if we cannot <strong>exactly calculate</strong> when some
+            data/code will hit/miss in cache, then we cannot estimate
+            its true timing behavior, leading to a lot of uncertainty →
+            <strong>bad</strong>!</p>
+            </blockquote>
+            <p>Some RTSes use <a
+            href="http://www.irisa.fr/alf/downloads/puaut/papers/date07.pdf"><strong>scratchpads</strong></a>
+            since they provide cache-like performance but have higher
+            predictability since the data onboarding/offloading is
+            <strong>explicitly managed</strong> (either by the program
+            or the <a
+            href="https://cs-people.bu.edu/rmancuso/files/papers/SPM-OS_RTSJ19.pdf">RTOS</a>).</p>
+            <p><strong>Some common memory-management techniques for
+            RTOSes</strong>:</p>
+            <ol type="1">
+            <li><strong>static memory allocation</strong>: all memory
+            used is allocated/deallocated at <strong>compile
+            time</strong>.</li>
+            <li><strong>memory pools</strong>: fixed-size blocks are
+            pre-allocated for specific purposes → fragmentation and
+            provides deterministic allocation times.</li>
+            <li><strong>careful stack management</strong>: careful
+            sizing/placing/management of the stack</li>
+            <li><strong>limited heap memory</strong>: using “safe”
+            versions of <code>malloc()</code> for instance</li>
+            <li><strong>memory protection</strong>: using hardware such
+            as memory protection units (MPUs)</li>
+            <li><strong>memory partitioning</strong>: explicitly
+            partition memory/caches so that tasks cannot read/write in
+            each others’ memory regions</li>
+            <li><strong>runtime mechanisms</strong>: such as memory
+            usage monitoring, leak detection and managing the
+            fragmentation</li>
+            </ol>
+            <blockquote>
+            <p>Of course, each of these mechanisms have their own
+            problems and a deliberation on those is left as an exercise
+            for the reader.</p>
+            </blockquote>
+            </section>
+            <section id="timer-and-interrupt-management" class="level3"
+            data-number="4.1.4">
+            <h3 data-number="4.1.4"><span
+            class="header-section-number">4.1.4</span> Timer and
+            Interrupt Management</h3>
+            <p>Timer and interrupt management are crucial components of
+            an RTOS, ensuring that tasks are <strong>executed at precise
+            intervals</strong> and that the system responds promptly to
+            (internal and) external events. The role between timers and
+            interrupts is closely related, since they offer the very
+            <strong>basic</strong> timing mechanism in RTOSes (from <a
+            href="https://link.springer.com/book/10.1007/978-1-4614-0676-1">Hard
+            Real-Time Computing Systems: Predictable Scheduling
+            Algorithms and Applications</a>):</p>
+            <blockquote>
+            <p>to generate a <strong>time reference</strong>, a timer
+            circuit is programmed to interrupt the processor at a
+            <strong>fixed rate</strong> and the internal system time is
+            represented by an integer variable, which is reset at system
+            initialization and is incremented at each <strong>timer
+            interrupt</strong>. The interval of time with which the
+            timer is programmed to interrupt defines the unit of time in
+            the system; that is, the minimum interval of time handled by
+            the kernel (time resolution). The unit of time in the system
+            is also called a system
+            <strong><code>tick</code></strong>.</p>
+            </blockquote>
+            <p><br></p>
+            <p>Timers, in general, play important roles in such systems,
+            <em>viz.,</em></p>
+            <table>
+            <thead>
+            <tr>
+            <th>role</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>task scheduling</strong></td>
+            <td>enable periodic execution of tasks</td>
+            </tr>
+            <tr>
+            <td><strong>timeout management</strong></td>
+            <td>prevent indefinite blocking of resources</td>
+            </tr>
+            <tr>
+            <td><strong>event timing</strong></td>
+            <td>measure intervals between events</td>
+            </tr>
+            <tr>
+            <td><strong>system timing</strong></td>
+            <td>maintain system clock and timestamps</td>
+            </tr>
+            <tr>
+            <td><strong>watchdog functions</strong></td>
+            <td>monitor system health and detect lockups</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>Typically these systems have the following <em>three</em>
+            types of timers:</p>
+            <table>
+            <colgroup>
+            <col style="width: 29%" />
+            <col style="width: 70%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>type</th>
+            <th>properties</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>hardware</strong></td>
+            <td>- direct access to hardware timing resources<br>-
+            highest precision and accuracy<br>- limited in number
+            (hardware dependent)<br>- used for critical timing
+            functions</td>
+            </tr>
+            <tr>
+            <td><strong>software</strong></td>
+            <td>- implemented in software, using hardware timer as
+            base<br>- more flexibility, less precise<br>- limited only
+            by memory<br>- more suitable for non-critical timing
+            functions</td>
+            </tr>
+            <tr>
+            <td><strong>system <code>tick</code></strong></td>
+            <td>- <strong>core</strong> timer for RTOS <br> - drives
+            task scheduling <br> - fixed frequency</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>There are various <strong>design considerations</strong>
+            for timers in an RTOS, <em>viz.,</em></p>
+            <ol type="1">
+            <li><strong>resolution</strong> → the smaller the
+            resolution, the higher the system/hardware/software/runtime
+            overheads</li>
+            <li><strong>accuracy</strong> → need to understand and
+            manage <em>drift</em> and <em>jitter</em>; timers may need
+            to be calibrated often++</li>
+            <li><strong>power consumption</strong> → more
+            accurate/high-precision a timer, higher the power
+            consumption; also the <code>tick</code> can result in
+            significant power consumption if not implemented/managed
+            well</li>
+            </ol>
+            <p>(++ drift indicates a <em>gradual, long-term change</em>
+            in the timer’s frequency over time, whereas jitter refers to
+            <em>short-term, random fluctuations</em> in the timing of
+            individual clock pulses)</p>
+            <p><strong>Interrupt Latencies</strong> → time from when an
+            interrupt occurs to when the corresponding interrupt service
+            routine (ISR) starts executing. As interrupts are integral
+            to the operation of an RTOS, from the implementation of the
+            system <code>tick</code> to notifcations of internal
+            (watchdog timers) and external events (new sensor data), it
+            is important to <strong>minimize interrupt
+            latencies</strong>.</p>
+            <p>Optimization Techniques (to minimize latencies):</p>
+            <ul>
+            <li>minimize interrupt frequency → oftean an RTOS will
+            disable interrupts in critical sections</li>
+            <li>efficient timer and interrupt queue management →
+            “nesting” interrupts,</li>
+            <li>power-aware timing strategies → “<em>tickless</em>”
+            operating systems have been tried</li>
+            <li>optimize ISRs → keep them short, use other methods (<a
+            href="https://www.osr.com/nt-insider/2009-issue1/deferred-procedure-call-details/">deferred
+            procedure calls</a> or “<a
+            href="http://www.cs.otago.ac.nz/cosc440/labs/lab08.pdf">bottom
+            halves</a>”).</li>
+            </ul>
+            </section>
+            <section id="kernel-performance-metrics" class="level3"
+            data-number="4.1.5">
+            <h3 data-number="4.1.5"><span
+            class="header-section-number">4.1.5</span> Kernel
+            Performance Metrics</h3>
+            <blockquote>
+            <p>Essentially, the kernel must be designed to
+            <strong>minimize jitter</strong> and ensure that all
+            operations have bounded and predictable execution times.</p>
+            </blockquote>
+            <p>Hence, we can try to evaluate whether an RTOS kernel
+            meets these goals using the following metrics
+            (<strong>note</strong>: not exhaustive):</p>
+            <table>
+            <colgroup>
+            <col style="width: 48%" />
+            <col style="width: 52%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>metric</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>interrupt latency</strong></td>
+            <td>the time taken to respond to an interrupt</td>
+            </tr>
+            <tr>
+            <td><strong>context switch time</strong></td>
+            <td>time to switch between tasks</td>
+            </tr>
+            <tr>
+            <td><strong>dispatch latency</strong></td>
+            <td>time difference between task being ready and when it
+            starts executing</td>
+            </tr>
+            <tr>
+            <td><strong>throughput</strong></td>
+            <td>number of tasks?operations kernel can handle per unit
+            time</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             </section>
             </section>
             </section>

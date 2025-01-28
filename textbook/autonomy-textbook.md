@@ -1487,10 +1487,11 @@ For programming a LiDAR, see: [how to program a LiDAR with an Arduino](h.ttps://
 
 ### Ultrasonic 
 
-[TBD]
+Much like lidars, we can use reflected sounds waves to detect objects. They work by emitting high-frequency sound waves, typically above human hearing, and then listening for the echoes that bounce back from nearby objects. The sensor calculates the distance based on the time it takes for the echo to return, using the speed of sound. Popular modules like the HC-SR04 (Used in Lab#2) are easy to integrate with microcontrollers such as Arduino and Raspberry Pi. These sensors are widely used in robotics for obstacle avoidance, automated navigation, and liquid level sensing.
 
+However, unlike optical (electromagnetic waves) detectors, ultrasonic sensors, while useful for basic distance measurements, cannot replicate the functionalities of LiDAR systems due to several key limitations. Unlike LiDAR, which employs laser beams to generate high-resolution, three-dimensional point clouds, ultrasonic sensors emit sound waves that provide only limited, single-point distance data with lower precision. LiDAR offers greater accuracy and longer range, enabling detailed mapping and object recognition essential for applications like autonomous vehicles and advanced robotics. Additionally, LiDAR systems can cover a wider field of view and operate effectively in diverse environments by rapidly scanning multiple directions, whereas ultrasonic sensors typically have a narrow detection cone and struggle with complex or cluttered scenes. Furthermore, LiDAR’s ability to capture data at high speeds allows for real-time processing and dynamic obstacle detection, which ultrasonics cannot match. This is because comparitively, it sounds waves take a lot of time to return since they're much slower in speed compared to light waves (360m/s vs 299,792,458m/s). These differences in data richness, accuracy, and versatility make ultrasonic sensors unsuitable substitutes for the sophisticated capabilities offered by LiDAR technology.
 
-
+We'll be using ultrasonic distance finders in futures MPs to stop our rovers from colliding into objects. Since our rovers don't moove to fast and complexity is relatively low, only a ultrasonic sensor would suffice.
 
 ## Errors in Sensing
 
@@ -1714,3 +1715,430 @@ Hence, to get a better fidelity representation of the original signal, we see th
 - more details with videos: [Analog to Digital Conversion, EE319K Univ. of Texas](https://users.ece.utexas.edu/~valvano/Volume1/E-Book/C14_ADCdataAcquisition.htm)
 - Programming an ADC: [1](https://blog.embeddedexpert.io/?p=68), [2](https://labs.dese.iisc.ac.in/embeddedlab/tm4c123-adc-programming/)
 
+<!--link rel="stylesheet" href="./custom.sibin.css"-->
+
+
+# Real-Time Operating Systems
+
+Real-Time Operating Systems (RTOS) are specialized operating systems designed to manage hardware resources, execute applications and process data in a **predictable** manner. The main aim of this focus on "predictability" is to ensure that critical tasks complete in a **timely** fashion. Unlike general-purpose operating systems (GPOS) like Windows or Linux, which prioritize multitasking and user experience, RTOS focuses on meeting strict timing constraints, ensuring that tasks are completed within defined **deadlines**. This makes RTOS essential for systems where timing accuracy and reliability are critical, such as in embedded systems, autonomous driving, industrial automation, automotive systems, medical devices and aerospace applications, among others.
+
+Hence, real-time systems (RTS), and RTOSes in general, have _two_ criteria for "correctness":
+
+| criteria | description |
+|------------------------|-----------------------------------------------------------------------------|
+| **functional** correctness | the system should work as expected, _i.e._, carry out its intended function without errors |
+| **temporal** correctness   | the functionally correct operations must be completed within a predefined timing const |
+
+<br>
+
+To place ourselves in the context of this course, this is where we are:
+
+<img src="img/stack_architecture/stack_overview.4.png" width="300">
+
+<br>
+
+We haven't looked at the actuation part but we will come back to it later. 
+
+### Key characteristics for RTOS
+
+| characteristic | description |
+|----------------|-------------|
+| **determinism** | primary feature of an RTOS is its ability to perform tasks within guaranteed time frames; this predictability ensures that high-priority tasks are executed without delay, even under varying system loads |
+| **task scheduling** | RTOS uses advanced scheduling algorithms (e.g., priority-based, round-robin or earliest-deadline-first) to manage task execution; RT tasks are often assigned priorities and the scheduler ensures that higher-priority tasks preempt lower-priority ones when necessary |
+| **low latency** | RTOS minimizes interrupt response times and context-switching overhead, enabling rapid task execution and efficient handling of time-sensitive operations (_e.g._, Linux spends **many milliseconds** handling interrupts such as disk access!) |
+| **resource management** | RTOS provides mechanisms for efficient allocation and management of system resources, such as memory, CPU and peripherals, to ensure optimal performance |
+| **scalability** | RTOS is often lightweight and modular, making it suitable for resource-constrained environments like microcontrollers and embedded systems |
+| **reliability and fault tolerance** | many RTOS implementations include features to enhance system stability, such as error detection, recovery mechanisms and redundancy |
+||
+
+## Kernels in RTOS
+
+As with most operating systems, the kernel provides the essential services in an RTOS. In hard real-time systems, the kernel must guarantee predictable and deterministic behavior to ensure that all tasks meet their deadlines. In this chapter we focus on kernel aspects that are _specific to RTS_.
+
+The RTOS kernel deals with,
+
+1. [task management](#tasks-jobs-threads)
+2. [communication and synchronization](#inter-task-communication-and-synchronization)
+3. [memory management](#memory-management)
+4. [timer and interrupt handling](#timer-and-interrupt-management)
+5. [performance metrics](#kernel-performance-metrics)
+
+
+### Tasks, Jobs, Threads
+
+The design of RTOSes (and RTS in general) deal with **tasks**, **jobs** and, for implementation-specific details, **threads**. 
+
+A real-time **task**, $\tau_i$ is defined using the following parameters: $(\phi_i, p_i, c_i, d_i)$ where,
+
+| Symbol | Description |
+| ------ | ----------- |
+| $\phi_i$ | Phase (offset for the first job of a task) |
+| $p_i$    | Period |
+| $c_i$    | Worst-case execution time |
+| $d_i$    | Deadline |
+||
+
+Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $\tau = {\tau_1, \tau_2, ... \tau_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task).For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
+
+> - remember that task is a set of parameters.
+> - We "release" multiple "_jobs_" of each task, each with its own deadline
+> - if all jobs of all tasks meet their deadlines, then the system remains _safe_.
+
+A **thread**, then, is an **implementation** of task/job -- depending on the actual OS, it could be either, or both. 
+
+At a high level, here is a comparison between tasks, jobs and threads (**note:** these details may vary depending on the _specific_ RTOS):
+
+| **aspect** | **task** | **job**| **thread** |
+|-------------|---------|--------|-------------|
+| **definition** | a task is a **unit of work** that represents a program or function executing in the RTOS | a job is a **specific instance** or execution of a task, often tied to a particular event or trigger | a thread is the **smallest unit of execution** within a task, sharing the task's resources |
+| **granularity** | coarse-grained; represents a complete function or program | fine-grained; represents a single execution of a task | fine-grained; represents a single flow of execution within a task |
+| **resource ownership** | owns its resources (e.g., stack, memory, state) | does not own resources; relies on the task's resources | shares resources (e.g., memory, address space) with other threads in the same task |
+| **scheduling** | scheduled by the RTOS kernel based on priority or scheduling algorithm | not directly scheduled; executed as part of a task's execution | scheduled by the RTOS kernel, often within the context of a task |
+| **concurrency** | tasks run concurrently, managed by the RTOS scheduler | jobs are sequential within a task but may overlap across tasks | threads run concurrently, even within the same task |
+| **state management** | maintains its own state (e.g., ready, running, blocked) | state is transient and tied to the task's execution | maintains its own state but shares the task's overall context |
+| **use case** | used to model independent functions or processes (e.g., control loops) | used to represent a single execution of a task (e.g., processing a sensor reading) | used to parallelize work within a task (e.g., handling multiple i/o operations) |
+| **example** | a task for controlling a motor | a job for processing a specific motor command | a thread for reading sensor data while another thread logs the data |
+| **overhead** | higher overhead due to separate stacks and contexts | minimal overhead, as it relies on the task's resources | moderate overhead, as threads share resources but require context switching |
+| **isolation** | high isolation; tasks do not share memory or resources by default **++** | no isolation; jobs are part of a task's execution | low isolation; threads share memory and resources within a task |
+||
+
+(**++** sometimes tasks **do** contend for resources, so we need to mitigate access to them, via locks, semaphores, etc. and then have to deal with thorny issues such as **priority inversions**)
+
+A task is often described using a **task control block** (TCB):
+
+<img src="img/rtos/tcb_sequence_png/tcb_12.png">
+
+
+Tasks typically cycle through a set of states, for instance (taken from the [FreeRTOS](https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/01-Tasks-and-co-routines/02-Task-states) real-time OS):
+
+<img src="img/rtos/free_rtos/freertos_taskstate.gif" width="300">
+
+<br>
+
+While the `READY`, `RUNNING` and `BLOCKED` states are similar to those in general-purpose operating systems (GPOS), _periodic_ RTOSes must introduce an additional state: **`IDLE`** or **`SUSPENDED`**:
+
+- periodic task enters this state when it (rather one 'job') completes its execution &rarr; has to wait for the beginning of the next period
+-  to be awakened by the timer (_i.e.,_ to launch the next instance/job), the task must notify the end of its cycle by executing a specific system call, `end cycle` &rarr; puts the job in the IDLE state and assigns the processor to another ready job
+- at the right time, each periodic task in IDLE state &rarr; awakened by kernel and inserted in the ready queue
+
+This operation is carried out by a routine **activated by a timer** &rarr; verifies, at each tick, whether some task(job) has to be awakened. 
+
+TCBs are usually managed in kernel **queues** (the implementation details may vary depending on the particular RTOS).
+
+**Context Switch Overheads**:
+
+One of the main issues with multitasking and preepmtion is that of **context switch overheads**, _i.e.,_ the time and resources required to switch from one task to another. For instance, consider this example of two tasks running on an ARM Cortex-M4:
+
+```c
+void Task1(void) {
+    while(1) {
+        // Task 1 operations
+        LED_Toggle();
+        delay_ms(100);
+    }
+}
+```
+
+and
+
+```C
+void Task2(void) {
+    while(1) {
+        // Task 2 operations
+        ReadSensor();
+        delay_ms(200);
+    }
+}
+```
+
+When switching between Task1 and Task2, an RTOS might need to:
+
+- save `16` general-purpose registers
+- save the program counter and stack pointer
+- update the memory protection unit settings
+- load the new task's context (program into memory, registers, cache, _etc._)
+
+So, on the ARM Cortex-M4, 
+
+| effect | cost|
+|--------|-------------|
+| basic context switch | `200-400` CPU cycles |
+| cache and pipeline effects, total overhead | `1000+` cycles |
+| frequent switching (e.g., every `1 ms`) | could consume `1-2%` of CPU time! |
+||
+
+
+These costs can add up, especially if the system has,
+
+- many RT tasks and frequent **preemption**
+- high-frequency/short period jobs that execute frequently
+- if tasks contend with each other for shared resources
+
+Hence and RTOS must not only be cognizant of such overheads but also **actively manage/mitigate** them. Some strategies could include:
+
+1. **better task/schedule design**: _e.g.,_ group related operations to reduce context switches
+
+```C
+void Task_Sensors(void) {
+    while(1) {
+        // Handle multiple sensors in one task
+        ReadTemperature();
+        ReadPressure();
+        ReadHumidity();
+        delay_ms(500);
+    }
+}
+```
+
+2. **priority-based scheduling**: _e.g.,_ high priority task gets more CPU
+
+```C
+void CriticalTask(void) {
+    // Set high priority
+    setPriority(HIGH_PRIORITY);
+    while(1) {
+        ProcessCriticalData();
+        delay_ms(50);
+    }
+}
+```
+
+3. **optimizing memory layouts**: _e.g._, align task stacks to cache line boundaries
+
+```C
+#define STACK_SIZE 1024
+static __attribute__((aligned(32))) 
+uint8_t task1_stack[STACK_SIZE];
+```
+
+**Note:** these are not comprehensive and other strategies could be followed, for instance **avoiding multitasking altogether**! All functions could be implemented in a **single** process that runs a giant, infinite loop known as a [**cyclic executive**](https://my.eng.utah.edu/~cs5785/slides-f10/22-1up.pdf). Newer RTOSes shun ths cyclic executive in favor of the multitasking model since the latter provides more flexibility, control and adaptability but many critical systems (especially older, long-running ones) still use the cyclic executive. For instance, nuclear reactors, chemical plants, _etc._
+
+In any case, a **precise** understanding of these overheads is crucial for:
+
+- setting appropriate task priorities
+- determining minimum task periods
+- calculating worst-case execution times
+- meeting real-time deadlines
+- optimizing system performance
+
+There is significant (ongoing) work, both in industry as well as academia, on how to get a handle on context switch overheads while still allowing for flexibility and modularity in the development of RTS.
+
+### (Inter-Task) Communication and Synchronization
+
+RTOSes use various mechanisms like semaphores, mutexes, message queues and event flags for communication and synchronization between tasks. Here are some examples:
+
+1. **Semaphores**:
+
+- binary semaphores: work like a mutex, with values 0 or 1
+- counting semaphores: can have multiple values, useful for managing resource pools
+
+```c
+// Example of binary semaphore usage
+semaphore_t sem;
+sem_init(&sem, 1);  // Initialize with 1
+
+void TaskA(void) {
+    while(1) {
+        sem_wait(&sem);
+        // Critical section
+        accessSharedResource();
+        sem_post(&sem);
+    }
+}
+```
+
+2. **Mutexes** (mutual exclusion):
+
+- mutexes provide exclusive access to shared resources
+- they include **priority inheritance** to prevent **priority inversion**
+
+```c
+mutex_t mutex;
+mutex_init(&mutex);
+
+void TaskB(void) {
+    mutex_lock(&mutex);
+    // Protected shared resource access
+    updateSharedData();
+    mutex_unlock(&mutex);
+}
+```
+
+3. **Message Queues**:
+
+- they allow **ordered data transfer** between tasks
+- provide for buffering capabilities
+
+```c
+queue_t msgQueue;
+queue_create(&msgQueue, MSG_SIZE, MAX_MSGS);
+
+void SenderTask(void) {
+    message_t msg = prepareMessage();
+    queue_send(&msgQueue, &msg, TIMEOUT);
+}
+
+void ReceiverTask(void) {
+    message_t msg;
+    queue_receive(&msgQueue, &msg, TIMEOUT);
+    processMessage(&msg);
+}
+```
+
+4. **Event Flags**:
+
+- enable **multiple tasks** to wait for one or more events
+- support `AND`/`OR` conditions for event combinations
+
+```c
+event_flags_t events;
+#define EVENT_SENSOR_DATA 0x01
+#define EVENT_USER_INPUT  0x02
+
+void TaskC(void) {
+    // Wait for both events
+    event_wait(&events, EVENT_SENSOR_DATA | EVENT_USER_INPUT, 
+               EVENT_ALL, TIMEOUT);
+    processEvents();
+}
+```
+
+5. **Condition Variables**:
+
+- tasks can wait for **specific conditions**
+- used with mutexes for complex synchronization
+
+```c
+mutex_t mutex;
+cond_t condition;
+
+void ConsumerTask(void) {
+    mutex_lock(&mutex);
+    while(bufferEmpty()) {
+        cond_wait(&condition, &mutex);
+    }
+    processData();
+    mutex_unlock(&mutex);
+}
+```
+
+<br>
+
+Each mechanism has specific use cases:
+
+| mechanism  | use case |
+|--------|------------|
+| **semaphores** | resource management and simple synchronization |
+| **mutexes** | exclusive access to shared resources |
+| **message queues** | data exchange and task communication |
+| **event flags** | multiple event synchronization |
+| **condition variables** | complex state-dependent synchronization |
+||
+
+Common considerations:
+
+1. Priority Inversion Prevention: a high-priority (HP) task is **indirectly preempted** by a lower-priority (LP) task; HP &rarr; needs resource (R); R held by &rarr; LP, LP preempted by medium-priority (MP) task. So **HP waits for MP** &rarr; inversion of priorities! We will discuss solutions (priority inheritance/priority ceiling) later.
+2. Deadlock Avoidance: tasks are *permanently blocked** waiting on resources from each other; $\tau_1$ holds resource $R_A$ and waits for $R_B$; $\tau_2$ holds resource $R_B$ and waits for $R_A$.
+3. Timeout Handling: _every_ synchronization mechanism should have a **timeout** to avoid indefinite blocking of critical tasks. 
+4. Error Handling: detecting errors and handling them in a **robust** manner is critical to maintain system reliability; RTOSes use _retry mechanisms_, _logging_ and, most importantly, have **clear recovery procedures** for failure scenarios.
+
+These considerations are crucial for ensuring system reliability, maintaining real-time performance, preventing system deadlocks, managing system resources effectively and handling error conditions gracefully.
+
+
+### Memory Management
+
+Real-time systems require **predictable memory allocation and deallocation** to avoid delays or fragmentation. Hence, they often use **limited memory management techniques** often eschewing even the use of dynamic memory allocation in favor of **static memory allocation**. For instance, many RTS don't even use `malloc()` or `new` (_i.e.,_ no heap allocated memory) and very often avoid garbage collection. The main goal is for tight control of the memory management &rarr; this makes _timing behavior more predictable_. Hence, the following become easier:
+
+- wcet analysis
+- schedulability and other analyses
+- runtime monitoring and management
+- recovery/restart
+
+Some **goals** for memory management in RTOSes:
+
+1. predictable execution times for memory operations
+2. fast allocation/deallocation
+3. minimal fragmentation, if any
+4. protection mechanisms between tasks
+
+In fact, to achieve these goals, many RTSes **don't even use caches** since they can be a major source of non-determinism in terms of timing behavior, _e.g.,_
+
+> if we cannot **exactly calculate** when some data/code will hit/miss in cache, then we cannot estimate its true timing behavior, leading to a lot of uncertainty &rarr; **bad**!
+
+Some RTSes use [**scratchpads**](http://www.irisa.fr/alf/downloads/puaut/papers/date07.pdf) since they provide cache-like performance but have higher predictability since the data onboarding/offloading is **explicitly managed** (either by the program or the [RTOS](https://cs-people.bu.edu/rmancuso/files/papers/SPM-OS_RTSJ19.pdf)).
+
+**Some common memory-management techniques for RTOSes**:
+
+1. **static memory allocation**: all memory used is allocated/deallocated at **compile time**.
+2. **memory pools**: fixed-size blocks are pre-allocated for specific purposes &rarr; fragmentation and provides deterministic allocation times.
+3. **careful stack management**: careful sizing/placing/management of the stack
+4. **limited heap memory**: using "safe" versions of `malloc()` for instance
+5. **memory protection**: using hardware such as memory protection units (MPUs)
+6. **memory partitioning**: explicitly partition memory/caches so that tasks cannot read/write in each others' memory regions
+7. **runtime mechanisms**: such as memory usage monitoring, leak detection and managing the fragmentation
+
+> Of course, each of these mechanisms have their own problems and a deliberation on those is left as an exercise for the reader. 
+
+### Timer and Interrupt Management
+
+Timer and interrupt management are crucial components of an RTOS, ensuring that tasks are **executed at precise intervals** and that the system responds promptly to (internal and) external events. The role between timers and interrupts is closely related, since they offer the very **basic** timing mechanism in RTOSes (from [Hard Real-Time Computing Systems: Predictable Scheduling Algorithms and Applications](https://link.springer.com/book/10.1007/978-1-4614-0676-1)): 
+
+> to generate a **time reference**, a timer circuit is programmed to interrupt the processor at a **fixed rate** and the internal system time is represented by an integer variable, which is reset at system initialization and is incremented at each **timer interrupt**. The interval of time with which the timer is programmed to interrupt defines the unit of time in the system; that is, the minimum interval of time handled by the kernel (time resolution). The unit of time in the system is also called a system **`tick`**.
+
+<br>
+
+Timers, in general, play important roles in such systems, _viz.,_
+
+| role |description |
+|------|------------|
+| **task scheduling** | enable periodic execution of tasks |
+| **timeout management** | prevent indefinite blocking of resources |
+| **event timing** | measure intervals between events |
+| **system timing** | maintain system clock and timestamps |
+| **watchdog functions** | monitor system health and detect lockups |
+||
+
+<br>
+
+Typically these systems have the following _three_ types of timers:
+
+|type | properties |
+|-----|------------|
+| **hardware** |- direct access to hardware timing resources<br>- highest precision and accuracy<br>- limited in number (hardware dependent)<br>- used for critical timing functions|
+| **software** |- implemented in software, using hardware timer as base<br>- more flexibility, less precise<br>- limited only by memory<br>- more suitable for non-critical timing functions|
+| **system `tick`** |- **core** timer for RTOS <br> - drives task scheduling <br> - fixed frequency|
+||
+
+<br>
+
+There are various **design considerations** for timers in an RTOS, _viz.,_
+
+1. **resolution** &rarr; the smaller the resolution, the higher the system/hardware/software/runtime overheads
+2. **accuracy** &rarr; need to understand and manage _drift_ and _jitter_; timers may need to be calibrated often++
+3. **power consumption** &rarr; more accurate/high-precision a timer, higher the power consumption; also the `tick` can result in significant power consumption if not implemented/managed well
+
+(++ drift indicates a _gradual, long-term change_ in the timer's frequency over time, whereas jitter refers to _short-term, random fluctuations_ in the timing of individual clock pulses)
+
+**Interrupt Latencies** &rarr; time from when an interrupt occurs to when the corresponding interrupt service routine (ISR) starts executing. As interrupts are integral to the operation of an RTOS, from the implementation of the system `tick` to notifcations of internal (watchdog timers) and external events (new sensor data), it is important to **minimize interrupt latencies**.  
+
+Optimization Techniques (to minimize latencies):
+
+- minimize interrupt frequency &rarr; oftean an RTOS will disable interrupts in critical sections
+- efficient timer and interrupt queue management &rarr; "nesting" interrupts, 
+- power-aware timing strategies &rarr; "_tickless_" operating systems have been tried
+- optimize ISRs &rarr; keep them short, use other methods ([deferred procedure calls](https://www.osr.com/nt-insider/2009-issue1/deferred-procedure-call-details/) or "[bottom halves](http://www.cs.otago.ac.nz/cosc440/labs/lab08.pdf)").
+
+
+### Kernel Performance Metrics
+
+> Essentially, the kernel must be designed to **minimize jitter** and ensure that all operations have bounded and predictable execution times.
+
+Hence, we can try to evaluate whether an RTOS kernel meets these goals using the following metrics (**note**: not exhaustive):
+
+| metric | description |
+|------------|-------------|
+| **interrupt latency** | the time taken to respond to an interrupt |
+| **context switch time** | time to switch between tasks |
+| **dispatch latency** | time difference between task being ready and when it starts executing |
+| **throughput** | number of tasks?operations kernel can handle per unit time |
+||
