@@ -911,6 +911,137 @@ each mechanism &rarr; specific use cases
 | **timeouts** | _every_ synchronization mechanism &rarr; timeout <br> avoid **indefinite blocking** |
 | **error handling** | detecting/handling errors &rarr; **robust** manner <br> _retry mechanisms_, _logging_, **clear recovery procedures** |
 ||
+
+
+---
+
+### Memory Management
+
+requirement &rarr; **predictable memory allocation and deallocation**
+
+---
+
+### Memory Management
+
+requirement &rarr; **predictable memory allocation and deallocation**
+
+- limited memory management techniques
+- **no dynamic memory**! 
+- use **only static** memory allocations
+
+---
+
+### memory management | goals
+
+- **tight control** of memory
+
+---
+
+### memory management | goals
+
+- **tight control** of memory
+- makes _timing behavior more predictable_
+
+---
+
+### the following become easier
+
+- wcet analysis
+- schedulability and other analyses
+- runtime monitoring and management
+- recovery/restart
+
+---
+
+### rtos memory management often **avoids**
+
+- `malloc()` or `new()`
+- garbage collection
+
+---
+
+### rtos memory management often **avoids**
+
+- `malloc()` or `new()`
+- garbage collection
+- **no caches**!
+
+Note: 
+if we cannot **exactly calculate** when some data/code will hit/miss in cache, then we cannot estimate its true timing behavior, leading to a lot of uncertainty &rarr; **bad**!
+
+Some RTSes use **scratchpads**
+
+---
+
+### Some memory-management techniques for RTOS
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory 
+2. **memory pools**: fixed-size blocks pre-allocated <br> avoids fragmentation and provides deterministic allocation times
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory 
+2. **memory pools**: fixed-size blocks pre-allocated <br> avoids fragmentation and provides deterministic allocation times
+3. **careful stack management**: sizing/placing/management of the stack
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory 
+2. **memory pools**: fixed-size blocks pre-allocated <br> avoids fragmentation and provides deterministic allocation times
+3. **careful stack management**: sizing/placing/management of the stack
+4. **limited heap memory**: using "safe" versions of `malloc()` for instance
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory 
+2. **memory pools**: fixed-size blocks pre-allocated <br> avoids fragmentation and provides deterministic allocation times
+3. **careful stack management**: sizing/placing/management of the stack
+4. **limited heap memory**: using "safe" versions of `malloc()` for instance
+5. **hardware memory protection**: _e.g.,_ memory protection units (MPUs)
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory 
+2. **memory pools**: fixed-size blocks pre-allocated <br> avoids fragmentation and provides deterministic allocation times
+3. **careful stack management**: sizing/placing/management of the stack
+4. **limited heap memory**: using "safe" versions of `malloc()` for instance
+5. **hardware memory protection**: _e.g.,_ memory protection units (MPUs)
+6. **memory partitioning**: explicit partition memory/caches <br> tasks **cannot** read/write each others' memory regions
+
+---
+
+### Some memory-management techniques for RTOS
+
+1. **static/compile-time memory allocation**: for all memory 
+2. **memory pools**: fixed-size blocks pre-allocated <br> avoids fragmentation and provides deterministic allocation times
+3. **careful stack management**: sizing/placing/management of the stack
+4. **limited heap memory**: using "safe" versions of `malloc()` for instance
+5. **hardware memory protection**: _e.g.,_ memory protection units (MPUs)
+6. **memory partitioning**: explicit partition memory/caches <br> tasks **cannot** read/write each others' memory regions
+7. **runtime mechanisms**: memory usage monitoring, leak detection, <br> managing fragmentation
+
+Note:
+Of course, each of these mechanisms have their own problems and a deliberation on those is left as an exercise for the reader. 
+
+---
                     </textarea>
                 </section>
             </div>
