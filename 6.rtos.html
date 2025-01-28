@@ -546,6 +546,145 @@ tasks cycle through a set of states:
 |-------|--------|
 |<img src="img/rtos/free_rtos/freertos_taskstate.gif">| <ul> <li>`READY`, `RUNNING` and `BLOCKED` &rarr; GPOS</li> <li>**`IDLE`** or **`SUSPENDED`** &rarr; RTOS</li> <li>when periodic task completes **one** job</li> <li>awakened by timer when next job is ready</li></ul>|
 ||
+
+
+---
+
+### Context Switch Overheads
+
+- time and resources &rarr; to switch from one task to another
+
+---
+
+### Context Switch Overheads
+
+consider following example of **two** tasks
+
+|||
+|------|------|
+|<img src="img/rtos/context_switch_code.1.png">|<img src="img/rtos/context_switch_code.2.png">|
+||
+
+---
+
+### Context Switch Overheads
+
+consider following example of **two** tasks
+
+||||
+|------|------|-------|
+|<img src="img/rtos/context_switch_code.1.png">|<img src="img/rtos/context_switch_code.2.png">|<ul><li>save `16` general-purpose registers</li><li>save `pc`, stack pointer</li><li>update memory protection unit </li><li>load new task's context (program into memory, registers, cache, _etc._)</li><ul>|
+||
+
+
+---
+
+### Context Switch Overheads
+
+on the **ARM Cortex-M4**
+
+| effect | cost|
+|--------|-------------|
+| basic context switch | `200-400` CPU cycles |
+| cache, pipeline &rarr; total overhead | `1000+` cycles |
+| frequent switching (e.g., every `1 ms`) | maybe `1-2%` of CPU time! |
+||
+
+
+---
+
+### Context Switch Overheads
+
+can add up, especially if the system has,
+
+- many RT tasks &rarr; frequent **preemption**
+- high-frequency/short period jobs &rarr; execute frequently
+- tasks contend with each other &rarr; shared resources
+
+---
+
+RTOS must &rarr; **actively manage/mitigate** these issues
+
+-v-
+
+1. **better task/schedule design** 
+
+_e.g.,_ group related operations to reduce context switches
+
+```C
+void Task_Sensors(void) {
+    while(1) {
+        // Handle multiple sensors in one task
+        ReadTemperature();
+        ReadPressure();
+        ReadHumidity();
+        delay_ms(500);
+    }
+}
+
+```
+
+-v-
+
+2. **priority-based scheduling** 
+
+_e.g.,_ high priority task gets more CPU
+
+```C
+void CriticalTask(void) {
+    // Set high priority
+    setPriority(HIGH_PRIORITY);
+    while(1) {
+        ProcessCriticalData();
+        delay_ms(50);
+    }
+}
+```
+
+-v-
+
+3. **optimizing memory layouts**
+
+_e.g._, align task stacks to cache line boundaries
+
+```C
+#define STACK_SIZE 1024
+static __attribute__((aligned(32))) 
+uint8_t task1_stack[STACK_SIZE];
+```
+
+Note:
+not comprehensive and other strategies could be followed, for instance **avoiding multitasking altogether**! All functions could be implemented in a **single** process that runs a giant, infinite loop known as a [**cyclic executive**]
+
+---
+
+**precise** understanding of context switch overheads is crucial 
+
+---
+
+**precise** understanding of context switch overheads is crucial 
+
+- setting appropriate **task priorities**
+- determining minimum **task periods**
+
+---
+
+**precise** understanding of context switch overheads is crucial 
+
+- setting appropriate **task priorities**
+- determining minimum **task periods**
+- calculating **worst-case execution times**
+- meeting real-time **deadlines**
+
+---
+
+**precise** understanding of context switch overheads is crucial 
+
+- setting appropriate **task priorities**
+- determining minimum **task periods**
+- calculating **worst-case execution times**
+- meeting real-time **deadlines**
+- optimizing system **performance**
                     </textarea>
                 </section>
             </div>
