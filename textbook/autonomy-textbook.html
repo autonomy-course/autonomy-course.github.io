@@ -343,6 +343,18 @@ George Washington University</p></li>
         class="toc-section-number">4.1.5</span> Kernel Performance
         Metrics</a></li>
         </ul></li>
+        <li><a href="#examples-of-rtos" id="toc-examples-of-rtos"><span
+        class="toc-section-number">4.2</span> Examples of RTOS</a>
+        <ul>
+        <li><a href="#freertos" id="toc-freertos"><span
+        class="toc-section-number">4.2.1</span> FreeRTOS</a></li>
+        <li><a href="#linuxreal-time" id="toc-linuxreal-time"><span
+        class="toc-section-number">4.2.2</span> Linux+Real-Time</a></li>
+        <li><a href="#raspberry-pi-osreal-time"
+        id="toc-raspberry-pi-osreal-time"><span
+        class="toc-section-number">4.2.3</span> Raspberry Pi
+        OS+Real-Time</a></li>
+        </ul></li>
         </ul></li>
         </ul>
 
@@ -4861,6 +4873,243 @@ George Washington University</p></li>
             </tr>
             </tbody>
             </table>
+            </section>
+            </section>
+            <section id="examples-of-rtos" class="level2"
+            data-number="4.2">
+            <h2 data-number="4.2"><span
+            class="header-section-number">4.2</span> Examples of
+            RTOS</h2>
+            <table>
+            <colgroup>
+            <col style="width: 24%" />
+            <col style="width: 41%" />
+            <col style="width: 34%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th><strong>name</strong></th>
+            <th><strong>description</strong></th>
+            <th><strong>features</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><a href="https://www.freertos.org">FreeRTOS</a></td>
+            <td>a widely used, <strong>open-source</strong> RTOS for
+            embedded systems</td>
+            <td>small footprint, portable, supports a wide range of
+            microcontrollers</td>
+            </tr>
+            <tr>
+            <td><a
+            href="https://www.windriver.com/products/vxworks">VxWorks</a></td>
+            <td><strong>commercial</strong> RTOS used in aerospace,
+            defense, applications</td>
+            <td>high reliability, real-time performance, and support for
+            multi-core processors</td>
+            </tr>
+            <tr>
+            <td><a href="https://blackberry.qnx.com/en">QNX</a></td>
+            <td>a <strong>commercial</strong> RTOS known for its
+            reliability and use in automotive and medical systems</td>
+            <td>microkernel architecture, high security, support for
+            posix apis</td>
+            </tr>
+            <tr>
+            <td><a href="https://www.zephyrproject.org">Zephyr</a></td>
+            <td><strong>open-source</strong> RTOS designed for IoT and
+            Edge devices</td>
+            <td>modular, scalable, supports a wide range of hardware
+            architectures</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>Why is Linux not on the list? While it has many
+            (increasing) <a
+            href="https://www.zdnet.com/article/real-time-linux-leads-kernel-v6-12s-list-of-new-features/">list
+            of real-time features</a>, it is still far from a
+            <strong>hard real-time system</strong>, mainly due to its
+            complexity. It is difficult to analyze WCETs on Linux or
+            completely control its timers → the list is endless. It
+            still sees use in many real-time and embedded systems and we
+            will (brielfy) explore its real-time capabilities soon.</p>
+            <section id="freertos" class="level3" data-number="4.2.1">
+            <h3 data-number="4.2.1"><span
+            class="header-section-number">4.2.1</span> FreeRTOS</h3>
+            <p>As mentioned earlier, FreeRTOS is one of the most popular
+            open-source RTOS options, widely used in embedded systems
+            due to its simplicity, portability and extensive community
+            support. It supports,</p>
+            <ul>
+            <li>creation of multiple tasks, each with its own
+            priority</li>
+            <li>preemptive and cooperative scheduling</li>
+            <li>mechanisms like queues, semaphores, and mutexes for
+            communication and synchronization between tasks</li>
+            <li>several memory management schemes, including heap_1,
+            heap_2, heap_3, heap_4, and heap_5, to suit different
+            application requirements</li>
+            <li><strong>highly portable</strong> and supports a wide
+            range of microcontrollers and development boards, including
+            ARM Cortex-M, ESP32 and STM32</li>
+            <li>a large and active community, with [extensive
+            documentation, tutorials and examples available online</li>
+            </ul>
+            <p>Here is an example that uses FreeRTOS to blink the LEDs
+            on a microcontroller:</p>
+            <div class="sourceCode" id="cb15"><pre
+            class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;FreeRTOS.h&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;task.h&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gpio.h&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Task to blink an LED</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> vBlinkTask<span class="op">(</span><span class="dt">void</span> <span class="op">*</span>pvParameters<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        GPIO_TogglePin<span class="op">(</span>LED_PIN<span class="op">);</span>  <span class="co">// Toggle LED</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        vTaskDelay<span class="op">(</span>pdMS_TO_TICKS<span class="op">(</span><span class="dv">500</span><span class="op">));</span>  <span class="co">// Delay for 500ms</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Initialize hardware</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    GPIO_Init<span class="op">(</span>LED_PIN<span class="op">,</span> GPIO_MODE_OUTPUT<span class="op">);</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Create the blink task</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    xTaskCreate<span class="op">(</span>vBlinkTask<span class="op">,</span> <span class="st">&quot;Blink&quot;</span><span class="op">,</span> configMINIMAL_STACK_SIZE<span class="op">,</span> NULL<span class="op">,</span> <span class="dv">1</span><span class="op">,</span> NULL<span class="op">);</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Start the scheduler</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    vTaskStartScheduler<span class="op">();</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// The program should never reach here</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(;;);</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+            <p><strong>Resources</strong>:</p>
+            <ol type="1">
+            <li><a
+            href="https://www.freertos.org/Documentation/RTOS_book.html">FreeRTOS
+            Documentation</a></li>
+            <li><a
+            href="https://www.freertos.org/Why-FreeRTOS/Features-and-demos/RAM_constrained_design_tutorial/Real-time-application-design">FreeRTOS
+            Tutorials</a></li>
+            <li><a
+            href="https://forums.freertos.org/t/using-freertos-with-the-raspberry-pi-pico-blog-series/16497"><strong>Raspberry
+            Pi and FreeRTOS</strong></a> [<a
+            href="https://github.com/aws-iot-builder-tools/freertos-pi-pico">GitHub
+            Repo</a>]</li>
+            </ol>
+            </section>
+            <section id="linuxreal-time" class="level3"
+            data-number="4.2.2">
+            <h3 data-number="4.2.2"><span
+            class="header-section-number">4.2.2</span>
+            Linux+Real-Time</h3>
+            <p>As mentioned earlier, Linux, as a general-purpose
+            operating system, is not inherently a real-time operating
+            system (RTOS). However, it does provide several features and
+            mechanisms that can be used to achieve real-time
+            performance, especially when combined with real-time patches
+            or specialized configurations.</p>
+            <p>Some of the real-time features of Linux include:</p>
+            <ul>
+            <li><p><strong><a
+            href="https://wiki.linuxfoundation.org/realtime/start">Preempt-RT
+            Patch</a></strong>: a set of patches that convert the Linux
+            kernel into a fully preemptible kernel, reducing latency and
+            improving real-time performance; the Preempt-RT patch
+            achieves this by:</p>
+            <ul>
+            <li>making almost <strong>all kernel code
+            preemptible</strong>: allows higher-priority tasks to
+            preempt lower-priority tasks, even when the lower-priority
+            tasks are executing kernel code</li>
+            <li><strong>converting interrupt handlers to kernel
+            threads</strong>: reduces time spent with interrupts
+            disabled, for better predictability and lower latency</li>
+            <li><strong>implementing priority inheritance</strong>:
+            helps prevent priority inversion by temporarily elevating
+            priority of lower-priority tasks holding a resource needed
+            by higher-priority tasks</li>
+            <li><strong>reducing non-preemptible sections</strong>:
+            minimizes time during which preemption is disabled, further
+            reducing latency</li>
+            <li><strong>enhancing timer granularity</strong>: allows for
+            more precise timing and scheduling of tasks, crucial for
+            real-time applications</li>
+            </ul>
+            <p>the Preempt-RT patch is widely used in industries such as
+            telecommunications, industrial automation and audio
+            processing. It is actively maintained and supported by the
+            Linux Foundation’s <a
+            href="https://wiki.linuxfoundation.org/realtime/rtl/start">Real-Time
+            Linux</a> (RTL) collaborative project</p></li>
+            <li><p><strong><a
+            href="https://man7.org/linux/man-pages/man7/sched.7.html">Real-Time
+            scheduling policies</a></strong>: support for real-time
+            scheduling policies such as <code>SCHED_FIFO</code> and
+            <code>SCHED_RR</code>, which provide deterministic
+            scheduling behavior</p></li>
+            <li><p><strong><a
+            href="https://www.kernel.org/doc/html/latest/timers/hrtimers.html">High-resolution
+            timers</a></strong>: support for high-resolution timers that
+            allow for precise timing and scheduling of tasks</p></li>
+            <li><p>basic <strong><a
+            href="https://www.kernel.org/doc/Documentation/locking/priority-inheritance.txt">priority
+            inheritance</a></strong>: mechanism to prevent priority
+            inversion by temporarily elevating the priority of
+            lower-priority tasks holding a resource needed by
+            higher-priority tasks</p></li>
+            <li><p><strong><a
+            href="https://www.kernel.org/doc/Documentation/admin-guide/kernel-parameters.html#isolcpus">CPU
+            isolation</a></strong>: ability to isolate CPUs from the
+            general scheduler, dedicating them to specific real-time
+            tasks; also pinning processes to certain cores</p></li>
+            <li><p><strong><a
+            href="https://www.kernel.org/doc/Documentation/core-api/genericirq.rst">Threaded
+            interrupts</a></strong>: support for handling interrupts in
+            kernel threads, reducing interrupt latency and improving
+            predictability</p></li>
+            <li><p><strong><a
+            href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_real_time/8/html/understanding_rhel_for_real_time/assembly_memory-management-on-rhel-for-real-time-_understanding-rhel-for-real-time-core-concepts#con_demand-paging_assembly_memory-management-on-rhel-for-real-time-">Memory
+            management</a></strong> techniques: such as <a
+            href="https://linux.die.net/man/2/mlock"><strong>memory
+            locking</strong></a> to prevent pages from being swapped,
+            the use of “<a
+            href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-memory-transhuge"><strong>huge</strong></a>”
+            pages and memory <a
+            href="https://docs.kernel.org/core-api/memory-allocation.html"><strong>pre-allocation</strong></a></p></li>
+            <li><p><strong><a
+            href="https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt">Control
+            groups (cgroups)</a></strong>: mechanism to allocate CPU,
+            memory and I/O resources to specific groups of tasks,
+            ensuring resource availability for real-time tasks</p></li>
+            </ul>
+            <p>These features, when properly configured, can help
+            achieve real-time performance on Linux, making it suitable
+            for certain real-time and embedded applications.</p>
+            </section>
+            <section id="raspberry-pi-osreal-time" class="level3"
+            data-number="4.2.3">
+            <h3 data-number="4.2.3"><span
+            class="header-section-number">4.2.3</span> Raspberry Pi
+            OS+Real-Time</h3>
+            <p>The <a
+            href="https://www.raspberrypi.com/software/">Raspberry Pi
+            OS</a> can also be made “real-time” in the same manner as
+            decribed above, since it is a Linux variant.</p>
+            <p>Though, there are some attempts at getting the Pi to
+            behave in a real-time fashion, <em>e.g.,</em>: <a
+            href="https://www.socallinuxexpo.org/sites/default/files/presentations/Steven_Doran_SCALE_13x.pdf"><strong>1</strong></a>,
+            <a
+            href="https://all3dp.com/2/rtos-raspberry-pi-real-time-os/#google_vignette"><strong>2</strong></a>,
+            <a
+            href="https://floating.io/2023/04/raspberry-pi-in-real-time/"><strong>3</strong></a>.</p>
             </section>
             </section>
             </section>
