@@ -3959,7 +3959,8 @@ George Washington University</p></li>
             <tr>
             <td><strong>temporal</strong> correctness</td>
             <td>the functionally correct operations must be completed
-            within a predefined timing const</td>
+            within a predefined timing constraint
+            (<strong>deadline</strong>)</td>
             </tr>
             </tbody>
             </table>
@@ -4115,7 +4116,7 @@ George Washington University</p></li>
             check if the task set is <strong>schedulable</strong>,
             <em>i.e.,</em> check whether all <strong>jobs</strong> of a
             task will meet their deadlines (a <strong>job</strong> is an
-            <strong>instance</strong> of a task).For this purpose,
+            <strong>instance</strong> of a task). For this purpose,
             multiple <strong>schedulability tests</strong> have been
             developed, each depending on the scheduling algorithm being
             used.</p>
@@ -4204,6 +4205,22 @@ George Washington University</p></li>
             context</td>
             </tr>
             <tr>
+            <td><strong>isolation</strong></td>
+            <td>high isolation; tasks do not share memory or resources
+            by default <strong>++</strong></td>
+            <td>no isolation; jobs are part of a task’s execution</td>
+            <td>low isolation; threads share memory and resources within
+            a task</td>
+            </tr>
+            <tr>
+            <td><strong>overhead</strong></td>
+            <td>higher overhead due to separate stacks and contexts</td>
+            <td>minimal overhead, as it relies on the task’s
+            resources</td>
+            <td>moderate overhead, as threads share resources but
+            require context switching</td>
+            </tr>
+            <tr>
             <td><strong>use case</strong></td>
             <td>used to model independent functions or processes (e.g.,
             control loops)</td>
@@ -4218,22 +4235,6 @@ George Washington University</p></li>
             <td>a job for processing a specific motor command</td>
             <td>a thread for reading sensor data while another thread
             logs the data</td>
-            </tr>
-            <tr>
-            <td><strong>overhead</strong></td>
-            <td>higher overhead due to separate stacks and contexts</td>
-            <td>minimal overhead, as it relies on the task’s
-            resources</td>
-            <td>moderate overhead, as threads share resources but
-            require context switching</td>
-            </tr>
-            <tr>
-            <td><strong>isolation</strong></td>
-            <td>high isolation; tasks do not share memory or resources
-            by default <strong>++</strong></td>
-            <td>no isolation; jobs are part of a task’s execution</td>
-            <td>low isolation; threads share memory and resources within
-            a task</td>
             </tr>
             <tr>
             <td></td>

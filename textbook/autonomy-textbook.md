@@ -1727,7 +1727,7 @@ Hence, real-time systems (RTS), and RTOSes in general, have _two_ criteria for "
 | criteria | description |
 |------------------------|-----------------------------------------------------------------------------|
 | **functional** correctness | the system should work as expected, _i.e._, carry out its intended function without errors |
-| **temporal** correctness   | the functionally correct operations must be completed within a predefined timing const |
+| **temporal** correctness   | the functionally correct operations must be completed within a predefined timing constraint (**deadline**) |
 
 <br>
 
@@ -1778,7 +1778,7 @@ A real-time **task**, $\tau_i$ is defined using the following parameters: $(\phi
 | $d_i$    | Deadline |
 ||
 
-Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $\tau = {\tau_1, \tau_2, ... \tau_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task).For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
+Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $\tau = {\tau_1, \tau_2, ... \tau_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task). For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
 
 > - remember that task is a set of parameters.
 > - We "release" multiple "_jobs_" of each task, each with its own deadline
@@ -1796,10 +1796,10 @@ At a high level, here is a comparison between tasks, jobs and threads (**note:**
 | **scheduling** | scheduled by the RTOS kernel based on priority or scheduling algorithm | not directly scheduled; executed as part of a task's execution | scheduled by the RTOS kernel, often within the context of a task |
 | **concurrency** | tasks run concurrently, managed by the RTOS scheduler | jobs are sequential within a task but may overlap across tasks | threads run concurrently, even within the same task |
 | **state management** | maintains its own state (e.g., ready, running, blocked) | state is transient and tied to the task's execution | maintains its own state but shares the task's overall context |
+| **isolation** | high isolation; tasks do not share memory or resources by default **++** | no isolation; jobs are part of a task's execution | low isolation; threads share memory and resources within a task |
+| **overhead** | higher overhead due to separate stacks and contexts | minimal overhead, as it relies on the task's resources | moderate overhead, as threads share resources but require context switching |
 | **use case** | used to model independent functions or processes (e.g., control loops) | used to represent a single execution of a task (e.g., processing a sensor reading) | used to parallelize work within a task (e.g., handling multiple i/o operations) |
 | **example** | a task for controlling a motor | a job for processing a specific motor command | a thread for reading sensor data while another thread logs the data |
-| **overhead** | higher overhead due to separate stacks and contexts | minimal overhead, as it relies on the task's resources | moderate overhead, as threads share resources but require context switching |
-| **isolation** | high isolation; tasks do not share memory or resources by default **++** | no isolation; jobs are part of a task's execution | low isolation; threads share memory and resources within a task |
 ||
 
 (**++** sometimes tasks **do** contend for resources, so we need to mitigate access to them, via locks, semaphores, etc. and then have to deal with thorny issues such as **priority inversions**)
