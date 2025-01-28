@@ -1042,6 +1042,151 @@ Note:
 Of course, each of these mechanisms have their own problems and a deliberation on those is left as an exercise for the reader. 
 
 ---
+
+### Timer and Interrupt Management
+
+---
+
+### Timer and Interrupt Management
+
+crucial components of an RTOS
+
+---
+
+### Timer and Interrupt Management
+
+crucial components of an RTOS
+
+- tasks are **executed at precise intervals**
+
+---
+
+### Timer and Interrupt Management
+
+crucial components of an RTOS
+
+- tasks are **executed at precise intervals**
+- system responds promptly to events &rarr; internal and external
+
+--- 
+
+**strong interconnect** between timers & interrupts
+
+--- 
+
+**strong interconnect** between timers & interrupts
+
+- generate a **time reference** &rarr; basic "clock" in RTOS
+
+--- 
+
+**strong interconnect** between timers & interrupts
+
+- generate a **time reference** &rarr; basic "clock" in RTOS
+- internal system time at **fixed rate**
+
+--- 
+
+**strong interconnect** between timers & interrupts
+
+- generate a **time reference** &rarr; basic "clock" in RTOS
+- internal system time at **fixed rate**
+- incremented by **timer interrupt**
+
+--- 
+
+**strong interconnect** between timers & interrupts
+
+- generate a **time reference** &rarr; basic "clock" in RTOS
+- internal system time at **fixed rate**
+- incremented by **timer interrupt**
+
+<scb>system "tick"</scb>
+
+---
+
+### role of timers in RTOS
+
+---
+
+### role of timers in RTOS
+
+| role |description |
+|------|------------|
+| **task scheduling** | enable periodic execution of tasks |
+
+---
+
+### role of timers in RTOS
+
+| role |description |
+|------|------------|
+| **task scheduling** | enable periodic execution of tasks |
+| **timeout management** | prevent indefinite blocking of resources |
+
+---
+
+### role of timers in RTOS
+
+| role |description |
+|------|------------|
+| **task scheduling** | enable periodic execution of tasks |
+| **timeout management** | prevent indefinite blocking of resources |
+| **event timing** | measure intervals between events |
+
+---
+
+### role of timers in RTOS
+
+| role |description |
+|------|------------|
+| **task scheduling** | enable periodic execution of tasks |
+| **timeout management** | prevent indefinite blocking of resources |
+| **event timing** | measure intervals between events |
+| **system timing** | maintain system clock and timestamps |
+
+---
+
+### role of timers in RTOS
+
+| role |description |
+|------|------------|
+| **task scheduling** | enable periodic execution of tasks |
+| **timeout management** | prevent indefinite blocking of resources |
+| **event timing** | measure intervals between events |
+| **system timing** | maintain system clock and timestamps |
+| **watchdog functions** | monitor system health and detect lockups |
+||
+
+---
+
+### _three_ types of timers
+
+---
+
+### _three_ types of timers
+
+|type | properties |
+|-----|------------|
+| **hardware** |- direct access to hardware timing resources<br>- highest precision and accuracy<br>- limited in number (hardware dependent)<br>- used for critical timing functions|
+
+---
+
+### _three_ types of timers
+
+|type | properties |
+|-----|------------|
+| **hardware** |- direct access to hardware timing resources<br>- highest precision and accuracy<br>- limited in number (hardware dependent)<br>- used for critical timing functions|
+| **software** |- implemented in software, using hardware timer as base<br>- more flexibility, less precise<br>- limited only by memory<br>- more suitable for non-critical timing functions|
+
+---
+
+### _three_ types of timers
+
+|type | properties |
+|-----|------------|
+| **system `tick`** |- **core** timer for RTOS <br> - drives task scheduling <br> - fixed frequency|
+||
                     </textarea>
                 </section>
             </div>
