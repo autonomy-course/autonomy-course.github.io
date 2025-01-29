@@ -46,7 +46,7 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-28" />
+  <meta name="date" content="2025-01-29" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 28,
+                              <li><p class="navbar-text">January 29,
 2025</p></li>
                   </ul>
       </div>
@@ -355,6 +355,10 @@ George Washington University</p></li>
         class="toc-section-number">4.2.3</span> Raspberry Pi
         OS+Real-Time</a></li>
         </ul></li>
+        <li><a href="#robot-operating-system-ros"
+        id="toc-robot-operating-system-ros"><span
+        class="toc-section-number">4.3</span> Robot Operating System
+        (ROS)</a></li>
         </ul></li>
         </ul>
 
@@ -5111,7 +5115,38 @@ George Washington University</p></li>
             href="https://all3dp.com/2/rtos-raspberry-pi-real-time-os/#google_vignette"><strong>2</strong></a>,
             <a
             href="https://floating.io/2023/04/raspberry-pi-in-real-time/"><strong>3</strong></a>.</p>
+            <p><br></p>
             </section>
+            </section>
+            <section id="robot-operating-system-ros" class="level2"
+            data-number="4.3">
+            <h2 data-number="4.3"><span
+            class="header-section-number">4.3</span> Robot Operating
+            System (ROS)</h2>
+            <pre class="mermaid"><code>graph TD
+    subgraph &quot;ROS Core Components&quot;
+        M[ROS Master] --&gt; N1[Node 1]
+        M --&gt; N2[Node 2]
+        M --&gt; N3[Node 3]
+        P[Parameter Server]
+        M -.-&gt; P
+    end
+    
+    subgraph &quot;Communication&quot;
+        N1 --&gt;|Topic| N2
+        N2 --&gt;|Service| N3
+        N3 --&gt;|Action| N1
+    end
+    
+    subgraph &quot;Tools&quot;
+        T1[RViz]
+        T2[Gazebo]
+        T3[rqt]
+    end
+    
+    N1 -.-&gt; T1
+    N2 -.-&gt; T2
+    N3 -.-&gt; T3</code></pre>
             </section>
             </section>
             <section id="footnotes"

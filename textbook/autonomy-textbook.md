@@ -2241,3 +2241,34 @@ These features, when properly configured, can help achieve real-time performance
 The [Raspberry Pi OS](https://www.raspberrypi.com/software/) can also be made "real-time" in the same manner as decribed above, since it is a Linux variant.
 
 Though, there are some attempts at getting the Pi to behave in a real-time fashion, _e.g.,_: [**1**](https://www.socallinuxexpo.org/sites/default/files/presentations/Steven_Doran_SCALE_13x.pdf), [**2**](https://all3dp.com/2/rtos-raspberry-pi-real-time-os/#google_vignette), [**3**](https://floating.io/2023/04/raspberry-pi-in-real-time/).
+
+<br>
+
+## Robot Operating System (ROS)
+
+```mermaid
+graph TD
+    subgraph "ROS Core Components"
+        M[ROS Master] --> N1[Node 1]
+        M --> N2[Node 2]
+        M --> N3[Node 3]
+        P[Parameter Server]
+        M -.-> P
+    end
+    
+    subgraph "Communication"
+        N1 -->|Topic| N2
+        N2 -->|Service| N3
+        N3 -->|Action| N1
+    end
+    
+    subgraph "Tools"
+        T1[RViz]
+        T2[Gazebo]
+        T3[rqt]
+    end
+    
+    N1 -.-> T1
+    N2 -.-> T2
+    N3 -.-> T3
+```
