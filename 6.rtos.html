@@ -1185,8 +1185,394 @@ crucial components of an RTOS
 
 |type | properties |
 |-----|------------|
-| **system `tick`** |- **core** timer for RTOS <br> - drives task scheduling <br> - fixed frequency|
+| system <scb>tick</scb> |- **core** timer for RTOS <br> - drives task scheduling <br> - fixed frequency|
 ||
+
+---
+
+## system <scb>tick</scb>
+
+```mermaid
+graph TD
+    A[System Tick Interrupt] --> B[Save Context]
+    B --> C[Increment System Tick Counter]
+    C --> D[Check Timers and Delays]
+    D --> E{Any Task Ready to Run?}
+    E -- Yes --> F[Schedule Next Task]
+    E -- No --> G[Restore Context]
+    F --> G
+    G --> H[Return from Interrupt]
+```
+
+---
+
+### design considerations for timers
+
+---
+
+### design considerations for timers
+
+|||
+|----|----|
+|**resolution**| &darr; resolution &rarr; &uarr; overheads|
+
+---
+
+### design considerations for timers
+
+|||
+|----|----|
+|**resolution**| &darr; resolution &rarr; &uarr; overheads|
+| **accuracy** | manage _drift_ and _jitter_ |
+
+
+
+Note: 
+(++ drift indicates a _gradual, long-term change_ in the timer's frequency over time, whereas jitter refers to _short-term, random fluctuations_ in the timing of individual clock pulses)
+
+---
+
+### design considerations for timers
+
+|||
+|----|----|
+|**resolution**| &darr; resolution &rarr; &uarr; overheads|
+| **accuracy** | manage _drift_ and _jitter_ |
+| **power consumption** | &uarr; accuracy/precision &rarr; &uarr; power |
+||
+
+
+Note: 
+(++ drift indicates a _gradual, long-term change_ in the timer's frequency over time, whereas jitter refers to _short-term, random fluctuations_ in the timing of individual clock pulses)
+
+---
+
+### design considerations for timers
+
+|||
+|----|----|
+|**resolution**| &darr; resolution &rarr; &uarr; overheads|
+| **accuracy** | manage _drift_ and _jitter_ |
+| **power consumption** | &uarr; accuracy/precision &rarr; &uarr; power |
+||
+
+system <scb>tick</scb> can **waster power** if not implemented well
+
+---
+
+## Interrupt Latencies
+
+---
+
+## Interrupt Latencies
+
+time between &rarr; interrrupt arrival and ISR starts
+
+---
+
+## Interrupt Latencies
+
+time between &rarr; interrrupt arrival and ISR starts
+
+important to **minimize interrupt latencies**
+
+---
+
+### reducing interrupt latencies
+
+- **minimize interrupt frequency** &rarr; disable in critical sections
+
+---
+
+### reducing interrupt latencies
+
+- **minimize interrupt frequency** &rarr; disable in critical sections
+- **efficient timer/interrupt queue management** &rarr; "nesting" interrupts
+
+---
+
+### reducing interrupt latencies
+
+- **minimize interrupt frequency** &rarr; disable in critical sections
+- **efficient timer/interrupt queue management** &rarr; "nesting" interrupts
+- **power-aware timing strategies** &rarr; "_tickless_" OS
+
+---
+
+### reducing interrupt latencies
+
+- **minimize interrupt frequency** &rarr; disable in critical sections
+- **efficient timer/interrupt queue management** &rarr; "nesting" interrupts
+- **power-aware timing strategies** &rarr; "_tickless_" OS
+- **optimize ISRs** &rarr; short, use other methods (DPC, "bottom halves")
+
+---
+
+### Kernel Performance Metrics
+
+---
+
+### Kernel Performance Metrics
+
+main goals for an RTOS kernel:
+
+---
+
+### Kernel Performance Metrics
+
+main goals for an RTOS kernel:
+
+- designed to **minimize jitter**
+
+---
+
+### Kernel Performance Metrics
+
+main goals for an RTOS kernel:
+
+- designed to **minimize jitter**
+- operations have bounded and predictable execution times
+
+
+---
+
+### Kernel Performance Metrics
+
+main goals for an RTOS kernel:
+
+- designed to **minimize jitter**
+- operations have bounded and predictable execution times
+
+<br>
+<br>
+
+how to **measure** success?
+
+---
+
+## metrics
+
+---
+
+## metrics
+
+| metric | description |
+|------------|-------------|
+| **interrupt latency** | time to respond to interrupt |
+
+---
+
+## metrics
+
+| metric | description |
+|------------|-------------|
+| **interrupt latency** | time to respond to interrupt |
+| **context switch time** | time to switch between tasks |
+
+---
+
+## metrics
+
+| metric | description |
+|------------|-------------|
+| **interrupt latency** | time to respond to interrupt |
+| **context switch time** | time to switch between tasks |
+| **dispatch latency** | time difference = task execution - ready |
+
+---
+
+## metrics
+
+| metric | description |
+|------------|-------------|
+| **interrupt latency** | time to respond to interrupt |
+| **context switch time** | time to switch between tasks |
+| **dispatch latency** | time difference = task execution - ready |
+| **throughput** | number of tasks/operations per unit time |
+||
+
+
+---
+
+## RTOS examples
+
+---
+
+## RTOS examples
+
+| **name** | **description** | **features** |
+|----------|-----------------|--------------|
+| [FreeRTOS](https://www.freertos.org) | widely used, **open-source** | small footprint, portable, wide support|
+| [VxWorks](https://www.windriver.com/products/vxworks) | **commercial**, aerospace, defense, applications | high reliability, hard real-time, multicore support|
+| [QNX](https://blackberry.qnx.com/en) | **commercial**, automotive,  medical | microkernel, high security & reliability, POSIX support|
+| [Zephyr](https://www.zephyrproject.org) | **open-source**, IoT and Edge devices | modular, scalable, wide hardware supports|
+||
+
+---
+
+## no linux?
+
+---
+
+### FreeRTOS
+
+- popular
+- **open-source**
+- simplicity, **portability**
+- extensive community support
+
+---
+
+### freertos example
+
+```C [13|14-15|6-11|17-20|22-23|25-26]
+#include <FreeRTOS.h>
+#include <task.h>
+#include <gpio.h>
+
+// Task to blink an LED
+void vBlinkTask(void *pvParameters) {
+    while (1) {
+        GPIO_TogglePin(LED_PIN);  // Toggle LED
+        vTaskDelay(pdMS_TO_TICKS(500));  // Delay for 500ms
+    }
+}
+
+int main(void) {
+    // Initialize hardware
+    GPIO_Init(LED_PIN, GPIO_MODE_OUTPUT);
+
+    // Create the blink task
+    xTaskCreate(vBlinkTask, "Blink", 
+                configMINIMAL_STACK_SIZE, 
+                NULL, 1, NULL);
+
+    // Start the scheduler
+    vTaskStartScheduler();
+
+    // The program should never reach here
+    for (;;);
+}
+```
+
+---
+
+### linux+Real-Time?
+
+<img src="img/rtos/linux.penguin_clock_realtime.png" width="1000">
+
+---
+
+### linux+Real-Time?
+
+- general-purpose OS
+- wasn't **designed** for real-time
+
+<br>
+<br>
+
+but, hold on...
+
+---
+
+### linux+Real-Time?
+
+- many "real-time" features/mechanisms 
+- **real-time patches**
+
+---
+
+### **Preempt-RT** patch
+
+---
+
+### **Preempt-RT** patch
+
+- makes **entire** kernel preemptible
+- reduces latency
+- ISRs are kernel threads
+- priority inheritance
+- precise/low granularity timers
+
+<br>
+<br>
+---
+
+### **Preempt-RT** patch
+
+- makes **entire** kernel preemptible
+- reduces latency
+- ISRs are kernel threads
+- priority inheritance
+- precise/low granularity timers
+
+<br>
+<br>
+
+**official** part of Linux &rarr; since <scb>v6.12</scb> onwards
+
+---
+
+### other "real-time" Linux features
+
+---
+
+### other "real-time" Linux features
+
+|feature| description/details|
+|-------|--------------------|
+|**scheduling policies** | <sc>SCHED_FIFO</sc>, <sc>SCHED_RR</sc>, <sc>SCHED_DEADLINE</sc> |
+
+---
+
+### other "real-time" Linux features
+
+|feature| description/details|
+|-------|--------------------|
+|**scheduling policies** | <sc>SCHED_FIFO</sc>, <sc>SCHED_RR</sc>, <sc>SCHED_DEADLINE</sc> |
+|**high-res timers** | precise timing and scheduling |
+
+---
+
+### other "real-time" Linux features
+
+|feature| description/details|
+|-------|--------------------|
+|**scheduling policies** | <sc>SCHED_FIFO</sc>, <sc>SCHED_RR</sc>, <sc>SCHED_DEADLINE</sc> |
+|**high-res timers** | precise timing and scheduling |
+| **cpu isolation** | isolate CPUs from scheduler <br> pin processes to cores |
+
+---
+
+### other "real-time" Linux features
+
+|feature| description/details|
+|-------|--------------------|
+|**scheduling policies** | <sc>SCHED_FIFO</sc>, <sc>SCHED_RR</sc>, <sc>SCHED_DEADLINE</sc> |
+|**high-res timers** | precise timing and scheduling |
+| **cpu isolation** | isolate CPUs from scheduler <br> pin processes to cores |
+| **memory** | memory _locking_, _huge_ pages_, preallocation |
+
+---
+
+### other "real-time" Linux features
+
+|feature| description/details|
+|-------|--------------------|
+|**scheduling policies** | <sc>SCHED_FIFO</sc>, <sc>SCHED_RR</sc>, <sc>SCHED_DEADLINE</sc> |
+|**high-res timers** | precise timing and scheduling |
+| **cpu isolation** | isolate CPUs from scheduler <br> pin processes to cores |
+| **memory** | memory _locking_, _huge_ pages_, preallocation |
+| **control groups** | allocate resources (cpu, I/O, memory) <br> &rarr; specific _groups_ of tasks |
+||
+
+---
+
+## Raspberry Pi OS+Real-Time?
+
+- essentially Linux
+- shares similar features/properties
+- many projects/extensions exist &rarr; add "real-time"
                     </textarea>
                 </section>
             </div>
