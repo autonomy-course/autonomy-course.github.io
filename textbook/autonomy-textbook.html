@@ -44,9 +44,11 @@
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/script.js"></script>
 
     <script src="https://cdn.rawgit.com/diversen/pandoc-bootstrap-adaptive-template/959c3622/jquery.sticky-kit.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-01-29" />
+  <meta name="date" content="2025-01-30" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -127,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">January 29,
+                              <li><p class="navbar-text">January 30,
 2025</p></li>
                   </ul>
       </div>
@@ -358,7 +360,17 @@ George Washington University</p></li>
         <li><a href="#robot-operating-system-ros"
         id="toc-robot-operating-system-ros"><span
         class="toc-section-number">4.3</span> Robot Operating System
-        (ROS)</a></li>
+        (ROS)</a>
+        <ul>
+        <li><a href="#ros-components" id="toc-ros-components"><span
+        class="toc-section-number">4.3.1</span> ROS Components</a></li>
+        <li><a href="#ros-and-real-time"
+        id="toc-ros-and-real-time"><span
+        class="toc-section-number">4.3.2</span> ROS and
+        Real-time?</a></li>
+        <li><a href="#rosnavio2" id="toc-rosnavio2"><span
+        class="toc-section-number">4.3.3</span> Ros+Navio2</a></li>
+        </ul></li>
         </ul></li>
         </ul>
 
@@ -433,7 +445,7 @@ George Washington University</p></li>
             <tbody>
             <tr>
             <td>Autonomy is the ability to <br> <strong>perform given
-            tasks</strong> <br> based on the system’s perception <br>
+            tasks</strong> <br> based on the systems perception <br>
             <scb>without</scb> human intervention</td>
             <td><img src="img/robot_profile_view.jpg" height="275"></td>
             </tr>
@@ -625,7 +637,7 @@ George Washington University</p></li>
             <h2 data-number="1.6"><span
             class="header-section-number">1.6</span>
             Overview/Architecture of Autonomous Systems</h2>
-            <p>So far, we’ve (briefly) talked about…</p>
+            <p>So far, we have (briefly) talked about…</p>
             <p>Sensing:</p>
             <p><img src="img/stack_architecture/stack_overview.2.png" width="200"></p>
             <p>Actuation:</p>
@@ -657,7 +669,7 @@ George Washington University</p></li>
             <li><em>what</em> obstacles may I face?</li>
             <li><em>how</em> do I avoid them?</li>
             </ul>
-            <p>let’s not forget the most important question of all…</p>
+            <p>let us not forget the most important question of all…</p>
             <p><img src="img/drax_gamora.avif" width="400"></p>
             <p><strong>why</strong> is gamora?</p>
             <section id="high-order-functions" class="level3"
@@ -666,7 +678,7 @@ George Washington University</p></li>
             class="header-section-number">1.6.1</span> high-order
             functions</h3>
             <p>In order to answer the following, we need
-            <strong>additional functionality</strong>. Let’s go through
+            <strong>additional functionality</strong>. Let us go through
             what that might be.</p>
             <table>
             <colgroup>
@@ -4787,6 +4799,9 @@ George Washington University</p></li>
             </tbody>
             </table>
             <p><br></p>
+            <p><br>
+            <img src="img/mermaid_figs/system_tick.png" alt="Mermaid Diagram" width="400" />
+            <br></p>
             <p>There are various <strong>design considerations</strong>
             for timers in an RTOS, <em>viz.,</em></p>
             <ol type="1">
@@ -5123,30 +5138,280 @@ George Washington University</p></li>
             <h2 data-number="4.3"><span
             class="header-section-number">4.3</span> Robot Operating
             System (ROS)</h2>
-            <pre class="mermaid"><code>graph TD
-    subgraph &quot;ROS Core Components&quot;
-        M[ROS Master] --&gt; N1[Node 1]
-        M --&gt; N2[Node 2]
-        M --&gt; N3[Node 3]
-        P[Parameter Server]
-        M -.-&gt; P
-    end
-    
-    subgraph &quot;Communication&quot;
-        N1 --&gt;|Topic| N2
-        N2 --&gt;|Service| N3
-        N3 --&gt;|Action| N1
-    end
-    
-    subgraph &quot;Tools&quot;
-        T1[RViz]
-        T2[Gazebo]
-        T3[rqt]
-    end
-    
-    N1 -.-&gt; T1
-    N2 -.-&gt; T2
-    N3 -.-&gt; T3</code></pre>
+            <p>ROS is an <strong>open source middleware</strong>
+            framework built for robotics applications. The main goal →
+            develop <strong>standards</strong> for robotic software. ROS
+            provides many <strong>reusable modules</strong> for
+            developing robotic applications.</p>
+            <p>Embedded/autonomous programs that do simple tasks (or
+            operate with a single sensor/motor) are relatively easy to
+            program. As more sensing, actuation, functionality is added
+            (consider a larege industrial robot or even an autonomous
+            car), programs quickly become quite complex – coordination
+            of the data and system states becomes challenging.</p>
+            <p><img src="img/rtos/ros/ros.complexity.webp" width="400"></p>
+            <p><br></p>
+            <p>ROS helps to develop and <strong>scale</strong> such
+            applications and also <strong>manages
+            communications</strong> between various parts of the
+            software. As mentioned earlier, ROS is <a
+            href="https://www.redhat.com/en/topics/middleware/what-is-middleware"><strong>middleware</strong></a>:</p>
+            <blockquote>
+            <p>Middleware is a software layer that connects the
+            operating system to applications, data, and users. It
+            provides common services and capabilities, like single-sign
+            on (SSO), easy communication/coordination (like ROS) or
+            application programming interface (API) management.
+            Developers can rely on middleware to provide consistent,
+            simplified integrations between application components. This
+            frees up developers to build core features of applications,
+            rather than spend time connecting those features to
+            different endpoints and environments, including legacy
+            systems.</p>
+            </blockquote>
+            <p>At a high level, ROS,</p>
+            <ul>
+            <li>creates a <em>separation</em> of code blocks → into
+            reusable blocks</li>
+            <li>provides <em>tools</em> → easy communication between
+            sub-programs</li>
+            <li>is <em>language agnostic</em> → allows different
+            components to be written in, say Python and C and yet
+            communicate using the <strong>ROS communication
+            protocol</strong></li>
+            </ul>
+            <p>A simple example: <a
+            href="https://dilipkumar.medium.com/ros-v1-robot-operating-system-88039990e913">control
+            of a robotic arm+camera</a>:</p>
+            <p><img src="img/rtos/ros/ros.robot_camera_example.webp" width="400"></p>
+            <p><br></p>
+            <p>To write a ROS application to control this robotic arm,
+            we first create a few <strong>subprograms</strong>:</p>
+            <ul>
+            <li>one for the camera → <code>node</code></li>
+            <li>another for → <code>motion planning</code></li>
+            <li>one for → <code>hardware drivers</code></li>
+            <li>finally one for → <code>joystick</code></li>
+            </ul>
+            <p>Now we use ROS → <strong>communication</strong> between
+            these nodes.</p>
+            <p>ROS even provides <strong>plug and play
+            libraries</strong> for designing your system, <em>e.g.,</em>
+            <a
+            href="https://moveit.ai/moveit/ros2/2020/02/18/moveit-2-beta-feature-list.html">inverse
+            kinematics libraries</a>, <a
+            href="https://roboticseabass.com/2024/06/30/how-do-robot-manipulators-move/">trajectory
+            planning for robotic arms</a>, <em>etc.</em></p>
+            <section id="ros-components" class="level3"
+            data-number="4.3.1">
+            <h3 data-number="4.3.1"><span
+            class="header-section-number">4.3.1</span> ROS
+            Components</h3>
+            <p>Some important <strong>components</strong> of ROS:</p>
+            <p><br>
+            <img src="img/mermaid_figs/ros_architecture_legends.png" alt="Mermaid Diagram" width="400" />
+            <br></p>
+            <p><br>
+            <img src="img/mermaid_figs/ros_architecture.png" alt="Mermaid Diagram" width="400" />
+            <br></p>
+            <ol type="1">
+            <li><a href="http://wiki.ros.org/Nodes">node</a></li>
+            </ol>
+            <ul>
+            <li>a process that performs <strong>computation</strong> (a
+            program/subprogram)</li>
+            <li>combined together into a graph</li>
+            <li>communicate via “topics”</li>
+            <li>operate at a fine-grained scale</li>
+            <li>a full system will have <em>multiple</em> nodes,
+            <em>e.g.,</em>
+            <ul>
+            <li>one node controls a laser range-finder</li>
+            <li>one Node controls the robot’s wheel motors</li>
+            <li>one node performs localization</li>
+            <li>one node performs path planning</li>
+            <li>one node provides a graphical view of the system</li>
+            </ul></li>
+            </ul>
+            <p>The use of nodes has several benefits such as
+            <strong>fault tolerance</strong>, <strong>reduced
+            complexity</strong> and <strong>modularity</strong>.</p>
+            <ol start="2" type="1">
+            <li><a href="http://wiki.ros.org/Topics">topics</a></li>
+            </ol>
+            <ul>
+            <li>they’re <strong>named buses</strong> over which nodes
+            exchange “messages”</li>
+            <li><strong>anonymous publish/subscribe semantics</strong> →
+            decouples production of information from its
+            consumption</li>
+            <li>nodes are not aware of who they are communicating
+            with</li>
+            <li>nodes that are interested in data
+            <strong>subscribe</strong> to the <em>relevant
+            topic</em></li>
+            <li>nodes that <em>generate</em> data
+            <strong>publish</strong> to the relevant topic</li>
+            <li>can be <strong>multiple</strong> publishers and
+            subscribers to a topic</li>
+            <li>topic is <strong>strongly typed</strong> by publisher →
+            nodes can only receive messages with a matching type</li>
+            </ul>
+            <p>Topics are meant for <em>unidirectional</em>,
+            <em>streaming</em> communication. ROS includes other
+            mechanisms such as <a
+            href="http://wiki.ros.org/Services">services</a> and
+            [parameter servers]http://wiki.ros.org/Parameter%20Server)
+            for different types of communciations.</p>
+            <ol start="3" type="1">
+            <li><a href="http://wiki.ros.org/Messages">messages</a></li>
+            </ol>
+            <ul>
+            <li>nodes communicate with each other by publishing messages
+            to topics</li>
+            <li>simple text files</li>
+            <li>simple data structure → <strong>typed
+            fields</strong></li>
+            <li>support standard primitives (<code>int</code>,
+            <code>float</code>, <code>boolean</code>)</li>
+            <li>can include arbitrarily nested <code>structs</code> and
+            <code>arrays</code></li>
+            <li>nodes can exchange → <code>request</code> an
+            <code>response</code> messages</li>
+            </ul>
+            <p>A simple ROS message:</p>
+            <pre class="ros"><code>std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+geometry_msgs/Point point
+  float64 x
+  float64 y
+  float64 z</code></pre>
+            <p>Example: <a
+            href="https://classes.cs.uchicago.edu/archive/2022/spring/20600-1/ros_intro.html">our
+            first ROS message</a>.</p>
+            <ol start="4" type="1">
+            <li><a href="http://wiki.ros.org/Master">ROS Master</a></li>
+            </ol>
+            <ul>
+            <li>provides naming and registration services to the rest of
+            the nodes in the ROS system</li>
+            <li>also runs the <a
+            href="http://wiki.ros.org/Parameter%20Server">parameter
+            server</a> → a shared, multi-variate dictionary that is
+            accessible via network APIs, used by nodes to
+            <strong>store/retrieve parameters</strong></li>
+            <li>tracks publishers and subscribers to topics as well as
+            services</li>
+            <li>enable individual ROS nodes to locate one anothe</li>
+            <li>once located, they communicate in a
+            <strong>peer-to-peer</strong> fashion</li>
+            </ul>
+            <p>Example:</p>
+            <ol type="1">
+            <li>consider two nodes → <code>camera</code> node and
+            <code>image_viewer</code> node</li>
+            <li><code>camera</code> notifies <code>master</code> → wants
+            to publish images on the topic, <code>images</code></li>
+            </ol>
+            <p><img src="img/rtos/ros/ROS_master_example_english_1.png"></p>
+            <ol start="3" type="1">
+            <li>no one is subscribing to the topic, yet → <strong>no
+            images sent</strong></li>
+            <li><code>image viewer</code> → subscribe to
+            <code>images</code> topic</li>
+            </ol>
+            <p><img src="img/rtos/ros/ROS_master_example_english_2.png"></p>
+            <ol start="5" type="1">
+            <li>topic, <code>images</code> has both → publisher and
+            subscriber</li>
+            <li><code>master</code> notifies both → of each others’
+            existence</li>
+            </ol>
+            <p><img src="img/rtos/ros/ROS_master_example_english_3.png"></p>
+            <ol start="7" type="1">
+            <li>both start <strong>communicating with each
+            other</strong>, directly</li>
+            </ol>
+            <p><br></p>
+            <p>A more intricate example of the same:</p>
+            <p><br>
+            <img src="img/mermaid_figs/ros_publish_subscribe.png" alt="Mermaid Diagram" width="400" />
+            <br></p>
+            <ol start="5" type="1">
+            <li><a href="http://wiki.ros.org/tf2">ROS transform</a></li>
+            </ol>
+            <ul>
+            <li>robotic system typically has many 3D coordinate frames
+            that change over time
+            <ul>
+            <li><em>e.g.,</em> world frame, base frame, gripper frame,
+            head frame, <em>etc.</em></li>
+            </ul></li>
+            <li>lets the user keep track of multiple coordinate frames
+            over time</li>
+            <li>maintains the relationship between coordinate frames →
+            manages <strong>spatial relationships</strong></li>
+            <li>in a tree structure buffered in time</li>
+            <li>lets the user transform points, vectors, <em>etc.</em> →
+            at any desired point in time</li>
+            <li><strong>distributed</strong> → coordinate frames of
+            robot available to <strong>all</strong> ROS components on
+            any computer in the system</li>
+            <li>sensor fusion, motion planning, and navigation</li>
+            <li>organizes all coordinate frames and their relationships
+            into a <strong>transform tree</strong></li>
+            </ul>
+            <p>An example of a ROS transform and tree:</p>
+            <p><br>
+            <img src="img/mermaid_figs/ros_transform.png" alt="Mermaid Diagram" width="400" />
+            <br></p>
+            </section>
+            <section id="ros-and-real-time" class="level3"
+            data-number="4.3.2">
+            <h3 data-number="4.3.2"><span
+            class="header-section-number">4.3.2</span> ROS and
+            Real-time?</h3>
+            <p>ROS (the first version) is <strong>not</strong>
+            real-time. Hence, systems that requires <strong>hard
+            real-time guarantees</strong> shoud not use it. But ROS can
+            be itegrated into systems that require <em>some</em> latency
+            guarantees. If needed, ROS can be run on top of the
+            <code>RT_PREEMPT</code> real-time patch on Linux. In
+            addition, <strong>specific nodes</strong> can be designed to
+            handle real-time functions or programmed to behave as
+            real-time control systems.</p>
+            <p>If better real-time guarantees are required on ROS, then
+            <a
+            href="https://roscon.ros.org/2015/presentations/RealtimeROS2.pdf"><strong>ROS
+            2</strong></a> if your best bet.</p>
+            <p><strong>Resources</strong>: more information on real-time
+            and ROS2 can be found at <a
+            href="https://xilinx.github.io/KRS/sphinx/build/html/docs/features/realtime_ros2.html">RT
+            ROS2 Xilinx</a> and <a
+            href="https://github.com/ros-realtime">RT ROS
+            Github</a>.</p>
+            </section>
+            <section id="rosnavio2" class="level3" data-number="4.3.3">
+            <h3 data-number="4.3.3"><span
+            class="header-section-number">4.3.3</span> Ros+Navio2</h3>
+            <p>We use ROS (the original version, not ROS2) in our class.
+            <strong>Note:</strong> while ROS has no real-time
+            capabilities, one some embedded systems, if it <em>fast
+            enough</em> that we can use it to control safety-critical
+            systems such as drones and other small autonomous
+            systems.</p>
+            <p>In fact, the basic Raspbian image comes installed with
+            ROS. We can use it communicate between the Navio2 and the
+            controller running on the Pi to exchange critical
+            information, <em>e.g.</em>, sensor data.</p>
+            <p><img src="img/rtos/ros/ros.ardupilot_navio.png" width="400"></p>
+            <p><strong>Resources</strong>: please read the <a
+            href="https://docs.emlid.com/navio2/ros/">step-by-step
+            instructions</a> on how to connect/use the Navio2 and the Pi
+            using ROS.</p>
+            </section>
             </section>
             </section>
             <section id="footnotes"

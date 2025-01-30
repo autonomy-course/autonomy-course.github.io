@@ -2111,9 +2111,20 @@ Typically these systems have the following _three_ types of timers:
 
 <br>
 
-<br>
-<img src="img/mermaid_figs/system_tick.png" alt="Mermaid Diagram" width="400" />
-<br>
+```mermaid
+---
+title: system tick
+---
+graph TD
+    A[System Tick Interrupt] --> B[Save Context]
+    B --> C[Increment System Tick Counter]
+    C --> D[Check Timers and Delays]
+    D --> E{Any Task Ready to Run?}
+    E -- Yes --> F[Schedule Next Task]
+    E -- No --> G[Restore Context]
+    F --> G
+    G --> H[Return from Interrupt]
+```
 
 There are various **design considerations** for timers in an RTOS, _viz.,_
 
@@ -2290,13 +2301,45 @@ ROS even provides **plug and play libraries** for designing your system, _e.g.,_
 Some important **components** of ROS:
 
 
-<br>
-<img src="img/mermaid_figs/ros_architecture_legends.png" alt="Mermaid Diagram" width="400" />
-<br>
+```mermaid
+---
+title: ros architecture legends
+---
+graph LR
+    subgraph "ROS Communication Types"
+        L1[Topics: Many-to-Many]
+        L2[Services: One-to-One]
+        L3[Actions: Long-running Tasks]
+    end
+```
 
-<br>
-<img src="img/mermaid_figs/ros_architecture.png" alt="Mermaid Diagram" width="400" />
-<br>
+```mermaid
+---
+title: ros architecture 
+---
+graph TD
+    subgraph "Core Components"
+        M[ROS Master] --> N1[Node 1]
+        M --> N2[Node 2]
+        M --> N3[Node 3]
+        P[Parameter Server]
+        M -.-> P
+    end
+    
+    N1 -->|Topic| N2
+    N2 -->|Service| N3
+    N3 -->|Action| N1
+    
+    subgraph "Tools"
+        T1[RViz]
+        T2[Gazebo]
+        T3[rqt]
+    end
+    
+    N1 -.-> T1
+    N2 -.-> T2
+    N3 -.-> T3
+```
 
 1. [node](http://wiki.ros.org/Nodes)
 
@@ -2380,9 +2423,23 @@ Example:
 
 A more intricate example of the same:
 
-<br>
-<img src="img/mermaid_figs/ros_publish_subscribe.png" alt="Mermaid Diagram" width="400" />
-<br>
+```mermaid
+---
+title: ros publish subscribe
+---
+graph LR
+    subgraph "Publisher Node"
+        P1[Camera Node] -->|Publishes| T1[/image_raw Topic/]
+        P2[Lidar Node] -->|Publishes| T2[/point_cloud Topic/]
+    end
+    
+    subgraph "Subscriber Nodes"
+        T1 -->|Subscribes| S1[Image Processing Node]
+        T1 -->|Subscribes| S2[Object Detection Node]
+        T2 -->|Subscribes| S3[Mapping Node]
+        T2 -->|Subscribes| S4[Obstacle Detection Node]
+    end
+```
 
 5. [ROS transform](http://wiki.ros.org/tf2)
 
@@ -2398,9 +2455,29 @@ A more intricate example of the same:
 
 An example of a ROS transform and tree:
 
-<br>
-<img src="img/mermaid_figs/ros_transform.png" alt="Mermaid Diagram" width="400" />
-<br>
+```mermaid
+---
+title: ros transform 
+---
+graph TD
+    subgraph "Transform Tree"
+        W[map] -->|transform| O[odom]
+        O -->|transform| B[base_link]
+        B -->|transform| L[laser]
+        B -->|transform| C[camera]
+        B -->|transform| G[gripper]
+    end
+    
+    subgraph "Transform Broadcasters"
+        TB1[Map to Odom Publisher]
+        TB2[Robot State Publisher]
+        TB3[Joint State Publisher]
+    end
+    
+    TB1 -.->|publishes| W
+    TB2 -.->|publishes| B
+    TB3 -.->|publishes| G
+```
 
 
 ### ROS and Real-time?
