@@ -47,6 +47,495 @@
 ### Prof. **Sibin Mohan**
 
 ---
+
+**open source middleware** framework
+
+---
+
+**open source middleware** framework &rarr; robotics applications
+
+---
+
+<img src="img/rtos/ros/ros.complexity.webp" width="900">
+
+---
+
+## ros
+
+- develop and **scale** applications 
+- **manages communications** 
+
+---
+
+## ros is **middleware**
+
+Note:
+> Middleware is a software layer that connects the operating system to applications, data, and users. It provides common services and capabilities, like single-sign on (SSO), easy communication/coordination (like ROS) or application programming interface (API) management. Developers can rely on middleware to provide consistent, simplified integrations between application components. This frees up developers to build core features of applications, rather than spend time connecting those features to different endpoints and environments, including legacy systems.
+
+--- 
+
+at a high level, ROS provides,
+
+- **separation** of code blocks &rarr; into reusable blocks
+
+--- 
+
+at a high level, ROS provides,
+
+- **separation** of code blocks &rarr; into reusable blocks
+- **tools** &rarr; easy communication between sub-programs
+
+--- 
+
+at a high level, ROS provides,
+
+- **separation** of code blocks &rarr; into reusable blocks
+- **tools** &rarr; easy communication between sub-programs
+- **language agnostic** coding &rarr; C++/Python or mixed
+
+--- 
+
+at a high level, ROS provides,
+
+- **separation** of code blocks &rarr; into reusable blocks
+- **tools** &rarr; easy communication between sub-programs
+- **language agnostic** coding &rarr; C++/Python or mixed
+    - can still communicate with each other
+
+---
+
+## simple example
+
+control of a robotic arm+camera
+
+<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">
+
+---
+
+## simple example
+
+to make this a **ROS program**
+
+|||
+|-----|-----|
+|<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">|create a few subprograms: |
+
+---
+
+## simple example
+
+to make this a **ROS program**
+
+|||
+|-----|-----|
+|<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">|create a few subprograms: <ol> <li>camera <scb>node</scb></li> |
+
+---
+
+## simple example
+
+to make this a **ROS program**
+
+|||
+|-----|-----|
+|<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">|create a few subprograms: <ol> <li>camera <scb>node</scb></li> <li><scb>motion planning</scb></li> |
+
+---
+
+## simple example
+
+to make this a **ROS program**
+
+|||
+|-----|-----|
+|<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">|create a few subprograms: <ol> <li>camera <scb>node</scb></li> <li><scb>motion planning</scb></li>  <li><scb>hardware drivers</scb></li> |
+
+---
+
+## simple example
+
+to make this a **ROS program**
+
+|||
+|-----|-----|
+|<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">|create a few subprograms: <ol> <li>camera <scb>node</scb></li> <li><scb>motion planning</scb></li>  <li><scb>hardware drivers</scb></li> <li><scb>joystick</scb></li>  </ol>|
+
+---
+
+## simple example
+
+to make this a **ROS program**
+
+|||
+|-----|-----|
+|<img src="img/rtos/ros/ros.robot_camera_example.webp" width="900">|create a few subprograms: <ol> <li>camera <scb>node</scb></li> <li><scb>motion planning</scb></li>  <li><scb>hardware drivers</scb></li> <li><scb>joystick</scb></li>  </ol>|
+|| **communication** &rarr; using ROS constructs|
+||
+
+---
+
+### ros components
+
+<img src="img/mermaid_figs/ros_architecture_legends.png"> 
+
+<br>
+<img src="img/mermaid_figs/ros_architecture.png" width="800">
+
+---
+
+### ros components | node
+
+- process/program &rarr; **computation** 
+- combined together into a graph
+- communicate via "topics"
+- operate at a fine-grained scale
+
+---
+
+### ros components | topics
+
+- **named buses** &rarr; nodes exchange "messages"
+
+---
+
+### ros components | topics
+
+- **named buses** &rarr; nodes exchange "messages"
+- **anonymous publish/subscribe semantics** 
+- nodes not aware of **who** they are communicating with
+
+---
+
+### ros components | topics
+
+- **named buses** &rarr; nodes exchange "messages"
+- **anonymous publish/subscribe semantics** 
+- nodes not aware of **who** they are communicating with
+- nodes interested in data **subscribe** to _relevant topic_
+- nodes that _generate_ data **publish** to relevant topic
+
+---
+
+### ros components | topics
+
+- **named buses** &rarr; nodes exchange "messages"
+- **anonymous publish/subscribe semantics** 
+- nodes not aware of **who** they are communicating with
+- nodes interested in data **subscribe** to _relevant topic_
+- nodes that _generate_ data **publish** to relevant topic
+- **multiple** publishers and subscribers for topic
+
+---
+
+### ros components | topics
+
+- **named buses** &rarr; nodes exchange "messages"
+- **anonymous publish/subscribe semantics** 
+- nodes not aware of **who** they are communicating with
+- nodes interested in data **subscribe** to _relevant topic_
+- nodes that _generate_ data **publish** to relevant topic
+- **multiple** publishers and subscribers for topic
+- topic is **strongly typed** by publisher 
+    - nodes can only receive messages with a matching type
+
+---
+
+### ros components | topics
+
+---
+
+### ros components | topics
+
+- nodes communicate &rarr; publish messages to topics
+- simple **text** files
+- simple data structure &rarr; **typed fields**
+
+---
+
+### ros components | topics
+
+- nodes communicate &rarr; publish messages to topics
+- simple **text** files
+- simple data structure &rarr; **typed fields**
+- support standard primitives (<sc>int</sc>, <sc>float</sc>, <sc>boolean</sc>)
+- can include arbitrarily nested <sc>structs</sc> and <sc>arrays</sc>
+
+---
+
+### ros components | topics
+
+- nodes communicate &rarr; publish messages to topics
+- simple **text** files
+- simple data structure &rarr; **typed fields**
+- support standard primitives (<sc>int</sc>, <sc>float</sc>, <sc>boolean</sc>)
+- can include arbitrarily nested <sc>structs</sc> and <sc>arrays</sc>
+- nodes can exchange &rarr; <sc>request</sc> an <sc>response</sc> messages
+
+
+---
+
+simple ROS message:
+
+```ros
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+geometry_msgs/Point point
+  float64 x
+  float64 y
+  float64 z
+```
+
+---
+
+### ros components | master
+
+- naming and registration services
+
+---
+
+### ros components | master
+
+- naming and registration services
+- runs parameter server &rarr; **store/retrieve parameters**
+
+Note: (http://wiki.ros.org/Parameter%20Server) &rarr; a shared, multi-variate dictionary that is accessible via network APIs, used by nodes to
+
+---
+
+### ros components | master
+
+- naming and registration services
+- runs parameter server &rarr; **store/retrieve parameters**
+- tracks publishers/subscribers to topics
+
+---
+
+### ros components | master
+
+- naming and registration services
+- runs parameter server &rarr; **store/retrieve parameters**
+- tracks publishers/subscribers to topics
+- individual ROS nodes &rarr; locate one another
+- once located &rarr; communicate **peer-to-peer**
+
+---
+
+### ros components | peer-to-peer example
+
+1. two nodes &rarr; <sc>camera</sc> node and <sc>image_viewer</sc> node
+2. <sc>camera</sc> notifies <sc>master</sc> &rarr; wants to publish topic, <sc>images</sc>
+
+<br>
+<br>
+
+<img src="img/rtos/ros/ROS_master_example_english_1.png" width="500">
+
+
+---
+
+### ros components | peer-to-peer example
+
+3. no one isubscribing to topic, yet &rarr; **no images sent**
+4. <sc>image viewer</sc> &rarr; subscribe to <sc>images</sc> topic
+
+<br>
+<br>
+
+<img src="img/rtos/ros/ROS_master_example_english_2.png" width="500">
+
+
+---
+
+### ros components | peer-to-peer example
+
+5. topic, <sc>images</sc> has both &rarr; publisher and subscriber
+6. <sc>master</sc> notifies both &rarr; of each others' existence
+
+<br>
+<br>
+
+<img src="img/rtos/ros/ROS_master_example_english_3.png" width="500">
+
+---
+
+### ros components | peer-to-peer example
+
+5. topic, <sc>images</sc> has both &rarr; publisher and subscriber
+6. <sc>master</sc> notifies both &rarr; of each others' existence
+
+<br>
+<br>
+
+<img src="img/rtos/ros/ROS_master_example_english_3.png" width="500">
+
+<br>
+<br>
+
+7. both start **communicating with each other**, directly
+
+---
+
+### ros components | more intricate example
+
+<img src="img/mermaid_figs/ros_publish_subscribe.png" width="1100"> 
+
+---
+
+### ros components | ROS transform
+
+---
+
+### ros components | ROS transform
+
+- robotic system &rarr; many 3D coordinate frames
+    - change over time
+    - _e.g.,_ world frame, base frame, gripper frame, head frame, _etc._
+
+---
+
+### ros components | ROS transform
+
+- robotic system &rarr; many 3D coordinate frames
+    - change over time
+    - _e.g.,_ world frame, base frame, gripper frame, head frame, _etc._
+- allows user keep track of **multiple** coordinate frames over time
+
+---
+
+### ros components | ROS transform
+
+- robotic system &rarr; many 3D coordinate frames
+    - change over time
+    - _e.g.,_ world frame, base frame, gripper frame, head frame, _etc._
+- allows user keep track of **multiple** coordinate frames over time
+- maintains relationship between coordinate frames
+    - manages **spatial relationships** 
+
+---
+
+### ros components | ROS transform [contd.]
+
+
+- **tree** structure buffered in time
+
+---
+
+### ros components | ROS transform [contd.]
+
+
+- **tree** structure buffered in time
+- user transform <sc>points</sc>, <sc>vectors</sc>, _etc._
+    - at **any** desired point in time 
+
+---
+
+### ros components | ROS transform [contd.]
+
+
+- **tree** structure buffered in time
+- user transform <sc>points</sc>, <sc>vectors</sc>, _etc._
+    - at **any** desired point in time 
+- **distributed**
+
+Note: 
+distributed: coordinate frames of robot available to **all** ROS components on any computer in the system
+
+---
+
+### ros components | ROS transform [contd.]
+
+
+- **tree** structure buffered in time
+- user transform <sc>points</sc>, <sc>vectors</sc>, _etc._
+    - at **any** desired point in time 
+- **distributed**
+- sensor fusion, motion planning, navigation
+
+---
+
+### ros components | ROS transform [contd.]
+
+
+- **tree** structure buffered in time
+- user transform <sc>points</sc>, <sc>vectors</sc>, _etc._
+    - at **any** desired point in time 
+- **distributed**
+- sensor fusion, motion planning, navigation
+- all coordinate frames/relationships &rarr; **transform tree**
+
+---
+
+### ros components | transform example
+
+<img src="img/mermaid_figs/ros_transform.png" width="1000"> 
+
+---
+
+## ros+real-time?
+
+---
+
+## ros+real-time?
+
+basic ROS is **not** real-time
+
+---
+
+## ros+real-time?
+
+- can be integrated with _some_ latency guarantees
+- can run on linux+<sc>PREEMPT_RT</sc>
+
+---
+
+for better real-time &rarr; [**ROS 2**](https://roscon.ros.org/2015/presentations/RealtimeROS2.pdf)
+
+---
+
+for better real-time &rarr; [**ROS 2**](https://roscon.ros.org/2015/presentations/RealtimeROS2.pdf)
+
+look at [online textbook](https://autonomy-course.github.io/textbook/autonomy-textbook.html#ros-and-real-time) for more resources
+
+---
+
+so why waste all this time learning about ROS?
+
+---
+
+## Ros+Navio2
+
+- Raspberry Pi_Navio2 &rarr; ROS
+- **fast enough** for our purposes
+- basic Raspbian image &rarr; installed with ROS
+
+---
+
+## Ros+Navio2
+
+- communicate between Navio2 and controller Pi 
+- _e.g.,_ collect/publish **sensor** data
+
+---
+
+## Ros+Navio2
+
+- communicate between Navio2 and controller Pi 
+- _e.g.,_ collect/publish **sensor** data
+
+<img src="img/rtos/ros/ros.ardupilot_navio.png" width="900">
+
+---
+
+## Ros+Navio2
+
+- communicate between Navio2 and controller Pi 
+- _e.g.,_ collect/publish **sensor** data
+
+<img src="img/rtos/ros/ros.ardupilot_navio.png" width="900">
+
+read &rarr; [step-by-step instructions](https://docs.emlid.com/navio2/ros/)
                     </textarea>
                 </section>
             </div>
