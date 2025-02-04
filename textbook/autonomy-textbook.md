@@ -1764,7 +1764,7 @@ The RTOS kernel deals with,
 
 The design of RTOSes (and RTS in general) deal with **tasks**, **jobs** and, for implementation-specific details, **threads**. 
 
-A real-time **task**, $	au_i$ is defined using the following parameters: $(\phi_i, p_i, c_i, d_i)$ where,
+A real-time **task**, $\tau_i$ is defined using the following parameters: $(\phi_i, p_i, c_i, d_i)$ where,
 
 | Symbol | Description |
 | ------ | ----------- |
@@ -1774,7 +1774,7 @@ A real-time **task**, $	au_i$ is defined using the following parameters: $(\phi_
 | $d_i$    | Deadline |
 ||
 
-Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $	au = {	au_1, 	au_2, ... 	au_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task). For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
+Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $\tau = {\tau_1, \tau_2, ... \tau_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task). For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
 
 > - remember that task is a set of parameters.
 > - We "release" multiple "_jobs_" of each task, each with its own deadline
@@ -2034,7 +2034,7 @@ Each mechanism has specific use cases:
 Common considerations:
 
 1. Priority Inversion Prevention: a high-priority (HP) task is **indirectly preempted** by a lower-priority (LP) task; HP &rarr; needs resource (R); R held by &rarr; LP, LP preempted by medium-priority (MP) task. So **HP waits for MP** &rarr; inversion of priorities! We will discuss solutions (priority inheritance/priority ceiling) later.
-2. Deadlock Avoidance: tasks are *permanently blocked** waiting on resources from each other; $	au_1$ holds resource $R_A$ and waits for $R_B$; $	au_2$ holds resource $R_B$ and waits for $R_A$.
+2. Deadlock Avoidance: tasks are *permanently blocked** waiting on resources from each other; $\tau_1$ holds resource $R_A$ and waits for $R_B$; $\tau_2$ holds resource $R_B$ and waits for $R_A$.
 3. Timeout Handling: _every_ synchronization mechanism should have a **timeout** to avoid indefinite blocking of critical tasks. 
 4. Error Handling: detecting errors and handling them in a **robust** manner is critical to maintain system reliability; RTOSes use _retry mechanisms_, _logging_ and, most importantly, have **clear recovery procedures** for failure scenarios.
 
@@ -2107,9 +2107,7 @@ Typically these systems have the following _three_ types of timers:
 
 <br>
 
-<br>
-<img src="img/mermaid_figs/system_tick.png" alt="Mermaid Diagram 1" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.system_tick.png" width="400">
 
 There are various **design considerations** for timers in an RTOS, _viz.,_
 
@@ -2123,8 +2121,8 @@ There are various **design considerations** for timers in an RTOS, _viz.,_
 
 Optimization Techniques (to minimize latencies):
 
-- minimize interrupt frequency &rarr; often an RTOS will disable interrupts in critical sections
-- efficient timer and interrupt queue management &rarr; "nesting" interrupts
+- minimize interrupt frequency &rarr; oftean an RTOS will disable interrupts in critical sections
+- efficient timer and interrupt queue management &rarr; "nesting" interrupts, 
 - power-aware timing strategies &rarr; "_tickless_" operating systems have been tried
 - optimize ISRs &rarr; keep them short, use other methods ([deferred procedure calls](https://www.osr.com/nt-insider/2009-issue1/deferred-procedure-call-details/) or "[bottom halves](http://www.cs.otago.ac.nz/cosc440/labs/lab08.pdf)").
 
@@ -2140,7 +2138,7 @@ Hence, we can try to evaluate whether an RTOS kernel meets these goals using the
 | **interrupt latency** | the time taken to respond to an interrupt |
 | **context switch time** | time to switch between tasks |
 | **dispatch latency** | time difference between task being ready and when it starts executing |
-| **throughput** | number of tasks/operations kernel can handle per unit time |
+| **throughput** | number of tasks?operations kernel can handle per unit time |
 ||
 
 
@@ -2285,14 +2283,9 @@ ROS even provides **plug and play libraries** for designing your system, _e.g.,_
 
 Some important **components** of ROS:
 
-
+<img src="img/mermaid_figs/6.realtime.ros_architecture_legends.png" width="400">
 <br>
-<img src="img/mermaid_figs/ros_architecture_legends.png" alt="Mermaid Diagram 2" width="400" />
-<br>
-
-<br>
-<img src="img/mermaid_figs/ros_architecture_.png" alt="Mermaid Diagram 3" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.ros_architecture.png" width="400">
 
 1. [node](http://wiki.ros.org/Nodes)
 
@@ -2350,7 +2343,7 @@ Example: [our first ROS message](https://classes.cs.uchicago.edu/archive/2022/sp
 - provides naming and registration services to the rest of the nodes in the ROS system
 - also runs the [parameter server](http://wiki.ros.org/Parameter%20Server) &rarr; a shared, multi-variate dictionary that is accessible via network APIs, used by nodes to **store/retrieve parameters**
 - tracks publishers and subscribers to topics as well as services
-- enable individual ROS nodes to locate one another
+- enable individual ROS nodes to locate one anothe
 - once located, they communicate in a **peer-to-peer** fashion
 
 Example:
@@ -2376,9 +2369,7 @@ Example:
 
 A more intricate example of the same:
 
-<br>
-<img src="img/mermaid_figs/ros_publish_subscribe.png" alt="Mermaid Diagram 4" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.ros_publish_subscribe.png" width="400">
 
 5. [ROS transform](http://wiki.ros.org/tf2)
 
@@ -2389,14 +2380,12 @@ A more intricate example of the same:
 - in a tree structure buffered in time
 - lets the user transform points, vectors, _etc._ &rarr; at any desired point in time 
 - **distributed** &rarr; coordinate frames of robot available to **all** ROS components on any computer in the system
-- sensor fusion, motion planning and navigation
+- sensor fusion, motion planning, and navigation
 - organizes all coordinate frames and their relationships into a **transform tree**
 
 An example of a ROS transform and tree:
 
-<br>
-<img src="img/mermaid_figs/ros_transform_.png" alt="Mermaid Diagram 5" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.ros_transform.png" width="400">
 
 
 ### ROS and Real-time?
@@ -2417,12 +2406,13 @@ In fact, the basic Raspbian image comes installed with ROS. We can use it commun
 <img src="img/rtos/ros/ros.ardupilot_navio.png" width="400">
 
 **Resources**: please read the [step-by-step instructions](https://docs.emlid.com/navio2/ros/) on how to connect/use the Navio2 and the Pi using ROS.
+
 <!--link rel="stylesheet" href="./custom.sibin.css"-->
 
 
 # Scheduling for Real-Time Systems
 
-Consider an engine control system that cycles through the various phases of operation for an automotive engine:
+Consider an engine control system that cycles through the various phases of operation for an [automotive engine](http://automobile-us.blogspot.com):
 
 <img src="img/scheduling/engine_animation.gif">
 
@@ -2434,6 +2424,42 @@ This system **periodically** cycles through multiple tasks, _viz._,
 2. pressure
 3. fuel injection+combustion
 4. exhaust
+
+If we correlate this to task "actiations", then we may see the [following](https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf):
+
+|||
+|-----|-----|
+|<img src="img/scheduling/engine_animation.gif" width="180">|<img src="img/scheduling/angular_task.png" width="300">|
+||
+
+We see that for each **cycle**, the same set of tasks **repeat** (_i.e._., "periodic behavior"). Note though that the tasks _need not_ execute in parallel -- rather, they must execute sequentially for this application. Usually such applications use a scheduling mechanism known as a "[cyclic executive]()" that we shall discuss soon. 
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+TODOs:
+
+- cyclic executives
+- simple task example -- how would you schedule this?
+- hard vs soft RTS -- explain with deadline diagrams
+- task model
+- more on cyclic executives, round robin, etc. [static table-driven]
+- static vs dynamic
+- priority-based [static v dynamic]
+- dynamic best effort?
 
 <!--link rel="stylesheet" href="./custom.sibin.css"-->
 
@@ -4201,7 +4227,7 @@ The RTOS kernel deals with,
 
 The design of RTOSes (and RTS in general) deal with **tasks**, **jobs** and, for implementation-specific details, **threads**. 
 
-A real-time **task**, $	au_i$ is defined using the following parameters: $(\phi_i, p_i, c_i, d_i)$ where,
+A real-time **task**, $\tau_i$ is defined using the following parameters: $(\phi_i, p_i, c_i, d_i)$ where,
 
 | Symbol | Description |
 | ------ | ----------- |
@@ -4211,7 +4237,7 @@ A real-time **task**, $	au_i$ is defined using the following parameters: $(\phi_
 | $d_i$    | Deadline |
 ||
 
-Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $	au = {	au_1, 	au_2, ... 	au_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task). For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
+Hence, a real-time tast _set_ (of size '_n_') is collection of such tasks, _i.e.,_ $\tau = {\tau_1, \tau_2, ... \tau_n}$. Given a real-time task set, the _first_ step is to check if the task set is **schedulable**, _i.e.,_ check whether all **jobs** of a task will meet their deadlines (a **job** is an **instance** of a task). For this purpose, multiple **schedulability tests** have been developed, each depending on the scheduling algorithm being used.
 
 > - remember that task is a set of parameters.
 > - We "release" multiple "_jobs_" of each task, each with its own deadline
@@ -4471,7 +4497,7 @@ Each mechanism has specific use cases:
 Common considerations:
 
 1. Priority Inversion Prevention: a high-priority (HP) task is **indirectly preempted** by a lower-priority (LP) task; HP &rarr; needs resource (R); R held by &rarr; LP, LP preempted by medium-priority (MP) task. So **HP waits for MP** &rarr; inversion of priorities! We will discuss solutions (priority inheritance/priority ceiling) later.
-2. Deadlock Avoidance: tasks are *permanently blocked** waiting on resources from each other; $	au_1$ holds resource $R_A$ and waits for $R_B$; $	au_2$ holds resource $R_B$ and waits for $R_A$.
+2. Deadlock Avoidance: tasks are *permanently blocked** waiting on resources from each other; $\tau_1$ holds resource $R_A$ and waits for $R_B$; $\tau_2$ holds resource $R_B$ and waits for $R_A$.
 3. Timeout Handling: _every_ synchronization mechanism should have a **timeout** to avoid indefinite blocking of critical tasks. 
 4. Error Handling: detecting errors and handling them in a **robust** manner is critical to maintain system reliability; RTOSes use _retry mechanisms_, _logging_ and, most importantly, have **clear recovery procedures** for failure scenarios.
 
@@ -4544,9 +4570,7 @@ Typically these systems have the following _three_ types of timers:
 
 <br>
 
-<br>
-<img src="img/mermaid_figs/system_tick.png" alt="Mermaid Diagram 1" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.system_tick.png" width="400">
 
 There are various **design considerations** for timers in an RTOS, _viz.,_
 
@@ -4560,8 +4584,8 @@ There are various **design considerations** for timers in an RTOS, _viz.,_
 
 Optimization Techniques (to minimize latencies):
 
-- minimize interrupt frequency &rarr; often an RTOS will disable interrupts in critical sections
-- efficient timer and interrupt queue management &rarr; "nesting" interrupts
+- minimize interrupt frequency &rarr; oftean an RTOS will disable interrupts in critical sections
+- efficient timer and interrupt queue management &rarr; "nesting" interrupts, 
 - power-aware timing strategies &rarr; "_tickless_" operating systems have been tried
 - optimize ISRs &rarr; keep them short, use other methods ([deferred procedure calls](https://www.osr.com/nt-insider/2009-issue1/deferred-procedure-call-details/) or "[bottom halves](http://www.cs.otago.ac.nz/cosc440/labs/lab08.pdf)").
 
@@ -4577,7 +4601,7 @@ Hence, we can try to evaluate whether an RTOS kernel meets these goals using the
 | **interrupt latency** | the time taken to respond to an interrupt |
 | **context switch time** | time to switch between tasks |
 | **dispatch latency** | time difference between task being ready and when it starts executing |
-| **throughput** | number of tasks/operations kernel can handle per unit time |
+| **throughput** | number of tasks?operations kernel can handle per unit time |
 ||
 
 
@@ -4722,14 +4746,9 @@ ROS even provides **plug and play libraries** for designing your system, _e.g.,_
 
 Some important **components** of ROS:
 
-
+<img src="img/mermaid_figs/6.realtime.ros_architecture_legends.png" width="400">
 <br>
-<img src="img/mermaid_figs/ros_architecture_legends.png" alt="Mermaid Diagram 2" width="400" />
-<br>
-
-<br>
-<img src="img/mermaid_figs/ros_architecture_.png" alt="Mermaid Diagram 3" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.ros_architecture.png" width="400">
 
 1. [node](http://wiki.ros.org/Nodes)
 
@@ -4787,7 +4806,7 @@ Example: [our first ROS message](https://classes.cs.uchicago.edu/archive/2022/sp
 - provides naming and registration services to the rest of the nodes in the ROS system
 - also runs the [parameter server](http://wiki.ros.org/Parameter%20Server) &rarr; a shared, multi-variate dictionary that is accessible via network APIs, used by nodes to **store/retrieve parameters**
 - tracks publishers and subscribers to topics as well as services
-- enable individual ROS nodes to locate one another
+- enable individual ROS nodes to locate one anothe
 - once located, they communicate in a **peer-to-peer** fashion
 
 Example:
@@ -4813,9 +4832,7 @@ Example:
 
 A more intricate example of the same:
 
-<br>
-<img src="img/mermaid_figs/ros_publish_subscribe.png" alt="Mermaid Diagram 4" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.ros_publish_subscribe.png" width="400">
 
 5. [ROS transform](http://wiki.ros.org/tf2)
 
@@ -4826,14 +4843,12 @@ A more intricate example of the same:
 - in a tree structure buffered in time
 - lets the user transform points, vectors, _etc._ &rarr; at any desired point in time 
 - **distributed** &rarr; coordinate frames of robot available to **all** ROS components on any computer in the system
-- sensor fusion, motion planning and navigation
+- sensor fusion, motion planning, and navigation
 - organizes all coordinate frames and their relationships into a **transform tree**
 
 An example of a ROS transform and tree:
 
-<br>
-<img src="img/mermaid_figs/ros_transform_.png" alt="Mermaid Diagram 5" width="400" />
-<br>
+<img src="img/mermaid_figs/6.realtime.ros_transform.png" width="400">
 
 
 ### ROS and Real-time?
@@ -4854,12 +4869,13 @@ In fact, the basic Raspbian image comes installed with ROS. We can use it commun
 <img src="img/rtos/ros/ros.ardupilot_navio.png" width="400">
 
 **Resources**: please read the [step-by-step instructions](https://docs.emlid.com/navio2/ros/) on how to connect/use the Navio2 and the Pi using ROS.
+
 <!--link rel="stylesheet" href="./custom.sibin.css"-->
 
 
 # Scheduling for Real-Time Systems
 
-Consider an engine control system that cycles through the various phases of operation for an automotive engine:
+Consider an engine control system that cycles through the various phases of operation for an [automotive engine](http://automobile-us.blogspot.com):
 
 <img src="img/scheduling/engine_animation.gif">
 
@@ -4871,4 +4887,128 @@ This system **periodically** cycles through multiple tasks, _viz._,
 2. pressure
 3. fuel injection+combustion
 4. exhaust
+
+If we correlate this to task "actiations", then we may see the [following](https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf):
+
+|||
+|-----|-----|
+|<img src="img/scheduling/engine_animation.gif" width="180">|<img src="img/scheduling/angular_task.png" width="300">|
+||
+
+## Cyclic Executives
+
+We see that for each **cycle**, the same set of tasks **repeat** (_i.e._., "periodic behavior"). Note though that the tasks _need not_ execute in parallel -- rather, they must execute sequentially for this application. Usually such applications use a scheduling mechanism known as a "**cyclic executive**". 
+
+Consider this simple example with three tasks:
+
+|task|c|
+|----|--|
+| $T_1$ | 1|
+| $T_2$ | 2|
+| $T_3$ | 3|
+||
+
+How would we **schedule** this? Assuming a single processors (hence a single timeline).
+
+<img src="img/scheduling/cyclic/pngs/cyclic1.png" width="400">
+
+Well, the _simplest_ mechanism is to just use a **sequential** schedule,
+
+<img src="img/scheduling/cyclic/pngs/cyclic4.png" width="400">
+
+If, as in the case of the engine control example we saw earlier, the tasks repeat _ad infinitum_, then we see the pattern also repeating...
+
+<img src="img/scheduling/cyclic/pngs/cyclic5.png" width="400">
+
+Cyclic executives were common in many critical RTS, since they're **simple** and **deterministic**. An implementation could look like,
+
+```
+while(1)    // an infinite loop
+{
+    // Some Initialization
+
+    Task_T1() ;
+
+    // Some processing, maybe
+
+    Task_T2() ;
+
+    // Some other processing, maybe
+
+    Task_T3() ;
+
+    // Cleanup
+}
+```
+
+**Question**: what problems, if any, can happen due to cyclic executives?
+
+The very simplicity of such systems can also be their biggest weakness. 
+
+1. **lack of flexibility**: as the example and code above demonstrate, once a pattern of executions is set, it cannot be changed, **unless the system is stopped, redesigned/recompiled and restarted**! This may not be possible for critical applications. Even for the engine control application in cars, this doesn't just mean stopping and restarting the car, but **re-flashing** the firmware for the engine, which is quite an involved task. 
+
+2. **scalability**: along similar lines, it is difficult to scale the system to deal with additional issues or add functionality. 
+
+3. **resource management**: certain tasks can corral resources and hold on to them while others may _starve_ -- leading to the system becoming unstable. For instance, even in the simple example, we see that $T_3$ can dominate the execution time on the CPU:
+
+<img src="img/scheduling/cyclic/cyclic6.svg" width="400">
+
+Since the system is _one giant executable_, it is difficult to stop a "runaway task" -- the entire system must be stopped and restarted, which can lead to serious problems.
+
+4. **priority**: there is no way to assign priority or preemption since all tasks essentially execute a the _same priority_. Hence, if we want to deal with higher-priority events (_e.g._, read a sensor) or even _atypical_ (aperiodic/sporadic) events, such as sudden braking in an autonomous car, then a cyclic executive is not the right way to go about it.
+
+
+### Frames
+
+One way to mitigate _some_ of the problems with cyclic executives, is to split the resource allocation into "frames" &rarr; **fixed** chunks of time when a task can ain exclusive access to a resource, _e.g.._ the processor:
+
+- once a frame starts, the task gets to execute _uninterrupted_
+- at the end of the frame, the task _must give up_ the resource &rarr; regardless of whether it was done or not
+
+So, if we revisit our simple example and break the processor schedule into frame sizes of `2` units, each,
+
+<img src="img/scheduling/cyclic/cyclic6_5.frame.svg" width="400">
+
+> why `2`? Well, it is arbitrary for now. But, as we shall see later, we can calculate a "good" frame size
+
+Now, our schedule looks like,
+
+<img src="img/scheduling/cyclic/cyclic8.frame.svg" width="400">
+
+As we see from this picture, task $T_1$ doesn't end up using its entire frame and hence, can waste resources (one of the pifalls of this method).
+
+Continuing further,
+
+<img src="img/scheduling/cyclic/cyclic9.frame.svg" width="400">
+
+Task $T_3$ is _forced_ to relinquish the processo at `t=6` even though it has some execution left &rarr; on account of the frame ending. Now $T_1$ resumes in its own frame. $T_3$ has to wait until `t=10` to resume (and complete) its execution:
+
+<img src="img/scheduling/cyclic/cyclic12.frame.svg" width="400">
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+TODOs:
+
+- cyclic executives
+- simple task example -- how would you schedule this?
+- hard vs soft RTS -- explain with deadline diagrams
+- task model
+- more on cyclic executives, round robin, etc. [static table-driven]
+- static vs dynamic
+- priority-based [static v dynamic]
+- dynamic best effort?
 

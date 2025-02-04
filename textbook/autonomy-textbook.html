@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-02-03" />
+  <meta name="date" content="2025-02-04" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">February 03,
+                              <li><p class="navbar-text">February 04,
 2025</p></li>
                   </ul>
       </div>
@@ -620,7 +620,16 @@ George Washington University</p></li>
         <li><a href="#scheduling-for-real-time-systems-1"
         id="toc-scheduling-for-real-time-systems-1"><span
         class="toc-section-number">10</span> Scheduling for Real-Time
-        Systems</a></li>
+        Systems</a>
+        <ul>
+        <li><a href="#cyclic-executives"
+        id="toc-cyclic-executives"><span
+        class="toc-section-number">10.1</span> Cyclic Executives</a>
+        <ul>
+        <li><a href="#frames" id="toc-frames"><span
+        class="toc-section-number">10.1.1</span> Frames</a></li>
+        </ul></li>
+        </ul></li>
         </ul>
 
         </div>
@@ -4331,8 +4340,9 @@ George Washington University</p></li>
             <strong>tasks</strong>, <strong>jobs</strong> and, for
             implementation-specific details,
             <strong>threads</strong>.</p>
-            <p>A real-time <strong>task</strong>, $ au_i$ is defined
-            using the following parameters: <span
+            <p>A real-time <strong>task</strong>, <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>
+            is defined using the following parameters: <span
             class="math inline">(<em>ϕ</em><sub><em>i</em></sub>, <em>p</em><sub><em>i</em></sub>, <em>c</em><sub><em>i</em></sub>, <em>d</em><sub><em>i</em></sub>)</span>
             where,</p>
             <table>
@@ -4370,12 +4380,13 @@ George Washington University</p></li>
             </tbody>
             </table>
             <p>Hence, a real-time tast <em>set</em> (of size
-            ‘<em>n</em>’) is collection of such tasks, <em>i.e.,</em> $
-            au = { au_1, au_2, … au_n}$. Given a real-time task set, the
-            <em>first</em> step is to check if the task set is
-            <strong>schedulable</strong>, <em>i.e.,</em> check whether
-            all <strong>jobs</strong> of a task will meet their
-            deadlines (a <strong>job</strong> is an
+            ‘<em>n</em>’) is collection of such tasks, <em>i.e.,</em>
+            <span
+            class="math inline"><em>τ</em> = <em>τ</em><sub>1</sub>, <em>τ</em><sub>2</sub>, ...<em>τ</em><sub><em>n</em></sub></span>.
+            Given a real-time task set, the <em>first</em> step is to
+            check if the task set is <strong>schedulable</strong>,
+            <em>i.e.,</em> check whether all <strong>jobs</strong> of a
+            task will meet their deadlines (a <strong>job</strong> is an
             <strong>instance</strong> of a task). For this purpose,
             multiple <strong>schedulability tests</strong> have been
             developed, each depending on the scheduling algorithm being
@@ -4837,12 +4848,14 @@ George Washington University</p></li>
             solutions (priority inheritance/priority ceiling)
             later.</li>
             <li>Deadlock Avoidance: tasks are *permanently blocked**
-            waiting on resources from each other; $ au_1$ holds resource
-            <span
+            waiting on resources from each other; <span
+            class="math inline"><em>τ</em><sub>1</sub></span> holds
+            resource <span
             class="math inline"><em>R</em><sub><em>A</em></sub></span>
             and waits for <span
             class="math inline"><em>R</em><sub><em>B</em></sub></span>;
-            $ au_2$ holds resource <span
+            <span class="math inline"><em>τ</em><sub>2</sub></span>
+            holds resource <span
             class="math inline"><em>R</em><sub><em>B</em></sub></span>
             and waits for <span
             class="math inline"><em>R</em><sub><em>A</em></sub></span>.</li>
@@ -5041,9 +5054,7 @@ George Washington University</p></li>
             </tbody>
             </table>
             <p><br></p>
-            <p><br>
-            <img src="img/mermaid_figs/system_tick.png" alt="Mermaid Diagram 1" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.system_tick.png" width="400"></p>
             <p>There are various <strong>design considerations</strong>
             for timers in an RTOS, <em>viz.,</em></p>
             <ol type="1">
@@ -5073,10 +5084,10 @@ George Washington University</p></li>
             latencies</strong>.</p>
             <p>Optimization Techniques (to minimize latencies):</p>
             <ul>
-            <li>minimize interrupt frequency → often an RTOS will
+            <li>minimize interrupt frequency → oftean an RTOS will
             disable interrupts in critical sections</li>
             <li>efficient timer and interrupt queue management →
-            “nesting” interrupts</li>
+            “nesting” interrupts,</li>
             <li>power-aware timing strategies → “<em>tickless</em>”
             operating systems have been tried</li>
             <li>optimize ISRs → keep them short, use other methods (<a
@@ -5126,7 +5137,7 @@ George Washington University</p></li>
             </tr>
             <tr>
             <td><strong>throughput</strong></td>
-            <td>number of tasks/operations kernel can handle per unit
+            <td>number of tasks?operations kernel can handle per unit
             time</td>
             </tr>
             <tr>
@@ -5450,12 +5461,9 @@ George Washington University</p></li>
             class="header-section-number">4.3.1</span> ROS
             Components</h3>
             <p>Some important <strong>components</strong> of ROS:</p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_architecture_legends.png" alt="Mermaid Diagram 2" width="400" />
-            <br></p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_architecture_.png" alt="Mermaid Diagram 3" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.ros_architecture_legends.png" width="400">
+            <br>
+            <img src="img/mermaid_figs/6.realtime.ros_architecture.png" width="400"></p>
             <ol type="1">
             <li><a href="http://wiki.ros.org/Nodes">node</a></li>
             </ol>
@@ -5546,7 +5554,7 @@ geometry_msgs/Point point
             <strong>store/retrieve parameters</strong></li>
             <li>tracks publishers and subscribers to topics as well as
             services</li>
-            <li>enable individual ROS nodes to locate one another</li>
+            <li>enable individual ROS nodes to locate one anothe</li>
             <li>once located, they communicate in a
             <strong>peer-to-peer</strong> fashion</li>
             </ul>
@@ -5578,9 +5586,7 @@ geometry_msgs/Point point
             </ol>
             <p><br></p>
             <p>A more intricate example of the same:</p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_publish_subscribe.png" alt="Mermaid Diagram 4" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.ros_publish_subscribe.png" width="400"></p>
             <ol start="5" type="1">
             <li><a href="http://wiki.ros.org/tf2">ROS transform</a></li>
             </ol>
@@ -5601,14 +5607,12 @@ geometry_msgs/Point point
             <li><strong>distributed</strong> → coordinate frames of
             robot available to <strong>all</strong> ROS components on
             any computer in the system</li>
-            <li>sensor fusion, motion planning and navigation</li>
+            <li>sensor fusion, motion planning, and navigation</li>
             <li>organizes all coordinate frames and their relationships
             into a <strong>transform tree</strong></li>
             </ul>
             <p>An example of a ROS transform and tree:</p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_transform_.png" alt="Mermaid Diagram 5" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.ros_transform.png" width="400"></p>
             </section>
             <section id="ros-and-real-time" class="level3"
             data-number="4.3.2">
@@ -5652,8 +5656,8 @@ geometry_msgs/Point point
             <p><strong>Resources</strong>: please read the <a
             href="https://docs.emlid.com/navio2/ros/">step-by-step
             instructions</a> on how to connect/use the Navio2 and the Pi
-            using ROS.
-            <!--link rel="stylesheet" href="./custom.sibin.css"--></p>
+            using ROS.</p>
+            <!--link rel="stylesheet" href="./custom.sibin.css"-->
             </section>
             </section>
             </section>
@@ -5663,7 +5667,9 @@ geometry_msgs/Point point
             class="header-section-number">5</span> Scheduling for
             Real-Time Systems</h1>
             <p>Consider an engine control system that cycles through the
-            various phases of operation for an automotive engine:</p>
+            various phases of operation for an <a
+            href="http://automobile-us.blogspot.com">automotive
+            engine</a>:</p>
             <p><img src="img/scheduling/engine_animation.gif"></p>
             <p><br></p>
             <p>This system <strong>periodically</strong> cycles through
@@ -5674,6 +5680,45 @@ geometry_msgs/Point point
             <li>fuel injection+combustion</li>
             <li>exhaust</li>
             </ol>
+            <p>If we correlate this to task “actiations”, then we may
+            see the <a
+            href="https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf">following</a>:</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/scheduling/engine_animation.gif" width="180"></td>
+            <td><img src="img/scheduling/angular_task.png" width="300"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>We see that for each <strong>cycle</strong>, the same set
+            of tasks <strong>repeat</strong> (<em>i.e.</em>., “periodic
+            behavior”). Note though that the tasks <em>need not</em>
+            execute in parallel – rather, they must execute sequentially
+            for this application. Usually such applications use a
+            scheduling mechanism known as a “<a href="">cyclic
+            executive</a>” that we shall discuss soon.</p>
+            <p><br> <br> <br> <br> <br> <br> <br> <br> <br> <br></p>
+            <p>TODOs:</p>
+            <ul>
+            <li>cyclic executives</li>
+            <li>simple task example – how would you schedule this?</li>
+            <li>hard vs soft RTS – explain with deadline diagrams</li>
+            <li>task model</li>
+            <li>more on cyclic executives, round robin, etc. [static
+            table-driven]</li>
+            <li>static vs dynamic</li>
+            <li>priority-based [static v dynamic]</li>
+            <li>dynamic best effort?</li>
+            </ul>
             <!--link rel="stylesheet" href="./custom.sibin.css"-->
             </section>
             <section id="introduction-1" class="level1" data-number="6">
@@ -9384,8 +9429,9 @@ geometry_msgs/Point point
             <strong>tasks</strong>, <strong>jobs</strong> and, for
             implementation-specific details,
             <strong>threads</strong>.</p>
-            <p>A real-time <strong>task</strong>, $ au_i$ is defined
-            using the following parameters: <span
+            <p>A real-time <strong>task</strong>, <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>
+            is defined using the following parameters: <span
             class="math inline">(<em>ϕ</em><sub><em>i</em></sub>, <em>p</em><sub><em>i</em></sub>, <em>c</em><sub><em>i</em></sub>, <em>d</em><sub><em>i</em></sub>)</span>
             where,</p>
             <table>
@@ -9423,12 +9469,13 @@ geometry_msgs/Point point
             </tbody>
             </table>
             <p>Hence, a real-time tast <em>set</em> (of size
-            ‘<em>n</em>’) is collection of such tasks, <em>i.e.,</em> $
-            au = { au_1, au_2, … au_n}$. Given a real-time task set, the
-            <em>first</em> step is to check if the task set is
-            <strong>schedulable</strong>, <em>i.e.,</em> check whether
-            all <strong>jobs</strong> of a task will meet their
-            deadlines (a <strong>job</strong> is an
+            ‘<em>n</em>’) is collection of such tasks, <em>i.e.,</em>
+            <span
+            class="math inline"><em>τ</em> = <em>τ</em><sub>1</sub>, <em>τ</em><sub>2</sub>, ...<em>τ</em><sub><em>n</em></sub></span>.
+            Given a real-time task set, the <em>first</em> step is to
+            check if the task set is <strong>schedulable</strong>,
+            <em>i.e.,</em> check whether all <strong>jobs</strong> of a
+            task will meet their deadlines (a <strong>job</strong> is an
             <strong>instance</strong> of a task). For this purpose,
             multiple <strong>schedulability tests</strong> have been
             developed, each depending on the scheduling algorithm being
@@ -9890,12 +9937,14 @@ geometry_msgs/Point point
             solutions (priority inheritance/priority ceiling)
             later.</li>
             <li>Deadlock Avoidance: tasks are *permanently blocked**
-            waiting on resources from each other; $ au_1$ holds resource
-            <span
+            waiting on resources from each other; <span
+            class="math inline"><em>τ</em><sub>1</sub></span> holds
+            resource <span
             class="math inline"><em>R</em><sub><em>A</em></sub></span>
             and waits for <span
             class="math inline"><em>R</em><sub><em>B</em></sub></span>;
-            $ au_2$ holds resource <span
+            <span class="math inline"><em>τ</em><sub>2</sub></span>
+            holds resource <span
             class="math inline"><em>R</em><sub><em>B</em></sub></span>
             and waits for <span
             class="math inline"><em>R</em><sub><em>A</em></sub></span>.</li>
@@ -10094,9 +10143,7 @@ geometry_msgs/Point point
             </tbody>
             </table>
             <p><br></p>
-            <p><br>
-            <img src="img/mermaid_figs/system_tick.png" alt="Mermaid Diagram 1" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.system_tick.png" width="400"></p>
             <p>There are various <strong>design considerations</strong>
             for timers in an RTOS, <em>viz.,</em></p>
             <ol type="1">
@@ -10126,10 +10173,10 @@ geometry_msgs/Point point
             latencies</strong>.</p>
             <p>Optimization Techniques (to minimize latencies):</p>
             <ul>
-            <li>minimize interrupt frequency → often an RTOS will
+            <li>minimize interrupt frequency → oftean an RTOS will
             disable interrupts in critical sections</li>
             <li>efficient timer and interrupt queue management →
-            “nesting” interrupts</li>
+            “nesting” interrupts,</li>
             <li>power-aware timing strategies → “<em>tickless</em>”
             operating systems have been tried</li>
             <li>optimize ISRs → keep them short, use other methods (<a
@@ -10179,7 +10226,7 @@ geometry_msgs/Point point
             </tr>
             <tr>
             <td><strong>throughput</strong></td>
-            <td>number of tasks/operations kernel can handle per unit
+            <td>number of tasks?operations kernel can handle per unit
             time</td>
             </tr>
             <tr>
@@ -10503,12 +10550,9 @@ geometry_msgs/Point point
             class="header-section-number">9.3.1</span> ROS
             Components</h3>
             <p>Some important <strong>components</strong> of ROS:</p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_architecture_legends.png" alt="Mermaid Diagram 2" width="400" />
-            <br></p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_architecture_.png" alt="Mermaid Diagram 3" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.ros_architecture_legends.png" width="400">
+            <br>
+            <img src="img/mermaid_figs/6.realtime.ros_architecture.png" width="400"></p>
             <ol type="1">
             <li><a href="http://wiki.ros.org/Nodes">node</a></li>
             </ol>
@@ -10599,7 +10643,7 @@ geometry_msgs/Point point
             <strong>store/retrieve parameters</strong></li>
             <li>tracks publishers and subscribers to topics as well as
             services</li>
-            <li>enable individual ROS nodes to locate one another</li>
+            <li>enable individual ROS nodes to locate one anothe</li>
             <li>once located, they communicate in a
             <strong>peer-to-peer</strong> fashion</li>
             </ul>
@@ -10631,9 +10675,7 @@ geometry_msgs/Point point
             </ol>
             <p><br></p>
             <p>A more intricate example of the same:</p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_publish_subscribe.png" alt="Mermaid Diagram 4" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.ros_publish_subscribe.png" width="400"></p>
             <ol start="5" type="1">
             <li><a href="http://wiki.ros.org/tf2">ROS transform</a></li>
             </ol>
@@ -10654,14 +10696,12 @@ geometry_msgs/Point point
             <li><strong>distributed</strong> → coordinate frames of
             robot available to <strong>all</strong> ROS components on
             any computer in the system</li>
-            <li>sensor fusion, motion planning and navigation</li>
+            <li>sensor fusion, motion planning, and navigation</li>
             <li>organizes all coordinate frames and their relationships
             into a <strong>transform tree</strong></li>
             </ul>
             <p>An example of a ROS transform and tree:</p>
-            <p><br>
-            <img src="img/mermaid_figs/ros_transform_.png" alt="Mermaid Diagram 5" width="400" />
-            <br></p>
+            <p><img src="img/mermaid_figs/6.realtime.ros_transform.png" width="400"></p>
             </section>
             <section id="ros-and-real-time-1" class="level3"
             data-number="9.3.2">
@@ -10706,8 +10746,8 @@ geometry_msgs/Point point
             <p><strong>Resources</strong>: please read the <a
             href="https://docs.emlid.com/navio2/ros/">step-by-step
             instructions</a> on how to connect/use the Navio2 and the Pi
-            using ROS.
-            <!--link rel="stylesheet" href="./custom.sibin.css"--></p>
+            using ROS.</p>
+            <!--link rel="stylesheet" href="./custom.sibin.css"-->
             </section>
             </section>
             </section>
@@ -10717,7 +10757,9 @@ geometry_msgs/Point point
             class="header-section-number">10</span> Scheduling for
             Real-Time Systems</h1>
             <p>Consider an engine control system that cycles through the
-            various phases of operation for an automotive engine:</p>
+            various phases of operation for an <a
+            href="http://automobile-us.blogspot.com">automotive
+            engine</a>:</p>
             <p><img src="img/scheduling/engine_animation.gif"></p>
             <p><br></p>
             <p>This system <strong>periodically</strong> cycles through
@@ -10728,6 +10770,192 @@ geometry_msgs/Point point
             <li>fuel injection+combustion</li>
             <li>exhaust</li>
             </ol>
+            <p>If we correlate this to task “actiations”, then we may
+            see the <a
+            href="https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf">following</a>:</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td><img src="img/scheduling/engine_animation.gif" width="180"></td>
+            <td><img src="img/scheduling/angular_task.png" width="300"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <section id="cyclic-executives" class="level2"
+            data-number="10.1">
+            <h2 data-number="10.1"><span
+            class="header-section-number">10.1</span> Cyclic
+            Executives</h2>
+            <p>We see that for each <strong>cycle</strong>, the same set
+            of tasks <strong>repeat</strong> (<em>i.e.</em>., “periodic
+            behavior”). Note though that the tasks <em>need not</em>
+            execute in parallel – rather, they must execute sequentially
+            for this application. Usually such applications use a
+            scheduling mechanism known as a “<strong>cyclic
+            executive</strong>”.</p>
+            <p>Consider this simple example with three tasks:</p>
+            <table>
+            <thead>
+            <tr>
+            <th>task</th>
+            <th>c</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>T</em><sub>1</sub></span></td>
+            <td>1</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>T</em><sub>2</sub></span></td>
+            <td>2</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>T</em><sub>3</sub></span></td>
+            <td>3</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>How would we <strong>schedule</strong> this? Assuming a
+            single processors (hence a single timeline).</p>
+            <p><img src="img/scheduling/cyclic/pngs/cyclic1.png" width="400"></p>
+            <p>Well, the <em>simplest</em> mechanism is to just use a
+            <strong>sequential</strong> schedule,</p>
+            <p><img src="img/scheduling/cyclic/pngs/cyclic4.png" width="400"></p>
+            <p>If, as in the case of the engine control example we saw
+            earlier, the tasks repeat <em>ad infinitum</em>, then we see
+            the pattern also repeating…</p>
+            <p><img src="img/scheduling/cyclic/pngs/cyclic5.png" width="400"></p>
+            <p>Cyclic executives were common in many critical RTS, since
+            they’re <strong>simple</strong> and
+            <strong>deterministic</strong>. An implementation could look
+            like,</p>
+            <pre><code>while(1)    // an infinite loop
+{
+    // Some Initialization
+
+    Task_T1() ;
+
+    // Some processing, maybe
+
+    Task_T2() ;
+
+    // Some other processing, maybe
+
+    Task_T3() ;
+
+    // Cleanup
+}</code></pre>
+            <p><strong>Question</strong>: what problems, if any, can
+            happen due to cyclic executives?</p>
+            <p>The very simplicity of such systems can also be their
+            biggest weakness.</p>
+            <ol type="1">
+            <li><p><strong>lack of flexibility</strong>: as the example
+            and code above demonstrate, once a pattern of executions is
+            set, it cannot be changed, <strong>unless the system is
+            stopped, redesigned/recompiled and restarted</strong>! This
+            may not be possible for critical applications. Even for the
+            engine control application in cars, this doesn’t just mean
+            stopping and restarting the car, but
+            <strong>re-flashing</strong> the firmware for the engine,
+            which is quite an involved task.</p></li>
+            <li><p><strong>scalability</strong>: along similar lines, it
+            is difficult to scale the system to deal with additional
+            issues or add functionality.</p></li>
+            <li><p><strong>resource management</strong>: certain tasks
+            can corral resources and hold on to them while others may
+            <em>starve</em> – leading to the system becoming unstable.
+            For instance, even in the simple example, we see that <span
+            class="math inline"><em>T</em><sub>3</sub></span> can
+            dominate the execution time on the CPU:</p></li>
+            </ol>
+            <p><img src="img/scheduling/cyclic/cyclic6.svg" width="400"></p>
+            <p>Since the system is <em>one giant executable</em>, it is
+            difficult to stop a “runaway task” – the entire system must
+            be stopped and restarted, which can lead to serious
+            problems.</p>
+            <ol start="4" type="1">
+            <li><strong>priority</strong>: there is no way to assign
+            priority or preemption since all tasks essentially execute a
+            the <em>same priority</em>. Hence, if we want to deal with
+            higher-priority events (<em>e.g.</em>, read a sensor) or
+            even <em>atypical</em> (aperiodic/sporadic) events, such as
+            sudden braking in an autonomous car, then a cyclic executive
+            is not the right way to go about it.</li>
+            </ol>
+            <section id="frames" class="level3" data-number="10.1.1">
+            <h3 data-number="10.1.1"><span
+            class="header-section-number">10.1.1</span> Frames</h3>
+            <p>One way to mitigate <em>some</em> of the problems with
+            cyclic executives, is to split the resource allocation into
+            “frames” → <strong>fixed</strong> chunks of time when a task
+            can ain exclusive access to a resource, <em>e.g..</em> the
+            processor:</p>
+            <ul>
+            <li>once a frame starts, the task gets to execute
+            <em>uninterrupted</em></li>
+            <li>at the end of the frame, the task <em>must give up</em>
+            the resource → regardless of whether it was done or not</li>
+            </ul>
+            <p>So, if we revisit our simple example and break the
+            processor schedule into frame sizes of <code>2</code> units,
+            each,</p>
+            <p><img src="img/scheduling/cyclic/cyclic6_5.frame.svg" width="400"></p>
+            <blockquote>
+            <p>why <code>2</code>? Well, it is arbitrary for now. But,
+            as we shall see later, we can calculate a “good” frame
+            size</p>
+            </blockquote>
+            <p>Now, our schedule looks like,</p>
+            <p><img src="img/scheduling/cyclic/cyclic8.frame.svg" width="400"></p>
+            <p>As we see from this picture, task <span
+            class="math inline"><em>T</em><sub>1</sub></span> doesn’t
+            end up using its entire frame and hence, can waste resources
+            (one of the pifalls of this method).</p>
+            <p>Continuing further,</p>
+            <p><img src="img/scheduling/cyclic/cyclic9.frame.svg" width="400"></p>
+            <p>Task <span
+            class="math inline"><em>T</em><sub>3</sub></span> is
+            <em>forced</em> to relinquish the processo at
+            <code>t=6</code> even though it has some execution left → on
+            account of the frame ending. Now <span
+            class="math inline"><em>T</em><sub>1</sub></span> resumes in
+            its own frame. <span
+            class="math inline"><em>T</em><sub>3</sub></span> has to
+            wait until <code>t=10</code> to resume (and complete) its
+            execution:</p>
+            <p><img src="img/scheduling/cyclic/cyclic12.frame.svg" width="400"></p>
+            <p><br> <br> <br> <br> <br> <br> <br> <br> <br> <br></p>
+            <p>TODOs:</p>
+            <ul>
+            <li>cyclic executives</li>
+            <li>simple task example – how would you schedule this?</li>
+            <li>hard vs soft RTS – explain with deadline diagrams</li>
+            <li>task model</li>
+            <li>more on cyclic executives, round robin, etc. [static
+            table-driven]</li>
+            <li>static vs dynamic</li>
+            <li>priority-based [static v dynamic]</li>
+            <li>dynamic best effort?</li>
+            </ul>
+            </section>
+            </section>
             </section>
             <section id="footnotes"
             class="footnotes footnotes-end-of-document"
