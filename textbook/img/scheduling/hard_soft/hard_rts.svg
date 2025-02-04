@@ -1,0 +1,16 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Axes -->
+  <line x1="50" y1="250" x2="350" y2="250" stroke="black" stroke-width="2" />
+  <line x1="50" y1="250" x2="50" y2="50" stroke="black" stroke-width="2" />
+  <text x="40" y="270" font-size="12">Time</text>
+  <text x="360" y="260" font-size="12">→</text>
+  <text x="30" y="40" font-size="12">Usefulness</text>
+
+  <!-- Deadline Line -->
+  <line x1="200" y1="50" x2="200" y2="250" stroke="red" stroke-width="1" stroke-dasharray="5,5" />
+  <text x="190" y="270" font-size="12">Deadline</text>
+
+  <!-- Usefulness Curve -->
+  <polyline points="50,100 200,100 200,250 350,250" stroke="blue" stroke-width="2" fill="none" />
+  <text x="220" y="240" font-size="12" fill="blue">Usefulness</text>
+</svg>
