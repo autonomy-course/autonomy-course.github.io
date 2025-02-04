@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 3** | Working with ROS
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**
+
+---
+
+## **Objectives**
+
+- Install and configure the Intel RealSense IMU
+- Understand the fundamentals of the Robot Operating System (ROS)
+- Install ROS and set up a workspace
+- Access and process IMU data using ROS
+
+---
+
+## **Installing RealSense IMU**
+
+### **Prerequisites**
+- **Hardware:** Intel RealSense device (e.g., D435i, L515) with a USB 3.0 port
+- **Software:** Ubuntu 18.04 or later, Python 3.6+
+- **Dependencies:** Install `librealsense2` SDK
+
+---
+
+## **Step 1: Install Librealsense SDK**
+
+### **1. Add the Intel RealSense Repository**
+```bash
+sudo apt-key adv --keyserver keys.gnupg.net --recv-key 49B9A1F8
+sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo $(lsb_release -sc) main" -u
+```
+
+### **2. Install required packages**
+```bash
+sudo apt-get install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg
+```
+
+### **3. Verify installation**
+```bash
+realsense-viewer
+```
+
+---
+
+## **Step 2: Enable IMU Streams**
+
+1. Open **RealSense Viewer**
+2. Select your device and enable **IMU Streams**
+3. Observe **Accelerometer and Gyroscope data**
+
+---
+
+## **Step 3: Access IMU Data Programmatically**
+
+### **Install Python API**
+```bash
+pip install pyrealsense2
+```
+
+Note: Check github for sample script
+
+---
+
+## **What is ROS?**
+
+### **Robot Operating System (ROS)**
+- Open-source framework for robotic applications
+- Facilitates sensor integration and motion planning
+- Supports distributed computing and modularity
+
+---
+
+## **Key Features of ROS**
+
+- **Distributed System:** Multiple nodes communicate via topics
+- **Interoperability:** Standardized message passing via `sensor_msgs`
+- **Simulation & Visualization:** Tools like `Gazebo` and `rviz`
+
+---
+
+## **Lab Assignment**
+
+### **Create a ROS workspace and demonstrate a basic hello_world ROS node.**
+
+Follow these steps
+1. **Create the workspace:**
+
+2. **Create a new package:**
+
+3. **Create a Python script for the node:**
+
+4. **Add the following code to `hello_world.py`:**
+
+5. **Make the script executable:**
+
+6. **Run the node:**
+
+
+---
+
+## **Summary**
+
+- Installed and configured the Intel RealSense IMU
+- Understood the basics of ROS and its architecture
+- Installed ROS Noetic and set up a workspace
+- Accessed IMU data programmatically and via ROS
+- Created a ROS workspace and demonstrated a basic `hello_world` ROS node
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>

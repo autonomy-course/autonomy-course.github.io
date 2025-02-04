@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 2** | Working with Sensors on Raspberry Pi
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**
+
+---
+
+## Objectives  
+
+- Understand how sensors communicate with Raspberry Pi.  
+- Work with onboard Navio2 sensors.  
+- Integrate and test an external ultrasonic sensor.  
+
+---
+
+## Equipment Required  
+- Raspberry Pi 4B (or similar)  
+- Navio2 Shield (with header pins, spacers, and screws)  
+- MicroSD Card (32GB or larger)  
+- USB to UART Cable  
+- Power Supply (USB-C)  
+- HC-SR04 Ultrasonic Sensor  
+- Jumper Wires  
+
+---
+
+## Basic Linux Shell Commands  
+
+### General Commands  
+- `ls`, `cd`, `pwd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `nano`  
+
+### Raspberry Pi-Specific  
+- `raspi-config`: Configure SSH, Wi-Fi, etc.  
+
+### Navio2-Specific  
+- `emlidtool`: Check the status of Navio2 sensors.  
+
+---
+
+## How Devices Communicate  
+
+### GPIO Overview  
+- General-purpose input/output pins for connecting devices.  
+- Protocols:  
+  - **I2C**: Used for Navio2 sensors.  
+  - **SPI, UART**: For high-speed or serial communication.  
+
+### Devices in Linux  
+- Devices represented as files (e.g., `/dev/gpio`).  
+- Interact via libraries or directly through shell commands.  
+
+---
+
+## Navio2 Sensors Overview  
+
+### Key Features  
+- **Accelerometer**: Measures acceleration.  
+- **Gyroscope**: Tracks rotation/tilt.  
+- **Magnetometer**: Compass for magnetic north.  
+- **Barometer**: Measures altitude.  
+- **GPS**: Tracks location.  
+- **PWM Outputs**: Drives motors and servos.  
+
+---
+
+## Onboard Sensor Testing  
+
+1. Assemble Navio2 shield on Raspberry Pi.  
+2. Verify functionality using:  
+   ```bash
+   sudo emlidtool
+   ```  
+
+---
+
+## Explanation of Accelerometer Code  
+
+- **Library Imports**:  
+  - `navio2.mpu9250`: Interacts with the accelerometer.  
+  - `time`: Adds delays for consistent data collection.  
+
+- **Initialization**:  
+  - `imu = navio2.mpu9250.MPU9250()`: Creates a sensor instance.  
+  - `imu.initialize()`: Prepares the sensor for data collection.  
+
+- **Data Collection**:  
+  - `imu.getMotion9()`: Reads acceleration in X, Y, and Z axes.  
+
+- **Output**:  
+  - Prints acceleration values in a readable format.  
+  - Adds a 1-second delay for clarity between readings.  
+
+---
+
+## Using an External Ultrasonic Sensor  
+
+### Connections  
+- `VCC` → `5V`  
+- `GND` → `GND`  
+- `TRIG` → GPIO18  
+- `ECHO` → GPIO24  
+
+### Validation  
+- Measure distances using Python scripts.  
+- Real-time output to verify accuracy.  
+
+---
+
+## Explanation of Ultrasonic Sensor Code  
+
+- **Pin Setup**:  
+  - `TRIG` → GPIO18: Trigger pin to send sound waves.  
+  - `ECHO` → GPIO24: Receives the reflected echo.  
+
+- **Working Principle**:  
+  - **Trigger Pulse**: Sends a short ultrasonic pulse (10 μs).  
+  - **Echo Measurement**: Measures the time taken for the echo to return.  
+
+- **Distance Calculation**:  
+  - Time (duration) × Speed of Sound (343 m/s) ÷ 2.  
+  - Divided by 2 because the wave travels to the object and back.  
+
+- **Real-Time Output**:  
+  - Continuously measures and prints distance in centimeters.  
+
+---
+
+## Assignment Question: Understanding Ultrasonic Sensors
+
+Write a detailed paragraph explaining how an ultrasonic sensor works. Your explanation should include:  
+
+- The basic principle behind ultrasonic sensing.  
+- The role of the **trigger** and **echo** pins.  
+- How distance is calculated using the time taken for sound waves to travel.  
+- Any real-world applications where ultrasonic sensors are commonly used.  
+
+## Submission Guidelines:  
+
+- Write your response in your own words.  
+- Submit as a typed document (**markdown**) by **12 PM tomorrow**.  
+- Ensure clarity and conciseness (**150-200 words**).  
+
+---
+
+## Summary  
+
+- Configured and tested **Navio2 onboard sensors**.  
+- Integrated an **external ultrasonic sensor**.  
+- Verified real-time data collection from all sensors.
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
