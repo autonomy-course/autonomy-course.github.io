@@ -2425,14 +2425,14 @@ This system **periodically** cycles through multiple tasks, _viz._,
 3. fuel injection+combustion
 4. exhaust
 
-If we correlate this to task "actiations", then we may see the [following](https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf):
+If we correlate this to task "activations", then we may see the [following](https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf):
 
 |||
 |-----|-----|
 |<img src="img/scheduling/engine_animation.gif" width="180">|<img src="img/scheduling/angular_task.png" width="300">|
 ||
 
-This is a (somewhat) simple execution model known as the [cyclic executive](#cyclic-executives) that we shall return to later.
+This is a (somewhat) simple execution model known as the [cyclic executive](#cyclic-executives) that we shall return to later. Hence, there is a **direct** correlation between the physical aspects of a real-time and autonomous system and issues such as scheduling. 
 
 
 ## Real-Time Models
@@ -2469,6 +2469,8 @@ Let us focus on **jobs** and some of their properties:
 
 <img src="img/scheduling/jobs/job.final.svg" width="400">
 
+**note** &rarr; deadlines and periods don't have to match, but they **usually** do, _i.e., $D = P$
+
 | property/parameters | description  |
 |----------|--------------|
 | **temporal** | timing constraints and behavior |
@@ -2484,9 +2486,9 @@ As discussed earlier, we need to get a good understanding of the [wcet](l#the-wc
 
 One of the important ways to understand the **workload requirements** for a **task** is to compute,
 
-> how much **utilization** is taken up by **all* jobs of the task?
+> how much **utilization** is taken up by **all** jobs of the task?
 
-One might ask: if there are (potentially) and _infinite_ number of jobs for each task, since they're periodic++ and long running, then how can one campute the utilization?
+One might ask: if there are (potentially) an _infinite_ number of jobs for each task, since they're periodic++ and long running, then how can one campute the utilization?
 
 > Recall that a **periodic** function is of the type &rarr; $f(t) = f(t+T)$
 >
@@ -2517,13 +2519,15 @@ U = \sum_{i=1}^{n} U_i
 = \sum_{i=1}^{n} \frac{c_i}{T_i}
 ```
 
-**Simple Exercise**: what is the tital utilization for the following task set?
+**Simple Exercise**: what is the total utilization for the following task set?
 | Task | c | T |
 |------|---|---|
 | τ1   | 1 | 4 |
 | τ2   | 2 | 5 |
 | τ3   | 5 | 17 |
 ||
+
+> what does it mean if $U > 1$? 
 
 
 #### Precedence Constraints
@@ -2606,9 +2610,9 @@ Here is a good comparison of the various types of (historical) CPU/OS schedulers
 
 In the realm of real-time systems, to _formally_ define a scheduling problem, we need to specify:
 
-1. a set of **tasks**
-2. a set of **processors**
-3. a set of **resources**
+1. a set of **tasks**, $\tau$
+2. a set of **processors**, $P$
+3. a set of **resources**, $R$
 
 Hence, the **general scheduling problem** is,
 
@@ -2621,7 +2625,7 @@ Hence, the **general scheduling problem** is,
 There is a [large body of literature](https://link.springer.com/book/10.1007/978-1-4614-0676-1) in the domain of real-time scheduling algorithms. In this chapter, we will focus on a few of them, _viz._,
 
 - completely static &rarr; _e,g.,_ [cyclic executives](#cyclic-executives)
-- priority-based &rarr; both static (RM) and dynamic (EDF)
+- priority-based &rarr; static (_e.g.,_ RM) and dynamic (_e.g.,_ EDF)
 - dynamic best effort
 
 One of the main problems with the scheduling problem, as defined above (and in general), is that many variants of the problem are **intractable**, _i.e.,_ NP-Hard or even NP-Complete.
@@ -2630,7 +2634,7 @@ One of the main problems with the scheduling problem, as defined above (and in g
 
 [Will leave it to the reader to recall or look up the definition of NP-Complete.]
 
-Since the scheduling problems may not be tractable (or "solvable" in a realistic time frame), we need to find _heuristics_. 
+Since the scheduling problems may not be tractable (or "solvable" in a realistic time frame), we need to find _heuristics_ but they can be "sub-optimal". Luckily, we have a couple of **provably optimal** real-time schedulers (in the single core domain). 
 
 **Additional, important definitions**:
 
@@ -2697,18 +2701,19 @@ The very simplicity of such systems can also be their biggest weakness.
 
 2. **scalability**: along similar lines, it is difficult to scale the system to deal with additional issues or add functionality. 
 
-3. **resource management**: certain tasks can corral resources and hold on to them while others may _starve_ -- leading to the system becoming unstable. For instance, even in the simple example, we see that $T_3$ can dominate the execution time on the CPU:
+3. **priority**: there is no way to assign priority or preemption since all tasks essentially execute a the _same priority_. Hence, if we want to deal with higher-priority events (_e.g._, read a sensor) or even _atypical_ (aperiodic/sporadic) events, such as sudden braking in an autonomous car, then a cyclic executive is not the right way to go about it.
+
+4. **resource management**: certain tasks can corral resources and hold on to them while others may _starve_ -- leading to the system becoming unstable. For instance, even in the simple example, we see that $T_3$ can dominate the execution time on the CPU:
 
 <img src="img/scheduling/cyclic/cyclic6.svg" width="400">
 
 Since the system is _one giant executable_, it is difficult to stop a "runaway task" -- the entire system must be stopped and restarted, which can lead to serious problems.
 
-4. **priority**: there is no way to assign priority or preemption since all tasks essentially execute a the _same priority_. Hence, if we want to deal with higher-priority events (_e.g._, read a sensor) or even _atypical_ (aperiodic/sporadic) events, such as sudden braking in an autonomous car, then a cyclic executive is not the right way to go about it.
 
 
 ### Frames
 
-One way to mitigate _some_ of the problems with cyclic executives, is to split the resource allocation into "frames" &rarr; **fixed** chunks of time when a task can ain exclusive access to a resource, _e.g.._ the processor:
+One way to mitigate _some_ of the problems with cyclic executives, is to split the resource allocation into "frames" &rarr; **fixed** chunks of time when a task can claim exclusive access to a resource, _e.g.._ the processor:
 
 - once a frame starts, the task gets to execute _uninterrupted_
 - at the end of the frame, the task _must give up_ the resource &rarr; regardless of whether it was done or not

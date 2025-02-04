@@ -5452,7 +5452,7 @@ geometry_msgs/Point point
             <li>fuel injection+combustion</li>
             <li>exhaust</li>
             </ol>
-            <p>If we correlate this to task “actiations”, then we may
+            <p>If we correlate this to task “activations”, then we may
             see the <a
             href="https://retis.sssup.it/~a.biondi/papers/ERIKA_AVR_RTAS16.pdf">following</a>:</p>
             <table>
@@ -5473,7 +5473,10 @@ geometry_msgs/Point point
             </table>
             <p>This is a (somewhat) simple execution model known as the
             <a href="#cyclic-executives">cyclic executive</a> that we
-            shall return to later.</p>
+            shall return to later. Hence, there is a
+            <strong>direct</strong> correlation between the physical
+            aspects of a real-time and autonomous system and issues such
+            as scheduling.</p>
             <section id="real-time-models" class="level2"
             data-number="5.1">
             <h2 data-number="5.1"><span
@@ -5555,6 +5558,9 @@ geometry_msgs/Point point
             <p>Let us focus on <strong>jobs</strong> and some of their
             properties:</p>
             <p><img src="img/scheduling/jobs/job.final.svg" width="400"></p>
+            <p><strong>note</strong> → deadlines and periods don’t have
+            to match, but they <strong>usually</strong> do, _i.e., <span
+            class="math inline"><em>D</em> = <em>P</em></span></p>
             <table>
             <colgroup>
             <col style="width: 41%" />
@@ -5602,9 +5608,9 @@ geometry_msgs/Point point
             <strong>task</strong> is to compute,</p>
             <blockquote>
             <p>how much <strong>utilization</strong> is taken up by
-            **all* jobs of the task?</p>
+            <strong>all</strong> jobs of the task?</p>
             </blockquote>
-            <p>One might ask: if there are (potentially) and
+            <p>One might ask: if there are (potentially) an
             <em>infinite</em> number of jobs for each task, since
             they’re periodic++ and long running, then how can one
             campute the utilization?</p>
@@ -5652,10 +5658,14 @@ geometry_msgs/Point point
             <pre class="math"><code>U = \sum_{i=1}^{n} U_i 
 
 = \sum_{i=1}^{n} \frac{c_i}{T_i}</code></pre>
-            <p><strong>Simple Exercise</strong>: what is the tital
+            <p><strong>Simple Exercise</strong>: what is the total
             utilization for the following task set? | Task | c | T |
             |——|—|—| | τ1 | 1 | 4 | | τ2 | 2 | 5 | | τ3 | 5 | 17 |
             ||</p>
+            <blockquote>
+            <p>what does it mean if <span
+            class="math inline"><em>U</em> &gt; 1</span>?</p>
+            </blockquote>
             <section id="precedence-constraints" class="level4"
             data-number="5.1.2.1">
             <h4 data-number="5.1.2.1"><span
@@ -5816,9 +5826,12 @@ geometry_msgs/Point point
             <p>In the realm of real-time systems, to <em>formally</em>
             define a scheduling problem, we need to specify:</p>
             <ol type="1">
-            <li>a set of <strong>tasks</strong></li>
-            <li>a set of <strong>processors</strong></li>
-            <li>a set of <strong>resources</strong></li>
+            <li>a set of <strong>tasks</strong>, <span
+            class="math inline"><em>τ</em></span></li>
+            <li>a set of <strong>processors</strong>, <span
+            class="math inline"><em>P</em></span></li>
+            <li>a set of <strong>resources</strong>, <span
+            class="math inline"><em>R</em></span></li>
             </ol>
             <p>Hence, the <strong>general scheduling problem</strong>
             is,</p>
@@ -5839,7 +5852,8 @@ geometry_msgs/Point point
             <ul>
             <li>completely static → <em>e,g.,</em> <a
             href="#cyclic-executives">cyclic executives</a></li>
-            <li>priority-based → both static (RM) and dynamic (EDF)</li>
+            <li>priority-based → static (<em>e.g.,</em> RM) and dynamic
+            (<em>e.g.,</em> EDF)</li>
             <li>dynamic best effort</li>
             </ul>
             <p>One of the main problems with the scheduling problem, as
@@ -5856,7 +5870,9 @@ geometry_msgs/Point point
             definition of NP-Complete.]</p>
             <p>Since the scheduling problems may not be tractable (or
             “solvable” in a realistic time frame), we need to find
-            <em>heuristics</em>.</p>
+            <em>heuristics</em> but they can be “sub-optimal”. Luckily,
+            we have a couple of <strong>provably optimal</strong>
+            real-time schedulers (in the single core domain).</p>
             <p><strong>Additional, important definitions</strong>:</p>
             <table>
             <colgroup>
@@ -5983,6 +5999,13 @@ geometry_msgs/Point point
             <li><p><strong>scalability</strong>: along similar lines, it
             is difficult to scale the system to deal with additional
             issues or add functionality.</p></li>
+            <li><p><strong>priority</strong>: there is no way to assign
+            priority or preemption since all tasks essentially execute a
+            the <em>same priority</em>. Hence, if we want to deal with
+            higher-priority events (<em>e.g.</em>, read a sensor) or
+            even <em>atypical</em> (aperiodic/sporadic) events, such as
+            sudden braking in an autonomous car, then a cyclic executive
+            is not the right way to go about it.</p></li>
             <li><p><strong>resource management</strong>: certain tasks
             can corral resources and hold on to them while others may
             <em>starve</em> – leading to the system becoming unstable.
@@ -5995,15 +6018,6 @@ geometry_msgs/Point point
             difficult to stop a “runaway task” – the entire system must
             be stopped and restarted, which can lead to serious
             problems.</p>
-            <ol start="4" type="1">
-            <li><strong>priority</strong>: there is no way to assign
-            priority or preemption since all tasks essentially execute a
-            the <em>same priority</em>. Hence, if we want to deal with
-            higher-priority events (<em>e.g.</em>, read a sensor) or
-            even <em>atypical</em> (aperiodic/sporadic) events, such as
-            sudden braking in an autonomous car, then a cyclic executive
-            is not the right way to go about it.</li>
-            </ol>
             </section>
             <section id="frames" class="level3" data-number="5.2.2">
             <h3 data-number="5.2.2"><span
@@ -6011,7 +6025,7 @@ geometry_msgs/Point point
             <p>One way to mitigate <em>some</em> of the problems with
             cyclic executives, is to split the resource allocation into
             “frames” → <strong>fixed</strong> chunks of time when a task
-            can ain exclusive access to a resource, <em>e.g..</em> the
+            can claim exclusive access to a resource, <em>e.g..</em> the
             processor:</p>
             <ul>
             <li>once a frame starts, the task gets to execute

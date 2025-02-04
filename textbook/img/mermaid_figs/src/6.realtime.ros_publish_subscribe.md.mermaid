@@ -1,0 +1,18 @@
+```mermaid
+---
+title: ros publish subscribe
+---
+graph LR
+    subgraph "Publisher Node"
+        P1[Camera Node] -->|Publishes| T1[/image_raw Topic/]
+        P2[Lidar Node] -->|Publishes| T2[/point_cloud Topic/]
+    end
+    
+    subgraph "Subscriber Nodes"
+        T1 -->|Subscribes| S1[Image Processing Node]
+        T1 -->|Subscribes| S2[Object Detection Node]
+        T2 -->|Subscribes| S3[Mapping Node]
+        T2 -->|Subscribes| S4[Obstacle Detection Node]
+    end
+
+```

@@ -1,0 +1,28 @@
+```mermaid
+---
+title: ros architecture 
+---
+graph TD
+    subgraph "Core Components"
+        M[ROS Master] --> N1[Node 1]
+        M --> N2[Node 2]
+        M --> N3[Node 3]
+        P[Parameter Server]
+        M -.-> P
+    end
+    
+    N1 -->|Topic| N2
+    N2 -->|Service| N3
+    N3 -->|Action| N1
+    
+    subgraph "Tools"
+        T1[RViz]
+        T2[Gazebo]
+        T3[rqt]
+    end
+    
+    N1 -.-> T1
+    N2 -.-> T2
+    N3 -.-> T3
+
+```
