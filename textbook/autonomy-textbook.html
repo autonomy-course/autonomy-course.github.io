@@ -382,13 +382,24 @@ George Washington University</p></li>
         <ul>
         <li><a href="#workload-model" id="toc-workload-model"><span
         class="toc-section-number">5.1.1</span> Workload Model</a></li>
+        <li><a href="#utilization" id="toc-utilization"><span
+        class="toc-section-number">5.1.2</span> Utilization</a></li>
+        <li><a href="#resource-model" id="toc-resource-model"><span
+        class="toc-section-number">5.1.3</span> Resource Model</a></li>
+        <li><a href="#scheduling-and-algorithms"
+        id="toc-scheduling-and-algorithms"><span
+        class="toc-section-number">5.1.4</span> Scheduling and
+        Algorithms</a></li>
         </ul></li>
+        <li><a href="#schedulers" id="toc-schedulers"><span
+        class="toc-section-number">5.2</span> Schedulers</a>
+        <ul>
         <li><a href="#cyclic-executives"
         id="toc-cyclic-executives"><span
-        class="toc-section-number">5.2</span> Cyclic Executives</a>
-        <ul>
+        class="toc-section-number">5.2.1</span> Cyclic
+        Executives</a></li>
         <li><a href="#frames" id="toc-frames"><span
-        class="toc-section-number">5.2.1</span> Frames</a></li>
+        class="toc-section-number">5.2.2</span> Frames</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -5516,15 +5527,17 @@ geometry_msgs/Point point
             <li>temporal parameters</li>
             <li>precedence constraints and dependencies</li>
             </ul></li>
-            <li><strong>resource</strong> model → describes system
-            resources available to applications
+            <li><a href="#resource-model"><strong>resource</strong>
+            model</a> → describes system resources available to
+            applications
             <ul>
             <li>modeling resources, e.g., processors, network cards,
             etc.</li>
             <li>resource parameters</li>
             </ul></li>
-            <li><strong>algorithms</strong> → defines how application
-            uses resources at all times
+            <li><a
+            href="#scheduling-and-algorithms"><strong>algorithms</strong></a>
+            → defines how application uses resources at all times
             <ul>
             <li>scheduling policies</li>
             <li>other resource management algorithms</li>
@@ -5535,14 +5548,356 @@ geometry_msgs/Point point
             <h3 data-number="5.1.1"><span
             class="header-section-number">5.1.1</span> Workload
             Model</h3>
-            <p>We have already discussed</p>
+            <p>We have already discussed <a
+            href="#tasks-jobs-threads">tasks vs. jobs vs. thread</a>
+            earlier so we understand how to model computation. We also
+            discussed how actual execution is modeled (via threads).</p>
+            <p>Let us focus on <strong>jobs</strong> and some of their
+            properties:</p>
+            <p><img src="img/scheduling/jobs/job.final.svg" width="400"></p>
+            <table>
+            <colgroup>
+            <col style="width: 41%" />
+            <col style="width: 58%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>property/parameters</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>temporal</strong></td>
+            <td>timing constraints and behavior</td>
+            </tr>
+            <tr>
+            <td><strong>functional</strong></td>
+            <td>intrinsic properties of the job</td>
+            </tr>
+            <tr>
+            <td><strong>resource</strong></td>
+            <td>resource requirements</td>
+            </tr>
+            <tr>
+            <td><strong>interconnection</strong></td>
+            <td>how it depends on other jobs and how other jobs depend
+            on it</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>As discussed earlier, we need to get a good understanding
+            of the <a href="l#the-wcet-problem">wcet</a> of jobs.</p>
+            </section>
+            <section id="utilization" class="level3"
+            data-number="5.1.2">
+            <h3 data-number="5.1.2"><span
+            class="header-section-number">5.1.2</span> Utilization</h3>
+            <p>One of the important ways to understand the
+            <strong>workload requirements</strong> for a
+            <strong>task</strong> is to compute,</p>
+            <blockquote>
+            <p>how much <strong>utilization</strong> is taken up by
+            **all* jobs of the task?</p>
+            </blockquote>
+            <p>One might ask: if there are (potentially) and
+            <em>infinite</em> number of jobs for each task, since
+            they’re periodic++ and long running, then how can one
+            campute the utilization?</p>
+            <blockquote>
+            <p>Recall that a <strong>periodic</strong> function is of
+            the type → <span
+            class="math inline"><em>f</em>(<em>t</em>) = <em>f</em>(<em>t</em> + <em>T</em>)</span></p>
+            <p>where <span class="math inline"><em>T</em></span> is the
+            “period”</p>
+            </blockquote>
+            <p><strong>Note:</strong> utilization is
+            <strong>not</strong> the time taken by a task (or its jobs).
+            It is,</p>
+            <blockquote>
+            <p>the <strong>fraction</strong> of the processor’s total
+            available utilization that is soaked up by the jobs of a
+            task</p>
+            </blockquote>
+            <p>Hence, the utilization for a <strong>single</strong> task
+            is,</p>
+            <pre class="math"><code>U_i = \frac{c_i}{T_i}</code></pre>
+            <p>where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>c</em><sub><em>i</em></sub></span></td>
+            <td>wcet of the task</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>T</em><sub><em>i</em></sub></span></td>
+            <td>period of the task</td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Now, we can compute the utilization for the
+            <strong>entire task set</strong>,</p>
+            <pre class="math"><code>U = \sum_{i=1}^{n} U_i 
+
+= \sum_{i=1}^{n} \frac{c_i}{T_i}</code></pre>
+            <p><strong>Simple Exercise</strong>: what is the tital
+            utilization for the following task set? | Task | c | T |
+            |——|—|—| | τ1 | 1 | 4 | | τ2 | 2 | 5 | | τ3 | 5 | 17 |
+            ||</p>
+            <section id="precedence-constraints" class="level4"
+            data-number="5.1.2.1">
+            <h4 data-number="5.1.2.1"><span
+            class="header-section-number">5.1.2.1</span> Precedence
+            Constraints</h4>
+            <p>Jobs can be either <strong>precedence
+            constrained</strong> or <strong>independent</strong> → we
+            can use directed acyclic graphs (DAGs) to specify/capture
+            these constraints.</p>
+            <p>For instance, $ J_a J_b$ implies,</p>
+            <ul>
+            <li><span
+            class="math inline"><em>J</em><sub><em>a</em></sub></span>
+            is a <strong>predecessor</strong> of <span
+            class="math inline"><em>J</em><sub><em>b</em></sub></span></li>
+            <li><span
+            class="math inline"><em>J</em><sub><em>b</em></sub></span>
+            is a <strong>successor</strong> of <span
+            class="math inline"><em>J</em><sub><em>a</em></sub></span></li>
+            </ul>
+            <p>$ J_a J_b$ implies</p>
+            <ul>
+            <li><span
+            class="math inline"><em>J</em><sub><em>a</em></sub></span>
+            is an <strong>immediate</strong> predecessor of <span
+            class="math inline"><em>J</em><sub><em>b</em></sub></span></li>
+            </ul>
+            <p>Consider the following example:</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>dag</th>
+            <th>relationships</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><img src="img/scheduling/jobs/job_precedence.png" width="150"></td>
+            <td><span
+            class="math inline"><em>J</em><sub>1</sub> ≺ <em>J</em><sub>2</sub></span>
+            <br> $ J_1 J_2$ <br> <span
+            class="math inline"><em>J</em><sub>1</sub> ≺ <em>J</em><sub>4</sub></span>
+            <br> <span
+            class="math inline"><em>J</em><sub>1</sub> ↛ <em>J</em><sub>4</sub></span></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Here is a more realistic example → the precedence
+            constraints in an <strong>autonomous driving
+            system</strong>:</p>
+            <p><img src="img/scheduling/jobs/autonomous_precedence_constraints_rtss2021.png" width="400"></p>
             </section>
             </section>
-            <section id="cyclic-executives" class="level2"
-            data-number="5.2">
+            <section id="resource-model" class="level3"
+            data-number="5.1.3">
+            <h3 data-number="5.1.3"><span
+            class="header-section-number">5.1.3</span> Resource
+            Model</h3>
+            <p>A “resource” is some structure used by task → advance
+            execution.</p>
+            <p>Type of resources:</p>
+            <ul>
+            <li><strong>active</strong> → e.g., processors (they execute
+            jobs)
+            <ul>
+            <li>every job → one or more processors</li>
+            <li>same type if functionally identical and used
+            interchangeably</li>
+            </ul></li>
+            <li><strong>passive</strong> → <em>e.g.,</em> files, network
+            sockets, <em>etc.</em></li>
+            <li><strong>private</strong> vs <strong>shared</strong></li>
+            </ul>
+            <p>We have already discussed <a
+            href="#inter-task-communication-and-synchronization">resource
+            sharing and synchronization</a> earlier → mutexes, locks,
+            <em>etc.</em> Esentially there is a need for <strong>mutual
+            exclusion</strong> that is guaranteed via one of these
+            methods or by the use of <a
+            href="https://cs.gmu.edu/~rcarver/ModernMultithreading/LectureNotes/Chapter2Notes.pdf">critical
+            sections</a>.</p>
+            </section>
+            <section id="scheduling-and-algorithms" class="level3"
+            data-number="5.1.4">
+            <h3 data-number="5.1.4"><span
+            class="header-section-number">5.1.4</span> Scheduling and
+            Algorithms</h3>
+            <p>Before we proceed, we need to understand →
+            <strong>preemption</strong>:</p>
+            <blockquote>
+            <p>preemption is the process of <strong>suspending a running
+            task</strong> in <strong>favor of a higher priority
+            task</strong>.</p>
+            </blockquote>
+            <p><img src="img/scheduling/preemption.png" width="400"></p>
+            <p>Most OS (real-time &amp; non real-time) allow preemption
+            since they allow,</p>
+            <ul>
+            <li>greater flexibility in constructing schedules</li>
+            <li>exception handling</li>
+            <li>interrupt servicing</li>
+            </ul>
+            <p>Preemptions, among others, help define a variety of
+            <strong>scheduling events</strong>; essentially, these are
+            the time when the <strong>scheduler is invoked</strong>:</p>
+            <ul>
+            <li>in a <em>fully</em> preemptive system → task arrival,
+            task completion, resource reauest, resource release,
+            interrupts and exceptions, <em>etc.</em></li>
+            <li>in a <em>non-preemptive</em> system → task
+            completion</li>
+            <li>in <em>limited</em> preemptive systems → predefined
+            preemptions points, <em>e.g.,</em> POSIX thread cancel
+            (<code>pthread_testcancel()</code>)</li>
+            </ul>
+            <section id="task-schedule" class="level4"
+            data-number="5.1.4.1">
+            <h4 data-number="5.1.4.1"><span
+            class="header-section-number">5.1.4.1</span> Task
+            Schedule</h4>
+            <p>We have been talking about “scheduling” all this while so
+            it is time to formally define what a
+            <strong>schedule</strong> is.</p>
+            <p>Given → a set of jobs, <span
+            class="math inline"><em>J</em> = {<em>J</em><sub>1</sub>, <em>J</em><sub>2</sub>, ..., <em>J</em><sub><em>n</em></sub>}</span></p>
+            <blockquote>
+            <p>A schedule → an <strong>assignment</strong> of Jobs to
+            the CPU, so that each task can execute till completion.</p>
+            </blockquote>
+            </section>
+            </section>
+            </section>
+            <section id="schedulers" class="level2" data-number="5.2">
             <h2 data-number="5.2"><span
-            class="header-section-number">5.2</span> Cyclic
-            Executives</h2>
+            class="header-section-number">5.2</span> Schedulers</h2>
+            <p>Finally, we get to the main topic at hand → schedulers
+            and scheduling! Historically there have been many scheduling
+            policies developed for a variety of systems, <em>e.g.,</em>
+            <a
+            href="https://www.geeksforgeeks.org/program-for-fcfs-cpu-scheduling-set-1/">FIFO</a>,
+            <a
+            href="https://www.geeksforgeeks.org/program-for-round-robin-scheduling-for-the-same-arrival-time/">round
+            robin</a>, <a
+            href="https://dl.acm.org/doi/abs/10.1145/1460833.1460871">time
+            sharing</a>, <em>etc.</em></p>
+            <p>Here is a good comparison of the various types of
+            (historical) CPU/OS schedulers: <a
+            href="https://www.geeksforgeeks.org/cpu-scheduling-in-operating-systems/">CPU
+            Scheduling in Operating Systems</a>.</p>
+            <p>In the realm of real-time systems, to <em>formally</em>
+            define a scheduling problem, we need to specify:</p>
+            <ol type="1">
+            <li>a set of <strong>tasks</strong></li>
+            <li>a set of <strong>processors</strong></li>
+            <li>a set of <strong>resources</strong></li>
+            </ol>
+            <p>Hence, the <strong>general scheduling problem</strong>
+            is,</p>
+            <blockquote>
+            <p>assign processors and resources to tasks, such that the
+            following constraints are met:</p>
+            <ul>
+            <li>timing constraints</li>
+            <li>precedence constraints</li>
+            <li>resource constraints</li>
+            </ul>
+            </blockquote>
+            <p>There is a <a
+            href="https://link.springer.com/book/10.1007/978-1-4614-0676-1">large
+            body of literature</a> in the domain of real-time scheduling
+            algorithms. In this chapter, we will focus on a few of them,
+            <em>viz.</em>,</p>
+            <ul>
+            <li>completely static → <em>e,g.,</em> <a
+            href="#cyclic-executives">cyclic executives</a></li>
+            <li>priority-based → both static (RM) and dynamic (EDF)</li>
+            <li>dynamic best effort</li>
+            </ul>
+            <p>One of the main problems with the scheduling problem, as
+            defined above (and in general), is that many variants of the
+            problem are <strong>intractable</strong>, <em>i.e.,</em>
+            NP-Hard or even NP-Complete.</p>
+            <blockquote>
+            <p>Recall that an NP-Hard problem is one where no
+            <em>known</em> polynomial time algorithm exists. So, all
+            known algorithms are superlinear or, usually, of
+            <em>exponential</em> time complexity!</p>
+            </blockquote>
+            <p>[Will leave it to the reader to recall or look up the
+            definition of NP-Complete.]</p>
+            <p>Since the scheduling problems may not be tractable (or
+            “solvable” in a realistic time frame), we need to find
+            <em>heuristics</em>.</p>
+            <p><strong>Additional, important definitions</strong>:</p>
+            <table>
+            <colgroup>
+            <col style="width: 36%" />
+            <col style="width: 63%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>concept</th>
+            <th>definition</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>feasibility</strong></td>
+            <td>schedule is feasible if all tasks can be completed by
+            satisfying a set of specified constraints</td>
+            </tr>
+            <tr>
+            <td><strong>schedulable</strong></td>
+            <td>set of tasks is schedulable if there exists <strong>at
+            least one algorithm</strong> that can produce a feasible
+            schedule</td>
+            </tr>
+            <tr>
+            <td><strong>schedulability analysis</strong></td>
+            <td>analysis to confirm that deadlines for a set of threads
+            can be guaranteed using a <strong>given scheduling
+            policy</strong></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <section id="cyclic-executives" class="level3"
+            data-number="5.2.1">
+            <h3 data-number="5.2.1"><span
+            class="header-section-number">5.2.1</span> Cyclic
+            Executives</h3>
             <p>In the automotive enginer example from earlier, we see
             that for each <strong>cycle</strong>, the same set of tasks
             <strong>repeat</strong> (<em>i.e.</em>., “periodic
@@ -5649,9 +6004,10 @@ geometry_msgs/Point point
             sudden braking in an autonomous car, then a cyclic executive
             is not the right way to go about it.</li>
             </ol>
-            <section id="frames" class="level3" data-number="5.2.1">
-            <h3 data-number="5.2.1"><span
-            class="header-section-number">5.2.1</span> Frames</h3>
+            </section>
+            <section id="frames" class="level3" data-number="5.2.2">
+            <h3 data-number="5.2.2"><span
+            class="header-section-number">5.2.2</span> Frames</h3>
             <p>One way to mitigate <em>some</em> of the problems with
             cyclic executives, is to split the resource allocation into
             “frames” → <strong>fixed</strong> chunks of time when a task

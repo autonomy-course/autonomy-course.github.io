@@ -2453,20 +2453,197 @@ There are many ways to **model** a real-time system:
     - functional parameters
     - temporal parameters
     - precedence constraints and dependencies
-2. **resource** model &rarr; describes system resources available to applications
+2. [**resource** model](#resource-model) &rarr; describes system resources available to applications
     - modeling resources, e.g., processors, network cards, etc.
     - resource parameters
-3. **algorithms** &rarr; defines how application uses resources at all times
+3. [**algorithms**](#scheduling-and-algorithms) &rarr; defines how application uses resources at all times
     - scheduling policies
     - other resource management algorithms 
 
 
 ### Workload Model
 
-We have already discussed 
+We have already discussed [tasks vs. jobs vs. thread](#tasks-jobs-threads) earlier so we understand how to model computation. We also discussed how actual execution is modeled (via threads). 
+
+Let us focus on **jobs** and some of their properties:
+
+<img src="img/scheduling/jobs/job.final.svg" width="400">
+
+| property/parameters | description  |
+|----------|--------------|
+| **temporal** | timing constraints and behavior |
+| **functional** | intrinsic properties of the job |
+| **resource** | resource requirements|
+| **interconnection** | how it depends on other jobs and how other jobs depend on it |
+||
+
+As discussed earlier, we need to get a good understanding of the [wcet](l#the-wcet-problem) of jobs.
 
 
-## Cyclic Executives
+### Utilization
+
+One of the important ways to understand the **workload requirements** for a **task** is to compute,
+
+> how much **utilization** is taken up by **all* jobs of the task?
+
+One might ask: if there are (potentially) and _infinite_ number of jobs for each task, since they're periodic++ and long running, then how can one campute the utilization?
+
+> Recall that a **periodic** function is of the type &rarr; $f(t) = f(t+T)$
+>
+> where $T$ is the "period"
+
+**Note:** utilization is **not** the time taken by a task (or its jobs). It is, 
+
+> the **fraction** of the processor's total available utilization that is soaked up by the jobs of a task
+
+Hence, the utilization for a **single** task is,
+
+```math
+U_i = \frac{c_i}{T_i}
+```
+
+where,
+
+| symbol | description |
+|--------|-------------|
+| $c_i$  | wcet of the task |
+| $T_i$  | period of the task |
+
+Now, we can compute the utilization for the **entire task set**,
+
+```math
+U = \sum_{i=1}^{n} U_i 
+
+= \sum_{i=1}^{n} \frac{c_i}{T_i}
+```
+
+**Simple Exercise**: what is the tital utilization for the following task set?
+| Task | c | T |
+|------|---|---|
+| τ1   | 1 | 4 |
+| τ2   | 2 | 5 |
+| τ3   | 5 | 17 |
+||
+
+
+#### Precedence Constraints
+
+Jobs can be either **precedence constrained** or **independent** &rarr; we can use directed acyclic graphs (DAGs) to specify/capture these constraints. 
+
+For instance, 
+$ J_a \prec J_b$ implies,
+
+- $J_a$ is a **predecessor** of $J_b$
+- $J_b$ is a **successor** of $J_a$
+
+$ J_a \to J_b$ implies
+
+- $J_a$ is an **immediate** predecessor of $J_b$
+
+Consider the following example:
+
+|dag| relationships|
+|-----|-----|
+|<img src="img/scheduling/jobs/job_precedence.png" width="150"> |  $J_1 \prec J_2$ <br> $ J_1 \to J_2$ <br> $J_1 \prec J_4$ <br> $J_1 \not\to J_4$|
+||
+
+
+Here is a more realistic example &rarr; the precedence constraints in an **autonomous driving system**:
+
+<img src="img/scheduling/jobs/autonomous_precedence_constraints_rtss2021.png" width="400">
+
+
+### Resource Model
+
+A "resource" is some structure used by task &rarr; advance execution.
+
+Type of resources:
+
+- **active** &rarr; e.g., processors (they execute jobs)
+    - every job &rarr; one or more processors
+    - same type if functionally identical and used interchangeably
+- **passive** &rarr; _e.g.,_ files, network sockets, _etc._
+- **private** vs **shared**
+
+We have already discussed [resource sharing and synchronization](#inter-task-communication-and-synchronization) earlier &rarr; mutexes, locks, _etc._ Esentially there is a need for **mutual exclusion** that is guaranteed via one of these methods or by the use of [critical sections](https://cs.gmu.edu/~rcarver/ModernMultithreading/LectureNotes/Chapter2Notes.pdf).
+
+
+### Scheduling and Algorithms
+
+Before we proceed, we need to understand &rarr; **preemption**:
+
+> preemption is the process of **suspending a running task** in **favor of a higher priority task**.
+
+<img src="img/scheduling/preemption.png" width="400">
+
+Most OS (real-time & non real-time) allow preemption since they allow,
+
+- greater flexibility in constructing schedules
+- exception handling
+- interrupt servicing
+
+Preemptions, among others, help define a variety of **scheduling events**; essentially, these are the time when the **scheduler is invoked**:
+
+- in a _fully_ preemptive system &rarr; task arrival, task completion, resource reauest, resource release, interrupts and exceptions, _etc._ 
+- in a _non-preemptive_ system &rarr; task completion
+- in _limited_ preemptive systems &rarr; predefined preemptions points, _e.g.,_ POSIX thread cancel (`pthread_testcancel()`)
+
+
+#### Task Schedule
+
+We have been talking about "scheduling" all this while so it is time to formally define what a **schedule** is.
+
+Given &rarr; a set of jobs, $J = \{ J_1, J_2,...,J_n \}$
+
+> A schedule &rarr; an **assignment** of Jobs to the CPU, so that each task can execute till completion.
+
+
+## Schedulers
+
+Finally, we get to the main topic at hand &rarr; schedulers and scheduling! Historically there have been many scheduling policies developed for a variety of systems, _e.g.,_ [FIFO](https://www.geeksforgeeks.org/program-for-fcfs-cpu-scheduling-set-1/), [round robin](https://www.geeksforgeeks.org/program-for-round-robin-scheduling-for-the-same-arrival-time/), [time sharing](https://dl.acm.org/doi/abs/10.1145/1460833.1460871), _etc._
+
+Here is a good comparison of the various types of (historical) CPU/OS schedulers: [CPU Scheduling in Operating Systems](https://www.geeksforgeeks.org/cpu-scheduling-in-operating-systems/).
+
+In the realm of real-time systems, to _formally_ define a scheduling problem, we need to specify:
+
+1. a set of **tasks**
+2. a set of **processors**
+3. a set of **resources**
+
+Hence, the **general scheduling problem** is,
+
+> assign processors and resources to tasks, such that the following constraints are met:
+> 
+> - timing constraints
+> - precedence constraints
+> - resource constraints
+
+There is a [large body of literature](https://link.springer.com/book/10.1007/978-1-4614-0676-1) in the domain of real-time scheduling algorithms. In this chapter, we will focus on a few of them, _viz._,
+
+- completely static &rarr; _e,g.,_ [cyclic executives](#cyclic-executives)
+- priority-based &rarr; both static (RM) and dynamic (EDF)
+- dynamic best effort
+
+One of the main problems with the scheduling problem, as defined above (and in general), is that many variants of the problem are **intractable**, _i.e.,_ NP-Hard or even NP-Complete.
+
+> Recall that an NP-Hard problem is one where no _known_ polynomial time algorithm exists. So, all known algorithms are superlinear or, usually, of _exponential_ time complexity!
+
+[Will leave it to the reader to recall or look up the definition of NP-Complete.]
+
+Since the scheduling problems may not be tractable (or "solvable" in a realistic time frame), we need to find _heuristics_. 
+
+**Additional, important definitions**:
+
+|concept| definition |
+|-------|------------|
+| **feasibility** | schedule is feasible if all tasks can be completed by satisfying a set of specified constraints|
+| **schedulable** | set of tasks is schedulable if there exists **at least one algorithm** that can produce a feasible schedule |
+| **schedulability analysis** | analysis to confirm that deadlines for a set of threads can be guaranteed using a **given scheduling policy** |
+||
+
+
+
+### Cyclic Executives
 
 In the automotive enginer example from earlier, we see that for each **cycle**, the same set of tasks **repeat** (_i.e._., "periodic behavior"). Note though that the tasks _need not_ execute in parallel -- rather, they must execute sequentially for this application. Usually such applications use a scheduling mechanism known as a "**cyclic executive**". 
 
