@@ -6775,10 +6775,107 @@ geometry_msgs/Point point
             data-number="5.2.3.3">
             <h4 data-number="5.2.3.3"><span
             class="header-section-number">5.2.3.3</span> RM vs. EDF</h4>
+            <p>So, let’s compare the two superstarts of the real-time
+            scheduling world, RM and EDF. The ✓ symbol indicates which
+            one is better.</p>
+            <table>
+            <thead>
+            <tr>
+            <th>parameter</th>
+            <th>RM</th>
+            <th>EDF</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>optimality</td>
+            <td>✓ (static)</td>
+            <td>✓</td>
+            </tr>
+            <tr>
+            <td>context switch overheads</td>
+            <td>✓</td>
+            <td>✗</td>
+            </tr>
+            <tr>
+            <td>preemptions</td>
+            <td>✗</td>
+            <td>✓</td>
+            </tr>
+            <tr>
+            <td>analysis overheads</td>
+            <td>✗</td>
+            <td>✓</td>
+            </tr>
+            <tr>
+            <td>utilization</td>
+            <td>✗</td>
+            <td>✓</td>
+            </tr>
+            <tr>
+            <td>implementation ease</td>
+            <td>✓</td>
+            <td>✗</td>
+            </tr>
+            <tr>
+            <td>predictability</td>
+            <td>✓</td>
+            <td>✗</td>
+            </tr>
+            <tr>
+            <td><strong>total</strong></td>
+            <td><scb>4</scb></td>
+            <td><scb>4</scb></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p><strong>Other Issues</strong>: note that we have mostly
+            considered a simple task model. But these may vary in real
+            world systems, <em>e.g.,</em></p>
+            <ul>
+            <li>$ D &lt;T $, <span
+            class="math inline"><em>D</em> &gt; <em>T</em></span> →
+            essentially situations where deadlines and periods don’t
+            align; there are other analyses methods that can be
+            applied</li>
+            <li><strong>multicore</strong> → so far we have only
+            discussed single core systems; scheduling across multiple
+            cores is an NP-complete problem but many heuristics have
+            been developed; see <a
+            href="https://dl.acm.org/doi/pdf/10.1145/1978802.1978814">A
+            Survey of Hard Real-Time Scheduling for Multiprocessor
+            Systems</a> for a summary of many results</li>
+            <li><strong>priority inheritance protocols</strong> → for
+            dealing with resource contentions; again a large body of
+            work exists in this domain; see <a
+            href="https://www.eecs.umich.edu/courses/eecs571/lectures/lecture6-schedule3.pdf">Lecture
+            Note #6</a> for a good summary.</li>
+            <li><strong>power consumption</strong> and scheduling →
+            scheduling methods can help alleviate power consumption
+            issues; see <a
+            href="https://www.eecs.umich.edu/courses/eecs571/lectures/lecture12-rtdvs.pdf">Real-Time
+            Dynamic Voltage Scaling for Low-Power Embedded Operating
+            Systems</a> for one of the early results.</li>
+            <li><strong><a
+            href="https://link.springer.com/article/10.1007/s11241-012-9158-9">memory</a></strong>,
+            <strong><a
+            href="https://sibin.github.io/papers/2017_RTSS_SDNQoS_Rakesh.pdf">networks</a></strong>,
+            <strong><a
+            href="https://www.computer.org/csdl/journal/td/2017/05/07728147/13rRUwj7coW">networks-on-chip</a></strong>,
+            <strong><a
+            href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9773317">5G</a></strong>,
+            <em>etc.,</em> → real-time scheduling has been applied to
+            wide variety of domains.</li>
+            </ul>
             <p><br> <br> <br> <br> <br> <br> <br> <br> <br> <br></p>
             <p>TODOs:</p>
             <ul>
-            <li>priority-based [static v dynamic]</li>
             <li>dynamic best effort?</li>
             </ul>
             </section>

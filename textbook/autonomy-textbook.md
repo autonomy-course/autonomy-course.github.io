@@ -3013,9 +3013,29 @@ EDF can definitely _squeeze_ out the maximum from a system -- as we just saw, it
 
 #### RM vs. EDF
 
+So, let's compare the two superstarts of the real-time scheduling world, RM and EDF. The &check; symbol indicates which one is better. 
 
+|parameter | RM | EDF |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+| analysis overheads | &cross; | &check; |
+| utilization | &cross; | &check; |
+| implementation ease | &check; | &cross; |
+| predictability | &check; | &cross; |
+|**total**| <scb>4</scb> | <scb>4</scb> |
+||
 
+<br>
 
+**Other Issues**: note that we have mostly considered a simple task model. But these may vary in real world systems, _e.g.,_
+
+- $ D <T $, $D > T$ &rarr; essentially situations where deadlines and periods don't align; there are other analyses methods that can be applied
+- **multicore** &rarr; so far we have only discussed single core systems; scheduling across multiple cores is an NP-complete problem but many heuristics have been developed; see [A Survey of Hard Real-Time Scheduling for Multiprocessor Systems](https://dl.acm.org/doi/pdf/10.1145/1978802.1978814) for a summary of many results
+- **priority inheritance protocols** &rarr; for dealing with resource contentions; again a large body of work exists in this domain; see [Lecture Note \#6](https://www.eecs.umich.edu/courses/eecs571/lectures/lecture6-schedule3.pdf) for a good summary.
+- **power consumption** and scheduling &rarr; scheduling methods can help alleviate power consumption issues; see [Real-Time Dynamic Voltage Scaling for Low-Power Embedded Operating Systems](https://www.eecs.umich.edu/courses/eecs571/lectures/lecture12-rtdvs.pdf) for one of the early results.
+- **[memory](https://link.springer.com/article/10.1007/s11241-012-9158-9)**, **[networks](https://sibin.github.io/papers/2017_RTSS_SDNQoS_Rakesh.pdf)**, **[networks-on-chip](https://www.computer.org/csdl/journal/td/2017/05/07728147/13rRUwj7coW)**, **[5G](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9773317)**, _etc.,_ &rarr; real-time scheduling has been applied to wide variety of domains.
 
 
 
@@ -3032,6 +3052,5 @@ EDF can definitely _squeeze_ out the maximum from a system -- as we just saw, it
 
 TODOs:
 
-- priority-based [static v dynamic]
 - dynamic best effort?
 
