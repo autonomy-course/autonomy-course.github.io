@@ -111,6 +111,30 @@
 	<use href="#deadline" x="450" y="120"/>
 	<use href="#deadline" x="650" y="120"/>
 
+	<!-- T2 Jobs -->
+	<use href="#release" x="50" y="260"/>
+	<use href="#release" x="300" y="260"/>
+	<use href="#release" x="550" y="260"/>
+
+	<use href="#deadline" x="300" y="220"/>
+	<use href="#deadline" x="550" y="220"/>
+
+	<!-- T3 Jobs -->
+	<use href="#release" x="50" y="380"/>
+	<use href="#release" x="550" y="380"/>
+
+	<use href="#deadline" x="550" y="310"/>
+
+
+
+
+	<!-- Jobs -->
+    	<use href="#job" x="50" y="120" fill="plum"/>
+    	<use href="#job" x="100" y="120" fill="plum"/>
+
+    	<use href="#job" x="150" y="220" fill="lightgreen"/>
+    	<use href="#job" x="200" y="220" fill="lightgreen"/>
+
 
   <!-- Timeline at the bottom -->
   <line x1="50" y1="350" x2="650" y2="350" stroke="black" stroke-width="2" />

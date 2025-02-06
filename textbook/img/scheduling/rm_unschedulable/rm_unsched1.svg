@@ -7,18 +7,18 @@
         </symbol>
 
         <symbol id="T1-key">
-            <rect width="50" height="30" fill="plum"/>
-  	    <text x="25" y="20" font-family="Arial" font-size="12" text-anchor="middle">1,2</text>
+            <rect width="100" height="30" fill="plum"/>
+  	    <text x="50" y="20" font-family="Arial" font-size="12" text-anchor="middle">2,4</text>
   	    <text x="-15" y="20" font-family="Arial" font-size="17" text-anchor="middle">T<tspan baseline-shift = "sub">1</tspan></text>
         </symbol>
         <symbol id="T2-key">
             <rect width="100" height="30" fill="lightgreen"/>
-  	    <text x="50" y="20" font-family="Arial" font-size="12" text-anchor="middle">1,4</text>
+  	    <text x="50" y="20" font-family="Arial" font-size="12" text-anchor="middle">2,5</text>
   	    <text x="-15" y="20" font-family="Arial" font-size="17" text-anchor="middle">T<tspan baseline-shift = "sub">2</tspan></text>
         </symbol>
         <symbol id="T3-key">
-            <rect width="150" height="30" fill="dimgrey"/>
-  	    <text x="75" y="20" font-family="Arial" font-size="12" text-anchor="middle" fill="white">2,6</text>
+            <rect width="50" height="30" fill="dimgrey"/>
+  	    <text x="25" y="20" font-family="Arial" font-size="12" text-anchor="middle" fill="white">1,10</text>
   	    <text x="-15" y="20" font-family="Arial" font-size="17" text-anchor="middle">T<tspan baseline-shift = "sub">3</tspan></text>
         </symbol>
 
@@ -92,23 +92,8 @@
 
 	<!-- Tasks Key at the top -->
   	<use href="#T1-key" x="50" y="10"/>
-	<use href="#T2-key" x="150" y="10"/>
-  	<use href="#T3-key" x="300" y="10"/>
-
-	<!-- Jobs -->
-    	<!--use href="#job" x="50" y="120" fill="plum"/>
-
-    	<use href="#job" x="100" y="220" fill="lightgreen"/>
-    	<use href="#job" x="150" y="220" fill="lightgreen"/>
-
-    	<use href="#job" x="200" y="320" fill="dimgrey"/-->
-
-
-
-
-
-
-
+	<use href="#T2-key" x="250" y="10"/>
+  	<use href="#T3-key" x="450" y="10"/>
 
 
   <!-- Timeline at the bottom -->
