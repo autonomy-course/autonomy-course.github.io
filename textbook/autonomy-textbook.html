@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-02-04" />
+  <meta name="date" content="2025-02-06" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">February 04,
+                              <li><p class="navbar-text">February 06,
 2025</p></li>
                   </ul>
       </div>
@@ -400,6 +400,10 @@ George Washington University</p></li>
         Executives</a></li>
         <li><a href="#frames" id="toc-frames"><span
         class="toc-section-number">5.2.2</span> Frames</a></li>
+        <li><a href="#priority-based-schedulers"
+        id="toc-priority-based-schedulers"><span
+        class="toc-section-number">5.2.3</span> Priority-Based
+        Schedulers</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -5429,7 +5433,8 @@ geometry_msgs/Point point
             href="https://docs.emlid.com/navio2/ros/">step-by-step
             instructions</a> on how to connect/use the Navio2 and the Pi
             using ROS.</p>
-            <!--link rel="stylesheet" href="./custom.sibin.css"-->
+            <!--t
+             rel="stylesheet" href="./custom.sibin.css"-->
             </section>
             </section>
             </section>
@@ -5631,7 +5636,8 @@ geometry_msgs/Point point
             </blockquote>
             <p>Hence, the utilization for a <strong>single</strong> task
             is,</p>
-            <pre class="math"><code>U_i = \frac{c_i}{T_i}</code></pre>
+            <p><span class="math display">$$ U_i = \frac{c_i}{T_i}
+            $$</span></p>
             <p>where,</p>
             <table>
             <thead>
@@ -5655,13 +5661,41 @@ geometry_msgs/Point point
             </table>
             <p>Now, we can compute the utilization for the
             <strong>entire task set</strong>,</p>
-            <pre class="math"><code>U = \sum_{i=1}^{n} U_i 
-
-= \sum_{i=1}^{n} \frac{c_i}{T_i}</code></pre>
+            <p><span class="math display">$$ U = \sum_{i=1}^{n} U_i =
+            \sum_{i=1}^{n} \frac{c_i}{T_i} $$</span></p>
             <p><strong>Simple Exercise</strong>: what is the total
-            utilization for the following task set? | Task | c | T |
-            |——|—|—| | τ1 | 1 | 4 | | τ2 | 2 | 5 | | τ3 | 5 | 17 |
-            ||</p>
+            utilization for the following task set?</p>
+            <table>
+            <thead>
+            <tr>
+            <th>Task</th>
+            <th>c</th>
+            <th>T</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>τ1</td>
+            <td>1</td>
+            <td>4</td>
+            </tr>
+            <tr>
+            <td>τ2</td>
+            <td>2</td>
+            <td>5</td>
+            </tr>
+            <tr>
+            <td>τ3</td>
+            <td>5</td>
+            <td>17</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             <blockquote>
             <p>what does it mean if <span
             class="math inline"><em>U</em> &gt; 1</span>?</p>
@@ -5852,8 +5886,9 @@ geometry_msgs/Point point
             <ul>
             <li>completely static → <em>e,g.,</em> <a
             href="#cyclic-executives">cyclic executives</a></li>
-            <li>priority-based → static (<em>e.g.,</em> RM) and dynamic
-            (<em>e.g.,</em> EDF)</li>
+            <li><a href="#priority-based-schedulers">priority-based</a>
+            → static (<em>e.g.,</em> RM) and dynamic (<em>e.g.,</em>
+            EDF)</li>
             <li>dynamic best effort</li>
             </ul>
             <p>One of the main problems with the scheduling problem, as
@@ -6061,6 +6096,554 @@ geometry_msgs/Point point
             wait until <code>t=10</code> to resume (and complete) its
             execution:</p>
             <p><img src="img/scheduling/cyclic/cyclic12.frame.svg" width="400"></p>
+            <p><strong>Other Static/Table-Driven
+            Scheduling</strong>:</p>
+            <p>Cyclic executives are an example of schedulers where the
+            tasks are fixed, <em>ahead of time</em>, and all that a
+            scheduler has to do is to <em>dispatch</em> them one at a
+            time in the <strong>exact same order</strong>. Often the
+            tasks are stored in a lookup table (hence the name
+            “table-driven”). Other examples of such systems (with some
+            prioritization and other features built in) have been built,
+            <em>e.g.,</em> <a
+            href="https://par.nsf.gov/servlets/purl/10383232">weighted
+            round robin</a> → also finds use in cloud computing and
+            networking load balancing, <em>etc.</em></p>
+            </section>
+            <section id="priority-based-schedulers" class="level3"
+            data-number="5.2.3">
+            <h3 data-number="5.2.3"><span
+            class="header-section-number">5.2.3</span> Priority-Based
+            Schedulers</h3>
+            <p>One method that overcomes the disadvantages of a
+            completely static method is to <strong>assign priorities for
+            jobs as they arrive</strong>. Hence, when a job is
+            <em>released</em> it gets assigned the a
+            <strong>priority</strong> and the scheduler then
+            dispatches/schedules the job accordingly. Hence, it if is
+            the highest priority job so far, it gets scheduled <em>right
+            away</em>, by preempting any currenlty running tasks. If, on
+            the other hand, it is not the highest priority task then it
+            is inserted into the ready queue at the right position
+            (priority level).</p>
+            <p>To deal with this, we need an <strong>online
+            scheduler</strong>, <em>i.e.,</em> one that is always
+            available to make scheduling decisions – when tasks arrive,
+            complete, miss their deadlines, <em>etc.</em></p>
+            <p>Before we go any further, let’s <strong>update the task
+            model</strong> a little, to make matters simple for us.</p>
+            <ul>
+            <li>as before, we have a task set comprised of <span
+            class="math inline"><em>n</em></span>
+            <strong>periodic</strong> tasks, <span
+            class="math inline"><em>τ</em> = <em>τ</em><sub>1</sub>, <em>τ</em><sub>2</sub>...<em>τ</em><sub><em>n</em></sub></span></li>
+            <li>deadline <strong>is equal to</strong> period,
+            <em>i.e.,</em> <span
+            class="math inline"><em>T</em> = <em>D</em></span>; task
+            periods are <span
+            class="math inline"><em>T</em><sub>1</sub>, <em>T</em><sub>2</sub>, ...<em>T</em><sub><em>n</em></sub></span></li>
+            <li>all tasks are <strong>independant</strong> → no
+            precedence or resource constraints exist</li>
+            <li>tasks <strong>cannot suspend</strong> themselves (or
+            others)</li>
+            <li>tasks are <strong>preemptible</strong> by the OS → each
+            time the highest priority task is executed (under preemptive
+            scheduling)</li>
+            <li>execution time of each task is <strong>bounded</strong>
+            → wcet (<span
+            class="math inline"><em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>, ...<em>c</em><sub><em>n</em></sub></span>)</li>
+            <li>tasks are released (<em>i.e.,</em> placed into the ready
+            queue) <strong>as soon as they arrive</strong></li>
+            <li>all kernel overheads (<em>e.g.,</em> context switches) →
+            assumed to be <strong>zero</strong></li>
+            </ul>
+            <p>While these may seem to be overly simplifying, they still
+            fit the model of many systems and help us develop
+            <em>fundamental results</em>. And we can always add them
+            back one-by-one and still retain the correctness of the
+            theoretical results we develop, while making the system more
+            realistic.</p>
+            <p>Now, in the real of <strong>online,
+            priority-driven</strong> schedulers, we have
+            <strong>two</strong> options:</p>
+            <table>
+            <colgroup>
+            <col style="width: 63%" />
+            <col style="width: 36%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>priority assignment</th>
+            <th>algorithms</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>static</strong></td>
+            <td><a
+            href="#rate-monotonic-scheduler-rm">Rate-Monotonic</a> (RM),
+            Deadline-Monotonic (EDF)</td>
+            </tr>
+            <tr>
+            <td><strong>dynamic</strong></td>
+            <td><a
+            href="#earliest-deadline-first-scheduler-edf">Earliest-Deadline
+            First</a>, Least-Slack Time (LST)</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>Let’s look at one of each (the most popular ones),
+            <em>viz.</em> the <a
+            href="#rate-monotonic-scheduler-rm">Rate-Monotonic</a> (RM)
+            and <a
+            href="#earliest-deadline-first-scheduler-edf">Earliest-Deadline
+            First</a> schedulers. Note that both were first described
+            and analyzed in a <strong>seminal Computer Science
+            Paper</strong>, that has since become one of the most cited
+            and influential papers in the field: <a
+            href="https://dl.acm.org/doi/10.1145/321738.321743">Scheduling
+            Algorithms for Multiprogramming in a Hard- Real-Time
+            Environment</a> by Liu and Layland.</p>
+            <p>Interestingly, both of these algorithms are
+            <strong>provably optimal</strong>, <em>i.e.,</em> no other
+            static or dynamic algorithm can do better than RM and EDF
+            respectively! Not bad for the first paper in the area – talk
+            about setting a high bar, or rather <em>bound</em>!</p>
+            <section id="rate-monotonic-scheduler-rm" class="level4"
+            data-number="5.2.3.1">
+            <h4 data-number="5.2.3.1"><span
+            class="header-section-number">5.2.3.1</span> Rate-Monotonic
+            Scheduler (RM)</h4>
+            <p>The Rate-Montonic priority assignment algorithm assigns
+            <strong>priority based on the period of the task</strong> →
+            shorter the period, the higher the priority!</p>
+            <p>Consider the following example:</p>
+            <table>
+            <thead>
+            <tr>
+            <th>task</th>
+            <th>c</th>
+            <th>T</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>1</sub></span></td>
+            <td>1</td>
+            <td>2</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>2</sub></span></td>
+            <td>1</td>
+            <td>4</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>3</sub></span></td>
+            <td>2</td>
+            <td>6</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>So, based on the RM algorithm, the priority will be:</p>
+            <p><span
+            class="math display"><em>τ</em><sub>1</sub> &gt; <em>τ</em><sub>2</sub> &gt; <em>τ</em><sub>3</sub></span></p>
+            <p>since, <span
+            class="math inline"><em>T</em><sub>1</sub> &lt; <em>T</em><sub>2</sub> &lt; <em>T</em><sub>3</sub></span>.</p>
+            <p>The question now is whether the above task set is
+            <strong>schedulable</strong>? Let us use our previous
+            utilization-based check, <em>i.e.</em>,</p>
+            <p><span class="math display">$$U = \sum_{i=1}^{n}
+            \frac{c_i}{T_i}$$</span></p>
+            <p>So, plugging in the numbers, we get,</p>
+            <p><span class="math display">$$ U = \frac{1}{2} +
+            \frac{1}{4} + \frac{2}{6} = 0.5 + 0.25 + 0.33333 \approx.
+            0.916 $$</span></p>
+            <p>Our test was: <span
+            class="math inline"><em>U</em> &lt; 1</span>. So, this task
+            set is…schedulable? Let us see – by plotting it on the
+            timeline:</p>
+            <p><img src="img/scheduling/rm_unschedulable/pngs/rm.final.png" width="400"></p>
+            <p>As we see, task <span
+            class="math inline"><em>τ</em><sub>3</sub></span> misses its
+            deadline! In fact, with the other two tasks, <span
+            class="math inline"><em>τ</em><sub>1</sub></span> and <span
+            class="math inline"><em>τ</em><sub>2</sub></span> constantly
+            executing, <span
+            class="math inline"><em>τ</em><sub>3</sub></span> will
+            <strong>never</strong> get to execute and
+            <strong>all</strong> of its jobs will miss their
+            deadlines!</p>
+            <blockquote>
+            <p>“Wait!”, you say. OK, <em>one</em> job has missed its
+            deadline, maybe two (from the picture). So how can I make
+            the bold claim that <em>all</em> will miss their
+            deadlines?</p>
+            <p>If you pay close attention to the figure, I have drawn
+            the timeline only for <code>12</code> time steps. Why that
+            number? Why not 10, 20 or something round? Well it so
+            happens that <code>12</code> is the <strong>LCM</strong>
+            (lowest common multiple) of <strong>all</strong> the task
+            periods, <code>2</code>, <code>6</code>,
+            <code>12</code>.</p>
+            <p>Why do we care about the LCM? Turns out, in real-time
+            scheduling, the LCM of the task periods have a special
+            significance. Turns out that if we construct the schedule
+            for <strong>one LCM</strong> nunber of time units, then the
+            schedule <strong>repeats exactly</strong> after that! Hence,
+            the exact same schedule repeats every LCM number of
+            units.</p>
+            <p>The LCM of the constituent (periodic) tasks in the system
+            is referred to as → <strong>hyperperiod</strong>. So, we
+            only need to check our schedule for <strong>one
+            hyperiod</strong>. If the task set is schedulable in that
+            timeframe then it will be and, if not, it will not be.</p>
+            <p>So, for this example, I can state, with confidence, that
+            <strong>all</strong> jobs of <span
+            class="math inline"><em>τ</em><sub>3</sub></span> will miss
+            their deadlines.</p>
+            </blockquote>
+            <p>So, coming back to our analysis, we started with our
+            utilization test <span
+            class="math inline"><em>U</em> &lt; 1</span> which this task
+            set, <em>passed</em>, yet it **failed to schedule*! So, it
+            seems we need something <em>better</em>.</p>
+            <p>Turns out the <a
+            href="https://dl.acm.org/doi/10.1145/321738.321743">Liu and
+            Layland paper</a> has figured this out. So they created
+            another test, one based on: <strong>utilization upper
+            bound</strong>. Since RM is a static priority assignment
+            mechanism, there is a <strong>theoretical limit</strong> on
+            the utilization for a task set, that <strong>depends on the
+            number of tasks</strong>, <code>n</code>, in the system.</p>
+            <p>So, we derive (I leave out the details here. Check the
+            Liu and Layland paper for more details) another check for
+            utilization,</p>
+            <p><span class="math display">$$ U = \sum_{i=1}^n
+            \frac{c_i}{T_i} \le n.(2^{\frac{1}{n}} -1) $$</span></p>
+            <p>If the <strong>total</strong> utilization of the system
+            is below this bound, then the task set is schedulable by RM.
+            <strong>Note</strong> that this is a <em>necessary but
+            <strong>not</strong> sufficient</em> test (more on that
+            later).</p>
+            <p>As we see from above, the value of the right hand side
+            will change with the number of tasks in the system. Hence,
+            with more tasks, the upper bound for <span
+            class="math inline"><em>U</em></span> will reduce.</p>
+            <blockquote>
+            <p>let’s open up the simulator-plotter for checking this for
+            various values of <code>n</code> and see for <span
+            class="math inline"><em>n</em> = 1, 2, ...</span></p>
+            </blockquote>
+            <p>So, we see that</p>
+            <p><span class="math display">$$n = 3\\
+            U_{ub} \approx 0.78
+            $$</span></p>
+            <p>The utilization for our task set was: <span
+            class="math inline">≈</span> <code>0.916</code> which is
+            significantly higher! No wonder our task set wasn’t
+            schedulable!</p>
+            <p>Here is a plot that shows the values for different
+            numbers of tasks:</p>
+            <p><img src="img/scheduling/rm_util_bounds.png" width="400"></p>
+            <p>As we see, the value keeps reducing. Does it keep going
+            <em>all</em> the way down to zero? What if I schedule
+            <code>100</code> tasks? A <code>1000</code>?</p>
+            <p>Turns out, we can check! With the exact same
+            equation.</p>
+            <blockquote>
+            <p>let’s open up the simulator-plotter for checking this for
+            various values of <code>n</code> and see for <span
+            class="math inline"><em>n</em> = 100, 1000, <em>e</em><em>t</em><em>c</em>.</span></p>
+            </blockquote>
+            <p><img src="img/scheduling/rm_util_bound_100.png" width="400"></p>
+            <p>As we see from the figure (and the active plotting), the
+            values seem to <em>plateau</em> out and converge…to
+            <strong><code>0.69</code></strong>! So, for any decent
+            real-time system scheduled using the RM assignment
+            mechanism, if the utilization bound is under
+            <code>0.69</code> then it is schedulable.</p>
+            <p><strong>Optimality</strong>: as mentioned earlier, RM is
+            <strong>optimal</strong>, <em>i.e.,</em></p>
+            <ul>
+            <li>if a task set is schedulable by RM → then there is no
+            other <em>static</em> algorithm that can do better (in terms
+            of utilization)</li>
+            <li>if a task set is <em>not</em> schedulable by RM → there
+            is <strong>no other <em>static</em> algorithm</strong> can
+            schedule it</li>
+            </ul>
+            <section id="exact-response-time-analysis" class="level5"
+            data-number="5.2.3.1.1">
+            <h5 data-number="5.2.3.1.1"><span
+            class="header-section-number">5.2.3.1.1</span> Exact
+            (Response Time) Analysis</h5>
+            <p>Now, let’s go back to one of our earlier examples (from
+            the <a href="#cyclic-executives">cyclic executive</a>
+            chapter):</p>
+            <table>
+            <thead>
+            <tr>
+            <th>task</th>
+            <th>c</th>
+            <th>T</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>1</sub></span></td>
+            <td>1</td>
+            <td>4</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>2</sub></span></td>
+            <td>2</td>
+            <td>6</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>3</sub></span></td>
+            <td>3</td>
+            <td>12</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>We added some period information to the tasks.</p>
+            <p>We know that using the naive utilization test, <span
+            class="math inline"><em>U</em> ≈ .0.833</span>. But, recall
+            that the utilization bound test, for <span
+            class="math inline"><em>n</em> = 3</span> tasks requires,
+            <span class="math inline"><em>U</em> &lt; 0.78</span>. So,
+            this task set must be <em>unschedulable</em>, right? Let’s
+            draw it out on the timeline and see:</p>
+            <p><img src="img/scheduling/rm_schedulable_example/rm.final.svg" width="400"></p>
+            <p>Wait, this is __schedulable**? But it fails our test!</p>
+            <p>This is why I referred to it as a <em>necessary but
+            <strong>not</strong> sufficient</em> test. Hence, for the
+            Liu and Layland utilization bound test,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>result of test</th>
+            <th>schedulable?</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>pass, <em>i.e.,</em> <span
+            class="math inline"><em>U</em><sub><em>u</em></sub><em>b</em> &lt; 0.69</span></td>
+            <td>yes</td>
+            </tr>
+            <tr>
+            <td>fail, <span
+            class="math inline"><em>U</em><sub><em>u</em></sub><em>b</em> &gt; 0.69</span></td>
+            <td><strong>unsure</strong></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>We we need a <em>better</em> test → <strong>Response Time
+            analysis</strong>: - if <strong>all jobs</strong> of a task
+            are able to <strong>complete before their respective
+            deadlines</strong> → task set is schedulable - caveat → we
+            account for the <strong>interference</strong> (hence,
+            delays) encountered by the jobs by <em>all</em> higher
+            priority jobs</p>
+            <p>Let’s look at it in more detail:</p>
+            <ol type="1">
+            <li><strong>worst-case</strong> response time of task, <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>
+            is</li>
+            </ol>
+            <p><span
+            class="math display"><em>R</em><sub><em>i</em></sub> = <em>c</em><sub><em>i</em></sub> + <em>I</em><sub><em>i</em></sub></span></p>
+            <p>where <span
+            class="math inline"><em>I</em><sub><em>i</em></sub></span>
+            is the <strong>interference</strong> face by that job from
+            <strong>all</strong> higher prioriy jobs until then.</p>
+            <ol start="2" type="1">
+            <li>For <em>each</em> higher priority job, <span
+            class="math inline"><em>τ</em><sub><em>j</em></sub></span>,
+            the number of <em>jobs</em> released during the time
+            interval <span
+            class="math inline"><em>R</em><sub><em>i</em></sub></span>
+            id:</li>
+            </ol>
+            <p><span class="math display">$$\left\lceil \frac{R_i}{T_j}
+            \right\rceil$$</span></p>
+            <p>Since <em>each period</em> of task <span
+            class="math inline"><em>τ</em><sub><em>j</em></sub></span>
+            results in a new job being released. Since RM gives higher
+            priority to shorter periods, those released jobs will
+            execute ahead of the current teak, <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>.</p>
+            <ol start="3" type="1">
+            <li>Since <span
+            class="math inline">⌈<em>R</em><sub><em>i</em></sub>/<em>T</em><sub><em>j</em></sub>⌉</span>
+            number of <span
+            class="math inline"><em>τ</em><sub><em>j</em></sub></span>’s
+            jobs execute before <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>,
+            the interference caused by all of them:</li>
+            </ol>
+            <p><span class="math display">$$I_j = \left\lceil
+            \frac{R_i}{T_j} \right\rceil .\ c_j$$</span></p>
+            <ol start="4" type="1">
+            <li>the <strong>total</strong> interference then, is the sum
+            of the individual interference by each of the higher
+            priority jobs, <em>i.e.,</em></li>
+            </ol>
+            <p><span class="math display">$$I = \sum_{j\in
+            hp(i)}\left\lceil \frac{R_i}{T_j} \right\rceil .\ c_j
+            $$</span></p>
+            <ol start="5" type="1">
+            <li>Finally, the <strong>response time</strong> for task,
+            <span
+            class="math inline"><em>τ</em><sub><em>i</em></sub></span>
+            must combine its own (worst-case) execution time with the
+            total interference from <strong>all</strong> higher priority
+            tasks,</li>
+            </ol>
+            <p><span
+            class="math display"><em>R</em><sub><em>i</em></sub> = <em>c</em><sub><em>i</em></sub> + <em>I</em><sub><em>i</em></sub></span></p>
+            <p><span class="math display">$$ R_i = c_i + \sum_{j\in
+            hp(i)}\left\lceil \frac{R_i}{T_j} \right\rceil .\ c_j
+            $$</span></p>
+            <p>For each task, we carry out the above analysis → stop
+            when consecutive iterations provide the
+            <strong>same</strong> values.</p>
+            <ol start="6" type="1">
+            <li>At each stage, check if the response time for a task is
+            less than or equal to its deadline</li>
+            </ol>
+            <p><span
+            class="math display">∀<em>τ</em><sub><em>i</em></sub> : <em>R</em><sub><em>i</em></sub> &lt; <em>T</em><sub><em>i</em></sub></span></p>
+            <p>If the above test passes for all tasks, then the task set
+            is <strong>schedulable</strong> even if the earlier tests
+            fail. Hence, this is both, <em>necessary
+            <strong>and</strong> sufficient</em>.</p>
+            <p><strong>Example</strong> [contd.]: Now, applying this to
+            our errant example:</p>
+            <ol type="1">
+            <li><p>assign priorities: <span
+            class="math inline"><em>τ</em><sub>1</sub> &gt; <em>τ</em><sub>2</sub> &gt; <em>τ</em><sub>3</sub></span></p></li>
+            <li><p>response time calculations</p></li>
+            </ol>
+            <p>For each task, we calculate the response time using the
+            above formula via iterative analysis.</p>
+            <table>
+            <colgroup>
+            <col style="width: 11%" />
+            <col style="width: 26%" />
+            <col style="width: 30%" />
+            <col style="width: 30%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>task</th>
+            <th>iteration</th>
+            <th>calculations</th>
+            <th><span
+            class="math inline"><em>R</em><sub><em>i</em></sub> &lt; <em>T</em><sub><em>i</em></sub></span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>1</sub></span></td>
+            <td>1</td>
+            <td><span
+            class="math inline"><em>R</em><sub>1</sub> = <em>c</em><sub>1</sub> = 1</span></td>
+            <td>yes [ <span class="math inline">1 &lt; 4</span> ]</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>2</sub></span></td>
+            <td>1</td>
+            <td><span
+            class="math inline"><em>R</em><sub>2</sub><sup>0</sup> = <em>c</em><sub>2</sub> = 2</span>
+            <br> <span class="math inline">$R_2^1 = c_2 +
+            \lceil\frac{R_2^0}{T_1}\rceil c_1$</span> <bR> <span
+            class="math inline">$R_2^1 = 2 + \lceil\frac{2}{4}\rceil
+            \cdot 1 = 3$</span></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td>2</td>
+            <td><span class="math inline">$R_2^2 = 2 +
+            \lceil\frac{3}{4}\rceil \cdot 1 = 3$</span> [stop]</td>
+            <td>yes [ <span class="math inline">3 &lt; 6</span> ]</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><em>τ</em><sub>3</sub></span></td>
+            <td>1</td>
+            <td><span
+            class="math inline"><em>R</em><sub>3</sub><sup>0</sup> = <em>c</em><sub>3</sub> = 3</span>
+            <br> <span class="math inline">$R_3^1 = c_3 +
+            \lceil\frac{R_3^0}{T_1}\rceil c_1 +
+            \lceil\frac{R_3^0}{T_2}\rceil c_2$</span> <br> <span
+            class="math inline">$R_3^1 = 3 + \lceil\frac{3}{4}\rceil
+            \cdot 1 + \lceil\frac{3}{6}\rceil \cdot 2 = 6$</span></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td>2</td>
+            <td><span class="math inline">$R_3^2 = 3 +
+            \lceil\frac{6}{4}\rceil \cdot 1 + \lceil\frac{6}{6}\rceil
+            \cdot 2 = 8$</span></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td>3</td>
+            <td><span class="math inline">$R_3^3 = 3 +
+            \lceil\frac{8}{4}\rceil \cdot 1 + \lceil\frac{8}{6}\rceil
+            \cdot 2 = 8$</span> [stop]</td>
+            <td>yes [ <span class="math inline">8 &lt; 12</span> ]</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Since the response time of <strong>all</strong> tasks
+            meet their deadlines under RM scheduling, therefore the task
+            set is <strong>schedulable</strong>.</p>
+            </section>
+            </section>
+            <section id="earliest-deadline-first-scheduler-edf"
+            class="level4" data-number="5.2.3.2">
+            <h4 data-number="5.2.3.2"><span
+            class="header-section-number">5.2.3.2</span>
+            Earliest-Deadline First Scheduler (EDF)</h4>
             <p><br> <br> <br> <br> <br> <br> <br> <br> <br> <br></p>
             <p>TODOs:</p>
             <ul>
@@ -6074,6 +6657,7 @@ geometry_msgs/Point point
             <li>priority-based [static v dynamic]</li>
             <li>dynamic best effort?</li>
             </ul>
+            </section>
             </section>
             </section>
             </section>

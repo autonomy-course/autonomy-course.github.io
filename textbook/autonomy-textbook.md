@@ -2407,7 +2407,8 @@ In fact, the basic Raspbian image comes installed with ROS. We can use it commun
 
 **Resources**: please read the [step-by-step instructions](https://docs.emlid.com/navio2/ros/) on how to connect/use the Navio2 and the Pi using ROS.
 
-<!--link rel="stylesheet" href="./custom.sibin.css"-->
+<!--t
+ rel="stylesheet" href="./custom.sibin.css"-->
 
 
 # Scheduling for Real-Time Systems
@@ -2500,9 +2501,7 @@ One might ask: if there are (potentially) an _infinite_ number of jobs for each 
 
 Hence, the utilization for a **single** task is,
 
-```math
-U_i = \frac{c_i}{T_i}
-```
+$$ U_i = \frac{c_i}{T_i} $$
 
 where,
 
@@ -2513,13 +2512,10 @@ where,
 
 Now, we can compute the utilization for the **entire task set**,
 
-```math
-U = \sum_{i=1}^{n} U_i 
-
-= \sum_{i=1}^{n} \frac{c_i}{T_i}
-```
+$$ U = \sum_{i=1}^{n} U_i = \sum_{i=1}^{n} \frac{c_i}{T_i} $$
 
 **Simple Exercise**: what is the total utilization for the following task set?
+
 | Task | c | T |
 |------|---|---|
 | τ1   | 1 | 4 |
@@ -2625,7 +2621,7 @@ Hence, the **general scheduling problem** is,
 There is a [large body of literature](https://link.springer.com/book/10.1007/978-1-4614-0676-1) in the domain of real-time scheduling algorithms. In this chapter, we will focus on a few of them, _viz._,
 
 - completely static &rarr; _e,g.,_ [cyclic executives](#cyclic-executives)
-- priority-based &rarr; static (_e.g.,_ RM) and dynamic (_e.g.,_ EDF)
+- [priority-based](#priority-based-schedulers) &rarr; static (_e.g.,_ RM) and dynamic (_e.g.,_ EDF)
 - dynamic best effort
 
 One of the main problems with the scheduling problem, as defined above (and in general), is that many variants of the problem are **intractable**, _i.e.,_ NP-Hard or even NP-Complete.
@@ -2738,8 +2734,222 @@ Task $T_3$ is _forced_ to relinquish the processo at `t=6` even though it has so
 
 <img src="img/scheduling/cyclic/cyclic12.frame.svg" width="400">
 
+**Other Static/Table-Driven Scheduling**:
+
+Cyclic executives are an example of schedulers where the tasks are fixed, _ahead of time_, and all that a scheduler has to do is to _dispatch_ them one at a time in the **exact same order**. Often the tasks are stored in a lookup table (hence the name "table-driven"). Other examples of such systems (with some prioritization and other features built in) have been built, _e.g.,_ [weighted round robin](https://par.nsf.gov/servlets/purl/10383232) &rarr; also finds use in cloud computing and networking load balancing, _etc._
 
 
+### Priority-Based Schedulers
+
+One method that overcomes the disadvantages of a completely static method is to **assign priorities for jobs as they arrive**. Hence, when a job is _released_ it gets assigned the a **priority** and the scheduler then dispatches/schedules the job accordingly. Hence, it if is the highest priority job so far, it gets scheduled _right away_, by preempting any currenlty running tasks. If, on the other hand, it is not the highest priority task then it is inserted into the ready queue at the right position (priority level).
+
+To deal with this, we need an **online scheduler**, _i.e.,_ one that is always available to make scheduling decisions -- when tasks arrive, complete, miss their deadlines, _etc._
+
+Before we go any further, let's **update the task model** a little, to make matters simple for us. 
+
+- as before, we have a task set comprised of $n$ **periodic** tasks, $\tau = {\tau_1, \tau_2...\tau_n}$
+- deadline **is equal to** period, _i.e.,_ $T=D$; task periods are $T_1, T_2, ... T_n$
+- all tasks are **independant** &rarr; no precedence or resource constraints exist
+- tasks **cannot suspend** themselves (or others)
+- tasks are **preemptible** by the OS &rarr; each time the highest priority task is executed (under preemptive scheduling)
+- execution time of each task is **bounded** &rarr; wcet ($c_1, c_2, ... c_n$)
+- tasks are released (_i.e.,_ placed into the ready queue) **as soon as they arrive**
+- all kernel overheads (_e.g.,_ context switches) &rarr; assumed to be **zero**
+
+While these may seem to be overly simplifying, they still fit the model of many systems and help us develop _fundamental results_. And we can always add them back one-by-one and still retain the correctness of the theoretical results we develop, while making the system more realistic. 
+
+Now, in the real of **online, priority-driven** schedulers, we have **two** options:
+
+| priority assignment | algorithms |
+|---------------------|------------|
+| **static** | [Rate-Monotonic](#rate-monotonic-scheduler-rm) (RM), Deadline-Monotonic (EDF) |
+| **dynamic** | [Earliest-Deadline First](#earliest-deadline-first-scheduler-edf), Least-Slack Time (LST) |
+||
+
+<br>
+
+Let's look at one of each (the most popular ones), _viz._ the [Rate-Monotonic](#rate-monotonic-scheduler-rm) (RM) and [Earliest-Deadline First](#earliest-deadline-first-scheduler-edf) schedulers. Note that both were first described and analyzed in a **seminal Computer Science Paper**, that has since become one of the most cited and influential papers in the field: [Scheduling Algorithms for Multiprogramming in a Hard- Real-Time Environment](https://dl.acm.org/doi/10.1145/321738.321743) by Liu and Layland.
+
+Interestingly, both of these algorithms are **provably optimal**, _i.e.,_ no other static or dynamic algorithm can do better than RM and EDF respectively! Not bad for the first paper in the area -- talk about setting a high bar, or rather _bound_!
+
+#### Rate-Monotonic Scheduler (RM)
+
+The Rate-Montonic priority assignment algorithm assigns **priority based on the period of the task** &rarr; shorter the period, the higher the priority!
+
+Consider the following example:
+
+|task|c|T|
+|----|--|----|
+| $\tau_1$ | 1| 2 |
+| $\tau_2$ | 1| 4 |
+| $\tau_3$ | 2| 6|
+||
+
+So, based on the RM algorithm, the priority will be:
+
+$$\tau_1 > \tau_2 > \tau_3$$
+
+since, $T_1 < T_2 < T_3$.
+
+The question now is whether the above task set is **schedulable**? Let us use our previous utilization-based check, _i.e._,
+
+$$U = \sum_{i=1}^{n} \frac{c_i}{T_i}$$
+
+So, plugging in the numbers, we get,
+
+$$ U = \frac{1}{2} + \frac{1}{4} + \frac{2}{6} = 0.5 + 0.25 + 0.33333 \approx. 0.916 $$
+
+Our test was: $U < 1$. So, this task set is...schedulable? Let us see -- by plotting it on the timeline:
+
+<img src="img/scheduling/rm_unschedulable/pngs/rm.final.png" width="400">
+
+As we see, task $\tau_3$ misses its deadline! In fact, with the other two tasks, $\tau_1$ and $\tau_2$ constantly executing, $\tau_3$ will **never** get to execute and **all** of its jobs will miss their deadlines!
+
+> "Wait!", you say. OK, _one_ job has missed its deadline, maybe two (from the picture). So how can I make the bold claim that _all_ will miss their deadlines?
+>
+> If you pay close attention to the figure, I have drawn the timeline only for `12` time steps. Why that number? Why not 10, 20 or something round? Well it so happens that `12` is the **LCM** (lowest common multiple) of **all** the task periods, `2`, `6`, `12`.
+>
+> Why do we care about the LCM? Turns out, in real-time scheduling, the LCM of the task periods have a special significance. Turns out that if we construct the schedule for **one LCM** nunber of time units, then the schedule **repeats exactly** after that! Hence, the exact same schedule repeats every LCM number of units.
+>
+> The LCM of the constituent (periodic) tasks in the system is referred to as &rarr; **hyperperiod**. So, we only need to check our schedule for **one hyperiod**. If the task set is schedulable in that timeframe then it will be and, if not, it will not be.
+>
+> So, for this example, I can state, with confidence, that **all** jobs of $\tau_3$ will miss their deadlines.
+
+So, coming back to our analysis, we started with our utilization test $U < 1$ which this task set, _passed_, yet it **failed to schedule*! So, it seems we need something _better_. 
+
+Turns out the [Liu and Layland paper](https://dl.acm.org/doi/10.1145/321738.321743) has figured this out. So they created another test, one based on: **utilization upper bound**. Since RM is a static priority assignment mechanism, there is a **theoretical limit** on the utilization for a task set, that **depends on the number of tasks**, `n`, in the system.
+
+So, we derive (I leave out the details here. Check the Liu and Layland paper for more details) another check for utilization,
+
+$$ U = \sum_{i=1}^n \frac{c_i}{T_i} \le n.(2^{\frac{1}{n}} -1) $$
+
+If the **total** utilization of the system is below this bound, then the task set is schedulable by RM. **Note** that this is a _necessary but **not** sufficient_ test (more on that later).
+
+As we see from above, the value of the right hand side will change with the number of tasks in the system. Hence, with more tasks, the upper bound for $U$ will reduce. 
+
+> let's open up the simulator-plotter for checking this for various values of `n` and see for $n=1, 2, ...$
+
+So, we see that 
+
+$$n = 3\\
+U_{ub} \approx 0.78
+$$
+
+The utilization for our task set was: $\approx$ `0.916` which is significantly higher! No wonder our task set wasn't schedulable!
+
+
+Here is a plot that shows the values for different numbers of tasks:
+
+<img src="img/scheduling/rm_util_bounds.png" width="400">
+
+As we see, the value keeps reducing. Does it keep going _all_ the way down to zero? What if I schedule `100` tasks? A `1000`?
+
+Turns out, we can check! With the exact same equation.
+
+> let's open up the simulator-plotter for checking this for various values of `n` and see for $n=100, 1000, etc.$
+
+<img src="img/scheduling/rm_util_bound_100.png" width="400">
+
+As we see from the figure (and the active plotting), the values seem to _plateau_ out and converge...to **`0.69`**! So, for any decent real-time system scheduled using the RM assignment mechanism, if the utilization bound is under `0.69` then it is schedulable. 
+
+**Optimality**: as mentioned earlier, RM is **optimal**, _i.e.,_
+
+- if a task set is schedulable by RM &rarr; then there is no other _static_ algorithm that can do better (in terms of utilization)
+- if a task set is _not_ schedulable by RM &rarr; there is **no other _static_ algorithm** can schedule it
+
+##### Exact (Response Time) Analysis
+
+Now, let's go back to one of our earlier examples (from the [cyclic executive](#cyclic-executives) chapter):
+
+|task|c|T|
+|----|--|----|
+| $\tau_1$ | 1| 4 |
+| $\tau_2$ | 2| 6 |
+| $\tau_3$ | 3| 12 |
+||
+
+We added some period information to the tasks.
+
+We know that using the naive utilization test, $U \approx. 0.833$. But, recall that the utilization bound test, for $n=3$ tasks requires, $U < 0.78$. So, this task set must be _unschedulable_, right? Let's draw it out on the timeline and see:
+
+<img src="img/scheduling/rm_schedulable_example/rm.final.svg" width="400">
+
+Wait, this is __schedulable**? But it fails our test!
+
+This is why I referred to it as a _necessary but **not** sufficient_ test. Hence, for the Liu and Layland utilization bound test,
+
+|result of test|schedulable?|
+|--------------|------------|
+| pass, _i.e.,_ $U_ub < 0.69$ | yes |
+| fail, $U_ub > 0.69$ | **unsure**|
+||
+
+We we need a _better_ test &rarr; **Response Time analysis**:
+- if **all jobs** of a task are able to **complete before their respective deadlines** &rarr; task set is schedulable
+- caveat &rarr; we account for the **interference** (hence, delays) encountered by the jobs by _all_ higher priority jobs
+
+Let's look at it in more detail:
+
+1. **worst-case** response time of task, $\tau_i$ is
+
+$$R_i = c_i + I_i$$
+
+where $I_i$ is the **interference** face by that job from **all** higher prioriy jobs until then.
+
+2. For _each_ higher priority job, $\tau_j$, the number of _jobs_ released during the time interval $R_i$ id:
+
+$$\left\lceil \frac{R_i}{T_j} \right\rceil$$
+
+Since _each period_ of task $\tau_j$ results in a new job being released. Since RM gives higher priority to shorter periods, those released jobs will execute ahead of the current teak, $\tau_i$.
+
+3. Since $\lceil {R_i}/{T_j} \rceil$ number of $\tau_j$'s jobs execute before $\tau_i$, the interference caused by all of them:
+
+$$I_j = \left\lceil \frac{R_i}{T_j} \right\rceil .\ c_j$$
+
+
+4. the **total** interference then, is the sum of the individual interference by each of the higher priority jobs, _i.e.,_
+
+$$I = \sum_{j\in hp(i)}\left\lceil \frac{R_i}{T_j} \right\rceil .\ c_j $$
+
+5. Finally, the **response time** for task, $\tau_i$ must combine its own (worst-case) execution time with the total interference from **all** higher priority tasks, 
+
+$$R_i = c_i + I_i$$
+
+$$ R_i = c_i + \sum_{j\in hp(i)}\left\lceil \frac{R_i}{T_j} \right\rceil .\ c_j $$
+
+For each task, we carry out the above analysis &rarr; stop when consecutive iterations provide the **same** values. 
+
+6. At each stage, check if the response time for a task is less than or equal to its deadline
+
+$$ \forall \tau_i: R_i < T_i $$
+
+If the above test passes for all tasks, then the task set is **schedulable** even if the earlier tests fail. Hence, this is both, _necessary **and** sufficient_.
+
+**Example** [contd.]: Now, applying this to our errant example:
+
+1. assign priorities: $\tau_1 > \tau_2 > \tau_3$
+
+2. response time calculations
+
+For each task, we calculate the response time using the above formula via iterative analysis.
+
+|task | iteration | calculations| $R_i < T_i$ |
+|-----|-----------|-------------|-------------|
+| $\tau_1$ | 1 | $R_1 = c_1 = 1$ | yes [ $1<4$ ]
+| $\tau_2$ | 1 | $R_2^0 = c_2 = 2$ <br> $R_2^1 = c_2 + \lceil\frac{R_2^0}{T_1}\rceil c_1$ <bR> $R_2^1 = 2 + \lceil\frac{2}{4}\rceil \cdot 1 = 3$ ||
+|          | 2 | $R_2^2 = 2 + \lceil\frac{3}{4}\rceil \cdot 1 = 3$ [stop] | yes [ $3 < 6$ ]
+| $\tau_3$ | 1 | $R_3^0 = c_3 = 3$ <br> $R_3^1 = c_3 + \lceil\frac{R_3^0}{T_1}\rceil c_1 + \lceil\frac{R_3^0}{T_2}\rceil c_2$ <br> $R_3^1 = 3 + \lceil\frac{3}{4}\rceil \cdot 1 + \lceil\frac{3}{6}\rceil \cdot 2 = 6$ ||
+|          | 2 | $R_3^2 = 3 + \lceil\frac{6}{4}\rceil \cdot 1 + \lceil\frac{6}{6}\rceil \cdot 2 = 8$ | |
+|          | 3 | $R_3^3 = 3 + \lceil\frac{8}{4}\rceil \cdot 1 + \lceil\frac{8}{6}\rceil \cdot 2 = 8$ [stop] | yes [ $8<12$ ]
+||
+
+Since the response time of **all** tasks meet their deadlines under RM scheduling, therefore the task set is **schedulable**.
+
+
+
+
+
+#### Earliest-Deadline First Scheduler (EDF)
 
 
 
