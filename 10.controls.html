@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## control theory
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+consider a simple problem &rarr; how do you balance a ball?
+
+Note:
+- discuss pen balance
+- show example in class
+- what is the "input"?
+- what is the "output"? 
+- what is the "desired state"?
+
+---
+
+consider a simple problem &rarr; how do you balance a ball?
+
+<img src="img/controls/soccer_ball_balance.gif" width="500">
+
+---
+
+consider a simple problem &rarr; how do you balance a ball?
+
+<img src="img/controls/soccer_ball_balance.gif" width="500">
+
+ok, that's a bit hard!
+
+---
+
+let's simplify &rarr; in a **one-dimensional** plane?
+
+
+---
+
+balance a ball &rarr; in the **middle** of a table
+
+<img src="img/controls/ball/ball.unstable.gif" width="900">
+
+---
+
+balance a ball &rarr; in the **middle** of a table
+
+<img src="img/controls/ball/ball.unstable.gif" width="900">
+
+pretty good attempt but **unstable**!
+
+---
+
+### goals
+
+- the ball remains **stable** and
+- it is in the **middle** of the table
+
+--- 
+
+options
+
+1. tilt the table down on the left (**anti-clockwise**)
+2. title the table down on the right (**clockwise**)
+
+---
+
+options
+
+1. tilt the table down on the left (**anti-clockwise**)
+2. title the table down on the right (**clockwise**)
+
+
+---
+
+options
+
+1. tilt the table down on the left (**anti-clockwise**)
+2. title the table down on the right (**clockwise**)
+3. control the **speed** at which the table tilts
+
+---
+
+### parameters for the problem
+
+
+---
+
+### parameters for the problem
+
+|type | options |
+|-----|---------|
+| **inputs** | speed (clockwise, anticlockwise) |
+
+---
+
+### parameters for the problem
+
+|type | options |
+|-----|---------|
+| **inputs** | speed (clockwise, anticlockwise) |
+| **output** | ball velocity, acceleration |
+||
+
+---
+
+we need to **control** outputs &rarr; modifying inputs to system
+
+---
+
+## control theory
+
+---
+
+## control theory
+
+- **multidisciplinary** field &rarr; applied mathematics+engineering
+
+---
+
+## control theory
+
+- **multidisciplinary** field &rarr; applied mathematics+engineering
+- **wide** use &rarr; _e.g.,_  mechanical, aerospace, electrical, chemical, _etc._
+
+---
+
+## control theory
+
+- **multidisciplinary** field &rarr; applied mathematics+engineering
+- **wide** use &rarr; _e.g.,_  mechanical, aerospace, electrical, chemical, _etc._
+- even biological sciences, finance, you name it!
+
+---
+
+anything that you,
+
+---
+
+anything that you,
+
+- **want to control** and
+
+---
+
+anything that you,
+
+- **want to control** and
+- can **develop a model**
+
+---
+
+anything that you,
+
+- **want to control** and
+- can **develop a model**
+
+develop a <font style="background-color:orange">**controller**</font> &rarr; using control theory
+
+--- 
+
+lots of **everyday** applications as well
+
+--- 
+
+lots of **everyday** applications as well
+
+adaptive cruise control, thermostats, ovens, lawn sprinkler systems, _etc._
+
+---
+
+### control theory | **basic idea**
+
+---
+
+### control theory | **basic idea**
+
+- **understand** a process or a system &rarr; develop a **model**
+
+> **relationships between &rarr; inputs and outputs**
+
+---
+
+### control theory | **model**
+
+---
+
+### control theory | **model**
+
+**adjust the inputs** :model &rarr; to get **desired outputs**
+
+---
+
+relationship between inputs and outputs &rarr; **empirical analysis**
+
+---
+
+relationship between inputs and outputs &rarr; **empirical analysis**
+
+1. **make changes** to the input
+
+---
+
+relationship between inputs and outputs &rarr; **empirical analysis**
+
+1. **make changes** to the input
+2. wait for the system to **respond**
+
+---
+
+relationship between inputs and outputs &rarr; **empirical analysis**
+
+1. **make changes** to the input
+2. wait for the system to **respond**
+2. **observe changes** in the output
+
+Note:
+- Even if the model is based on an equation from physics, the parameters within the model are still identified experimentally or through computer simulations.
+
+---
+
+this is **not** what we **really** want!
+
+---
+
+this is **not** what we **really** want!
+
+so, what is is that we want?
+
+---
+
+what is the **objective**?
+
+---
+
+what is the **objective**?
+
+_e.g.,_ balance the ball
+
+---
+
+what is the **objective**?
+
+_e.g.,_ balance the ball &rarr; control the **output**
+
+---
+
+control the **output** &rarr; tune the **input**!
+
+---
+
+### simple example | **lightbulb**
+
+<img src="img/controls/lightbulb.png" width="900">
+
+
+---
+
+### simple example | **lightbulb**
+
+<img src="img/controls/lightbulb.png" width="900">
+
+assume we don't know relationship between **bulb** and **switch**
+
+---
+
+assume we don't know relationship between **bulb** and **switch**
+
+conduct a few experiments &rarr; capture the relationship
+
+---
+
+results of empirical analysis
+
+|switch state <br> (input) | bulb state <br> (output)|
+|---------------------|--------------------|
+| off | off |
+| on  | on |
+||
+
+---
+
+results of empirical analysis
+
+|switch state <br> (input) | bulb state <br> (output)|
+|---------------------|--------------------|
+| off | off |
+| on  | on |
+||
+
+"model" of input (switch state) &rarr; output (ligthbulb state)
+
+---
+
+results of empirical analysis
+
+|switch state <br> (input) | bulb state <br> (output)|
+|---------------------|--------------------|
+| off | off |
+| on  | on |
+||
+
+"model" of input (switch state) &rarr; output (ligthbulb state)
+
+**not** the control model
+
+---
+
+**not** the control model
+
+### why?
+
+---
+
+we care about &rarr; if **bulb** is <scb>on</scb> (or <scb>off</scb>)
+
+---
+
+we care about &rarr; if **bulb** is <scb>on</scb> (or <scb>off</scb>)
+
+**not** if switch is <scb>on</scb> (or <scb>off</scb>)
+
+---
+
+so to develop a **control model** &rarr; **invert** above relationship
+
+---
+
+### **control model** | lightbulb
+
+---
+
+### **control model** | lightbulb
+
+
+|desired output <br> lightbulb state| corresponding input <br> switch state|
+|---------------------|--------------------|
+
+---
+
+### **control model** | lightbulb
+
+|desired output <br> lightbulb state| corresponding input <br> switch state|
+|---------------------|--------------------|
+| on | on |
+| off  | off |
+||
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal-js/dist/reveal.js"></script>
+        <script src="assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
