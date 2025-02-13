@@ -290,7 +290,281 @@ Security is another cross-cutting issue &rarr; <scb>can affect</scb> **all** com
 Hence this figure is a (loose) map of this course:
 
 <img src="img/stack_architecture/stack_overview.png" width="300">
-<!--link rel="stylesheet" href="./custom.sibin.css"-->
+<!--rel="stylesheet" href="./custom.sibin.css"-->
+
+
+# Control Theory
+
+Consider a simple problem &rarr; how do you balance a ball?
+
+<img src="img/controls/soccer_ball_balance.gif">
+
+<br>
+
+I guess that's more complicated than what we wanted! So, let's make it really simple and try in a _one dimensional plane_, as follows:
+
+<img src="img/controls/ball/ball.unstable.gif" width="300">
+
+We want to balance the ball in the _middle_ of the table. And the ball moves either left or right, based on how we _tilt_ the table. 
+
+As we see from this picture, a naive attempt at balancing the ball can quickly make it "_unstable_". But, our objective, is to make sure that,
+
+- the ball remains **stable** and
+- it is in the **middle** of the table
+
+The options that are available to us are:
+
+1. tilt the table down on the left (anti-clockwise)
+2. title the table down on the right (clockwise)
+
+We also have the ability to control the _speed_ at which the table tilts to either side. We can actually combine these, as we shall see.
+
+Hence, the parameters for the problem are:
+
+|type | options |
+|-----|---------|
+| inputs | speed (clockwise, anticlockwise) |
+| output | ball velocity, acceleration |
+||
+
+Some how, we need to _control_ the outputs by modifying the inputs to the system. Enter **control theory**. 
+
+
+## Control Theory | Introduction
+
+Control theory is a _multidisciplinary_ field at the intersection of applied mathematics and engineering. Engineering fields that heavily utilize control theory include mechanical, aerospace, electrical and chemical engineering. Control theory has been applied to the biological sciences, finance, you name it.
+
+Anything that you,
+
+- you **want to control** and
+- can **develop a model**
+
+you can develop a "_controller_" for managing it, using the tools of control theory.
+
+In our everyday life, we interact with technologies that utilize control theory. They appear in applications like adaptive cruise control, thermostats, ovens and even lawn sprinkler systems. The field of control theory is huge and there's a wide range of subdisciplines.
+
+The basic idea behind control theory is to _understand a process or a system_ by developing a model for it that represents,
+
+> the **relationships between inputs and outputs for the system**
+
+We then use this model to **adjust the inputs** &rarr; to get **desired outputs**. The relationship between the inputs and outputs is usually obtained through empirical analysis, _viz.,_,
+
+1. makes change to the input
+2. wait for the system to respond
+2. observe changes in the output. 
+
+Even if the model is based on an equation from physics, the parameters within the model are still identified experimentally or through computer simulations.
+
+We repeat the experiments/simulations as needed to "understand" the system as well as we can, in ordero to develop the model. Once the model has been developed, we develop a **control model** that can used to tune the input &rarr; output relationship.
+
+In effect, we are _inverting_ the original model (input &rarr; output) to develop, 
+
+> control model: input &larr; output
+
+To better understand this, consider the example of a light bulb and switch:
+
+<img src="img/controls/lightbulb.png" width="300">
+
+Even if we didn't know the relationship between the switch and bulb, we can conduct a few experiments to figure out the following:
+
+|switch state <br> (input) | bulb state <br> (output)|
+|---------------------|--------------------|
+| off | off |
+| on  | on |
+||
+
+Now we have our "model" of input (switch state) &rarr; output (ligthbulb state). This model works as as no _external_ disturbances occur (power failure or bulb burn out).
+
+But, this is _not_ our control model. For that, we need to **invert** the model we've built so far. 
+
+So, we start with the **desired output state**, _e.g.,_ the "lightbulb must be on". Then, we reason backwards to: "_what should the input be to achieve this desired state?_". Should the switch be `on` or `off`?
+
+From our original model (and experiments), we have created the I/O relationship table above. Hence, it stands to reason that we can "invert" it as:
+
+|desired output <br> lightbulb state| corresponding input <br> switch state|
+|---------------------|--------------------|
+| on | on |
+| off  | off |
+||
+
+<br>
+
+Now, let'ss **formalize** things a little. 
+
+Consider the following mathematical model that describes the behavior of a system:
+
+<img src="img/controls/equations/svgs/equations.002.svg" width="300">
+
+The model says that if we change the input `u` the output `y` will change to be **twice** the value of the input `u`.
+
+Now, in control theory, we are concerned about how to **get to a specific output**. Hence, if we want to reach a specific value of `y`, say &rarr; **$y^*$**, we need to _manipulate the model_ to now create a "control model", _i.e.,_
+
+$$u = \frac{y^*}{2}$$
+
+This model says for any value of the output $y^*$ that we want, we can identify the input `u` &rarr; essentially dividing $y^*$ by `2`. Notice that this equation is now **in terms of `u`** &rarr; we have our **control law**! Restating the obvious, this is an "inverse" of the original model of the system.
+
+We have just developed our **first controller**! The desired value, $y^*$ is referred to as the **setpoint**. We get to the setpoint by picking the right value for `u`. 
+
+Developing a control law, in a sense, is inverting your model to rewrite the output in terms of the input so that you can get the output you want. More complex systems lead to more complicated control laws. Practitioners have developed methods of developing control laws for systems whose models cannot be cleanly inverted, _e.g.,_ such as nonlinear systems or systems with dead times.
+
+### Open-Loop vs Closed-Loop Control
+
+For the control law we just developed, if our model is accurate and there are no disturbances then, 
+
+$$ y = y^*$$
+
+However, note that there is nothing ensuring that the value of $y = y^*$. We just assume (rather, _expect_) that it would be the case. This is known as an **open loop controller**. You desire a certain output and hope that the controller actually gets there.
+
+So, the open loop controller is depicted as:
+
+<img src="img/controls/controls_openloop/controls.openloop.svg" >
+
+What we really want, is to somehow _ensure_ that the controllers gets to its setpoint. How do we do that?
+
+The problem is that while the input drives the output, there is no way to _guarantee_ that the controller will get to the set point. 
+
+What we really need, is a **closed-loop controller** &rarr; one that uses **feedback** to,
+
+- **adjust `u`**
+- ensure that we get to $y^*$ (or, at least as close to it as possible).
+
+The feedback typically comes from the output of the controller model that we created. So,
+
+<img src="img/controls/controls_closedloop/controls.closedloop.final.svg">
+
+Note that the feedback can be positive or negative. 
+
+
+[The above description is distillation of the [excellent description found here](https://www.reddit.com/r/ControlTheory/comments/lqjgb3/comment/gogu5pu/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button).]
+
+
+## Feedback Control
+
+Consider the following problem (that we increasingly encounter in the real world):
+
+> how do you ensure that a car remains in the _center_ of its lane?
+
+So, we have a car moving on the road, thus:
+
+<img src="img/controls/feedback_lane/car_road.1.png" width="200">
+
+<br>
+
+the blue arrow shows the direction of motion of the car. Hence, for the car to remain in the _center_ of the lane, we need to apply a **correction** to its direction of motion,
+
+<img src="img/controls/feedback_lane/car_road.2.png" width="200">
+
+<br>
+
+There are some questions that come up:
+
+- **how** do we apply the corrections?
+- **how much** and
+- **when** do we **stop**?
+
+Enter **feedback control**:
+
+> - _compare_ system state to the desired state
+> - apply a _change_ to the system inputs &rarr; counteract the deviations
+> - repeat until desired outcome &rarr; setpoint
+
+**Example**: let's see how feedback control can be applied to a temperature control of a room. 
+
+Given a "desired" room temperature (as input to a thermostate), what do we need to consider while attempting to achieve this temperature?
+
+<img src="img/controls/feedback_temp/temperature.1.png" width="200">
+
+The thermostate needs to control/provide inputs to a furnace/AC,
+
+<img src="img/controls/feedback_temp/temperature.2.png" width="300">
+
+which then affects the temperature in the room:
+
+<img src="img/controls/feedback_temp/temperature.3.png" width="400">
+
+Easy! Done...right?
+
+Except, the real world is far from ideal. We have to deal with disturbances...
+
+<img src="img/controls/feedback_temp/vader_disturbance_force.jpg" width="300">
+
+<br>
+
+Well not that kind of disturbance, but pesky issues like heat loss, bad insulation and physical in general:
+
+<img src="img/controls/feedback_temp/temperature.4.png" width="500">
+
+As we see from the picture, we may not get to the expected behavior due to external factors. So, as before, just the input will not suffice to reach the setpoint. 
+
+So, we provide "feedback" to the controller:
+
+<img src="img/controls/feedback_temp/temperature.5.png" width="500">
+
+Essentially the temperature reading of the room, _after_ the thermostat and furnace/AC have completed their operations based on the original inputs (desired temperature).
+
+Let's introduce some _generic_ technical terms for each of these components:
+
+<img src="img/controls/feedback_temp/temperature.6.png" width="500">
+
+The "controller" is based on the "control model" that we developed earlier. It sends commands ("_actuation signals_") to an actuator and then affects the _process under control_. Finally, the _process variable_ (the "output" from the earlier discussions) is what we want to drive towards the set point.
+
+**Note**: in the case that feedback is not possible, there is work on &rarr; [open-loop control](https://www.electronics-tutorials.ws/systems/open-loop-system.html) and [feedforward control](https://web.stanford.edu/class/archive/ee/ee392m/ee392m.1034/Lecture5_Feedfrwrd.pdf).
+
+Another example &rarr; cruise control.
+
+<img src="img/controls/feedback_temp/cruise_control.png" width="500">
+
+Note how the feedback reaches the controller in this case. 
+
+So, at a high-level, a **closed-loop feedback control system** looks like,
+
+<img src="img/controls/closed_loop_feedback.1.png" width="400">
+
+Some of these inputs/edges have _specific_ names:
+
+<img src="img/controls/closed_loop_feedback.2.png" width="400">
+
+**Note:** the main goal &rarr; **error is minimized** (ideally `0`).
+
+A more formal definition of the same quantities,
+
+<img src="img/controls/closed_loop_feedback.3.png" width="400">
+
+|quantity | definition |
+|---------|------------|
+| $r(t)$  | **reference**/set point|
+| $e(t)$  | **error** |
+| $u(t)$  | **control signal**/"input" |
+| $y(t)$  | (expected/final) **output** |
+| $\overline{y(t)}$ | "feedback"/**estimate** |
+||
+
+Now let's apply this feedback control model to the earlier problem of lane following.
+
+
+### Feedback Control Applied to Lane Following
+
+Recall that we want to keep the car in the center of its lane:
+
+<img src="img/controls/feedback_lane/car_road.2.png" width="100">
+
+But here's a question &rarr; _how do you find the **center** of the lane?_
+
+
+
+**References**:
+
+1. Control theory introductions: [1](https://www.basicknowledge101.com/pdf/control/Control%20theory.pdf), [2](https://engineeringmedia.com/controlblog/what-is-control-engineering), [3](https://www.basicknowledge101.com/pdf/control/Control%20system.pdf)
+2. [Map of Control Theory](https://engineeringmedia.com/maps)
+3. [What is PID Control](https://www.mathworks.com/discovery/pid-control.html) by Mathworks
+4. [Control Theory Lectures](https://www.youtube.com/watch?v=oBc_BHxw78s&list=PLUMWjy5jgHK1NC52DXXrriwihVrYZKqjk) by Brian Douglas. 
+5. [Introduction to Control Theory and Application to Computing Systems](https://www.eecs.umich.edu/courses/eecs571/reading/control-to-computer-zaher.pdf) by Abdelzaher et al.
+6. [Automotive Control Systems](https://www.sciencedirect.com/topics/engineering/automotive-control-system)
+7. [PID Controller Design](https://ctms.engin.umich.edu/CTMS/index.php?example=Introduction&section=ControlPID)
+8. [Introduction to PID controllers](https://www.digikey.com/en/maker/projects/introduction-to-pid-controllers/763a6dca352b4f2ba00adde46445ddeb)
+10. [Construction and theoretical study of a ball balancing platform](https://www.diva-portal.org/smash/get/diva2:1373784/FULLTEXT01.pdf.) by Frank and TJERNSTRÖM.
+11. [Understanding PID Control: 2-DOF Ball Balancer Experiments](https://acrome.net/post/understanding-pid-control-using-2-dof-ball-balancer-experiments)
+12. [Control Engineering for Industry](https://web.stanford.edu/class/archive/ee/ee392m/ee392m.1034/) from Stanford University.<!--link rel="stylesheet" href="./custom.sibin.css"-->
 
 
 # Embedded Architectures
@@ -2741,7 +3015,7 @@ Cyclic executives are an example of schedulers where the tasks are fixed, _ahead
 
 ### Priority-Based Schedulers
 
-One method that overcomes the disadvantages of a completely static method is to **assign priorities for jobs as they arrive**. Hence, when a job is _released_ it gets assigned the a **priority** and the scheduler then dispatches/schedules the job accordingly. Hence, it if is the highest priority job so far, it gets scheduled _right away_, by preempting any currenlty running tasks. If, on the other hand, it is not the highest priority task then it is inserted into the ready queue at the right position (priority level).
+One method that overcomes the disadvantages of a completely static method is to **assign priorities for jobs as they arrive**. Hence, when a job is _released_ it gets assigned a **priority** and the scheduler then dispatches/schedules the job accordingly. Hence, it if is the highest priority job so far, it gets scheduled _right away_, by preempting any currenlty running tasks. If, on the other hand, it is not the highest priority task then it is inserted into the ready queue at the right position (priority level).
 
 To deal with this, we need an **online scheduler**, _i.e.,_ one that is always available to make scheduling decisions -- when tasks arrive, complete, miss their deadlines, _etc._
 
@@ -2762,7 +3036,7 @@ Now, in the real of **online, priority-driven** schedulers, we have **two** opti
 
 | priority assignment | algorithms |
 |---------------------|------------|
-| **static** | [Rate-Monotonic](#rate-monotonic-scheduler-rm) (RM), Deadline-Monotonic (EDF) |
+| **static** | [Rate-Monotonic](#rate-monotonic-scheduler-rm) (RM), Deadline-Monotonic (DM) |
 | **dynamic** | [Earliest-Deadline First](#earliest-deadline-first-scheduler-edf), Least-Slack Time (LST) |
 ||
 
@@ -2850,7 +3124,7 @@ Turns out, we can check! With the exact same equation.
 
 <img src="img/scheduling/rm_util_bound_100.png" width="400">
 
-As we see from the figure (and the active plotting), the values seem to _plateau_ out and converge...to **`0.69`**! So, for any decent real-time system scheduled using the RM assignment mechanism, if the utilization bound is under `0.69` then it is schedulable. 
+As we see from the figure (and the active plotting), the values seem to _plateau_ out and converge...to **`0.69`**! So, for any real-time system scheduled using the RM assignment mechanism, if the utilization bound is under `0.69` then it is schedulable. 
 
 **Optimality**: as mentioned earlier, RM is **optimal**, _i.e.,_
 
@@ -2874,17 +3148,17 @@ We know that using the naive utilization test, $U \approx. 0.833$. But, recall t
 
 <img src="img/scheduling/rm_schedulable_example/rm.final.svg" width="400">
 
-Wait, this is __schedulable**? But it fails our test!
+Wait, this is **schedulable**? But it fails our test!
 
 This is why I referred to it as a _necessary but **not** sufficient_ test. Hence, for the Liu and Layland utilization bound test,
 
 |result of test|schedulable?|
 |--------------|------------|
-| pass, _i.e.,_ $U_ub < 0.69$ | yes |
-| fail, $U_ub > 0.69$ | **unsure**|
+| pass, _i.e.,_ $U_{ub} < 0.69$ | yes |
+| fail, $U_{ub} > 0.69$ | **unsure**|
 ||
 
-We we need a _better_ test &rarr; **Response Time analysis**:
+We we need a _better_ test &rarr; **Response Time Analysis** (RTA):
 - if **all jobs** of a task are able to **complete before their respective deadlines** &rarr; task set is schedulable
 - caveat &rarr; we account for the **interference** (hence, delays) encountered by the jobs by _all_ higher priority jobs
 
@@ -2894,9 +3168,9 @@ Let's look at it in more detail:
 
 $$R_i = c_i + I_i$$
 
-where $I_i$ is the **interference** face by that job from **all** higher prioriy jobs until then.
+where $I_i$ is the **interference** faced by that job from **all** higher prioriy jobs until then.
 
-2. For _each_ higher priority job, $\tau_j$, the number of _jobs_ released during the time interval $R_i$ id:
+2. For _each_ higher priority job, $\tau_j$, the number of _jobs_ released during the time interval $R_i$ is:
 
 $$\left\lceil \frac{R_i}{T_j} \right\rceil$$
 

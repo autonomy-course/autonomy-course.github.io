@@ -40,7 +40,7 @@
                 
                 >
                     <textarea data-template>
-                        ## **Lab 4** | Working with ROS
+                        ## **Lab 5** | Working with ROS Contd.
 
 ### Design of Autonomous Systems  
 ### CSCI 6907/4907 - Section 86  
@@ -50,75 +50,131 @@
 
 ## **Objectives**
 
-- Install and configure the Intel RealSense IMU
-- Understand the fundamentals of the Robot Operating System (ROS)
-- Install ROS and set up a workspace
-- Access and process IMU data using ROS
+- Implement and understand the Publisher-Subscriber Model in ROS
+- Learn how to read sensor data using ROS Modules and Nodes
+- Install and configure the Intel RealSense IMU in ROS
 
 ---
 
-## **Installing RealSense IMU**
+## **Publisher-Subscriber Model**
+
+### **Understanding the Model**
+- The Publisher-Subscriber model is the fundamental communication mechanism in ROS.
+- **Publisher:** Sends messages to a specific topic.
+- **Subscriber:** Listens to messages from a topic.
+
+**Use Cases:**
+- A camera publishes images, while an image-processing node subscribes to them.
+- A LIDAR sensor node publishes distance data, while a mapping node subscribes to it.
+
+### **Implementing a Publisher-Subscriber Model**
+
+#### **1. Creating a ROS Package**
+```bash
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/src
+catkin_create_pkg pubsub_example std_msgs rospy roscpp
+cd ~/catkin_ws
+catkin_make
+```
+
+#### **2. Writing a Publisher Node**
+```bash
+cd ~/catkin_ws/src/pubsub_example/src
+nano publisher.py
+```
+
+**Add the following code:**
+```python
+#!/usr/bin/env python3
+import rospy
+from std_msgs.msg import String
+
+def publisher():
+    pub = rospy.Publisher('chatter', String, queue_size=10)
+    rospy.init_node('talker', anonymous=True)
+    rate = rospy.Rate(1)
+    while not rospy.is_shutdown():
+        msg = "Hello, ROS!"
+        rospy.loginfo(msg)
+        pub.publish(msg)
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        publisher()
+    except rospy.ROSInterruptException:
+        pass
+```
+
+#### **3. Writing a Subscriber Node**
+```bash
+nano subscriber.py
+```
+
+**Add the following code:**
+```python
+#!/usr/bin/env python3
+import rospy
+from std_msgs.msg import String
+
+def callback(data):
+    rospy.loginfo("Received: %s", data.data)
+
+def subscriber():
+    rospy.init_node('listener', anonymous=True)
+    rospy.Subscriber('chatter', String, callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    subscriber()
+```
+
+#### **4. Running the Publisher-Subscriber Model**
+```bash
+roscore
+rosrun pubsub_example publisher.py
+rosrun pubsub_example subscriber.py
+```
+
+---
+
+## **Reading Sensors with ROS, ROS Modules, and Nodes**
+
+### **IMU Sensor Integration**
+1. Install dependencies:
+   ```bash
+   sudo apt-get install ros-noetic-imu-tools
+   ```
+2. Run the IMU Sensor Node:
+   ```bash
+   roslaunch imu_tools imu_filter_madgwick.launch
+   ```
+3. View IMU Data:
+   ```bash
+   rostopic echo /imu/data
+   ```
+
+---
+
+## **Installing RealSense in ROS**
 
 ### **Prerequisites**
-- **Hardware:** Intel RealSense device (e.g., D435i, L515) with a USB 3.0 port
-- **Software:** Ubuntu 18.04 or later, Python 3.6+
-- **Dependencies:** Install `librealsense2` SDK
+- Ubuntu 18.04 or later
+- RealSense IMU-compatible device
 
----
-
-## **Step 1: Install Librealsense SDK**
-
-### **1. Add the Intel RealSense Repository**
+### **Installation Steps**
 ```bash
-sudo apt-key adv --keyserver keys.gnupg.net --recv-key 49B9A1F8
-sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo $(lsb_release -sc) main" -u
+sudo apt-get install ros-noetic-realsense2-camera
+roslaunch realsense2_camera rs_camera.launch
 ```
 
-### **2. Install required packages**
+### **Verifying Installation**
 ```bash
-sudo apt-get install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg
+rostopic list
+rviz
 ```
-
-### **3. Verify installation**
-```bash
-realsense-viewer
-```
-
----
-
-## **Step 2: Enable IMU Streams**
-
-1. Open **RealSense Viewer**
-2. Select your device and enable **IMU Streams**
-3. Observe **Accelerometer and Gyroscope data**
-
----
-
-## **Step 3: Access IMU Data Programmatically**
-
-### **Install Python API**
-```bash
-pip install pyrealsense2
-```
-
-Note: Check github for sample script
-
----
-
-## **What is ROS?**
-
-### **Robot Operating System (ROS)**
-- Open-source framework for robotic applications
-- Facilitates sensor integration and motion planning
-- Supports distributed computing and modularity
-
----
-
-## **Key Features of ROS**
-
-- **Distributed System:** Multiple nodes communicate via topics
-- **Interoperability:** Standardized message passing via `sensor_msgs`
-- **Simulation & Visualization:** Tools like `Gazebo` and `rviz`
+Add `/camera/color/image_raw` in rviz to visualize RGB camera data.
 
 ---
 
@@ -126,29 +182,50 @@ Note: Check github for sample script
 
 ### **Create a ROS workspace and demonstrate a basic hello_world ROS node.**
 
-Follow these steps
+Follow these steps:
 1. **Create the workspace:**
-
+   ```bash
+   mkdir -p ~/catkin_ws/src
+   cd ~/catkin_ws
+   catkin_make
+   ```
 2. **Create a new package:**
-
+   ```bash
+   cd ~/catkin_ws/src
+   catkin_create_pkg hello_world std_msgs rospy roscpp
+   ```
 3. **Create a Python script for the node:**
-
+   ```bash
+   nano ~/catkin_ws/src/hello_world/src/hello_world.py
+   ```
 4. **Add the following code to `hello_world.py`:**
-
+   ```python
+   #!/usr/bin/env python3
+   import rospy
+   def main():
+       rospy.init_node('hello_world_node')
+       rospy.loginfo("Hello, ROS!")
+       rospy.spin()
+   if __name__ == "__main__":
+       main()
+   ```
 5. **Make the script executable:**
-
+   ```bash
+   chmod +x ~/catkin_ws/src/hello_world/src/hello_world.py
+   ```
 6. **Run the node:**
-
+   ```bash
+   rosrun hello_world hello_world.py
+   ```
 
 ---
 
 ## **Summary**
 
-- Installed and configured the Intel RealSense IMU
-- Understood the basics of ROS and its architecture
-- Installed ROS Noetic and set up a workspace
-- Accessed IMU data programmatically and via ROS
-- Created a ROS workspace and demonstrated a basic `hello_world` ROS node
+- Implemented a **Publisher-Subscriber** model in ROS.
+- Explored **sensor data acquisition** using ROS nodes.
+- Installed and configured **Intel RealSense in ROS**.
+- Created a ROS workspace and demonstrated a basic `hello_world` ROS node.
                     </textarea>
                 </section>
             </div>
