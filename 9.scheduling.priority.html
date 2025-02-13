@@ -259,7 +259,7 @@ may overly simplifying...
 | priority assignment | algorithms |
 |---------------------|------------|
 | **static** | [Rate-Monotonic](#rate-monotonic-scheduler-rm) (RM), Deadline-Monotonic |
-| **dynamic** | [Earliest-Deadline First](#earliest-deadline-first-scheduler-edf), Least-Slack Time (LST) |
+| **dynamic** | [Earliest-Deadline First](#earliest-deadline-first-edf), Least-Slack Time (LST) |
 ||
 
 ---
@@ -331,7 +331,7 @@ since, $T_1 < T_2 < T_3$
 
 ---
 
-consider followin example:
+consider following example:
 
 |task|c|T|
 |----|--|----|
@@ -1111,6 +1111,579 @@ based on RTA &rarr; **schedulable**
 response time analysis algorithm:
 
 <img src="img/scheduling/response_time_algo.png" width="1100">
+
+---
+
+there exist **other** static assignment algorithms
+
+---
+
+there exist **other** [static assignment algorithms](https://iris.unimore.it/bitstream/11380/1118762/4/POST_PRINT_JSA2016Priority.pdf)
+
+- fixed priority pre-emptive scheduling (FPPS)
+- **deadline-monotonic**
+
+---
+
+Liu and Layland paper showed that...
+
+---
+
+Liu and Layland paper showed that...
+
+### RM is **optimal**
+
+---
+
+Liu and Layland paper showed that...
+
+### RM is **optimal** *
+
+<br>
+
+[* _synchronous_ periodic task sets with _implicit deadlines_]
+
+---
+
+problem with static priority assignments?
+
+---
+
+problem with static priority assignments?
+
+### non-optimal
+
+---
+
+### non-optimal
+
+they don't use **entire capacity** available to them
+
+---
+
+they don't use **entire capacity** available to them
+
+_e.g.,_ we saw that RM schedulers
+
+<img src="img/scheduling/rm_util_bound_100.png" width="1100">
+
+utilization bounds taper off &rarr; <scb>0.69</scb>
+
+---
+
+we can create task sets with _higher_ utilizations
+
+(recall Response-Time Analysis)
+
+---
+
+we can create task sets with _higher_ utilizations
+
+(recall Response-Time Analysis)
+
+<br>
+
+significant **manual effort**
+
+---
+
+common case &rarr; **wasting nearly <scb>31%</scb> utilization**!
+
+---
+
+solution?
+
+---
+
+solution?
+
+**dynamic assignment** of priorities
+
+---
+
+**dynamic assignment** of priorities
+
+1. [FIFO](https://d-nb.info/1240614632/34)
+2. [Least Slack Time](https://www.javatpoint.com/least-slack-time-lst-scheduling-algorithm-in-real-time-systems)
+
+
+---
+
+**dynamic assignment** of priorities
+
+1. [FIFO](https://d-nb.info/1240614632/34)
+2. [Least Slack Time](https://www.javatpoint.com/least-slack-time-lst-scheduling-algorithm-in-real-time-systems)
+3. [**Earliest-Deadline First**](#earliest-deadline-first-edf) (EDF)
+
+---
+
+## Earliest-Deadline First (EDF)
+
+---
+
+## Earliest-Deadline First (EDF)
+
+assign priorities &rarr; **absolute deadlines** of jobs
+
+---
+
+## Earliest-Deadline First (EDF)
+
+for every _scheduling event_,
+
+1. search queue &rarr; process **closest** to its deadline
+2. schedule for execution
+
+---
+
+## Earliest-Deadline First (EDF)
+
+- **exact** priority of job &rarr; depends on its deadline
+
+---
+
+## Earliest-Deadline First (EDF)
+
+- **exact** priority of job &rarr; depends on its deadline
+- but deadlines &rarr; **calculated statically**
+
+---
+
+## Earliest-Deadline First (EDF)
+
+- **exact** priority of job &rarr; depends on its deadline
+- but deadlines &rarr; **calculated statically**
+- different jobs of _same_ task &rarr; **different priorities**
+
+---
+
+## Earliest-Deadline First (EDF)
+
+- **exact** priority of job &rarr; depends on its deadline
+- but deadlines &rarr; **calculated statically**
+- different jobs of _same_ task &rarr; **different priorities**
+- _each_ job &rarr; only **one priority level**
+
+---
+
+## Earliest-Deadline First (EDF)
+
+- **exact** priority of job &rarr; depends on its deadline
+- but deadlines &rarr; **calculated statically**
+- different jobs of _same_ task &rarr; **different priorities**
+- _each_ job &rarr; only **one priority level**
+
+<br> 
+
+as jobs complete &rarr; priorities of remaining/incoming jobs change
+
+---
+
+## edf schedulability test
+
+---
+
+## edf schedulability test
+
+remember our first test?
+
+$$ U = \sum_{i=1}^{n} \frac{c_i}{T_i} \le 1 $$
+
+---
+
+## edf schedulability test
+
+remember our first test?
+
+$$ U = \sum_{i=1}^{n} \frac{c_i}{T_i} \le 1 $$
+
+that's it! this is the **edf schedulability test**!
+
+
+---
+
+## edf schedulability test
+
+remember our first test?
+
+$$ U = \sum_{i=1}^{n} \frac{c_i}{T_i} \le 1 $$
+
+edf schedulability test &rarr; very **simple**!
+
+---
+
+need to agree on some _niceties_...
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | **?** |
+
+
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | job &rarr; **earlier release** |
+
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | job &rarr; **earlier release** |
+| same deadlines **and** same release | **?** |
+
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | job &rarr; **earlier release** |
+| same deadlines **and** same release | **lower index** |
+||
+
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | job &rarr; **earlier release** |
+| same deadlines **and** same release | **lower index** |
+||
+
+**note**: not rules, just policies
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | job &rarr; **earlier release** |
+| same deadlines **and** same release | **lower index** |
+||
+
+**note**: not rules, just policies &rarr; can be changed
+
+---
+
+consider two jobs that have,
+
+|issue| priority |
+|-----|----------|
+| **same** deadline | job &rarr; **earlier release** |
+| same deadlines **and** same release | **lower index** |
+||
+
+**note**: not rules, just policies &rarr; can be changed
+
+maintain **consistency**!
+
+---
+
+same deadlines **and** same release
+
+---
+
+same deadlines **and** same release &rarr; redesign to **combine** the tasks
+
+---
+
+revisit **unschedulable** RM example from before
+
+
+|task|c|T|
+|----|--|----|
+| $\tau_1$ | 2| 4 |
+| $\tau_2$ | 2| 5 |
+| $\tau_3$ | 1| 10|
+
+---
+
+revisit **unschedulable** RM example from before
+
+<img src="img/scheduling/rm_unschedulable/pngs/rm.final.png" width="1500" >
+
+---
+
+revisit **unschedulable** RM example from before
+
+$$U = \frac{2}{4} + \frac{2}{5} + \frac{1}{10} = 0.5 + 0.4 + 0.1 = 1 \le 1$$
+
+
+---
+
+revisit **unschedulable** RM example from before
+
+$$U = \frac{2}{4} + \frac{2}{5} + \frac{1}{10} = 0.5 + 0.4 + 0.1 = 1 \le 1$$
+
+<font style="background-color:orange">**schedulable** via EDF!</font>
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf1.svg" width="1500">
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf2.svg" width="1500">
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf3.svg" width="1500">
+
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf4.svg" width="1500">
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf5.svg" width="1500">
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf6.svg" width="1500">
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf.final.svg" width="1500">
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf.final.svg" width="1500">
+
+schedulable? are we done?
+
+---
+
+### edf schedule
+
+<img src="img/scheduling/edf/edf.final.svg" width="1500">
+
+schedulable? are we done? &rarr; **check until hyperperiod**!
+
+---
+
+### edf schedule vs rm schedule
+
+<img src="img/scheduling/edf/edf.final.svg" width="700">
+<img src="img/scheduling/rm_unschedulable/pngs/rm.final.png" width="700" >
+
+---
+
+## edf is **provably optimal**
+
+---
+
+## edf is **provably optimal**
+
+- if task set is schedulable by _any_ algorithm
+- then **edf** can schedule it
+
+---
+
+## edf is **provably optimal**
+
+- can squeeze out **maximum** from system
+- can _theoretically_* schedule task sets with $U = 1$!
+
+---
+
+## edf is **provably optimal**
+
+- can squeeze out **maximum** from system
+- can _theoretically_* schedule task sets with $U = 1$!
+
+why is this "theoretical"? 
+
+---
+
+### edf can **never** touch $U=1$ in practice
+
+---
+
+### edf can **never** touch $U=1$ in practice 
+
+primarily due to **overheads**
+
+- context-switch overheads
+- run-time calculations &rarr; dynamic piorities
+
+---
+
+## RM vs EDF
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+| analysis overheads | &cross; | &check; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+| analysis overheads | &cross; | &check; |
+| utilization | &cross; | &check; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+| analysis overheads | &cross; | &check; |
+| utilization | &cross; | &check; |
+| implementation ease | &check; | &cross; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+| analysis overheads | &cross; | &check; |
+| utilization | &cross; | &check; |
+| implementation ease | &check; | &cross; |
+| predictability | &check; | &cross; |
+
+---
+
+## RM vs EDF
+
+|parameter | rm | edf |
+|----------|----|-----|
+| optimality | &check; (static) | &check; |
+| context switch overheads | &check; | &cross; |
+| preemptions | &cross; | &check; |
+| analysis overheads | &cross; | &check; |
+| utilization | &cross; | &check; |
+| implementation ease | &check; | &cross; |
+| predictability | &check; | &cross; |
+|**total**| <scb>4</scb> | <scb>4</scb> |
+||
+
+---
+
+other **issues** with priority assignments algorithms
+
+---
+
+other **issues** with priority assignments algorithms
+
+- **simplistic task model**
+    - other situations exist &rarr; $ D <T $, $D > T$
+
+---
+
+other **issues** with priority assignments algorithms
+
+- **simplistic task model**
+    - other situations exist &rarr; $ D <T $, $D > T$
+- **multicore** &rarr; NP-complete!
+    - many [**heuristics**](https://dl.acm.org/doi/pdf/10.1145/1978802.1978814) exist
+
+---
+
+other **issues** with priority assignments algorithms
+
+- **simplistic task model**
+    - other situations exist &rarr; $ D <T $, $D > T$
+- **multicore** &rarr; NP-complete!
+    - many [**heuristics**](https://dl.acm.org/doi/pdf/10.1145/1978802.1978814) exist
+- [**priority inheritance protocols**](https://www.eecs.umich.edu/courses/eecs571/lectures/lecture6-schedule3.pdf) &rarr; resource contentions
+
+---
+
+other **issues** with priority assignments algorithms
+
+- **simplistic task model**
+    - other situations exist &rarr; $ D <T $, $D > T$
+- **multicore** &rarr; NP-complete!
+    - many [**heuristics**](https://dl.acm.org/doi/pdf/10.1145/1978802.1978814) exist
+- [**priority inheritance protocols**](https://www.eecs.umich.edu/courses/eecs571/lectures/lecture6-schedule3.pdf) &rarr; resource contentions
+- [**power consumption** and scheduling](https://www.eecs.umich.edu/courses/eecs571/lectures/lecture12-rtdvs.pdf)
+
+---
+
+### RT scheduling & other domains
+
+- **[memory](https://link.springer.com/article/10.1007/s11241-012-9158-9)**
+- **[networks](https://sibin.github.io/papers/2017_RTSS_SDNQoS_Rakesh.pdf)**
+- **[networks-on-chip](https://www.computer.org/csdl/journal/td/2017/05/07728147/13rRUwj7coW)**
+- **[5G](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9773317)**
                     </textarea>
                 </section>
             </div>
