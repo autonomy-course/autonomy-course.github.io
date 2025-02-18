@@ -1053,6 +1053,182 @@ how can we **reduce oscillations**
 
 Note:
 can we get to the following situation (smoother, _actual_ approach to the goal)?
+
+---
+
+### Derivative (D) Control 
+
+---
+
+### Derivative (D) Control 
+
+**improves the dynamic response** of system by,
+
+---
+
+### Derivative (D) Control 
+
+**improves the dynamic response** of system by,
+
+- studying the **rate of change** of the error and
+- **decreasing oscillation**
+
+---
+
+### Derivative (D) Control 
+
+**improves the dynamic response** of system
+
+<img src="img/controls/feedback_lane/d_control.1.png" width="1300">
+
+---
+
+### Derivative (D) Control 
+
+**improves the dynamic response** of system
+
+<img src="img/controls/feedback_lane/d_control.2.png" width="1500">
+
+---
+
+<img src="img/controls/feedback_lane/d_control.2.png" width="1500">
+
+measuring and trying to control &rarr; the **rate of change**
+
+---
+
+<img src="img/controls/feedback_lane/d_control.2.png" width="1500">
+
+measuring and trying to control &rarr; the **rate of change**
+
+$$y(t-1) \rightarrow y(t)$$
+
+---
+
+car **actually** get close to reference/goal, $y=0$
+
+<img src="img/controls/feedback_lane/d_lateral_axis.1.png" width="1300">
+
+---
+
+proportional/derivative control **used together** 
+
+counteract each others' influences
+
+---
+
+## proportional+derivative controller
+
+<img src="img/controls/equations/svgs/equations.003.svg" width="1100">
+
+---
+
+## proportional+derivative controller
+
+<img src="img/controls/equations/svgs/equations.004.svg" width="1500">
+
+---
+
+two options for derivative "gain":
+
+- $\frac{dy(t)}{dt} < 0$
+- $\frac{dy(t)}{dt} > 0$
+
+---
+
+derivative controller's job:
+
+- steer **away** from the reference line
+- act as a counter to proportional controller
+
+---
+
+$$\frac{dy(t)}{dt} < 0$$
+
+---
+
+derivative controller acts like a **brake** and counteracts correctional force
+
+<img src="img/controls/feedback_lane/pd_lateral_axis.1.png" width="1300">
+
+Note:
+- derivative controller acts like a **brake** and counteracts the correctional force. It reduces overshoot by **slowing the correctional factor** &rarr; as the reference goal approaches.
+- We see numerous uses of the combination, known as the **P-D** controllers in every day life, from the smallest to the largest, even rocket ships!
+
+---
+
+<video controls width="1000"> <source src="img/controls/feedback_lane/SpaceX_landing.mp4"></video>
+
+---
+
+### Tuning P-D Controllers
+
+need to pick the **right** values for the gains, $K_p$ and $K_d$
+
+---
+
+### Tuning P-D Controllers
+
+consider following values for two coefficients, $K_p$ and $K_d$:
+
+<img src="img/controls/feedback_lane/pd_graph.1.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.2.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.3.png" width="450">
+
+
+---
+
+### Tuning P-D Controllers
+
+consider following values for two coefficients, $K_p$ and $K_d$:
+
+<img src="img/controls/feedback_lane/pd_graph.1.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.2.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.3.png" width="450">
+
+tuning $K_d$ has a significant impact!
+
+Note:
+- As we see, tuning $K_d$ has a significant impact! The oscillations pretty much go away and we _quickly_ get to the reference line with very little oscillation. Of course, the car overshoots a little but the combination of P-D brings it back soon enough.
+
+---
+
+### Tuning P-D Controllers
+
+what if we increase $K_d$ &rarr; making it **very large**?
+
+<img src="img/controls/feedback_lane/pd_graph.4.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.5.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.6.png" width="450">
+
+---
+
+### Tuning P-D Controllers
+
+what if we increase $K_d$ &rarr; making it **very large**?
+
+<img src="img/controls/feedback_lane/pd_graph.4.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.5.png" width="450">
+<img src="img/controls/feedback_lane/pd_graph.6.png" width="450">
+
+can improve or **make things worse** &rarr; drive car _away_ from goal!
+
+Note:
+- While we see from the first graph ($K_p = 0.2$, $K_d = 4.0$) that the oscillations have gone away, increasing $K_d$ further make
+
+---
+
+fix &rarr; **tuning** paramters, _e.g.,_ **K_p = 3.0** 
+
+|before|after|
+|--------|--------|
+|<img src="img/controls/feedback_lane/pd_graph.6.png" width="450">| <img src="img/controls/feedback_lane/pd_graph.7.png" width="450">|
+||
+
+a quick, "smooth" path to the reference! 
+
+Note:
+- In fact, a lot of the design of control systems involves the tuning of such parameters, depending on the system, to get things "just right".
                     </textarea>
                 </section>
             </div>
