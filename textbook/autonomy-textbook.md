@@ -3209,6 +3209,8 @@ Note that the feedback can be positive or negative.
 
 ## Feedback Control
 
+[The following material is thanks to [Prof. Sathish Gopalakrishan](https://ece.ubc.ca/sathish-gopalakrishnan/), Univ. of British Columbia].
+
 Consider the following problem (that we increasingly encounter in the real world):
 
 > how do you ensure that a car remains in the _center_ of its lane?
