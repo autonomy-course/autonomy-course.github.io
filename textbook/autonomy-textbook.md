@@ -3702,9 +3702,12 @@ The displacement achieved is commonly linear or rotational, as exemplified by
 
 Another broad classification of actuators separates them into two types: 
 
-1. incremental-drive actuators (_e.g.,_ **stepper motors**) and 
-2. continuous-drive actuators. 
+1. continuous-drive actuators and
+2. incremental-drive actuators (_e.g.,_ **stepper motors**).
 
+<img src="img/actuation/Electric_motor.gif">
+
+**Brushed DC motors** move **continuously** when DC voltage is applied to their terminals. 
 
 **Stepper motors** are a variant of motors, named **brushless motors**, that rotate in a series of small and discrete angular steps. Stepper motors can be set to any given step position **without needing a position sensor for feedback**. step position can be rapidly increased or decreased to create continuous rotation, or the motor can be ordered to actively hold its position at one given step. Motors vary in size, speed, step resolution and torque.
 
@@ -3720,9 +3723,6 @@ The stepper motor is known for its property of converting a **train of input pul
 
 When the top electromagnet (1) is again enabled, the rotor will have rotated by one tooth position; since there are 25 teeth, it will take 100 steps to make a full rotation in this example.]
 
-<img src="img/actuation/Electric_motor.gif">
-
-**Brushed DC motors** on the other hand, continuously when DC voltage is applied to their terminals. 
 
 **[Motor Control](https://control.com/technical-articles/understanding-the-basicsof-pulse-width-modulation-pwm/)**: motor speed and direction are dictated by the voltage applied -- change or reverse the polarity of the voltage and the motor will respond in a similar fashion. Voltage can be changed by raising the series resistance within the electrical circuit, which in turn lowers the current through the motor. This change in voltage can be accomplished by series resistors, potentiometers or rheostats. While these devices may be effective for small changes in voltage, the power and torque of the motor are decreased as the current drops. In addition, significant resistance from these devices can _produce a lot of heat_ which could damage other devices within the electrical system.
 
