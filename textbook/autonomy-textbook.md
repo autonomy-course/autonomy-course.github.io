@@ -3678,10 +3678,11 @@ An actuator, then, is a part of a device or machine that helps it to achieve phy
 <iframe width="560" height="315" src="https://www.youtube.com/embed/izeXcf5qu6s?si=yohPUDy1Uf10mges" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 [Defined simply](https://www.progressiveautomations.com/pages/actuators), an actuator is a device that converts energy, which may be electric, hydraulic, pneumatic, etc., to mechanical in such a way that it can be **controlled**. The quantity and the nature of input depend on:
+
 - the kind of energy to be converted and
 - function of the actuator. 
 
-<img src="img/actuation/electric_actuator_diagram.jpg.webp" width=300>
+<img src="img/actuation/electric_actuator_diagram.png" width=300>
 
 <br>
 
