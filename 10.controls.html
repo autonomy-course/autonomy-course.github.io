@@ -507,17 +507,17 @@ from output &rarr; input
 
 ---
 
-## open loop controller
+## closed loop controller
 
 ---
 
-## open loop controller
+## closed loop controller
 
 - **adjust** <scb>u</scb>
 
 ---
 
-## open loop controller
+## closed loop controller
 
 - **adjust** <scb>u</scb>
 - ensure that we get to $y^*$ 
@@ -525,7 +525,7 @@ from output &rarr; input
 
 ---
 
-## open loop controller
+## closed loop controller
 
 - **adjust** <scb>u</scb>
 - ensure that we get to $y^*$ 
@@ -534,13 +534,13 @@ from output &rarr; input
 
 ---
 
-## open loop controller
+## closed loop controller
 
 feedback from &rarr; output of controller model we created
 
 ---
 
-## open loop controller
+## closed loop controller
 
 feedback from &rarr; output of controller model we created
 
@@ -548,7 +548,7 @@ feedback from &rarr; output of controller model we created
 
 ---
 
-## open loop controller
+## closed loop controller
 
 feedback from &rarr; output of controller model we created
 
@@ -556,7 +556,7 @@ feedback from &rarr; output of controller model we created
 
 ---
 
-## open loop controller
+## closed loop controller
 
 feedback from &rarr; output of controller model we created
 
@@ -1056,17 +1056,17 @@ can we get to the following situation (smoother, _actual_ approach to the goal)?
 
 ---
 
-### Derivative (D) Control 
+## Derivative (D) Control 
 
 ---
 
-### Derivative (D) Control 
+## Derivative (D) Control 
 
 **improves the dynamic response** of system by,
 
 ---
 
-### Derivative (D) Control 
+## Derivative (D) Control 
 
 **improves the dynamic response** of system by,
 
@@ -1075,7 +1075,7 @@ can we get to the following situation (smoother, _actual_ approach to the goal)?
 
 ---
 
-### Derivative (D) Control 
+## Derivative (D) Control 
 
 **improves the dynamic response** of system
 
@@ -1083,7 +1083,7 @@ can we get to the following situation (smoother, _actual_ approach to the goal)?
 
 ---
 
-### Derivative (D) Control 
+## Derivative (D) Control 
 
 **improves the dynamic response** of system
 
@@ -1228,7 +1228,288 @@ fix &rarr; **tuning** paramters, _e.g.,_ **K_p = 3.0**
 a quick, "smooth" path to the reference! 
 
 Note:
-- In fact, a lot of the design of control systems involves the tuning of such parameters, depending on the system, to get things "just right".
+- In fact, a lot of the design of control systems involves the tuning of such parameters, depending on the system, to get things "just right". 
+
+---
+
+are we done? 
+
+---
+
+let's take a closer look at the results:
+
+<img src="img/controls/feedback_lane/i.graph.1.png" width="1000">
+
+---
+
+let's take a closer look at the results:
+
+<img src="img/controls/feedback_lane/i.graph.2.png" width="1500">
+
+Note:
+- As we see from this image, even though we reached the reference, the behavior is **not smooth**!
+
+---
+
+many reasons, _e.g.,_ _steering drift_ 
+
+<img src="img/controls/feedback_lane/i_control.1.png" width="700">
+<img src="img/controls/feedback_lane/i_control.2.png" width="650">
+
+---
+
+**unmodeled disturbances** and **systemic errors** (_"bias"_)
+
+---
+
+**unmodeled disturbances** and **systemic errors** (_"bias"_)
+
+- actuators and processes &rarr; not ideal
+
+---
+
+**unmodeled disturbances** and **systemic errors** (_"bias"_)
+
+- actuators and processes &rarr; not ideal
+- friction, steering, drift, changing workloads, misalignments, _etc._
+
+---
+
+signal **may never reach** set points! 
+
+may end up "settling" near reference, which is not ideal
+
+---
+
+## Integral (I) Control
+
+---
+
+## Integral (I) Control
+
+define **steady state error** (SSE):
+
+> difference between the reference and the steady-state process variable
+
+---
+
+## Integral (I) Control
+
+when time goes to _infinity_,
+
+$$SSE = \lim_{x\to\infty} [r(t) - y(t)]$$
+
+---
+
+## Integral (I) Control
+
+applied correction must be,
+- **proportional** to **error** and **duration** of error
+- essentially it **sums the error over time**
+
+---
+
+## Integral (I) Control
+
+<img src="img/controls/feedback_lane/i_control.3.png" width="1300">
+
+---
+
+## Integral (I) Control
+
+<img src="img/controls/feedback_lane/i_control.4.png" width="1300">
+
+---
+
+unless the error is _zero_, this term will **grow**! 
+
+---
+
+unless the error is _zero_, this term will **grow**! 
+
+|||
+|-----|------|
+|<ul><li>error adds up</li><li><strong>correction must also increase</strong></li><li>drives steady state error to <strong>zero</strong></li></ul> | |
+
+---
+
+unless the error is _zero_, this term will **grow**! 
+
+|||
+|-----|------|
+|<ul><li>error adds up</li><li><strong>correction must also increase</strong></li><li>drives steady state error to <strong>zero</strong></li></ul> | <img src="img/controls/feedback_lane/i.graph.4.png" width="800">|
+||
+
+---
+
+**I** control used **in conjunction with** **P**/**D** controllers
+
+<img src="img/controls/equations/svgs/equations.005.svg" width="1500">
+
+---
+
+**I** control used **in conjunction with** **P**/**D** controllers
+
+<img src="img/controls/equations/svgs/equations.006.svg" width="1700">
+
+---
+**I** control used **in conjunction with** **P**/**D** controllers
+
+<img src="img/controls/equations/svgs/equations.006.svg" width="1700">
+
+## **PID Control**
+
+---
+
+## **PID Control**
+
+<img src="img/controls/feedback_lane/pid_control.1.png" width="1300">
+
+---
+
+## **PID Control**
+
+<img src="img/controls/feedback_lane/pid_control.2.png" width="1300">
+
+---
+
+## **PID Control**
+
+<img src="img/controls/feedback_lane/pid_control.2.png" width="1300">
+<img src="img/controls/equations/svgs/equations.005.svg" width="1000">
+
+---
+
+examples of tuning PID parameters
+
+<img src="img/controls/feedback_lane/pid_graph.1.png" width="550">
+<img src="img/controls/feedback_lane/pid_graph.2.png" width="550">
+
+---
+
+Let's increase $K_p$ now and see the effect:
+
+<img src="img/controls/feedback_lane/pid_graph.3.png" width="1000">
+
+---
+
+Let's increase $K_p$ now and see the effect:
+
+<img src="img/controls/feedback_lane/pid_graph.3.png" width="900">
+
+system **stabilized** &rarr; around reference point 
+
+(if we zoom in, we see fewer disturbances)
+
+---
+
+what if we keep increasing $K_p$?
+
+---
+
+what if we keep increasing $K_p$?
+
+<img src="img/controls/feedback_lane/pid_graph.4.png" width="550">
+<img src="img/controls/feedback_lane/pid_graph.5.png" width="550">
+
+---
+
+what if we keep increasing $K_p$?
+
+<img src="img/controls/feedback_lane/pid_graph.4.png" width="550">
+<img src="img/controls/feedback_lane/pid_graph.5.png" width="550">
+
+
+wait, the signal _oscillates_?
+
+---
+what if we keep increasing $K_p$?
+
+<img src="img/controls/feedback_lane/pid_graph.4.png" width="550">
+<img src="img/controls/feedback_lane/pid_graph.5.png" width="550">
+
+
+the **I** term &rarr; not zero when crossing the reference, $y(t) = 0$ 
+
+takes a little while &rarr; wash out the cumulative error
+
+---
+
+## summary
+
+---
+
+## summary
+
+- **P** is <font style="background:orange">required</font>
+
+---
+
+## summary
+
+- **P** is <font style="background:orange">required</font>
+- depending on system &rarr; **PI**, **PD** or **PID**
+
+---
+
+## **Tuning** P, I, D gains 
+
+
+---
+
+## **Tuning** P, I, D gains 
+
+no "optimal" way to tune PID gains
+
+---
+
+## **Tuning** P, I, D gains 
+
+no "optimal" way to tune PID gains
+
+1. start &rarr; $K_p = 0$, $K_d = 0$, $K_i = 0$
+
+---
+
+## **Tuning** P, I, D gains 
+
+no "optimal" way to tune PID gains
+
+1. start &rarr; $K_p = 0$, $K_d = 0$, $K_i = 0$
+2. **slowly** increase $K_p$ &rarr; oscillate around set point
+
+---
+
+## **Tuning** P, I, D gains 
+
+no "optimal" way to tune PID gains
+
+1. start &rarr; $K_p = 0$, $K_d = 0$, $K_i = 0$
+2. **slowly** increase $K_p$ &rarr; oscillate around set point
+3. slowly increase $K_d$ &rarr; settle around set point
+
+---
+
+## **Tuning** P, I, D gains 
+
+no "optimal" way to tune PID gains
+
+1. start &rarr; $K_p = 0$, $K_d = 0$, $K_i = 0$
+2. **slowly** increase $K_p$ &rarr; oscillate around set point
+3. slowly increase $K_d$ &rarr; settle around set point
+4. if steady-state error &rarr; slowly increase $K_i$ 
+
+---
+
+## **Tuning** P, I, D gains 
+
+no "optimal" way to tune PID gains
+
+1. start &rarr; $K_p = 0$, $K_d = 0$, $K_i = 0$
+2. **slowly** increase $K_p$ &rarr; oscillate around set point
+3. slowly increase $K_d$ &rarr; settle around set point
+4. if steady-state error &rarr; slowly increase $K_i$ 
+    - system &rarr; corrected without additional oscillations
                     </textarea>
                 </section>
             </div>
