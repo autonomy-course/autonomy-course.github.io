@@ -3663,7 +3663,10 @@ In summary:
 8. [Introduction to PID controllers](https://www.digikey.com/en/maker/projects/introduction-to-pid-controllers/763a6dca352b4f2ba00adde46445ddeb)
 10. [Construction and theoretical study of a ball balancing platform](https://www.diva-portal.org/smash/get/diva2:1373784/FULLTEXT01.pdf.) by Frank and TJERNSTRÖM.
 11. [Understanding PID Control: 2-DOF Ball Balancer Experiments](https://acrome.net/post/understanding-pid-control-using-2-dof-ball-balancer-experiments)
-12. [Control Engineering for Industry](https://web.stanford.edu/class/archive/ee/ee392m/ee392m.1034/) from Stanford University.<!--rel="stylesheet" href="./custom.sibin.css"-->
+12. [Control Engineering for Industry](https://web.stanford.edu/class/archive/ee/ee392m/ee392m.1034/) from Stanford University.
+13. [A Line Following Robot Using PID Controller](http://robinhsieh.com/line-following-robot/)
+14. [Ball and Beam: System Modeling](https://ctms.engin.umich.edu/CTMS/index.php?example=BallBeam&section=SystemModeling)
+15. [Open Loop Control System](https://www.geeksforgeeks.org/open-loop-control-system/)<!--rel="stylesheet" href="./custom.sibin.css"-->
 
 
 # Actuation
@@ -3922,3 +3925,4 @@ Additional reading/examples/etc. if you want to learn more about PWMs, programmi
 6. [Understanding the Basics of PWM](https://control.com/technical-articles/understanding-the-basicsof-pulse-width-modulation-pwm/)
 7. [Raspberry Pi: PWM Outputs with Python (Fading LED)](https://randomnerdtutorials.com/raspberry-pi-pwm-python/)
 8. [Raspberry Pi PWM tutorial](https://circuitdigest.com/microcontroller-projects/raspberry-pi-pwm-tutorial)
+9. [Actuation and Avionics](https://www.collinsaerospace.com/what-we-do/industries/business-aviation/power-controls-actuation/actuation)
