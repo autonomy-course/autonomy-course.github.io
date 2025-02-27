@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-02-20" />
+  <meta name="date" content="2025-02-27" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">February 20,
+                              <li><p class="navbar-text">February 27,
 2025</p></li>
                   </ul>
       </div>
@@ -469,6 +469,26 @@ George Washington University</p></li>
         id="toc-pwm-generation-in-microcontrollers"><span
         class="toc-section-number">7.1.5</span> PWM Generation in
         Microcontrollers</a></li>
+        </ul></li>
+        </ul></li>
+        <li><a href="#ekf" id="toc-ekf"><span
+        class="toc-section-number">8</span> EKF</a>
+        <ul>
+        <li><a href="#state-estimation" id="toc-state-estimation"><span
+        class="toc-section-number">8.1</span> State Estimation</a>
+        <ul>
+        <li><a href="#how-to-estimate-state"
+        id="toc-how-to-estimate-state"><span
+        class="toc-section-number">8.1.1</span> How to Estimate
+        State?</a></li>
+        <li><a href="#exponential-moving-average-ema"
+        id="toc-exponential-moving-average-ema"><span
+        class="toc-section-number">8.1.2</span> Exponential Moving
+        Average (EMA)</a></li>
+        <li><a href="#state-space-representation"
+        id="toc-state-space-representation"><span
+        class="toc-section-number">8.1.3</span> State Space
+        Representation</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -8293,8 +8313,833 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             Pi PWM tutorial</a></li>
             <li><a
             href="https://www.collinsaerospace.com/what-we-do/industries/business-aviation/power-controls-actuation/actuation">Actuation
-            and Avionics</a></li>
+            and
+            Avionics</a><!--rel="stylesheet" href="./custom.sibin.css"--></li>
             </ol>
+            </section>
+            </section>
+            </section>
+            <section id="ekf" class="level1" data-number="8">
+            <h1 data-number="8"><span
+            class="header-section-number">8</span> EKF</h1>
+            <p>Consider a robot in a simple grid starting at <span
+            class="math inline">(0, 0)</span> with the intention of
+            moving to <span class="math inline">(2, 2)</span>:</p>
+            <p><img src="img/ekf/robot_grid.1.png" width="300">
+            <img src="img/ekf/robot_grid.2.png" width="300"></p>
+            <p>Now the robot can take multiple paths to get to its
+            destination. The robot has multiple choices as shown in the
+            following figure:</p>
+            <p><img src="img/ekf/robot_grid.3.png" width="300"></p>
+            <p>Let’s assume that it follows one of these paths and ends
+            up at the following position:</p>
+            <p><img src="img/ekf/robot_grid.4.png" width="200">
+            <img src="img/ekf/robot_grid.5.png" width="200">
+            <img src="img/ekf/robot_grid.6.png" width="200"></p>
+            <p>Clearly this is not the intended goal so a few things
+            need to happen:</p>
+            <ol type="1">
+            <li>first of all, the robot has to understand and estimate
+            where it is <em>right now</em> → <em>i.e.,</em>
+            <strong>estimate its current state</strong></li>
+            <li>the robot has to then make a decision, based on its
+            current state, where to head next</li>
+            </ol>
+            <p>How to do this?</p>
+            <p>Answer: <strong><a href="#state-estimation">state
+            estimation</a></strong>!</p>
+            <p>But before we go there, we have to answer the following
+            question → <em>how did we end up here in spite of onboard
+            sensors?</em></p>
+            <p>The sensor gave us a value, <span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span> →
+            we can’t seem to trust it as is → because sensors are
+            imperfect, mainly due to:</p>
+            <ul>
+            <li>physical limitations, measurement noise, poor
+            calibrations, etc.</li>
+            <li>errors can’t be zero
+            <ul>
+            <li><span
+            class="math inline"><em>e</em><em>r</em><em>r</em><em>o</em><em>r</em> = <em>o</em><em>b</em><em>s</em><em>e</em><em>r</em><em>v</em><em>a</em><em>t</em><em>i</em><em>o</em><em>n</em> – <em>t</em><em>r</em><em>u</em><em>e</em>_<em>v</em><em>a</em><em>l</em><em>u</em><em>e</em></span></li>
+            </ul></li>
+            </ul>
+            <p>In some sense, we need to “filter” out noisy data and
+            only allow correct data to guide us. Hence, our robot can
+            pick the right direction to end up at its <em>correct</em>
+            destination.</p>
+            <p><img src="img/ekf/robot_grid.7.png" width="200">
+            <img src="img/ekf/robot_grid.8.png" width="200">
+            <img src="img/ekf/robot_grid.9.png" width="200"></p>
+            <section id="state-estimation" class="level2"
+            data-number="8.1">
+            <h2 data-number="8.1"><span
+            class="header-section-number">8.1</span> State
+            Estimation</h2>
+            <p>State estimation is a fundamental problem in control
+            theory, robotics and signal processing. It involves
+            <strong>determining the state of a dynamic system from noisy
+            or incomplete measurements</strong>. The Kalman filter,
+            developed by Rudolf E. Kálmán in the early 1960s, is one of
+            the most widely used and powerful algorithms for state
+            estimation.</p>
+            <p>In the context of dynamic systems,
+            “<strong>state</strong>” is defined as,</p>
+            <blockquote>
+            <p>a set of variables that completely describe the system at
+            a given time.</p>
+            </blockquote>
+            <p>For example: | <strong>system</strong> | <strong>state
+            variables</strong> | |————|———————-| | <strong>moving
+            vehicle</strong> | position, velocity, acceleration | |
+            <strong>pendulum</strong> | angle, angular velocity | |
+            <strong>financial system</strong> | asset prices, market
+            indicators | ||</p>
+            <p>State <strong>evolves over time</strong> according to the
+            system dynamics, which can be described by a <strong>state
+            transition model</strong>.</p>
+            <section id="how-to-estimate-state" class="level3"
+            data-number="8.1.1">
+            <h3 data-number="8.1.1"><span
+            class="header-section-number">8.1.1</span> How to Estimate
+            State?</h3>
+            <p>Let’s look at some data:</p>
+            <p><img src="img/ekf/noisy_data.1.png" width="300"></p>
+            <p><br></p>
+            <p>How we take these values (<span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span>)
+            and generate a state <em>estimate</em>, <span
+            class="math inline">$\overline{x_k}$</span>?</p>
+            <p>What if we have a few more values?</p>
+            <p><img src="img/ekf/noisy_data.2.png" width="300">
+            <img src="img/ekf/noisy_data.3.png" width="300"></p>
+            <p><br></p>
+            <p>Do we see a trend? What if we had many more values?</p>
+            <p><img src="img/ekf/noisy_data.4.png" width="300"></p>
+            <p><br></p>
+            <p>What’s the best way to capture the behavior? We can see
+            that it is “noisy” in that it doesn’t follow an “exact”
+            trend.</p>
+            <p>Remember that <span
+            class="math inline">$\overline{x_k}$</span> is the estimate
+            we want:</p>
+            <p><img src="img/ekf/sensor_state.3.png" width="400"></p>
+            <p>One way to compute <span
+            class="math inline">$\overline{x_k}$</span> would be as an
+            <strong>average</strong> of a <strong>running window of
+            samples</strong>. Why “window” and not all the samples? Well
+            we may only care about the most recent <code>n</code> values
+            – anything older and it may not be directly applicable to
+            our current situation.</p>
+            <p>We can compute the average as follows:</p>
+            <p><span class="math display">$$
+            \overline{x_{k}}=\frac{x_{k-n-1}+\cdots+x_{k-1}+x_{k}}{n}
+            $$</span></p>
+            <p>where the only parameter is the window size, <span
+            class="math inline"><em>n</em></span>.</p>
+            <p>Consider the following date:</p>
+            <table>
+            <thead>
+            <tr>
+            <th><span class="math inline"><em>k</em></span></th>
+            <th><span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span></th>
+            <th><span class="math inline">$\overline{x_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>0</td>
+            <td>0.08187</td>
+            <td>0.08187</td>
+            </tr>
+            <tr>
+            <td>1</td>
+            <td>0.97601</td>
+            <td>0.52894</td>
+            </tr>
+            <tr>
+            <td>2</td>
+            <td>1.18350</td>
+            <td>0.74713</td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Using the running window average method (for window size
+            <span class="math inline"><em>n</em> = 3</span>), we
+            get:</p>
+            <p><img src="img/ekf/average_window.1.png" width="300"></p>
+            <p><br></p>
+            <p>As we add more values, we see that the window moves as
+            well, aggregating groups of values:</p>
+            <table>
+            <thead>
+            <tr>
+            <th><span class="math inline"><em>k</em></span></th>
+            <th><span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span></th>
+            <th><span class="math inline">$\overline{x_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>0</td>
+            <td>0.08187</td>
+            <td>0.08187</td>
+            </tr>
+            <tr>
+            <td>1</td>
+            <td>0.97601</td>
+            <td>0.52894</td>
+            </tr>
+            <tr>
+            <td>2</td>
+            <td>1.18350</td>
+            <td>0.74713</td>
+            </tr>
+            <tr>
+            <td>3</td>
+            <td>0.99502</td>
+            <td>1.05151</td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/ekf/average_window.2.png" width="300"></p>
+            <p><br></p>
+            <table>
+            <thead>
+            <tr>
+            <th><span class="math inline"><em>k</em></span></th>
+            <th><span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span></th>
+            <th><span class="math inline">$\overline{x_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>0</td>
+            <td>0.08187</td>
+            <td>0.08187</td>
+            </tr>
+            <tr>
+            <td>1</td>
+            <td>0.97601</td>
+            <td>0.52894</td>
+            </tr>
+            <tr>
+            <td>2</td>
+            <td>1.18350</td>
+            <td>0.74713</td>
+            </tr>
+            <tr>
+            <td>3</td>
+            <td>0.99502</td>
+            <td>1.05151</td>
+            </tr>
+            <tr>
+            <td>4</td>
+            <td>-0.31375</td>
+            <td>0.62159</td>
+            </tr>
+            <tr>
+            <td>5</td>
+            <td>-0.25739</td>
+            <td>0.14129</td>
+            </tr>
+            <tr>
+            <td>6</td>
+            <td>1.52112</td>
+            <td>0.31666</td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/ekf/average_window.3.png" width="300"></p>
+            <p><br></p>
+            <p>We can see that the estimate is trying to match the
+            changes in the original sensor readings.</p>
+            <p>finally, we get:</p>
+            <table>
+            <thead>
+            <tr>
+            <th><span class="math inline"><em>k</em></span></th>
+            <th><span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span></th>
+            <th><span class="math inline">$\overline{x_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>0</td>
+            <td>0.08187</td>
+            <td>0.08187</td>
+            </tr>
+            <tr>
+            <td>1</td>
+            <td>0.97601</td>
+            <td>0.52894</td>
+            </tr>
+            <tr>
+            <td>2</td>
+            <td>1.18350</td>
+            <td>0.74713</td>
+            </tr>
+            <tr>
+            <td>3</td>
+            <td>0.99502</td>
+            <td>1.05151</td>
+            </tr>
+            <tr>
+            <td>4</td>
+            <td>-0.31375</td>
+            <td>0.62159</td>
+            </tr>
+            <tr>
+            <td>5</td>
+            <td>-0.25739</td>
+            <td>0.14129</td>
+            </tr>
+            <tr>
+            <td>6</td>
+            <td>1.52112</td>
+            <td>0.31666</td>
+            </tr>
+            <tr>
+            <td>7</td>
+            <td>1.75454</td>
+            <td>1.00609</td>
+            </tr>
+            <tr>
+            <td>8</td>
+            <td>1.82412</td>
+            <td>1.69993</td>
+            </tr>
+            <tr>
+            <td>9</td>
+            <td>1.89229</td>
+            <td>1.82365</td>
+            </tr>
+            <tr>
+            <td>10</td>
+            <td>1.10513</td>
+            <td>1.60718</td>
+            </tr>
+            <tr>
+            <td>11</td>
+            <td>1.22321</td>
+            <td>1.40688</td>
+            </tr>
+            <tr>
+            <td>12</td>
+            <td>2.20793</td>
+            <td>1.51209</td>
+            </tr>
+            <tr>
+            <td>13</td>
+            <td>3.02390</td>
+            <td>2.15168</td>
+            </tr>
+            <tr>
+            <td>14</td>
+            <td>2.45511</td>
+            <td>2.56231</td>
+            </tr>
+            <tr>
+            <td>15</td>
+            <td>2.07442</td>
+            <td>2.51781</td>
+            </tr>
+            <tr>
+            <td>16</td>
+            <td>1.49280</td>
+            <td>2.00744</td>
+            </tr>
+            <tr>
+            <td>17</td>
+            <td>1.19093</td>
+            <td>1.58605</td>
+            </tr>
+            <tr>
+            <td>18</td>
+            <td>2.32653</td>
+            <td>1.67009</td>
+            </tr>
+            <tr>
+            <td>19</td>
+            <td>3.84177</td>
+            <td>2.45308</td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/ekf/average_window.4.png" width="300"></p>
+            <p><br></p>
+            <p>This is a good start, but let’s consider a few
+            changes.</p>
+            <p>First: what happens if window size *increases**?</p>
+            <p>We conside <span
+            class="math inline"><em>n</em> = 4</span> or <span
+            class="math inline"><em>n</em> = 9</span> even.</p>
+            <p><img src="img/ekf/average_window.5.png" width="300"></p>
+            <p><br></p>
+            <p>But first, let’s discuss some properties that correlate
+            with <em>larger</em> window size:</p>
+            <table>
+            <thead>
+            <tr>
+            <th>property</th>
+            <th>effect (larger <span
+            class="math inline"><em>n</em></span>)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>smoothening</td>
+            <td>more/less?</td>
+            </tr>
+            <tr>
+            <td>sensitivity (to changes)</td>
+            <td>more/less?</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Let’s look at a few examples:</p>
+            <p><img src="img/ekf/average_window.6.png" width="150">
+            <img src="img/ekf/average_window.7.png" width="150">
+            <img src="img/ekf/average_window.8.png" width="150">
+            <img src="img/ekf/average_window.9.png" width="150"></p>
+            <p><br></p>
+            <p>What about <strong>delays</strong>? Does the window size
+            affect how delayed the estimate is?</p>
+            <p><img src="img/ekf/average_window.10.png" width="150">
+            <img src="img/ekf/average_window.11.png" width="150">
+            <img src="img/ekf/average_window.12.png" width="150"></p>
+            <p><br></p>
+            <p>As we see, this is the case! With increased window sizes
+            → delays increase.</p>
+            <p><strong>Questions</strong>: Why does this happen?</p>
+            <table>
+            <thead>
+            <tr>
+            <th>property</th>
+            <th>effect (larger <span
+            class="math inline"><em>n</em></span>)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>smoothening</td>
+            <td><strong>more</strong></td>
+            </tr>
+            <tr>
+            <td>sensitivity (to changes)</td>
+            <td><strong>more</strong></td>
+            </tr>
+            <tr>
+            <td>delays</td>
+            <td><strong>more</strong></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            </section>
+            <section id="exponential-moving-average-ema" class="level3"
+            data-number="8.1.2">
+            <h3 data-number="8.1.2"><span
+            class="header-section-number">8.1.2</span> Exponential
+            Moving Average (EMA)</h3>
+            <p>To give more weights to <em>recent</em> data, prevent
+            delays and get a better control over the smoothing, we use
+            EMA that usese <strong>exponentially decreasing weights over
+            time</strong>,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \overline{x_{0}}=x_{0} \\
+            &amp; \overline{x_{k}}=\alpha x_{k}+(1-\alpha)
+            \overline{x_{k-1}}, k&gt;0
+            \end{aligned}
+            $$</span></p>
+            <p>where, <span class="math inline"><em>α</em></span> (<span
+            class="math inline">0 &lt; <em>α</em> &lt; 1</span>) →
+            <strong>smoothing factor</strong>.</p>
+            <p>Example (<span
+            class="math inline"><em>α</em> = 0.75</span>):</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: center;"><span
+            class="math inline"><em>k</em></span></th>
+            <th style="text-align: center;"><span
+            class="math inline"><em>x</em><sub><em>k</em></sub></span></th>
+            <th style="text-align: center;"><span
+            class="math inline">$\overline{x_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: center;">0</td>
+            <td style="text-align: center;">2.0</td>
+            <td style="text-align: center;">2.0000</td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">1</td>
+            <td style="text-align: center;">3.0</td>
+            <td style="text-align: center;">2.7000</td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">2</td>
+            <td style="text-align: center;">2.0</td>
+            <td style="text-align: center;">2.2100</td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">3</td>
+            <td style="text-align: center;">4.0</td>
+            <td style="text-align: center;">3.4630</td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">4</td>
+            <td style="text-align: center;">3.0</td>
+            <td style="text-align: center;">3.1389</td>
+            </tr>
+            <tr>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>One of the main advantages of EMA is that we <strong>only
+            need to store one value</strong>, <span
+            class="math inline">$\overline{x_{k}}$</span>.</p>
+            <p>But why “exponential”? If we expand the term for <span
+            class="math inline">$\overline{x_{k}}$</span> we see,</p>
+            <p><span class="math display">$$
+            \begin{array}{rlrl}
+            \overline{x_{k}} &amp; =\alpha x_{k}+(1-\alpha)
+            \overline{x_{k-1}} &amp; &amp; \alpha(1-\alpha)^{2}=0.1470
+            \\
+            &amp; =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+(1-\alpha)^{2}
+            \overline{x_{k-2}} &amp; \alpha(1-\alpha)^{3}=0.1029 \\
+            &amp; =\alpha x_{k}+\alpha(1-\alpha)
+            x_{k-1}+\alpha(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3}
+            \overline{x_{k-3}} &amp; \vdots \\
+            &amp; =\cdots &amp; \\
+            &amp; =\alpha\left[x_{k}+(1-\alpha) x_{k-1}+(1-\alpha)^{2}
+            x_{k-2}+(1-\alpha)^{3} x_{k-3}+\cdots+(1-\alpha)^{k-1}
+            x_{1}\right]+(1-\alpha)^{k} x_{0}
+            \end{array}
+            $$</span></p>
+            <p>As we see, the effect of the smoothing factor, <span
+            class="math inline"><em>α</em></span>, is applied
+            exponentially with each sensor reading. For various values
+            of <span class="math inline"><em>α</em></span>,</p>
+            <p><span class="math display">$$
+            \begin{array}{c}
+            \alpha=0.3000 \\
+            \alpha(1-\alpha)=0.2100 \\
+            \alpha(1-\alpha)^{2}=0.1470 \\
+            \alpha(1-\alpha)^{3}=0.1029 \\
+            \vdots \\
+            \end{array}
+            $$</span></p>
+            <p>EMA takes into acount <strong>all past data</strong> and
+            encodes it into a <strong>single</strong> value, <span
+            class="math inline">$\overline{x_{k}}$</span>.</p>
+            <p>Consider the following example where <span
+            class="math inline"><em>α</em> = 0.5</span>:</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: right;"><span
+            class="math inline"><sub><em>k</em></sub></span></th>
+            <th style="text-align: left;"><span
+            class="math inline"><em>χ</em><sub><em>k</em></sub></span></th>
+            <th style="text-align: left;"><span
+            class="math inline">$\overline{\chi_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: right;">0</td>
+            <td style="text-align: left;">0.08187</td>
+            <td style="text-align: left;">0.08187</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">1</td>
+            <td style="text-align: left;">0.97601</td>
+            <td style="text-align: left;">0.52894</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">2</td>
+            <td style="text-align: left;">1.18350</td>
+            <td style="text-align: left;">0.85622</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">3</td>
+            <td style="text-align: left;">0.99502</td>
+            <td style="text-align: left;">0.92562</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">4</td>
+            <td style="text-align: left;">-0.31375</td>
+            <td style="text-align: left;">0.30594</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">5</td>
+            <td style="text-align: left;">-0.25739</td>
+            <td style="text-align: left;">0.02427</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">6</td>
+            <td style="text-align: left;">1.52112</td>
+            <td style="text-align: left;">0.77269</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">7</td>
+            <td style="text-align: left;">1.75454</td>
+            <td style="text-align: left;">1.26362</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">8</td>
+            <td style="text-align: left;">1.82412</td>
+            <td style="text-align: left;">1.54387</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">9</td>
+            <td style="text-align: left;">1.89229</td>
+            <td style="text-align: left;">1.71808</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">10</td>
+            <td style="text-align: left;">1.10513</td>
+            <td style="text-align: left;">1.41161</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">11</td>
+            <td style="text-align: left;">1.22321</td>
+            <td style="text-align: left;">1.31741</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">12</td>
+            <td style="text-align: left;">2.20793</td>
+            <td style="text-align: left;">1.76267</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">13</td>
+            <td style="text-align: left;">3.02390</td>
+            <td style="text-align: left;">2.39328</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">14</td>
+            <td style="text-align: left;">2.45511</td>
+            <td style="text-align: left;">2.42420</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">15</td>
+            <td style="text-align: left;">2.07442</td>
+            <td style="text-align: left;">2.24931</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">16</td>
+            <td style="text-align: left;">1.49280</td>
+            <td style="text-align: left;">1.87105</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">17</td>
+            <td style="text-align: left;">1.19093</td>
+            <td style="text-align: left;">1.53099</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">18</td>
+            <td style="text-align: left;">2.32653</td>
+            <td style="text-align: left;">1.92876</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">19</td>
+            <td style="text-align: left;">3.84177</td>
+            <td style="text-align: left;">2.88526</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>The graph looks like:</p>
+            <p><img src="img/ekf/ema.1.png" width="300"></p>
+            <p><br></p>
+            <p>Let’s consider some of the values:</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: right;"><span
+            class="math inline"><sub><em>k</em></sub></span></th>
+            <th style="text-align: left;"><span
+            class="math inline"><em>χ</em><sub><em>k</em></sub></span></th>
+            <th style="text-align: left;"><span
+            class="math inline">$\overline{\chi_{k}}$</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: right;">0</td>
+            <td style="text-align: left;">0.08187</td>
+            <td style="text-align: left;">0.08187</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">1</td>
+            <td style="text-align: left;">0.97601</td>
+            <td style="text-align: left;">0.52894</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">2</td>
+            <td style="text-align: left;">1.18350</td>
+            <td style="text-align: left;">0.85622</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">3</td>
+            <td style="text-align: left;">0.99502</td>
+            <td style="text-align: left;"><strong>0.92562</strong></td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">4</td>
+            <td style="text-align: left;"><strong>-0.31375</strong></td>
+            <td style="text-align: left;"><strong>0.30594</strong></td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">5</td>
+            <td style="text-align: left;">-0.25739</td>
+            <td style="text-align: left;">0.02427</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">6</td>
+            <td style="text-align: left;">1.52112</td>
+            <td style="text-align: left;">0.77269</td>
+            </tr>
+            <tr>
+            <td style="text-align: right;">…</td>
+            <td style="text-align: left;">…</td>
+            <td style="text-align: left;">…</td>
+            </tr>
+            </tbody>
+            </table>
+            <p><span class="math inline">$\overline{x_{4}}=0.5 x_{4}+0.5
+            \overline{x_{3}}$</span></p>
+            <p>We see that for this value of <span
+            class="math inline"><em>α</em></span>, the estimate is
+            “halfway” between the two sensor readings,</p>
+            <p><img src="img/ekf/ema.3.png" width="300"></p>
+            <p><br></p>
+            <p>Now, if we change <span
+            class="math inline"><em>α</em> = 0.7</span>, we get <span
+            class="math inline">$\overline{x_{4}}=0.7 x_{4}+0.3
+            \overline{x_{3}}$</span> and the graph now looks like,</p>
+            <p><img src="img/ekf/ema.4.png" width="300"></p>
+            <p><br></p>
+            <p>As we see, there’s a <strong>heavier bias</strong>
+            towards the <strong>more recent value</strong>.</p>
+            <p>Now, of these graphs, which one is <span
+            class="math inline"><em>α</em> = 0.05</span> and which one
+            is <span class="math inline"><em>α</em> = 0.95</span>?</p>
+            <p><img src="img/ekf/ema.5.png" width="300">
+            <img src="img/ekf/ema.6.png" width="300"></p>
+            <p><br></p>
+            <p>We can see the significance of changing <span
+            class="math inline"><em>α</em></span>,</p>
+            <p><img src="img/ekf/ema.7.png" width="300">
+            <img src="img/ekf/ema.8.png" width="300"></p>
+            <p><br></p>
+            <p>As we see from the following figures, increasing <span
+            class="math inline"><em>α</em></span> (left to right)
+            results in:</p>
+            <ul>
+            <li><strong>less delay</strong></li>
+            <li><strong>less smoothening out</strong></li>
+            </ul>
+            <p><img src="img/ekf/ema.9.png" width="200">
+            <img src="img/ekf/ema.10.png" width="200">
+            <img src="img/ekf/ema.11.png" width="200"></p>
+            <p><br></p>
+            </section>
+            <section id="state-space-representation" class="level3"
+            data-number="8.1.3">
+            <h3 data-number="8.1.3"><span
+            class="header-section-number">8.1.3</span> State Space
+            Representation</h3>
+            <p>Dynamic systems are commonly expressed using the state
+            space representation:</p>
+            <p><span
+            class="math display"><strong>x</strong><sub><em>k</em></sub> = <em>f</em>(<strong>x</strong><sub><em>k</em> − 1</sub>, <strong>u</strong><sub><em>k</em> − 1</sub>, <strong>w</strong><sub><em>k</em> − 1</sub>)</span>
+            <span
+            class="math display"><strong>z</strong><sub><em>k</em></sub> = <em>h</em>(<strong>x</strong><sub><em>k</em></sub>, <strong>v</strong><sub><em>k</em></sub>)</span></p>
+            <p>Where:</p>
+            <table>
+            <thead>
+            <tr>
+            <th>symbol</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span
+            class="math inline"><strong>x</strong><sub><em>k</em></sub></span></td>
+            <td>the state vector at time <span
+            class="math inline"><em>k</em></span></td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><strong>u</strong><sub><em>k</em></sub></span></td>
+            <td>the control input (if any)</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><strong>w</strong><sub><em>k</em></sub></span></td>
+            <td>the process noise</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><strong>z</strong><sub><em>k</em></sub></span></td>
+            <td>the measurement/observation</td>
+            </tr>
+            <tr>
+            <td><span
+            class="math inline"><strong>v</strong><sub><em>k</em></sub></span></td>
+            <td>the measurement noise</td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>f</em>(⋅)</span></td>
+            <td>the state transition function</td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>h</em>(⋅)</span></td>
+            <td>the measurement function</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>For linear systems, the equations simplify to:</p>
+            <p><span
+            class="math display"><strong>x</strong><sub><em>k</em></sub> = <strong>F</strong><sub><em>k</em></sub><strong>x</strong><sub><em>k</em> − 1</sub> + <strong>B</strong><sub><em>k</em></sub><strong>u</strong><sub><em>k</em> − 1</sub> + <strong>w</strong><sub><em>k</em> − 1</sub></span>
+            <span
+            class="math display"><strong>z</strong><sub><em>k</em></sub> = <strong>H</strong><sub><em>k</em></sub><strong>x</strong><sub><em>k</em></sub> + <strong>v</strong><sub><em>k</em></sub></span></p>
+            <p>Where: - <span
+            class="math inline"><strong>F</strong><sub><em>k</em></sub></span>
+            is the state transition matrix - <span
+            class="math inline"><strong>B</strong><sub><em>k</em></sub></span>
+            is the control input matrix - <span
+            class="math inline"><strong>H</strong><sub><em>k</em></sub></span>
+            is the observation matrix</p>
             </section>
             </section>
             </section>

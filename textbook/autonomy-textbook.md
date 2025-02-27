@@ -3928,4 +3928,419 @@ Additional reading/examples/etc. if you want to learn more about PWMs, programmi
 6. [Understanding the Basics of PWM](https://control.com/technical-articles/understanding-the-basicsof-pulse-width-modulation-pwm/)
 7. [Raspberry Pi: PWM Outputs with Python (Fading LED)](https://randomnerdtutorials.com/raspberry-pi-pwm-python/)
 8. [Raspberry Pi PWM tutorial](https://circuitdigest.com/microcontroller-projects/raspberry-pi-pwm-tutorial)
-9. [Actuation and Avionics](https://www.collinsaerospace.com/what-we-do/industries/business-aviation/power-controls-actuation/actuation)
+9. [Actuation and Avionics](https://www.collinsaerospace.com/what-we-do/industries/business-aviation/power-controls-actuation/actuation)<!--rel="stylesheet" href="./custom.sibin.css"-->
+
+
+# EKF
+
+Consider a robot in a simple grid starting at $(0,0)$ with the intention of moving to $(2,2)$:
+
+<img src="img/ekf/robot_grid.1.png" width="300">
+<img src="img/ekf/robot_grid.2.png" width="300">
+
+Now the robot can take multiple paths to get to its destination. The robot has multiple choices as shown in the following figure:
+
+<img src="img/ekf/robot_grid.3.png" width="300">
+
+Let's assume that it follows one of these paths and ends up at the following position:
+
+<img src="img/ekf/robot_grid.4.png" width="200">
+<img src="img/ekf/robot_grid.5.png" width="200">
+<img src="img/ekf/robot_grid.6.png" width="200">
+
+Clearly this is not the intended goal so a few things need to happen:
+
+1. first of all, the robot has to understand and estimate where it is _right now_ &rarr; _i.e.,_ **estimate its current state**
+2. the robot has to then make a decision, based on its current state, where to head next 
+
+How to do this?
+
+Answer: **[state estimation](#state-estimation)**!
+
+But before we go there, we have to answer the following question &rarr; _how did we end up here in spite of onboard sensors?_
+
+The sensor gave us a value, $x_k$ &rarr; we can't seem to trust it as is &rarr; because sensors are imperfect, mainly due to:
+
+- physical limitations, measurement noise, poor calibrations, etc.
+- errors can’t be zero
+    - $error = observation\ –\ true\_value$
+
+In some sense, we need to "filter" out noisy data and only allow correct data to guide us. Hence, our robot can pick the right direction to end up at its _correct_ destination. 
+
+<img src="img/ekf/robot_grid.7.png" width="200">
+<img src="img/ekf/robot_grid.8.png" width="200">
+<img src="img/ekf/robot_grid.9.png" width="200">
+
+
+## State Estimation
+
+State estimation is a fundamental problem in control theory, robotics and signal processing. It involves **determining the state of a dynamic system from noisy or incomplete measurements**. The Kalman filter, developed by Rudolf E. Kálmán in the early 1960s, is one of the most widely used and powerful algorithms for state estimation.
+
+In the context of dynamic systems, "**state**" is defined as,
+
+> a set of variables that completely describe the system at a given time. 
+
+For example:
+| **system** | **state variables** |
+|------------|----------------------|
+| **moving vehicle** | position, velocity, acceleration |
+| **pendulum** | angle, angular velocity |
+| **financial system** | asset prices, market indicators |
+||
+
+State **evolves over time** according to the system dynamics, which can be described by a **state transition model**.
+
+
+### How to Estimate State?
+
+Let's look at some data:
+
+<img src="img/ekf/noisy_data.1.png" width="300">
+
+<br>
+
+How we take these values ($x_k$) and generate a state _estimate_, $\overline{x_k}$?
+
+What if we have a few more values?
+
+<img src="img/ekf/noisy_data.2.png" width="300">
+<img src="img/ekf/noisy_data.3.png" width="300">
+
+<br>
+
+Do we see a trend? What if we had many more values?
+
+<img src="img/ekf/noisy_data.4.png" width="300">
+
+<br>
+
+What's the best way to capture the behavior? We can see that it is "noisy" in that it doesn't follow an "exact" trend. 
+
+Remember that $\overline{x_k}$ is the estimate we want:
+
+<img src="img/ekf/sensor_state.3.png" width="400">
+
+
+One way to compute $\overline{x_k}$ would be as an **average** of a **running window of samples**. Why "window" and not all the samples? Well we may only care about the most recent `n` values -- anything older and it may not be directly applicable to our current situation.
+
+We can compute the average as follows:
+
+$$
+\overline{x_{k}}=\frac{x_{k-n-1}+\cdots+x_{k-1}+x_{k}}{n}
+$$
+
+where the only parameter is the window size, $n$.
+
+Consider the following date:
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+
+Using the running window average method (for window size $n=3$), we get:
+
+<img src="img/ekf/average_window.1.png" width="300">
+
+<br>
+
+As we add more values, we see that the window moves as well, aggregating groups of values:
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+
+
+<img src="img/ekf/average_window.2.png" width="300">
+
+<br>
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+| 4 | -0.31375 | 0.62159 |
+| 5 | -0.25739 | 0.14129 |
+| 6 | 1.52112 | 0.31666 |
+
+<img src="img/ekf/average_window.3.png" width="300">
+
+<br>
+
+We can see that the estimate is trying to match the changes in the original sensor readings. 
+
+
+finally, we get:
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+| 4 | -0.31375 | 0.62159 |
+| 5 | -0.25739 | 0.14129 |
+| 6 | 1.52112 | 0.31666 |
+| 7 | 1.75454 | 1.00609 |
+| 8 | 1.82412 | 1.69993 |
+| 9 | 1.89229 | 1.82365 |
+| 10 | 1.10513 | 1.60718 |
+| 11 | 1.22321 | 1.40688 |
+| 12 | 2.20793 | 1.51209 |
+| 13 | 3.02390 | 2.15168 |
+| 14 | 2.45511 | 2.56231 |
+| 15 | 2.07442 | 2.51781 |
+| 16 | 1.49280 | 2.00744 |
+| 17 | 1.19093 | 1.58605 |
+| 18 | 2.32653 | 1.67009 |
+| 19 | 3.84177 | 2.45308 |
+
+<img src="img/ekf/average_window.4.png" width="300">
+
+<br>
+
+
+This is a good start, but let's consider a few changes.
+
+First: what happens if window size *increases**? 
+
+We conside $n=4$ or $n=9$ even.
+
+<img src="img/ekf/average_window.5.png" width="300">
+
+<br>
+
+But first, let's discuss some properties that correlate with _larger_ window size:
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | more/less?|
+| sensitivity (to changes) | more/less? |
+||
+
+
+Let's look at a few examples:
+
+<img src="img/ekf/average_window.6.png" width="150">
+<img src="img/ekf/average_window.7.png" width="150">
+<img src="img/ekf/average_window.8.png" width="150">
+<img src="img/ekf/average_window.9.png" width="150">
+
+<br>
+
+What about **delays**? Does the window size affect how delayed the estimate is?
+
+<img src="img/ekf/average_window.10.png" width="150">
+<img src="img/ekf/average_window.11.png" width="150">
+<img src="img/ekf/average_window.12.png" width="150">
+
+<br>
+
+As we see, this is the case! With increased window sizes &rarr; delays increase.
+
+**Questions**: Why does this happen?
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | **more**|
+| sensitivity (to changes) | **more**|
+| delays | **more**|
+||
+
+
+### Exponential Moving Average (EMA)
+
+To give more weights to _recent_ data, prevent delays and get a better control over the smoothing, we use EMA that usese **exponentially decreasing weights over time**,
+
+$$
+\begin{aligned}
+& \overline{x_{0}}=x_{0} \\
+& \overline{x_{k}}=\alpha x_{k}+(1-\alpha) \overline{x_{k-1}}, k>0
+\end{aligned}
+$$
+
+where, $\alpha$ ($0 < \alpha < 1$) &rarr; **smoothing factor**.
+
+Example ($\alpha = 0.75$):
+
+| $k$ | $x_{k}$ | $\overline{x_{k}}$ |
+| :---: | :---: | :---: |
+| 0 | 2.0 | 2.0000 |
+| 1 | 3.0 | 2.7000 |
+| 2 | 2.0 | 2.2100 |
+| 3 | 4.0 | 3.4630 |
+| 4 | 3.0 | 3.1389 |
+||
+
+One of the main advantages of EMA is that we **only need to store one value**, $\overline{x_{k}}$. 
+
+But why "exponential"? If we expand the term for $\overline{x_{k}}$ we see,
+
+$$
+\begin{array}{rlrl}
+\overline{x_{k}} & =\alpha x_{k}+(1-\alpha) \overline{x_{k-1}} & & \alpha(1-\alpha)^{2}=0.1470 \\
+& =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+(1-\alpha)^{2} \overline{x_{k-2}} & \alpha(1-\alpha)^{3}=0.1029 \\
+& =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+\alpha(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3} \overline{x_{k-3}} & \vdots \\
+& =\cdots & \\
+& =\alpha\left[x_{k}+(1-\alpha) x_{k-1}+(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3} x_{k-3}+\cdots+(1-\alpha)^{k-1} x_{1}\right]+(1-\alpha)^{k} x_{0}
+\end{array}
+$$
+
+As we see, the effect of the smoothing factor, $\alpha$, is applied exponentially with each sensor reading. For various values of $\alpha$,
+
+$$
+\begin{array}{c}
+\alpha=0.3000 \\
+\alpha(1-\alpha)=0.2100 \\
+\alpha(1-\alpha)^{2}=0.1470 \\
+ \alpha(1-\alpha)^{3}=0.1029 \\
+\vdots \\
+\end{array}
+$$
+
+EMA takes into acount **all past data** and encodes it into a **single** value, $\overline{x_{k}}$. 
+
+Consider the following example where $\alpha=0.5$:
+
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | 0.92562 |
+| 4 | -0.31375 | 0.30594 |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+| 7 | 1.75454 | 1.26362 |
+| 8 | 1.82412 | 1.54387 |
+| 9 | 1.89229 | 1.71808 |
+| 10 | 1.10513 | 1.41161 |
+| 11 | 1.22321 | 1.31741 |
+| 12 | 2.20793 | 1.76267 |
+| 13 | 3.02390 | 2.39328 |
+| 14 | 2.45511 | 2.42420 |
+| 15 | 2.07442 | 2.24931 |
+| 16 | 1.49280 | 1.87105 |
+| 17 | 1.19093 | 1.53099 |
+| 18 | 2.32653 | 1.92876 |
+| 19 | 3.84177 | 2.88526 |
+||
+
+The graph looks like:
+
+<img src="img/ekf/ema.1.png" width="300">
+
+<br>
+
+Let's consider some of the values:
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | **0.92562** |
+| 4 | **-0.31375** | **0.30594** |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+|...|...|...|
+
+$\overline{x_{4}}=0.5 x_{4}+0.5 \overline{x_{3}}$
+
+We see that for this value of $\alpha$, the estimate is "halfway" between the two sensor readings,
+
+<img src="img/ekf/ema.3.png" width="300">
+
+<br>
+
+Now, if we change $\alpha=0.7$, we get $\overline{x_{4}}=0.7 x_{4}+0.3 \overline{x_{3}}$ and the graph now looks like,
+
+<img src="img/ekf/ema.4.png" width="300">
+
+<br>
+
+As we see, there's a **heavier bias** towards the **more recent value**.
+
+Now, of these graphs, which one is $\alpha=0.05$ and which one is $\alpha=0.95$?
+
+<img src="img/ekf/ema.5.png" width="300">
+<img src="img/ekf/ema.6.png" width="300">
+
+<br>
+
+We can see the significance of changing $\alpha$,
+
+<img src="img/ekf/ema.7.png" width="300">
+<img src="img/ekf/ema.8.png" width="300">
+
+<br>
+
+As we see from the following figures, increasing $\alpha$ (left to right) results in:
+
+- **less delay**
+- **less smoothening out**
+
+<img src="img/ekf/ema.9.png" width="200">
+<img src="img/ekf/ema.10.png" width="200">
+<img src="img/ekf/ema.11.png" width="200">
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### State Space Representation
+
+Dynamic systems are commonly expressed using the state space representation:
+
+$$\mathbf{x}_k = f(\mathbf{x}_{k-1}, \mathbf{u}_{k-1}, \mathbf{w}_{k-1})$$
+$$\mathbf{z}_k = h(\mathbf{x}_k, \mathbf{v}_k)$$
+
+Where:
+
+| symbol | description |
+|--------|-------------|
+| $\mathbf{x}_k$ | the state vector at time $k$ |
+| $\mathbf{u}_k$ | the control input (if any) |
+| $\mathbf{w}_k$ | the process noise |
+| $\mathbf{z}_k$ | the measurement/observation |
+| $\mathbf{v}_k$ | the measurement noise |
+| $f(\cdot)$ | the state transition function |
+| $h(\cdot)$ | the measurement function |
+||
+
+<br>
+
+For linear systems, the equations simplify to:
+
+$$\mathbf{x}_k = \mathbf{F}_k\mathbf{x}_{k-1} + \mathbf{B}_k\mathbf{u}_{k-1} + \mathbf{w}_{k-1}$$
+$$\mathbf{z}_k = \mathbf{H}_k\mathbf{x}_k + \mathbf{v}_k$$
+
+Where:
+- $\mathbf{F}_k$ is the state transition matrix
+- $\mathbf{B}_k$ is the control input matrix
+- $\mathbf{H}_k$ is the observation matrix
+
