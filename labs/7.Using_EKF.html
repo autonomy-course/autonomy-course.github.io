@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 7** | Understanding Steering Models and Using Extended Kalman Filter
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**
+
+---
+
+## **Objectives**
+
+- Understand different **steering models** and their role in autonomous navigation.
+- Analyze **kinematic and dynamic reachability** and their impact on motion planning.
+- Learn about the **Extended Kalman Filter (EKF)** and its importance in localization.
+- Implement EKF for real-world robotic applications using **ROS**.
+
+---
+
+## **1. Introduction to Steering Models**
+
+Autonomous systems rely on precise motion planning and localization techniques to navigate complex environments. 
+
+we explore three primary steering models
+
+- Ackermann
+- Differential Drive
+- Omnidirectional
+
+while analyzing their role in motion planning and reachability
+
+---
+
+### **Key Steering Models**
+- **Ackermann Steering Model** - Used in four-wheeled vehicles, ensuring smooth turns.
+- **Differential Drive Model** - Common in mobile robots, allowing in-place rotation.
+- **Omnidirectional Steering Model** - Enables movement in any direction.
+
+---
+
+## **2. Reachability in Motion Planning**
+
+### **Kinematic Reachability**
+Defines the set of positions a robot can reach based purely on its steering constraints, without considering velocity, acceleration, or environmental factors.
+
+---
+
+### **Dynamic Reachability**
+Expands upon kinematic reachability by incorporating **velocity, acceleration, and slip** constraints. This is crucial in real-world motion planning where friction, actuator limitations, and inertia play a role.
+
+---
+
+## **3. Extended Kalman Filter (EKF) for Localization**
+
+### **Why Use EKF?**
+Localization is a critical challenge in robotics, where a robot must estimate its position and orientation in an environment. Sensors such as IMUs, GPS, and LiDAR provide noisy data, and the **Extended Kalman Filter (EKF)** refines this data for accurate localization.
+
+---
+
+### **EKF Process**
+1. **Prediction Step:**
+   ```math
+   x_t = f(x_{t-1}, u_t) + w_t
+   ```
+2. **Update Step:**
+   ```math
+   z_t = h(x_t) + v_t
+   ```
+
+---
+
+## **4. Implementing Ackermann Steering in the Rover**
+
+### **Part 1: Setup and ROS Package Creation**
+
+#### **Setup Your Environment**
+- Ensure **ROS (Noetic)** is installed on your Raspberry Pi.
+- Install dependencies:
+  ```bash
+  sudo apt update
+  sudo apt install ros-noetic-rosserial ros-noetic-joy ros-noetic-ackermann-msgs
+  ```
+
+---
+
+- Clone or create a ROS package for steering:
+  ```bash
+  cd ~/catkin_ws/src
+  catkin_create_pkg ackermann_steering std_msgs rospy geometry_msgs ackermann_msgs
+  ```
+
+---
+
+#### **Develop a Steering Controller Node**
+- Implement a **ROS node** that:
+  - Subscribes to `/cmd_vel`.
+  - Calculates **inner and outer wheel angles** using Ackermann equations.
+  - Publishes angles to a **servo motor controlling front wheels**.
+  - Drives **rear wheels using PWM or motor driver commands**.
+
+---
+
+### **Part 2: PWM Control and Testing**
+
+#### **Setup PWM Control for Steering and Throttle**
+- **Servo Steering:**
+  - Use **Navio's PWM outputs** to control the steering servo.
+  - Map the **steering angles to servo PWM values**.
+
+- **Motor Control:**
+  - Use **Navio’s PWM** to control the motor driver.
+  - Convert speed commands to **throttle PWM values**
+
+---
+
+#### **Test Steering & Motion**
+- **Run ROS Node:**
+  ```bash
+  rosrun ackermann_steering steering_controller.py
+  ```
+- **Publish Test Commands:**
+  ```bash
+  rostopic pub /cmd_vel geometry_msgs/Twist "{linear: {x: 1.0}, angular: {z: 0.5}}"
+  ```
+  This should move the rover **forward with a turn**.
+
+---
+
+## **5. Summary**
+
+- **Ackermann steering** is efficient but lacks lateral movement.
+- **Differential drive** allows rotation but cannot strafe.
+- **Omnidirectional robots** have the highest flexibility but require complex control.
+- **EKF improves localization** by fusing sensor data to reduce noise and uncertainty.
+
+> **Refer to the GitHub repository for detailed setup, code, and execution instructions.**
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>

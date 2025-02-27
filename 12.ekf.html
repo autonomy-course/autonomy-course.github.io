@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        # EKF
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+consider a robot in a simple grid
+
+<img src="img/ekf/robot_grid.1.png" width="700">
+
+---
+
+consider a robot in a simple grid
+
+<img src="img/ekf/robot_grid.1.png" width="700">
+
+starting at $(0,0)$
+
+---
+
+consider a robot in a simple grid
+
+<img src="img/ekf/robot_grid.2.png" width="700">
+
+starting at $(0,0)$ &rarr; heading towards $(2,2)$
+
+
+---
+
+robot can take multiple paths to get to its destination
+
+<img src="img/ekf/robot_grid.3.png" width="700">
+
+
+---
+
+assume that it follows one of these paths and ends up at:
+
+<img src="img/ekf/robot_grid.4.png" width="700">
+
+
+---
+
+assume that it follows one of these paths and ends up at:
+
+<img src="img/ekf/robot_grid.5.png" width="700">
+
+clearly this is not the intended goal!
+
+---
+
+what now?
+
+---
+
+what now?
+
+1. robot &rarr; understand and estimate where it is _right now_ 
+    - _i.e.,_ **estimate its current state**
+
+---
+
+what now?
+
+1. robot &rarr; understand and estimate where it is _right now_ 
+    - _i.e.,_ **estimate its current state**
+2. robot &rarr; make a **decision**
+    - based on its current state &rarr; where to head **next**
+
+---
+
+how?
+
+---
+
+how?
+
+### **[state estimation](#state-estimation)**
+
+---
+
+but first &rarr; _how did we end up here in spite of onboard sensors?_
+
+
+---
+
+but first &rarr; _how did we end up here in spite of onboard sensors?_
+
+sensor gave us a value, $x_k$
+
+---
+
+sensor gave us a value, $x_k$
+
+- we can't trust it as is
+
+---
+
+sensor gave us a value, $x_k$
+
+- we can't trust it as is
+- sensors are **imperfect**
+
+---
+
+sensors are **imperfect** 
+
+- physical limitations
+
+---
+
+sensors are **imperfect** 
+
+- physical limitations
+- measurement noise
+
+---
+
+sensors are **imperfect** 
+
+- physical limitations
+- measurement noise
+- poor calibrations, etc.
+
+---
+
+sensors are **imperfect** 
+
+- physical limitations
+- measurement noise
+- poor calibrations, etc.
+- errors can’t be zero
+
+---
+
+sensors are **imperfect** 
+
+- physical limitations
+- measurement noise
+- poor calibrations, etc.
+- errors can’t be zero
+    - $error = observation\ –\ true value$
+
+---
+
+"**filter**" out noisy data &rarr; only allow correct data to guide us
+
+<img src="img/ekf/robot_grid.7.png" width="700">
+
+---
+
+"**filter**" out noisy data &rarr; only allow correct data to guide us
+
+our robot &rarr; pick the right direction to its _correct_ destination
+
+<img src="img/ekf/robot_grid.8.png" width="700">
+
+---
+
+<img src="img/ekf/robot_grid.8.png" width="700">
+<img src="img/ekf/robot_grid.9.png" width="700">
+
+---
+
+## State Estimation
+
+a **fundamental problem** in control theory, robotics and signal processing 
+
+---
+
+## State Estimation
+
+
+determining **state of dynamic system** 
+
+from **noisy/incomplete measurements**
+
+---
+
+in context of dynamic systems, "**state**",
+
+> a set of variables that completely describe the system at a given time 
+
+---
+
+| **system** | **state variables** |
+|------------|----------------------|
+| **moving vehicle** | position, velocity, acceleration |
+| **pendulum** | angle, angular velocity |
+| **financial system** | asset prices, market indicators |
+||
+
+---
+
+### state &rarr; **evolves over time** 
+
+---
+
+### state &rarr; **evolves over time** 
+
+- according to system dynamics
+
+---
+
+### state &rarr; **evolves over time** 
+
+- according to system dynamics
+- described by a **state transition model**
+
+---
+
+### How to Estimate State?
+
+---
+
+### How to Estimate State?
+
+<img src="img/ekf/sensor_state.1.png" width="700">
+
+
+---
+
+### How to Estimate State?
+
+<img src="img/ekf/sensor_state.2.png" width="900">
+
+
+---
+
+### How to Estimate State?
+
+<img src="img/ekf/sensor_state.3.png" width="1100">
+
+---
+
+### How to Estimate State?
+
+let's look at some data:
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### How to Estimate State?
+
+let's look at some data:
+
+<img src="img/ekf/noisy_data.1.png" width="900">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### How to Estimate State?
+
+<img src="img/ekf/noisy_data.1.png" width="900">
+
+from sensor reading ($x_k$) &rarr; how to generate state _estimate_, $\overline{x_k}$?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+what if we have a few more values?
+
+<img src="img/ekf/noisy_data.2.png" width="900">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+what if we have a few more values?
+
+<img src="img/ekf/noisy_data.2.png" width="500">
+<img src="img/ekf/noisy_data.3.png" width="900">
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+do we see a trend? What if we had many more values?
+
+<img src="img/ekf/noisy_data.2.png" width="300">
+<img src="img/ekf/noisy_data.3.png" width="300">
+<img src="img/ekf/noisy_data.4.png" width="900">
+
+---
+
+best way to capture behavior? 
+
+---
+
+<!-- .slide: data-background="white" -->
+
+best way to capture behavior? 
+
+<img src="img/ekf/noisy_data.4.png" width="900">
+
+data is "noisy" &rarr; doesn't follow an "exact" trend
+
+---
+
+Remember that $\overline{x_k}$ is the estimate we want:
+
+<img src="img/ekf/sensor_state.3.png" width="1100">
+
+---
+
+one way to compute $\overline{x_k}$ &rarr; **average** 
+
+---
+
+one way to compute $\overline{x_k}$ &rarr; **average** 
+
+of a **running window of samples**
+
+---
+
+### moving average (MA)
+
+---
+
+why "window" and not all the samples? 
+
+---
+
+we may only care about most recent <scb>n</scb> values 
+
+Note:
+
+anything older and it may not be directly applicable to our current situation.
+
+---
+
+compute **moving average** as follows:
+
+$$
+\overline{x_{k}}=\frac{x_{k-n-1}+\cdots+x_{k-1}+x_{k}}{n}
+$$
+
+---
+compute **moving average** as follows:
+
+$$
+\overline{x_{k}}=\frac{x_{k-n-1}+\cdots+x_{k-1}+x_{k}}{n}
+$$
+
+<br>
+
+where $n$ &rarr; **window size**
+
+---
+
+consider following data:
+
+| $k$ | $x_k$ |
+| --- | --- | 
+| 0 | 0.08187 |
+| 1 | 0.97601 |
+| 2 | 1.18350 |
+
+---
+
+using the MA method ($n=3$),
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+
+---
+
+<!-- .slide: data-background="white" -->
+
+using the MA method ($n=3$),
+
+<div class="multicolumn">
+
+<div>
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+
+</div>
+
+<div>
+
+<img src="img/ekf/average_window.1.png" width="600">
+
+</div>
+
+</div>
+
+---
+
+more values &rarr; window moves, aggregating groups of values:
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+more values &rarr; window moves, aggregating groups of values:
+
+<div class="multicolumn">
+
+<div>
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+
+</div>
+
+<div>
+
+<img src="img/ekf/average_window.2.png" width="600">
+
+</div>
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+<div class="multicolumn">
+
+<div>
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+| 4 | -0.31375 | 0.62159 |
+| 5 | -0.25739 | 0.14129 |
+| 6 | 1.52112 | 0.31666 |
+
+</div>
+
+<div>
+
+<br>
+
+<img src="img/ekf/average_window.3.png" width="900">
+
+</div>
+</div>
+
+---
+
+**estimate** &rarr; trying to **match** changes in original sensor readings 
+
+---
+
+<!-- .slide: data-background="white" -->
+
+finally, we get:
+
+<div class="multicolumn">
+
+<div>
+
+<font size="5">
+
+| $k$ | $x_k$ | $\overline{x_{k}}$ |
+| --- | --- | --- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.74713 |
+| 3 | 0.99502 | 1.05151 |
+| 4 | -0.31375 | 0.62159 |
+| 5 | -0.25739 | 0.14129 |
+| 6 | 1.52112 | 0.31666 |
+| 7 | 1.75454 | 1.00609 |
+| 8 | 1.82412 | 1.69993 |
+| 9 | 1.89229 | 1.82365 |
+| 10 | 1.10513 | 1.60718 |
+| 11 | 1.22321 | 1.40688 |
+| 12 | 2.20793 | 1.51209 |
+| 13 | 3.02390 | 2.15168 |
+| 14 | 2.45511 | 2.56231 |
+| 15 | 2.07442 | 2.51781 |
+| 16 | 1.49280 | 2.00744 |
+| 17 | 1.19093 | 1.58605 |
+| 18 | 2.32653 | 1.67009 |
+| 19 | 3.84177 | 2.45308 |
+
+</small>
+
+</div>
+
+<div>
+
+<br>
+<br>
+
+<img src="img/ekf/average_window.4.png" width="900">
+
+</div>
+
+</div>
+
+---
+
+a good start, but let's consider a few changes...
+
+First: what happens if window size *increases**? 
+
+We conside $n=4$ or $n=9$ even.
+
+<img src="img/ekf/average_window.5.png" width="300">
+
+<br>
+
+But first, let's discuss some properties that correlate with _larger_ window size:
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | more/less?|
+| sensitivity (to changes) | more/less? |
+||
+
+
+Let's look at a few examples:
+
+<img src="img/ekf/average_window.6.png" width="150">
+<img src="img/ekf/average_window.7.png" width="150">
+<img src="img/ekf/average_window.8.png" width="150">
+<img src="img/ekf/average_window.9.png" width="150">
+
+<br>
+
+What about **delays**? Does the window size affect how delayed the estimate is?
+
+<img src="img/ekf/average_window.10.png" width="150">
+<img src="img/ekf/average_window.11.png" width="150">
+<img src="img/ekf/average_window.12.png" width="150">
+
+<br>
+
+As we see, this is the case! With increased window sizes &rarr; delays increase.
+
+**Questions**: Why does this happen?
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | **more**|
+| sensitivity (to changes) | **more**|
+| delays | **more**|
+||
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal-js/dist/reveal.js"></script>
+        <script src="assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
