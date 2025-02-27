@@ -565,15 +565,92 @@ finally, we get:
 
 a good start, but let's consider a few changes...
 
-First: what happens if window size *increases**? 
+---
 
-We conside $n=4$ or $n=9$ even.
+<!-- .slide: data-background="white" -->
 
-<img src="img/ekf/average_window.5.png" width="300">
+what happens with **changing** window size? 
 
-<br>
+consider $n=4$ or $n=9$ 
 
-But first, let's discuss some properties that correlate with _larger_ window size:
+<img src="img/ekf/average_window.5.png" width="900">
+
+---
+
+some **properties** &rarr; correlate with **larger window size**
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | more/less?|
+| sensitivity (to changes) | more/less? |
+||
+
+Note:
+- why do these matter?
+- these properties can significantly affect the **response** for the system &rarr; whether it is jerky or sudden vs. a better, albeit slower, response. Also, the sensitivity tells us that the system doesn't respond easily to big changes in output, thus increasing inertia!
+
+---
+
+consider a few examples
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider a few examples
+
+<img src="img/ekf/average_window.6.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider a few examples
+
+<img src="img/ekf/average_window.6.png" width="350">
+<img src="img/ekf/average_window.7.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider a few examples
+
+<img src="img/ekf/average_window.6.png" width="350">
+<img src="img/ekf/average_window.7.png" width="350">
+<img src="img/ekf/average_window.8.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider a few examples
+
+<img src="img/ekf/average_window.6.png" width="250">
+<img src="img/ekf/average_window.7.png" width="250">
+<img src="img/ekf/average_window.8.png" width="250">
+<img src="img/ekf/average_window.9.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider a few examples
+
+<img src="img/ekf/average_window.6.png" width="450">
+<img src="img/ekf/average_window.7.png" width="450">
+<img src="img/ekf/average_window.8.png" width="450">
+<img src="img/ekf/average_window.9.png" width="450">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+<img src="img/ekf/average_window.6.png" width="450">
+<img src="img/ekf/average_window.7.png" width="450">
+<img src="img/ekf/average_window.8.png" width="450">
+<img src="img/ekf/average_window.9.png" width="450">
+
 
 |property | effect (larger $n$) |
 |---------|--------|
@@ -582,33 +659,583 @@ But first, let's discuss some properties that correlate with _larger_ window siz
 ||
 
 
-Let's look at a few examples:
+---
 
-<img src="img/ekf/average_window.6.png" width="150">
-<img src="img/ekf/average_window.7.png" width="150">
-<img src="img/ekf/average_window.8.png" width="150">
-<img src="img/ekf/average_window.9.png" width="150">
+<!-- .slide: data-background="white" -->
 
-<br>
+<img src="img/ekf/average_window.6.png" width="450">
+<img src="img/ekf/average_window.7.png" width="450">
+<img src="img/ekf/average_window.8.png" width="450">
+<img src="img/ekf/average_window.9.png" width="450">
 
-What about **delays**? Does the window size affect how delayed the estimate is?
-
-<img src="img/ekf/average_window.10.png" width="150">
-<img src="img/ekf/average_window.11.png" width="150">
-<img src="img/ekf/average_window.12.png" width="150">
-
-<br>
-
-As we see, this is the case! With increased window sizes &rarr; delays increase.
-
-**Questions**: Why does this happen?
 
 |property | effect (larger $n$) |
 |---------|--------|
 | smoothening | **more**|
-| sensitivity (to changes) | **more**|
+| sensitivity (to changes) | more/less? |
+||
+
+---
+
+<!-- .slide: data-background="white" -->
+
+<img src="img/ekf/average_window.6.png" width="450">
+<img src="img/ekf/average_window.7.png" width="450">
+<img src="img/ekf/average_window.8.png" width="450">
+<img src="img/ekf/average_window.9.png" width="450">
+
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | **more**|
+| sensitivity (to changes) | **less** |
+||
+
+
+---
+
+**delays** &rarr; window size affects how delayed the estimate is?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**delays?**
+
+<img src="img/ekf/average_window.10.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**delays?**
+
+<img src="img/ekf/average_window.10.png" width="550">
+<img src="img/ekf/average_window.11.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**delays?**
+
+<img src="img/ekf/average_window.10.png" width="450">
+<img src="img/ekf/average_window.11.png" width="450">
+<img src="img/ekf/average_window.12.png" width="950">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**delays?**
+
+<img src="img/ekf/average_window.10.png" width="600">
+<img src="img/ekf/average_window.11.png" width="600">
+<img src="img/ekf/average_window.12.png" width="600">
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**delays?**
+
+<img src="img/ekf/average_window.10.png" width="600">
+<img src="img/ekf/average_window.11.png" width="600">
+<img src="img/ekf/average_window.12.png" width="600">
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | **more**|
+| sensitivity (to changes) | **less** |
+| delays | more/less? |
+||
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**delays?**
+
+<img src="img/ekf/average_window.10.png" width="600">
+<img src="img/ekf/average_window.11.png" width="600">
+<img src="img/ekf/average_window.12.png" width="600">
+
+|property | effect (larger $n$) |
+|---------|--------|
+| smoothening | **more**|
+| sensitivity (to changes) | **less** |
 | delays | **more**|
 ||
+
+---
+
+with increased window sizes &rarr; delays **increase**!
+
+---
+
+with increased window sizes &rarr; delays **increase**!
+
+**why** does this happen?
+
+---
+
+### issues with moving averages
+
+- less sensitive to changes
+- greater delays
+
+---
+
+### issues with moving averages
+
+- less sensitive to changes
+- greater delays
+- computationally **expensive**
+
+---
+
+## Exponential Moving Average (EMA)
+
+---
+
+## Exponential Moving Average (EMA)
+
+- more weights &rarr; **recent** data
+
+---
+
+## Exponential Moving Average (EMA)
+
+- more weights &rarr; **recent** data
+- prevent delays
+
+---
+
+## Exponential Moving Average (EMA)
+
+- more weights &rarr; **recent** data
+- prevent delays
+- better control over smoothing 
+
+---
+
+## Exponential Moving Average (EMA)
+
+- more weights &rarr; **recent** data
+- prevent delays
+- better control over smoothing 
+
+**exponentially decreasing weights over time**
+
+---
+
+## Exponential Moving Average (EMA)
+
+$$
+\overline{x_{0}}=x_{0} 
+$$
+
+---
+
+## Exponential Moving Average (EMA)
+
+$$
+\overline{x_{0}}=x_{0} 
+$$
+
+$$
+\overline{x_{k}}=\alpha x_{k}+(1-\alpha) \overline{x_{k-1}}, k>0
+$$
+
+---
+
+## Exponential Moving Average (EMA)
+
+$$
+\overline{x_{0}}=x_{0} 
+$$
+
+$$
+\overline{x_{k}}=\alpha x_{k}+(1-\alpha) \overline{x_{k-1}}, k>0
+$$
+
+
+**$\alpha$** &rarr; **smoothing factor** ($0 < \alpha < 1$) 
+
+---
+
+Exampl ($\alpha = 0.75$):
+
+| $k$ | $x_{k}$ | $\overline{x_{k}}$ |
+| :---: | :---: | :---: |
+| 0 | 2.0 | 2.0000 |
+| 1 | 3.0 | 2.7000 |
+| 2 | 2.0 | 2.2100 |
+| 3 | 4.0 | 3.4630 |
+| 4 | 3.0 | 3.1389 |
+||
+
+---
+
+one main advantages of EMA &rarr; **only need to store one value**, $\overline{x_{k}}$ 
+
+---
+
+why "exponential"? 
+
+---
+
+as we expand the term for $\overline{x_{k}}$ we see,
+
+
+---
+
+as we expand the term for $\overline{x_{k}}$ we see,
+
+<br>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+(1-\alpha) \overline{x_{k-1}} $
+</p>
+---
+
+as we expand the term for $\overline{x_{k}}$ we see,
+
+<br>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+(1-\alpha) \overline{x_{k-1}} $
+</p>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+(1-\alpha)^{2} \overline{x_{k-2}}$
+</p>
+---
+
+as we expand the term for $\overline{x_{k}}$ we see,
+
+<br>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+(1-\alpha) \overline{x_{k-1}} $
+</p>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+(1-\alpha)^{2} \overline{x_{k-2}}$
+</p>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+\alpha(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3} \overline{x_{k-3}}$
+</p>
+
+
+---
+
+as we expand the term for $\overline{x_{k}}$ we see,
+
+<br>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+(1-\alpha) \overline{x_{k-1}} $
+</p>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+(1-\alpha)^{2} \overline{x_{k-2}}$
+</p>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha x_{k}+\alpha(1-\alpha) x_{k-1}+\alpha(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3} \overline{x_{k-3}}$
+</p>
+
+$ \vdots $
+
+<p align="left">
+$ \overline{x_{k}} =\alpha\left[x_{k}+(1-\alpha) x_{k-1}+(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3} x_{k-3} +\cdots+\\
+ \quad \quad(1-\alpha)^{k-1} x_{1}\right]+(1-\alpha)^{k} x_{0}$
+</p>
+
+---
+
+why "exponential"? 
+
+<br>
+
+<p align="left">
+$ \overline{x_{k}} =\alpha\left[x_{k}+(1-\alpha) x_{k-1}+(1-\alpha)^{2} x_{k-2}+(1-\alpha)^{3} x_{k-3} +\cdots+\\
+ \quad \quad(1-\alpha)^{k-1} x_{1}\right]+(1-\alpha)^{k} x_{0}$
+</p>
+
+<br>
+
+effect of the smoothing factor, $\alpha$
+
+applied **exponentially** with **each sensor reading**
+
+---
+
+For various values of $\alpha$,
+
+$$
+\alpha=0.3000 \\
+$$
+$$
+\alpha(1-\alpha)=0.2100 \\
+$$
+$$
+\alpha(1-\alpha)^{2}=0.1470 \\
+$$
+$$
+\alpha(1-\alpha)^{3}=0.1029 \\
+$$
+$$
+\vdots \\
+$$
+
+---
+
+EMA &rarr; accounts for **all past data**
+
+---
+
+EMA &rarr; accounts for **all past data**
+
+encodes it into a **single** value &rarr; $\overline{x_{k}}$ 
+
+---
+
+consider example where $\alpha=0.5$,
+
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | 0.92562 |
+| 4 | -0.31375 | 0.30594 |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+| 7 | 1.75454 | 1.26362 |
+
+---
+
+consider example where $\alpha=0.5$,
+
+
+<font size="5">
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | 0.92562 |
+| 4 | -0.31375 | 0.30594 |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+| 7 | 1.75454 | 1.26362 |
+| 8 | 1.82412 | 1.54387 |
+| 9 | 1.89229 | 1.71808 |
+| 10 | 1.10513 | 1.41161 |
+| 11 | 1.22321 | 1.31741 |
+| 12 | 2.20793 | 1.76267 |
+| 13 | 3.02390 | 2.39328 |
+| 14 | 2.45511 | 2.42420 |
+| 15 | 2.07442 | 2.24931 |
+| 16 | 1.49280 | 1.87105 |
+| 17 | 1.19093 | 1.53099 |
+| 18 | 2.32653 | 1.92876 |
+| 19 | 3.84177 | 2.88526 |
+||
+
+</font>
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider example where $\alpha=0.5$,
+
+<div class="multicolumn">
+
+<div>
+
+<font size="5">
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | 0.92562 |
+| 4 | -0.31375 | 0.30594 |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+| 7 | 1.75454 | 1.26362 |
+| 8 | 1.82412 | 1.54387 |
+| 9 | 1.89229 | 1.71808 |
+| 10 | 1.10513 | 1.41161 |
+| 11 | 1.22321 | 1.31741 |
+| 12 | 2.20793 | 1.76267 |
+| 13 | 3.02390 | 2.39328 |
+| 14 | 2.45511 | 2.42420 |
+| 15 | 2.07442 | 2.24931 |
+| 16 | 1.49280 | 1.87105 |
+| 17 | 1.19093 | 1.53099 |
+| 18 | 2.32653 | 1.92876 |
+| 19 | 3.84177 | 2.88526 |
+||
+
+</font>
+
+</div>
+
+<div>
+
+<br>
+
+<img src="img/ekf/ema.1.png" width="900">
+
+</div>
+</div>
+
+---
+
+consider some of the values in the table:
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | **0.92562** |
+| 4 | **-0.31375** | **0.30594** |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+|...|...|...|
+||
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider some of the values in the table:
+
+<div class="multicolumn">
+
+<div>
+
+| ${ }_{k}$ | $\chi_{k}$ | $\overline{\chi_{k}}$ |
+| ---: | :--- | :--- |
+| 0 | 0.08187 | 0.08187 |
+| 1 | 0.97601 | 0.52894 |
+| 2 | 1.18350 | 0.85622 |
+| 3 | 0.99502 | **0.92562** |
+| 4 | **-0.31375** | **0.30594** |
+| 5 | -0.25739 | 0.02427 |
+| 6 | 1.52112 | 0.77269 |
+|...|...|...|
+||
+
+</div>
+<div>
+
+$\overline{x_{4}}=\textbf{0.5} x_{4} + \textbf{0.5} \overline{x_{3}}$
+
+<img src="img/ekf/ema.3.png" width="900">
+
+</div>
+</div>
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+for $\alpha = 0.5$, the estimate &rarr; "**halfway**" between two sensor readings
+
+$\overline{x_{4}}=\textbf{0.5} x_{4} + \textbf{0.5} \overline{x_{3}}$
+
+<img src="img/ekf/ema.3.png" width="900">
+
+
+
+---
+
+now, change $\alpha=\textbf{0.7}$ 
+
+
+---
+
+now, change $\alpha=\textbf{0.7}$ 
+
+$\overline{x_{4}}=0.7 x_{4}+0.3 \overline{x_{3}}$
+
+---
+
+<!-- .slide: data-background="white" -->
+
+now, change $\alpha=\textbf{0.7}$ 
+
+$\overline{x_{4}}=0.7 x_{4}+0.3 \overline{x_{3}}$
+
+<img src="img/ekf/ema.4.png" width="900">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+now, change $\alpha=\textbf{0.7}$ 
+
+$\overline{x_{4}}=0.7 x_{4}+0.3 \overline{x_{3}}$
+
+<img src="img/ekf/ema.4.png" width="900">
+
+**heavier bias** towards the **more recent value**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+<img src="img/ekf/ema.5.png" width="700">
+<img src="img/ekf/ema.6.png" width="700">
+
+which one is $\alpha=\textbf{0.05}$ and which one is $\alpha=\textbf{0.95}$?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+significance of **changing $\alpha$**
+
+<img src="img/ekf/ema.7.png" width="700">
+<img src="img/ekf/ema.8.png" width="700">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+increasing $\alpha$ (left to right) results in:
+
+<img src="img/ekf/ema.9.png" width="500">
+<img src="img/ekf/ema.10.png" width="500">
+<img src="img/ekf/ema.11.png" width="500">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+increasing $\alpha$ (left to right) results in:
+
+<img src="img/ekf/ema.9.png" width="500">
+<img src="img/ekf/ema.10.png" width="500">
+<img src="img/ekf/ema.11.png" width="500">
+
+- **less delay**
+- **less smoothening out**
                     </textarea>
                 </section>
             </div>
