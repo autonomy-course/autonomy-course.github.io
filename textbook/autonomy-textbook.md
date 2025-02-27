@@ -4294,53 +4294,269 @@ As we see from the following figures, increasing $\alpha$ (left to right) result
 <br>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### State Space Representation
 
-Dynamic systems are commonly expressed using the state space representation:
+A more "formal" description of **state**:
 
-$$\mathbf{x}_k = f(\mathbf{x}_{k-1}, \mathbf{u}_{k-1}, \mathbf{w}_{k-1})$$
-$$\mathbf{z}_k = h(\mathbf{x}_k, \mathbf{v}_k)$$
+> a **quantitative** characterization of a system that is **not directly observable**
 
-Where:
+Examples: temperature, position, velocity, weight, etc.
 
-| symbol | description |
-|--------|-------------|
-| $\mathbf{x}_k$ | the state vector at time $k$ |
-| $\mathbf{u}_k$ | the control input (if any) |
-| $\mathbf{w}_k$ | the process noise |
-| $\mathbf{z}_k$ | the measurement/observation |
-| $\mathbf{v}_k$ | the measurement noise |
-| $f(\cdot)$ | the state transition function |
-| $h(\cdot)$ | the measurement function |
+There are _many_ ways to represent state, even for the same quantity. For instance, consider how to estimate the position of a car in a 2D plane, with the intent of **tracking** it:
+
+<img src="img/ekf/state.1.png" width="200">
+
+<br>
+
+So, how do we represent the "state" of this car?
+
+1. $\boldsymbol{x}_{\boldsymbol{k}}=(x, y)$
+
+A simple position on the coordinate system. Is this sufficient? 
+
+While this captures a **static** state of the system, it doesn't necessarily allow for tracking the car. 
+
+2.  $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, y, \dot{y})$
+
+So, let's also track the **velocity**. Clearly that will tell us how fast the car is moving and so we can "track" it correctly?
+
+Well, not quite. This is **instantaneous velocity** that doesn't tell us if the car is accelerating or deccelerating!
+
+3. $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y})$
+
+Ok, so now we have position, velocity **and** acceleration! Surely, we're done?
+
+But do we know which **direction** the car is heading in?
+
+4. $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y}, \theta)$
+
+Now, we have a better sense of the "state" of the car, in order to track it.
+
+**State estimation** &rarr; estimating state from sensor measurements.
+
+While the moving averages and EMA are good ways to deal with noisy measurements, estimating state is much harder. There is often **uncertainty** in the measurements and state estimation. 
+
+### Probabilistic State Estimation
+
+- Represent state in a probability distribution
+    - Measurements are noisy
+    - Models ‘uncertainty’
+
+- Belief: Knowledge about the state
+    - Or 'estimate of the true state’
+
+- Probabilistic state estimation
+    - Computes **new belief based on measurement data**
+
+<img src="img/ekf/prob_state.1.jpeg" width="300">
+
+
+####  Review of Probability Theory
+
+Let's take a quick detour to review some concepts in probability theory.
+
+**Random variable**, $X$
+
+- A variable whose possible values are numerical outcomes of a random phenomenon
+    - A function X: $\Omega \rightarrow \mathbb{R}$, where $\Omega$ is the set of possible outcomes
+    - Example: rolling a dice, $\Omega=\{1,2,3,4,5,6\}$
+- It models state, measurement, controls, environments, etc.
+
+
+- **Discrete random variable** &rarr; X can take on a countable number of values
+- **Continuous** random variable &rarr; X can take on an infinite number of values
+
+
+**Probability distribution**, $p(x)$
+
+- Links each outcome with probability
+
+Probability distribution: $p(\cdot)$
+Probability: $\operatorname{Pr}(\cdot)$
+
+Two way do represent probability distributions:
+
+|probability mass function (PMF) | probability density function (PDF)|
+|--------------------------------|-----------------------------------|
+| <img src="img/ekf/pmf.png" width="200">| <img src="img/ekf/pdf.png" width="200">|
+
+- **Joint distribution**
+    - $p(x, y)=p(X=x$ and $Y=y)$
+- If X and Y are **independent**
+    - $p(x, y)=p(x) p(y)$
+
+<br>
+
+**Conditional distribution**
+
+- $p(x \mid y)$ : probability of $x$ given $y$
+- If $p(y)>0$,
+    - $p(x \mid y)=\frac{p(x, y)}{p(y)}$
+    - $p(x, y)=p(x \mid y) p(y)$
+- If X and Y are independent, $p(x \mid y)=$ ?, $p(y \mid x)=$ ?
+    - i.e., X (resp. Y ) tells nothing about Y (resp. X )
+
+
+Consider the example of rolling two dice ( $\mathrm{X}, \mathrm{Y}$ )
+
+| $(1,1)$ | $(1,2)$ | $(1,3)$ | $(1,4)$ | $(1,5)$ | $(1,6)$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $(2,1)$ | $(2,2)$ | $(2,3)$ | $(2,4)$ | $(2,5)$ | $(2,6)$ |
+| $(3,1)$ | $(3,2)$ | $(3,3)$ | $(3,4)$ | $(3,5)$ | $(3,6)$ |
+| $(4,1)$ | $(4,2)$ | $(4,3)$ | $(4,4)$ | $(4,5)$ | $(4,6)$ |
+| $(5,1)$ | $(5,2)$ | $(5,3)$ | $(5,4)$ | $(5,5)$ | $(5,6)$ |
+| $(6,1)$ | $(6,2)$ | $(6,3)$ | $(6,4)$ | $(6,5)$ | $(6,6)$ |
+
+<br>
+
+What is $Pr(𝑋=2 | 𝑋 + 𝑌 \le 5)$?
+
+| |  |  |  |  |  |  |  |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+|  | 1 | 2 | 3 | 4 | 5 | 6 |  |
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 |  |
+| 2 | 3 | 4 | 5 | 6 | 7 | 8 |  |
+| 3 | 4 | 5 | 6 | 7 | 8 | 9 |  |
+| 4 | 5 | 6 | 7 | 8 | 9 | 10 |  |
+| 5 | 6 | 7 | 8 | 9 | 10 | 11 |  |
+| 6 | 7 | 8 | 9 | 10 | 11 | 12 |  |
+
+**Theorem of total probability**
+
+$$
+\begin{array}{ll}
+\underline{\text { Discrete }} & p(x)=\sum_{y} p(x, y)=\sum_{y} p(x \mid y) p(y) \\
+\underline{\text { Continuous }} & p(x)=\int p(x, y) d y=\int p(x \mid y) p(y) d y
+\end{array}
+$$
+
+Consider the following problem:
+
+<img src="img/ekf/cond_prob.1.jpg" width="400">
+
+<br>
+
+Let's look at the row where "eye color" is `brown`:
+
+<img src="img/ekf/cond_prob.2.jpg" width="400">
+
+<br>
+
+Filling in the right values:
+
+<img src="img/ekf/cond_prob.3.jpg" width="400">
+
+<br>
+
+
+**Conditional independence**
+
+- $x$ and $y$ are independent if $z$ is known
+
+$$
+\begin{aligned}
+& p(x, y \mid z)=p(x \mid z) p(y \mid z) \\
+& p(x \mid z)=p(x \mid y, z) \\
+& p(y \mid z)=p(y \mid x, z)
+\end{aligned}
+$$
+
+- Conditional (resp. absolute) independence does not imply absolute (resp. conditional) independence
+
+<br>
+
+**Bayes Rule**:
+
+| | |
+|----------|------------|
+|discrete | $p(x \mid y)=\frac{p(y \mid x) p(x)}{p(y)}=\frac{p(y \mid x) p(x)}{\sum_{x \prime} p\left(y \mid x^{\prime}\right) p\left(x^{\prime}\right)}$ | 
+|continuous | $\quad p(x \mid y)=\frac{p(y \mid x) p(x)}{p(y)}=\frac{p(y \mid x) p(x)}{\int p\left(y \mid x^{\prime}\right) p\left(x^{\prime}\right) d x^{\prime}}$|
+||
+
+
+**Prior and posterior probabilities**
+
+$$
+\text p(x \mid y)=\frac{p(y \mid x) p(x)}{p(y)}
+$$
+
+where,
+
+- $p(x \mid y)$ &rarr; posterior
+- $p(x)$ &rarr; prior
+
+Hence,
+
+- Inferring $x$ from $y$
+    - $x$ : state, $y$ : data (measurement)
+- Bayes rule helps compute a posterior using the inverse, $p(y \mid x)$, and prior, $p(x)$
+    - The probability of an event ( $x=$ state) given information ( $y=$ measurement)
+    - Easier to obtain $p(y \mid x)$
+        - E.g., sensor accuracy: $p$ (thermometer reading $=72$ | temperature $=71$ )?
+    - Example
+        - $x$ : has disease, $y$ : test is positive
+        - x: position, y: sensor reading
+
+<br>
+
+**Conditioning Bayes rule on an arbitrary random variable**
+
+$$
+p(x \mid y, z)=\frac{p(y \mid x, z) p(x \mid z)}{p(y \mid z)}
+$$
+
+<br>
+
+**Expectation of a random variable**, $\mathrm{E}[X]$ (or $\mu$, mean)
+
+$$
+\begin{array}{ll}
+\underline{\text { Discrete }} & \mathrm{E}[X]=\sum_{x} x p(x) \\
+\underline{\text { Continuous }} & \mathrm{E}[X]=\int x p(x) d x
+\end{array}
+$$
+
+|  | $X=0$ | $X=1$ | $X=2$ | $X=3$ |
+| :---: | :---: | :---: | :---: | :---: |
+| $p(x)$ | 0.10 | 0.20 | 0.60 | 0.10 |
 ||
 
 <br>
 
-For linear systems, the equations simplify to:
+$\mathrm{E}[X]=\sum_{x} x p(x)=0 \cdot 0.10+1 \cdot 0.20+2 \cdot 0.60+3 \cdot 0.10=1.70$
 
-$$\mathbf{x}_k = \mathbf{F}_k\mathbf{x}_{k-1} + \mathbf{B}_k\mathbf{u}_{k-1} + \mathbf{w}_{k-1}$$
-$$\mathbf{z}_k = \mathbf{H}_k\mathbf{x}_k + \mathbf{v}_k$$
+<bR>
 
-Where:
-- $\mathbf{F}_k$ is the state transition matrix
-- $\mathbf{B}_k$ is the control input matrix
-- $\mathbf{H}_k$ is the observation matrix
+**Variance**, $\operatorname{Var}(X)$ or $\sigma^{2}$
+
+- How far values are spread out from the mean
+- It can represent uncertainty or noise
+
+$$
+\begin{aligned}
+\operatorname{Var}[X]=\mathrm{E}\left[(X-\mu)^{2}\right] & =\sum_{x}(x-\mu)^{2} p(x) & & \text { Discrete } \\
+& =\int(x-\mu)^{2} p(x) d x & & \text { Continuous }
+\end{aligned}
+$$
+
+where,
+
+- $\sigma^{2}$ : variance
+- $\sigma$ : standard deviation
+
+<br>
+
+**Covariance**, $\operatorname{Cov}(X, Y)$ or $\sigma_{X Y}^{2}$
+
+- Joint variability of $X$ and $Y$
+
+$$
+\begin{array}{ll}
+\operatorname{Cov}(X, Y)=\mathrm{E}[(X-\mathrm{E}[X])(Y-\mathrm{E}[Y])]=\mathrm{E}[\mathrm{XY}]-\mathrm{E}[\mathrm{X}] \mathrm{E}[Y] & \\
+\operatorname{Cov}(X, Y)=\operatorname{Cov}(Y, X) & 
+\end{array}
+$$
+
+If $X$ and $Y$ are **independent**, $\operatorname{Cov}(X, Y)=0$
+
 

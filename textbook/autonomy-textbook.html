@@ -489,6 +489,10 @@ George Washington University</p></li>
         id="toc-state-space-representation"><span
         class="toc-section-number">8.1.3</span> State Space
         Representation</a></li>
+        <li><a href="#probabilistic-state-estimation"
+        id="toc-probabilistic-state-estimation"><span
+        class="toc-section-number">8.1.4</span> Probabilistic State
+        Estimation</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -9072,54 +9076,404 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             <h3 data-number="8.1.3"><span
             class="header-section-number">8.1.3</span> State Space
             Representation</h3>
-            <p>Dynamic systems are commonly expressed using the state
-            space representation:</p>
-            <p><span
-            class="math display"><strong>x</strong><sub><em>k</em></sub> = <em>f</em>(<strong>x</strong><sub><em>k</em> − 1</sub>, <strong>u</strong><sub><em>k</em> − 1</sub>, <strong>w</strong><sub><em>k</em> − 1</sub>)</span>
-            <span
-            class="math display"><strong>z</strong><sub><em>k</em></sub> = <em>h</em>(<strong>x</strong><sub><em>k</em></sub>, <strong>v</strong><sub><em>k</em></sub>)</span></p>
-            <p>Where:</p>
+            <p>A more “formal” description of
+            <strong>state</strong>:</p>
+            <blockquote>
+            <p>a <strong>quantitative</strong> characterization of a
+            system that is <strong>not directly observable</strong></p>
+            </blockquote>
+            <p>Examples: temperature, position, velocity, weight,
+            etc.</p>
+            <p>There are <em>many</em> ways to represent state, even for
+            the same quantity. For instance, consider how to estimate
+            the position of a car in a 2D plane, with the intent of
+            <strong>tracking</strong> it:</p>
+            <p><img src="img/ekf/state.1.png" width="200"></p>
+            <p><br></p>
+            <p>So, how do we represent the “state” of this car?</p>
+            <ol type="1">
+            <li><span
+            class="math inline"><strong>x</strong><sub><strong>k</strong></sub> = (<em>x</em>, <em>y</em>)</span></li>
+            </ol>
+            <p>A simple position on the coordinate system. Is this
+            sufficient?</p>
+            <p>While this captures a <strong>static</strong> state of
+            the system, it doesn’t necessarily allow for tracking the
+            car.</p>
+            <ol start="2" type="1">
+            <li><span
+            class="math inline"><strong>x</strong><sub><strong>k</strong></sub> = (<em>x</em>, <em>ẋ</em>, <em>y</em>, <em>ẏ</em>)</span></li>
+            </ol>
+            <p>So, let’s also track the <strong>velocity</strong>.
+            Clearly that will tell us how fast the car is moving and so
+            we can “track” it correctly?</p>
+            <p>Well, not quite. This is <strong>instantaneous
+            velocity</strong> that doesn’t tell us if the car is
+            accelerating or deccelerating!</p>
+            <ol start="3" type="1">
+            <li><span
+            class="math inline">$\boldsymbol{x}_{\boldsymbol{k}}=(x,
+            \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y})$</span></li>
+            </ol>
+            <p>Ok, so now we have position, velocity
+            <strong>and</strong> acceleration! Surely, we’re done?</p>
+            <p>But do we know which <strong>direction</strong> the car
+            is heading in?</p>
+            <ol start="4" type="1">
+            <li><span
+            class="math inline">$\boldsymbol{x}_{\boldsymbol{k}}=(x,
+            \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y},
+            \theta)$</span></li>
+            </ol>
+            <p>Now, we have a better sense of the “state” of the car, in
+            order to track it.</p>
+            <p><strong>State estimation</strong> → estimating state from
+            sensor measurements.</p>
+            <p>While the moving averages and EMA are good ways to deal
+            with noisy measurements, estimating state is much harder.
+            There is often <strong>uncertainty</strong> in the
+            measurements and state estimation.</p>
+            </section>
+            <section id="probabilistic-state-estimation" class="level3"
+            data-number="8.1.4">
+            <h3 data-number="8.1.4"><span
+            class="header-section-number">8.1.4</span> Probabilistic
+            State Estimation</h3>
+            <ul>
+            <li>Represent state in a probability distribution
+            <ul>
+            <li>Measurements are noisy</li>
+            <li>Models ‘uncertainty’</li>
+            </ul></li>
+            <li>Belief: Knowledge about the state
+            <ul>
+            <li>Or ‘estimate of the true state’</li>
+            </ul></li>
+            <li>Probabilistic state estimation
+            <ul>
+            <li>Computes <strong>new belief based on measurement
+            data</strong></li>
+            </ul></li>
+            </ul>
+            <p><img src="img/ekf/prob_state.1.jpeg" width="300"></p>
+            <section id="review-of-probability-theory" class="level4"
+            data-number="8.1.4.1">
+            <h4 data-number="8.1.4.1"><span
+            class="header-section-number">8.1.4.1</span> Review of
+            Probability Theory</h4>
+            <p>Let’s take a quick detour to review some concepts in
+            probability theory.</p>
+            <p><strong>Random variable</strong>, <span
+            class="math inline"><em>X</em></span></p>
+            <ul>
+            <li><p>A variable whose possible values are numerical
+            outcomes of a random phenomenon</p>
+            <ul>
+            <li>A function X: <span
+            class="math inline"><em>Ω</em> → ℝ</span>, where <span
+            class="math inline"><em>Ω</em></span> is the set of possible
+            outcomes</li>
+            <li>Example: rolling a dice, <span
+            class="math inline"><em>Ω</em> = {1, 2, 3, 4, 5, 6}</span></li>
+            </ul></li>
+            <li><p>It models state, measurement, controls, environments,
+            etc.</p></li>
+            <li><p><strong>Discrete random variable</strong> → X can
+            take on a countable number of values</p></li>
+            <li><p><strong>Continuous</strong> random variable → X can
+            take on an infinite number of values</p></li>
+            </ul>
+            <p><strong>Probability distribution</strong>, <span
+            class="math inline"><em>p</em>(<em>x</em>)</span></p>
+            <ul>
+            <li>Links each outcome with probability</li>
+            </ul>
+            <p>Probability distribution: <span
+            class="math inline"><em>p</em>(⋅)</span> Probability: <span
+            class="math inline">Pr (⋅)</span></p>
+            <p>Two way do represent probability distributions:</p>
             <table>
+            <colgroup>
+            <col style="width: 47%" />
+            <col style="width: 52%" />
+            </colgroup>
             <thead>
             <tr>
-            <th>symbol</th>
-            <th>description</th>
+            <th>probability mass function (PMF)</th>
+            <th>probability density function (PDF)</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-            <td><span
-            class="math inline"><strong>x</strong><sub><em>k</em></sub></span></td>
-            <td>the state vector at time <span
-            class="math inline"><em>k</em></span></td>
+            <td><img src="img/ekf/pmf.png" width="200"></td>
+            <td><img src="img/ekf/pdf.png" width="200"></td>
+            </tr>
+            </tbody>
+            </table>
+            <ul>
+            <li><strong>Joint distribution</strong>
+            <ul>
+            <li><span
+            class="math inline"><em>p</em>(<em>x</em>, <em>y</em>) = <em>p</em>(<em>X</em> = <em>x</em></span>
+            and <span
+            class="math inline"><em>Y</em> = <em>y</em>)</span></li>
+            </ul></li>
+            <li>If X and Y are <strong>independent</strong>
+            <ul>
+            <li><span
+            class="math inline"><em>p</em>(<em>x</em>, <em>y</em>) = <em>p</em>(<em>x</em>)<em>p</em>(<em>y</em>)</span></li>
+            </ul></li>
+            </ul>
+            <p><br></p>
+            <p><strong>Conditional distribution</strong></p>
+            <ul>
+            <li><span
+            class="math inline"><em>p</em>(<em>x</em> ∣ <em>y</em>)</span>
+            : probability of <span class="math inline"><em>x</em></span>
+            given <span class="math inline"><em>y</em></span></li>
+            <li>If <span
+            class="math inline"><em>p</em>(<em>y</em>) &gt; 0</span>,
+            <ul>
+            <li><span class="math inline">$p(x \mid y)=\frac{p(x,
+            y)}{p(y)}$</span></li>
+            <li><span
+            class="math inline"><em>p</em>(<em>x</em>, <em>y</em>) = <em>p</em>(<em>x</em> ∣ <em>y</em>)<em>p</em>(<em>y</em>)</span></li>
+            </ul></li>
+            <li>If X and Y are independent, <span
+            class="math inline"><em>p</em>(<em>x</em> ∣ <em>y</em>)=</span>
+            ?, <span
+            class="math inline"><em>p</em>(<em>y</em> ∣ <em>x</em>)=</span>
+            ?
+            <ul>
+            <li>i.e., X (resp. Y ) tells nothing about Y (resp. X )</li>
+            </ul></li>
+            </ul>
+            <p>Consider the example of rolling two dice ( <span
+            class="math inline">X, Y</span> )</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: center;"><span
+            class="math inline">(1, 1)</span></th>
+            <th style="text-align: center;"><span
+            class="math inline">(1, 2)</span></th>
+            <th style="text-align: center;"><span
+            class="math inline">(1, 3)</span></th>
+            <th style="text-align: center;"><span
+            class="math inline">(1, 4)</span></th>
+            <th style="text-align: center;"><span
+            class="math inline">(1, 5)</span></th>
+            <th style="text-align: center;"><span
+            class="math inline">(1, 6)</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: center;"><span
+            class="math inline">(2, 1)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(2, 2)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(2, 3)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(2, 4)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(2, 5)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(2, 6)</span></td>
             </tr>
             <tr>
-            <td><span
-            class="math inline"><strong>u</strong><sub><em>k</em></sub></span></td>
-            <td>the control input (if any)</td>
+            <td style="text-align: center;"><span
+            class="math inline">(3, 1)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(3, 2)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(3, 3)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(3, 4)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(3, 5)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(3, 6)</span></td>
             </tr>
             <tr>
-            <td><span
-            class="math inline"><strong>w</strong><sub><em>k</em></sub></span></td>
-            <td>the process noise</td>
+            <td style="text-align: center;"><span
+            class="math inline">(4, 1)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(4, 2)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(4, 3)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(4, 4)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(4, 5)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(4, 6)</span></td>
             </tr>
             <tr>
-            <td><span
-            class="math inline"><strong>z</strong><sub><em>k</em></sub></span></td>
-            <td>the measurement/observation</td>
+            <td style="text-align: center;"><span
+            class="math inline">(5, 1)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(5, 2)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(5, 3)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(5, 4)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(5, 5)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(5, 6)</span></td>
             </tr>
             <tr>
-            <td><span
-            class="math inline"><strong>v</strong><sub><em>k</em></sub></span></td>
-            <td>the measurement noise</td>
+            <td style="text-align: center;"><span
+            class="math inline">(6, 1)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(6, 2)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(6, 3)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(6, 4)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(6, 5)</span></td>
+            <td style="text-align: center;"><span
+            class="math inline">(6, 6)</span></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>What is <span
+            class="math inline"><em>P</em><em>r</em>(<em>𝑋</em> = 2|<em>𝑋</em> + <em>𝑌</em> ≤ 5)</span>?</p>
+            <table>
+            <tbody>
+            <tr>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;">1</td>
+            <td style="text-align: center;">2</td>
+            <td style="text-align: center;">3</td>
+            <td style="text-align: center;">4</td>
+            <td style="text-align: center;">5</td>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;"></td>
             </tr>
             <tr>
-            <td><span class="math inline"><em>f</em>(⋅)</span></td>
-            <td>the state transition function</td>
+            <td style="text-align: center;">1</td>
+            <td style="text-align: center;">2</td>
+            <td style="text-align: center;">3</td>
+            <td style="text-align: center;">4</td>
+            <td style="text-align: center;">5</td>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;">7</td>
+            <td style="text-align: center;"></td>
             </tr>
             <tr>
-            <td><span class="math inline"><em>h</em>(⋅)</span></td>
-            <td>the measurement function</td>
+            <td style="text-align: center;">2</td>
+            <td style="text-align: center;">3</td>
+            <td style="text-align: center;">4</td>
+            <td style="text-align: center;">5</td>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;">7</td>
+            <td style="text-align: center;">8</td>
+            <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">3</td>
+            <td style="text-align: center;">4</td>
+            <td style="text-align: center;">5</td>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;">7</td>
+            <td style="text-align: center;">8</td>
+            <td style="text-align: center;">9</td>
+            <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">4</td>
+            <td style="text-align: center;">5</td>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;">7</td>
+            <td style="text-align: center;">8</td>
+            <td style="text-align: center;">9</td>
+            <td style="text-align: center;">10</td>
+            <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">5</td>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;">7</td>
+            <td style="text-align: center;">8</td>
+            <td style="text-align: center;">9</td>
+            <td style="text-align: center;">10</td>
+            <td style="text-align: center;">11</td>
+            <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+            <td style="text-align: center;">6</td>
+            <td style="text-align: center;">7</td>
+            <td style="text-align: center;">8</td>
+            <td style="text-align: center;">9</td>
+            <td style="text-align: center;">10</td>
+            <td style="text-align: center;">11</td>
+            <td style="text-align: center;">12</td>
+            <td style="text-align: center;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><strong>Theorem of total probability</strong></p>
+            <p><span class="math display">$$
+            \begin{array}{ll}
+            \underline{\text { Discrete }} &amp; p(x)=\sum_{y} p(x,
+            y)=\sum_{y} p(x \mid y) p(y) \\
+            \underline{\text { Continuous }} &amp; p(x)=\int p(x, y) d
+            y=\int p(x \mid y) p(y) d y
+            \end{array}
+            $$</span></p>
+            <p>Consider the following problem:</p>
+            <p><img src="img/ekf/cond_prob.1.jpg" width="400"></p>
+            <p><br></p>
+            <p>Let’s look at the row where “eye color” is
+            <code>brown</code>:</p>
+            <p><img src="img/ekf/cond_prob.2.jpg" width="400"></p>
+            <p><br></p>
+            <p>Filling in the right values:</p>
+            <p><img src="img/ekf/cond_prob.3.jpg" width="400"></p>
+            <p><br></p>
+            <p><strong>Conditional independence</strong></p>
+            <ul>
+            <li><span class="math inline"><em>x</em></span> and <span
+            class="math inline"><em>y</em></span> are independent if
+            <span class="math inline"><em>z</em></span> is known</li>
+            </ul>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; p(x, y \mid z)=p(x \mid z) p(y \mid z) \\
+            &amp; p(x \mid z)=p(x \mid y, z) \\
+            &amp; p(y \mid z)=p(y \mid x, z)
+            \end{aligned}
+            $$</span></p>
+            <ul>
+            <li>Conditional (resp. absolute) independence does not imply
+            absolute (resp. conditional) independence</li>
+            </ul>
+            <p><br></p>
+            <p><strong>Bayes Rule</strong>:</p>
+            <table>
+            <colgroup>
+            <col style="width: 45%" />
+            <col style="width: 54%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td>discrete</td>
+            <td><span class="math inline">$p(x \mid y)=\frac{p(y \mid x)
+            p(x)}{p(y)}=\frac{p(y \mid x) p(x)}{\sum_{x \prime} p\left(y
+            \mid x^{\prime}\right)
+            p\left(x^{\prime}\right)}$</span></td>
+            </tr>
+            <tr>
+            <td>continuous</td>
+            <td><span class="math inline">$\quad p(x \mid y)=\frac{p(y
+            \mid x) p(x)}{p(y)}=\frac{p(y \mid x) p(x)}{\int p\left(y
+            \mid x^{\prime}\right) p\left(x^{\prime}\right) d
+            x^{\prime}}$</span></td>
             </tr>
             <tr>
             <td></td>
@@ -9127,19 +9481,155 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             </tr>
             </tbody>
             </table>
-            <p><br></p>
-            <p>For linear systems, the equations simplify to:</p>
-            <p><span
-            class="math display"><strong>x</strong><sub><em>k</em></sub> = <strong>F</strong><sub><em>k</em></sub><strong>x</strong><sub><em>k</em> − 1</sub> + <strong>B</strong><sub><em>k</em></sub><strong>u</strong><sub><em>k</em> − 1</sub> + <strong>w</strong><sub><em>k</em> − 1</sub></span>
+            <p><strong>Prior and posterior probabilities</strong></p>
+            <p><span class="math display">$$
+            \text p(x \mid y)=\frac{p(y \mid x) p(x)}{p(y)}
+            $$</span></p>
+            <p>where,</p>
+            <ul>
+            <li><span
+            class="math inline"><em>p</em>(<em>x</em> ∣ <em>y</em>)</span>
+            → posterior</li>
+            <li><span class="math inline"><em>p</em>(<em>x</em>)</span>
+            → prior</li>
+            </ul>
+            <p>Hence,</p>
+            <ul>
+            <li>Inferring <span class="math inline"><em>x</em></span>
+            from <span class="math inline"><em>y</em></span>
+            <ul>
+            <li><span class="math inline"><em>x</em></span> : state,
+            <span class="math inline"><em>y</em></span> : data
+            (measurement)</li>
+            </ul></li>
+            <li>Bayes rule helps compute a posterior using the inverse,
             <span
-            class="math display"><strong>z</strong><sub><em>k</em></sub> = <strong>H</strong><sub><em>k</em></sub><strong>x</strong><sub><em>k</em></sub> + <strong>v</strong><sub><em>k</em></sub></span></p>
-            <p>Where: - <span
-            class="math inline"><strong>F</strong><sub><em>k</em></sub></span>
-            is the state transition matrix - <span
-            class="math inline"><strong>B</strong><sub><em>k</em></sub></span>
-            is the control input matrix - <span
-            class="math inline"><strong>H</strong><sub><em>k</em></sub></span>
-            is the observation matrix</p>
+            class="math inline"><em>p</em>(<em>y</em> ∣ <em>x</em>)</span>,
+            and prior, <span
+            class="math inline"><em>p</em>(<em>x</em>)</span>
+            <ul>
+            <li>The probability of an event ( <span
+            class="math inline"><em>x</em>=</span> state) given
+            information ( <span class="math inline"><em>y</em>=</span>
+            measurement)</li>
+            <li>Easier to obtain <span
+            class="math inline"><em>p</em>(<em>y</em> ∣ <em>x</em>)</span>
+            <ul>
+            <li>E.g., sensor accuracy: <span
+            class="math inline"><em>p</em></span> (thermometer reading
+            <span class="math inline"> = 72</span> | temperature <span
+            class="math inline"> = 71</span> )?</li>
+            </ul></li>
+            <li>Example
+            <ul>
+            <li><span class="math inline"><em>x</em></span> : has
+            disease, <span class="math inline"><em>y</em></span> : test
+            is positive</li>
+            <li>x: position, y: sensor reading</li>
+            </ul></li>
+            </ul></li>
+            </ul>
+            <p><br></p>
+            <p><strong>Conditioning Bayes rule on an arbitrary random
+            variable</strong></p>
+            <p><span class="math display">$$
+            p(x \mid y, z)=\frac{p(y \mid x, z) p(x \mid z)}{p(y \mid
+            z)}
+            $$</span></p>
+            <p><br></p>
+            <p><strong>Expectation of a random variable</strong>, <span
+            class="math inline">E[<em>X</em>]</span> (or <span
+            class="math inline"><em>μ</em></span>, mean)</p>
+            <p><span class="math display">$$
+            \begin{array}{ll}
+            \underline{\text { Discrete }} &amp; \mathrm{E}[X]=\sum_{x}
+            x p(x) \\
+            \underline{\text { Continuous }} &amp; \mathrm{E}[X]=\int x
+            p(x) d x
+            \end{array}
+            $$</span></p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: center;"></th>
+            <th style="text-align: center;"><span
+            class="math inline"><em>X</em> = 0</span></th>
+            <th style="text-align: center;"><span
+            class="math inline"><em>X</em> = 1</span></th>
+            <th style="text-align: center;"><span
+            class="math inline"><em>X</em> = 2</span></th>
+            <th style="text-align: center;"><span
+            class="math inline"><em>X</em> = 3</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: center;"><span
+            class="math inline"><em>p</em>(<em>x</em>)</span></td>
+            <td style="text-align: center;">0.10</td>
+            <td style="text-align: center;">0.20</td>
+            <td style="text-align: center;">0.60</td>
+            <td style="text-align: center;">0.10</td>
+            </tr>
+            <tr>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p><span
+            class="math inline">E[<em>X</em>] = ∑<sub><em>x</em></sub><em>x</em><em>p</em>(<em>x</em>) = 0 ⋅ 0.10 + 1 ⋅ 0.20 + 2 ⋅ 0.60 + 3 ⋅ 0.10 = 1.70</span></p>
+            <p><bR></p>
+            <p><strong>Variance</strong>, <span
+            class="math inline">Var (<em>X</em>)</span> or <span
+            class="math inline"><em>σ</em><sup>2</sup></span></p>
+            <ul>
+            <li>How far values are spread out from the mean</li>
+            <li>It can represent uncertainty or noise</li>
+            </ul>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \operatorname{Var}[X]=\mathrm{E}\left[(X-\mu)^{2}\right]
+            &amp; =\sum_{x}(x-\mu)^{2} p(x) &amp; &amp; \text { Discrete
+            } \\
+            &amp; =\int(x-\mu)^{2} p(x) d x &amp; &amp; \text {
+            Continuous }
+            \end{aligned}
+            $$</span></p>
+            <p>where,</p>
+            <ul>
+            <li><span class="math inline"><em>σ</em><sup>2</sup></span>
+            : variance</li>
+            <li><span class="math inline"><em>σ</em></span> : standard
+            deviation</li>
+            </ul>
+            <p><br></p>
+            <p><strong>Covariance</strong>, <span
+            class="math inline">Cov (<em>X</em>, <em>Y</em>)</span> or
+            <span
+            class="math inline"><em>σ</em><sub><em>X</em><em>Y</em></sub><sup>2</sup></span></p>
+            <ul>
+            <li>Joint variability of <span
+            class="math inline"><em>X</em></span> and <span
+            class="math inline"><em>Y</em></span></li>
+            </ul>
+            <p><span class="math display">$$
+            \begin{array}{ll}
+            \operatorname{Cov}(X,
+            Y)=\mathrm{E}[(X-\mathrm{E}[X])(Y-\mathrm{E}[Y])]=\mathrm{E}[\mathrm{XY}]-\mathrm{E}[\mathrm{X}]
+            \mathrm{E}[Y] &amp; \\
+            \operatorname{Cov}(X, Y)=\operatorname{Cov}(Y, X) &amp;
+            \end{array}
+            $$</span></p>
+            <p>If <span class="math inline"><em>X</em></span> and <span
+            class="math inline"><em>Y</em></span> are
+            <strong>independent</strong>, <span
+            class="math inline">Cov (<em>X</em>, <em>Y</em>) = 0</span></p>
+            </section>
             </section>
             </section>
             </section>
