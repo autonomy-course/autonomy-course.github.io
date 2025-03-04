@@ -4570,8 +4570,7 @@ If $X$ and $Y$ are **independent**, $\operatorname{Cov}(X, Y)=0$
 
 ## Bayes Filter
 
-Recall that sensors capture **incomplete** or **noisy** information. Consider the example of two LiDAR:w
-ensors that are trying to estimate the distance to a pedestrian. One of the LiDAR sensors, measure the distance to be at $10 m$ (with a probability of $50 \%$) while the other estimates the person to be at $10.8 m$ (also with a probability of $50\%$). 
+Recall that sensors capture **incomplete** or **noisy** information. Consider the example of two LiDAR sensors that are trying to estimate the distance to a pedestrian. One of the LiDAR sensors, measure the distance to be at $10 m$ (with a probability of $50 \%$) while the other estimates the person to be at $10.8 m$ (also with a probability of $50\%$). 
 
 <img src="img/ekf/bayes.lidar.4.png" width="400">
 

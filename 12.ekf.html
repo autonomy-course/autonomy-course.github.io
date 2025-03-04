@@ -1236,6 +1236,1222 @@ increasing $\alpha$ (left to right) results in:
 
 - **less delay**
 - **less smoothening out**
+
+---
+
+## State Space Representation
+
+---
+
+more "formal" description of **state**:
+
+---
+
+more "formal" description of **state**:
+
+> a **quantitative** characterization of a system that is **not directly observable**
+
+---
+
+more "formal" description of **state**:
+
+> a **quantitative** characterization of a system that is **not directly observable**
+
+<br>
+
+examples: temperature, position, velocity, weight, etc.
+
+Note:
+
+There are _many_ ways to represent state, even for the same quantity. 
+
+---
+
+how to estimate the position of a car in a 2D plane?
+
+
+---
+
+how to estimate the position of a car in a 2D plane?
+
+with the intent of **tracking** it
+
+---
+
+<img src="img/ekf/state.1.png" width="700">
+
+---
+
+<img src="img/ekf/state.1.png" width="700">
+
+how do we represent the "state" of this car?
+
+---
+
+## "state" of car
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/state.1.png" width="700">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+1. $\boldsymbol{x}_{\boldsymbol{k}}=(x, y)$
+
+<br>
+
+position &rarr; coordinate system
+
+</div>
+
+</div>
+
+
+---
+
+## "state" of car
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/state.1.png" width="700">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+1. $\boldsymbol{x}_{\boldsymbol{k}}=(x, y)$
+
+<br>
+
+position &rarr; coordinate system
+
+</div>
+
+</div>
+
+is this sufficient? 
+
+---
+
+captures a **static** state of the system
+
+---
+
+captures a **static** state of the system
+
+doesn't allow for **tracking** the car &rarr; predict next move?
+
+---
+
+## "state" of car
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/state.1.png" width="700">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+2.  $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, y, \dot{y})$
+
+<br>
+
+also track the **velocity**
+
+
+</div>
+
+</div>
+
+Note:
+
+Clearly that will tell us how fast the car is moving and so we can "track" it correctly?
+
+---
+
+## "state" of car
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/state.1.png" width="700">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+2.  $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, y, \dot{y})$
+
+<br>
+
+also track the **velocity**
+
+
+</div>
+
+</div>
+
+so we can "track" it correctly?
+
+---
+
+not quite &rarr; **instantaneous velocity** 
+
+---
+
+not quite &rarr; **instantaneous velocity** 
+
+doesn't tell if car accelerating or deccelerating!
+
+---
+
+## "state" of car
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/state.1.png" width="700">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+3. $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y})$
+
+<br>
+
+position, velocity **and** acceleration
+
+</div>
+
+</div>
+
+Note:
+
+Ok, so now we have position, velocity **and** acceleration! Surely, we're done?
+
+---
+
+do we know which **direction** the car is heading in?
+
+---
+
+## "state" of car
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/state.1.png" width="700">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+4. $\boldsymbol{x}_{\boldsymbol{k}}=(x, \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y}, \theta)$
+
+<br>
+
+position, velocity, acceleration and **direction**
+
+</div>
+
+</div>
+
+Note: 
+Now, we have a better sense of the "state" of the car, in order to track it
+
+---
+
+## state estimation 
+
+estimating state from sensor measurements
+
+Note:
+
+While the moving averages and EMA are good ways to deal with noisy measurements, estimating state is much harder
+
+---
+
+## state estimation 
+
+estimating state from sensor measurements
+
+**uncertainty** &rarr; in measurements and state estimation
+
+---
+
+## Probabilistic State Estimation
+
+
+---
+
+## Probabilistic State Estimation
+
+**probability** &rarr; deal with uncertanties in
+
+---
+
+## Probabilistic State Estimation
+
+**probability** &rarr; deal with uncertanties in
+
+- sensor measurements
+- state estimation
+
+---
+
+## Probabilistic State Estimation
+
+**probability** &rarr; deal with uncertanties in
+
+- sensor measurements
+- state estimation
+
+main idea &rarr; represent state in a **probability distribution**
+
+---
+    
+## Probabilistic State Estimation
+
+- measurements are **noisy**
+- models ‘**uncertainty**’
+
+---
+
+## Probabilistic State Estimation
+
+start with **"belief"** 
+
+knowledge about state or _'estimate of true state'_
+
+---
+
+## Probabilistic State Estimation
+
+start with **"belief"** 
+
+compute **new belief** based on &rarr; **measurement data**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## Probabilistic State Estimation
+
+compute **new belief** based on &rarr; **measurement data**
+
+<img src="img/ekf/prob_state.1.jpeg" width="700">
+
+---
+
+## Probabilistic State Estimation
+
+various methods for **probabilistic state estimations**, 
+
+1. [Bayes filter](#bayes-filter)
+2. [Kalman filter](#kalman-filter)
+3. [Extended Kalman Filter]()
+
+---
+
+## Bayes Filter
+
+---
+
+## Bayes Filter
+
+
+sensors capture &rarr; **incomplete** or **noisy** information
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example
+
+two LiDAR sensors &rarr; estimate distance to a pedestrian
+
+<img src="img/ekf/bayes.lidar.1.png" width="1400">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/bayes.lidar.2.png" width="1000">
+
+</div>
+
+<div>
+
+
+<br>
+
+|sensor| distance|
+|-----|-----|
+| LiDar1 | $10\ m$ |
+
+
+</div>
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/bayes.lidar.3.png" width="1000">
+
+</div>
+
+<div>
+
+
+<br>
+
+|sensor| distance|
+|-----|-----|
+| LiDar1 | $10\ m$ |
+| LiDar2 | $10.8\ m$ |
+
+
+</div>
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/bayes.lidar.3.png" width="1000">
+
+</div>
+
+<div>
+
+
+<br>
+
+|sensor| distance|
+|-----|-----|
+| LiDar1 | $10\ m$ |
+| LiDar2 | $10.8\ m$ |
+
+
+</div>
+</div>
+
+so there's a **mismatch** &rarr; which one do we trust?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example
+
+what if we add **probabilities**?
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/bayes.lidar.3.png" width="1000">
+
+</div>
+
+<div>
+
+
+<br>
+
+|sensor| distance| uncertainty |
+|-----|-----|-------|
+| LiDar1 | $10\ m$ | **50%** |
+| LiDar2 | $10.8\ m$ | **50%** |
+
+
+</div>
+</div>
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example
+
+what if we add **probabilities**?
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/ekf/bayes.lidar.3.png" width="1000">
+
+</div>
+
+<div>
+
+
+<br>
+
+|sensor| distance| confidence |
+|-----|-----|-------|
+| LiDar1 | $10\ m$ | **50%** |
+| LiDar2 | $10.8\ m$ | **50%** |
+
+
+</div>
+</div>
+
+what if the probabilities **differ**?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### example | reality
+
+<img src="img/ekf/bayes.lidar.4.png" width="1400">
+
+---
+
+how do we deal with such situations? 
+
+---
+
+how do we deal with such situations? 
+
+- what if probabilities **differ** greatly? 
+
+---
+
+how do we deal with such situations? 
+
+- what if probabilities **differ** greatly? 
+- **which** sensor would you trust and **how much**?
+
+---
+
+## bayes filter
+
+---
+
+### Bayes filter | **Prediction**
+
+---
+
+### Bayes filter | **Prediction**
+
+revisit our previous example of a car:
+
+<img src="img/ekf/state.1.png" width="700">
+
+---
+
+### Bayes filter | **Prediction**
+
+say car is in &rarr; $state_k$ at a certain point in time 
+
+
+---
+
+### Bayes filter | **Prediction**
+
+say car is in &rarr; $state_k$ at a certain point in time 
+
+make a **prediction** &rarr; **future state**, $state_{k+1}$
+
+---
+
+### Bayes filter | **Prediction**
+
+<div class="multicolumn">
+
+<div>
+
+<br>
+<br>
+<br>
+
+car &rarr; $state_k$
+
+**prediction** &rarr; $state_{k+1}$
+
+</div>
+
+<div>
+
+<img src="img/ekf/bayes_car.2.png" width="700">
+
+</div>
+</div>
+
+---
+
+simplify matters
+
+---
+
+simplify matters
+
+- assume car moving along *one* axis, _e.g.,_ x-axis
+
+---
+
+simplify matters
+
+- assume car moving along *one* axis, _e.g.,_ x-axis
+- follow **discrete** position: $0,1,2, .., 9$
+
+---
+
+simplify matters
+
+- assume car moving along *one* axis, _e.g.,_ x-axis
+- follow **discrete** position: $0,1,2, .., 9$
+- this is a "circular" track: $+1$ move from $9 \rightarrow 0$
+
+---
+
+simplify matters
+
+- assume car moving along *one* axis, _e.g.,_ x-axis
+- follow **discrete** position: $0,1,2, .., 9$
+- this is a "circular" track: $+1$ move from $9 \rightarrow 0$
+
+
+<img src="img/ekf/bayes_car.3.png" width="1300">
+
+---
+
+assume existence of **sensor** &rarr; captures car's movement
+
+---
+
+assume existence of **sensor** &rarr; captures car's movement
+
+| sensor output | meaning |
+|---------------|---------|
+| <scb>0</scb> | **stay** |
+
+---
+
+assume existence of **sensor** &rarr; captures car's movement
+
+| sensor output | meaning |
+|---------------|---------|
+| <scb>0</scb> | **stay** |
+| <scb>+1</scb>, <scb>+2</scb>, ... | move forward by that amount |
+||
+
+---
+
+assume existence of **sensor** &rarr; captures car's movement
+
+| sensor output | meaning |
+|---------------|---------|
+| <scb>0</scb> | **stay** |
+| <scb>+1</scb>, <scb>+2</scb>, ... | move forward by that amount |
+||
+
+
+also assume &rarr; sensor is **always correct** (for now)
+
+---
+
+<!-- .slide: data-background="white" -->
+
+current "belief"
+
+<img src="img/ekf/bayes_car.4.png" width="700">
+
+<img src="img/ekf/bayes_car.3.png" width="1300">
+
+Note:
+- based on the location of the car
+
+---
+
+if we more car forward &rarr; <scb>1</scb> step
+
+---
+
+car forward by <scb>1</scb> &rarr; how does this update belief?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+car forward by <scb>1</scb> &rarr; how does this update belief?
+
+<img src="img/ekf/bayes_car.5.png" width="1500">
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+car forward by <scb>1</scb> &rarr; how does this update belief?
+
+<img src="img/ekf/bayes_car.6.png" width="1500">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+car forward by <scb>1</scb> &rarr; how does this update belief?
+
+<img src="img/ekf/bayes_car.6.png" width="1500">
+
+**simple** case &rarr; car **obviously** moved <scb>1</scb> step and we can **verify** it
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+car forward by <scb>1</scb> &rarr; how does this update belief?
+
+<img src="img/ekf/bayes_car.6.png" width="1500">
+
+**simple** case &rarr; car **obviously** moved <scb>1</scb> step and we can **verify** it
+
+the belief is updated accordingly
+
+---
+
+**realistic case** &rarr; motion sensor  has **noise** with probabilities
+
+---
+
+**realistic case** &rarr; motion sensor  has **noise** with probabilities
+
+| probability | meaning |
+|-------------|-------------|
+| <scb>80%</scb>         | **correct** reading |
+| <scb>10%</scb>         | **over**estimate |
+| <scb>10%</scb>         | **under**estimate |
+||
+
+---
+
+**realistic case** &rarr; motion sensor  has **noise** with probabilities
+
+| probability | meaning |
+|-------------|-------------|
+| <scb>80%</scb>         | **correct** reading |
+| <scb>10%</scb>         | **over**estimate |
+| <scb>10%</scb>         | **under**estimate |
+||
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+sensor &rarr; **number** of moves is <scb>+3</scb>
+
+---
+
+sensor &rarr; **number** of moves is <scb>+3</scb>
+
+|probability | movement |
+|------------|----------|
+| <scb>80%</scb> | <scb>+3</scb> |
+| <scb>10%</scb> | <scb>+2</scb> |
+| <scb>10%</scb> | <scb>+4</scb> |
+||
+
+---
+
+sensor &rarr; **number** of moves is <scb>+3</scb>
+
+|probability | movement |
+|------------|----------|
+| <scb>80%</scb> | <scb>+3</scb> |
+| <scb>10%</scb> | <scb>+2</scb> |
+| <scb>10%</scb> | <scb>+4</scb> |
+||
+
+what happens to the **belief**?
+
+---
+ 
+<!-- .slide: data-background="white" -->
+
+what happens to the **belief**?
+
+<img src="img/ekf/bayes_car.8.png" width="1500">
+
+
+---
+ 
+<!-- .slide: data-background="white" -->
+
+what happens to the **belief**?
+
+<img src="img/ekf/bayes_car.8.png" width="1500">
+
+[note the starting belief]
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**updated belief** 
+
+<img src="img/ekf/bayes_car.9.png" width="1300">
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**updated belief** 
+
+<img src="img/ekf/bayes_car.9.png" width="1300">
+
+
+**how**?
+
+---
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right) = \textbf{?}
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+
+---
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(\text{started at } x_0 = 1\right) \operatorname{Pr}(\textbf{under})
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(x_{0}=1\right) \operatorname{Pr}(\textbf{under})
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(x_{0}=1\right) \operatorname{Pr}(under)+ 
+$$
+
+$$
+{Pr}\left(\text{started at }x_{0}=2\right) \operatorname{Pr}(\textbf{correct}) 
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(x_{0}=1\right) \operatorname{Pr}(\textbf{under})+{Pr}\left(x_{0}=2\right) \operatorname{Pr}(\textbf{correct}) 
+$$
+
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(x_{0}=1\right) \operatorname{Pr}(\textbf{under})+{Pr}\left(x_{0}=2\right) \operatorname{Pr}(\textbf{correct}) 
+$$
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)=0.5 \times 0.1+0.5 \times 0.8= \textbf{0.45}
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+
+---
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(x_{0}=1\right) \operatorname{Pr}(\textbf{under})+{Pr}\left(x_{0}=2\right) \operatorname{Pr}(\textbf{correct}) 
+$$
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)=0.5 \times 0.1+0.5 \times 0.8= \textbf{0.45}
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+wait, where did the <scb>0.5</scb> come from?
+
+---
+
+<!-- .slide: data-background="white" -->
+
+wait, where did the <scb>0.5</scb> come from?
+
+<img src="img/ekf/bayes_car.9.png" width="1300">
+
+starting position &rarr; one of <scb>1</scb> or <scb>2</scb>
+
+---
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)={Pr}\left(x_{0}=1\right) \operatorname{Pr}(\textbf{under})+{Pr}\left(x_{0}=2\right) \operatorname{Pr}(\textbf{correct}) 
+$$
+
+$$
+\operatorname{Pr}\left(x_{1}=5\right)=0.5 \times 0.1+0.5 \times 0.8= \textbf{0.45}
+$$
+
+<img src="img/ekf/bayes_car.7.png" width="1300">
+
+---
+
+**law of total probability**
+
+---
+
+**law of total probability**
+
+$$p\left(x_{k}\right)=\sum_{i} p\left(x_{k} \mid x_{k-1}=i\right) p\left(x_{k-1}=i\right)$$
+
+---
+
+also need to compute
+
+$$
+\operatorname{Pr}\left(x_{1}=4\right)=0.5 \times 0.8+0.5 \times 0.1= \textbf{0.45}
+$$
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+after <scb>3</scb> moves &rarr; **predicted** probability estimate 
+
+<img src="img/ekf/bayes_car.10.png" width="1500">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+let's keep going ...
+
+<img src="img/ekf/bayes_car.11.png" width="1500">
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+let's keep going ...
+
+<img src="img/ekf/bayes_car.12.png" width="1500">
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+let's keep going ...
+
+<img src="img/ekf/bayes_car.13.png" width="1500">
+
+
+---
+
+<!-- .slide: data-background="white" -->
+
+what happens after &rarr; **<scb>20</scb> predictions** ?
+
+<img src="img/ekf/bayes_car.14.png" width="1300">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+what happens after &rarr; **<scb>20</scb> predictions** ?
+
+<img src="img/ekf/bayes_car.15.png" width="1500">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+what happens after &rarr; **<scb>20</scb> predictions** ?
+
+<img src="img/ekf/bayes_car.15.png" width="1500">
+
+why did the probabilities **collapse** into a lower spread?
+
+---
+
+sensors are **imperfect** 
+
+---
+
+sensors are **imperfect** &rarr; information is **lost**
+
+---
+
+actual state **differs** from the predicted state
+
+<img src="img/ekf/bayes_car.16.png" width="700">
+
+---
+
+need to find a way to **fix** this
+
+---
+
+### Bayes filter | **Measurement Update**
+
+---
+
+### Bayes filter | **Measurement Update**
+
+use **measurement**
+
+---
+
+### Bayes filter | **Measurement Update**
+
+use **measurement** &rarr; "fix" divergence between actual/predicted state
+
+---
+
+### Bayes filter | **Measurement Update**
+
+**feedback** from the real world &rarr; using **sensors** (same or different type)
+
+
+---
+
+### Bayes filter | **Measurement Update**
+
+**feedback** from the real world &rarr; using **sensors** (same or different type) 
+
+(sounds familiar?)
+
+
+---
+
+### Bayes filter | **Measurement Update**
+
+**feedback** from the real world &rarr; using **sensors** (same or different type)
+
+(sounds familiar? **feedback control**)
+
+---
+
+how **sensor** data is used by,
+
+---
+
+how **sensor** data is used by,
+
+|state estimation <br> (what we're doing here)| feedback control|
+|----------------------------------------|----------------|
+
+---
+
+how **sensor** data is used by,
+
+|state estimation <br> (what we're doing here)| feedback control|
+|----------------------------------------|----------------|
+| fix **estimate** of **current** state  | |
+
+---
+
+how **sensor** data is used by,
+
+|state estimation <br> (what we're doing here)| feedback control|
+|----------------------------------------|----------------|
+| fix **estimate** of **current** state  | fix **next state** |
+
+
+---
+
+### Bayes filter | **Measurement Update**
+
+<img src="img/ekf/bayes_car.17.png" width="900">
+
+---
+
+let's put aside prediction, for now
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### Prior
+
+probability **before** incorporating measurement 
+
+**equally likelhood** in any position &rarr; $\frac{1}{10}$ for every position
+
+<img src="img/ekf/bayes_measure.1.png" width="1300">
+
+---
+
+**first** sensor reading &rarr; $z_0 = 2$
+
+---
+
+**first** sensor reading &rarr; $z_0 = 2$
+
+but the sensor is **noisy** &rarr; probability of <scb>90 %</scb>
+
+---
+
+but we've used sensors before &rarr; in the **predict** stage?
+
+<img src="img/ekf/futurama_doubtful.gif" width="700">
+
+---
+
+use of sensors
+
+| predict stage | measurement stage |
+|---------------------|----------|
+
+---
+
+use of sensors
+
+| predict stage | measurement stage |
+|---------------------|----------|
+| what was **intended**? | |
+
+---
+
+use of sensors
+
+| predict stage | measurement stage |
+|---------------------|----------|
+| what was **intended**? | what **actually happened**? | 
+
+---
+
+use of sensors
+
+| predict stage | measurement stage |
+|---------------------|----------|
+| what was **intended**? | what **actually happened**? | 
+ "engine generated enough torque to move forward by <scb>3</scb> slots"||
+
+---
+
+use of sensors
+
+| predict stage | measurement stage |
+|---------------------|----------|
+| what was **intended**? | what **actually happened**? | 
+| "engine generated enough torque to move forward by <scb>3</scb> slots" |"how much was **actually** moved?" |
+||
+
+---
+
+$z_0 = 2$ &rarr; probability <scb>90 %</scb>
+
+---
+
+$z_0 = 2$ &rarr; probability <scb>90 %</scb>
+
+what is the **new belief**? 
+
+---
+
+$z_0 = 2$ &rarr; probability <scb>90 %</scb>
+
+intuitively &rarr; $x_{0}=2$ is <scb>9</scb> **times more likely** than $x_{0} \neq 2$
+
+---
+
+use **Bayes Rule**
+
+$$
+p\left(x_{k} \mid z_{k}\right)=\frac{p\left(z_{k} \mid x_{k}\right) \times p\left(x_{k}\right)}{p\left(z_{k}\right)}
+$$
+
+---
+
+use **Bayes Rule**
+
+<img src="img/ekf/equations/pngs/equations.png" width="1500">
+
+---
+
+---
+
+<img src="img/ekf/equations/pngs/equations.png" width="1500">
+
+$$
+p\left(z_{k}\right)=\sum_{x_{i}} p\left(z_{k} \mid x_{i}\right) p\left(x_{i}\right)
+$$ 
+
+(as we've seen before, from the law of total probability)
+
+---
                     </textarea>
                 </section>
             </div>
