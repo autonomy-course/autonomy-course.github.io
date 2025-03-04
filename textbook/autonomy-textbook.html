@@ -10220,42 +10220,35 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             Filter are:</p>
             <p><img src="img/ekf/bayes/bayes_filter.final.png" width="300"></p>
             <p><br></p>
-            <table>
-            <colgroup>
-            <col style="width: 27%" />
-            <col style="width: 33%" />
-            <col style="width: 38%" />
-            </colgroup>
-            <thead>
-            <tr>
-            <th>step</th>
-            <th>details</th>
-            <th>math</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td><strong>predict</strong></td>
-            <td></td>
-            <td><span
-            class="math inline"><em>p</em>(<em>x</em><sub><em>k</em></sub>) = ∑<sub><em>i</em></sub><em>p</em>(<em>x</em><sub><em>k</em></sub> ∣ <em>x</em><sub><em>k</em> − 1</sub> = <em>i</em>)<em>p</em>(<em>x</em><sub><em>k</em> − 1</sub> = <em>i</em> ∣ <em>z</em><sub><em>k</em> − 1</sub>)</span></td>
-            </tr>
-            <tr>
-            <td><strong>update</strong></td>
-            <td></td>
-            <td><span class="math inline">$p\left(x_{k} \mid
-            z_{k}\right)=\frac{p\left(z_{k} \mid x_{k}\right) \times
-            p\left(x_{k}\right)}{p\left(z_{k}\right)} \newline \text {
-            where, } p\left(z_{k}\right)=\sum_{x} p\left(z_{k} \mid
-            x\right) p(x)$</span></td>
-            </tr>
-            <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            </tr>
-            </tbody>
-            </table>
+            <ol type="1">
+            <li><strong>predict</strong>:
+            <ul>
+            <li>calculate the prior, <span
+            class="math inline"><em>p</em>(<em>x</em><sub><em>k</em></sub>)</span>,
+            from the previous posterior, <span
+            class="math inline"><em>p</em>(<em>x</em><sub><em>k</em> − 1</sub> ∣ <em>z</em><sub><em>k</em> − 1</sub>)</span></li>
+            <li>by incorporating the motion (process) model,</li>
+            </ul></li>
+            </ol>
+            <p><span
+            class="math display"><em>p</em>(<em>x</em><sub><em>k</em></sub>) = ∑<sub><em>i</em></sub><em>p</em>(<em>x</em><sub><em>k</em></sub> ∣ <em>x</em><sub><em>k</em> − 1</sub> = <em>i</em>)<em>p</em>(<em>x</em><sub><em>k</em> − 1</sub> = <em>i</em> ∣ <em>z</em><sub><em>k</em> − 1</sub>)</span></p>
+            <ol start="2" type="1">
+            <li><strong>update</strong>:
+            <ul>
+            <li>given a measurement, <span
+            class="math inline"><em>z</em><sub><em>k</em></sub></span>,
+            compute the likelihood</li>
+            <li>from the likelihood and prior, apply Bayes Rule to
+            update the belief:</li>
+            </ul></li>
+            </ol>
+            <p><span class="math display">$$
+            p\left(x_{k} \mid z_{k}\right)=\frac{p\left(z_{k} \mid
+            x_{k}\right) \times
+            p\left(x_{k}\right)}{p\left(z_{k}\right)}
+            $$</span></p>
+            <p>where, <span
+            class="math inline"><em>p</em>(<em>z</em><sub><em>k</em></sub>) = ∑<sub><em>x</em></sub><em>p</em>(<em>z</em><sub><em>k</em></sub> ∣ <em>x</em>)<em>p</em>(<em>x</em>)</span>.</p>
             <p><strong>Limitations</strong>:</p>
             <p>While the Bayesian filter works for many instances, the
             main problem is that it is <strong>discrete</strong> in

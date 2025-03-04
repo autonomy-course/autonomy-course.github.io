@@ -5006,11 +5006,23 @@ To **summarize**, the steps in the Bayes Filter are:
 
 <br>
 
-| step | details | math |
-|-----|------|-------|
-| **predict** | <ul> <li> calculate the prior, $p\left(x_{k}\right)$, from the previous posterior, $p\left(x_{k-1} \mid z_{k-1}\right)$ </li> <li> by incorporating the motion (process) model </li> </ul> | $p\left(x_{k}\right)=\sum_{i} p\left(x_{k} \mid x_{k-1}=i\right) p\left(x_{k-1}=i \mid z_{k-1}\right)$ |
-| **update** | <ul> <li> given a measurement, $z_{k}$, compute the likelihood </li> <li> from the likelihood and prior, apply Bayes Rule to update the belief </li> </ul> | $p\left(x_{k} \mid z_{k}\right)=\frac{p\left(z_{k} \mid x_{k}\right) \times p\left(x_{k}\right)}{p\left(z_{k}\right)} \newline \text { where, } p\left(z_{k}\right)=\sum_{x} p\left(z_{k} \mid x\right) p(x)$ |
-||
+1. **predict**: 
+    - calculate the prior, $p\left(x_{k}\right)$, from the previous posterior, $p\left(x_{k-1} \mid z_{k-1}\right)$ 
+    - by incorporating the motion (process) model, 
+    
+$$
+p\left(x_{k}\right)=\sum_{i} p\left(x_{k} \mid x_{k-1}=i\right) p\left(x_{k-1}=i \mid z_{k-1}\right)
+$$
+
+2. **update**: 
+    - given a measurement, $z_{k}$, compute the likelihood
+    - from the likelihood and prior, apply Bayes Rule to update the belief:
+
+$$
+p\left(x_{k} \mid z_{k}\right)=\frac{p\left(z_{k} \mid x_{k}\right) \times p\left(x_{k}\right)}{p\left(z_{k}\right)}
+$$
+
+where, $p\left(z_{k}\right)=\sum_{x} p\left(z_{k} \mid x\right) p(x)$.
 
 
 **Limitations**:
