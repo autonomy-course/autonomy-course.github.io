@@ -4718,7 +4718,8 @@ So now, what is the **new belief**? From this setup, intuitively, it seems &rarr
 
 Time to use **[Bayes Rule](#review-of-probability-theory)**:
 
-<img src="img/ekf/equations/pngs/equations.png" width="500">
+
+<img src="img/ekf/equations/pngs/equations-0.png" width="500">
 
 <br>
 
@@ -5040,8 +5041,557 @@ Enter the **[Kalman Filter](#kalman-filter)**.
 
 ## Kalman Filter
 
+To deal with some of the issues with the basic Bayes filter, we introduce the **Kalman Filter** that express state and uncertainty using **Gaussians** (aka the "[normal](https://en.wikipedia.org/wiki/Normal_distribution)" distribution).
+
+<img src="img/ekf/kalman/discrete_bayes.png" width="200">
+<img src="img/ekf/kalman/kalman_gaussian.png" width="200">
+
+<br>
+
+### Gaussian Distribution
+
+Now a quick detour on Gaussians. A normal distribution or Gaussian distribution is a type of **continuous probability distribution** for a **real-valued random variable** and is represented as:
+
+<img src="img/ekf/equations/pngs/equations-1.png" width="500">
+
+<!--
+$$
+\mathcal{N}\left(\mu, \sigma^{2}\right)=\frac{1}{\sqrt{2 \pi \sigma^{2}}} e^{-\frac{(x-\mu)^{2}}{2 \sigma^{2}}} 
+$$
+-->
+
+<br>
+
+A very common Gaussian can be visualized as:
+
+<img src="img/ekf/kalman/normal_distribution_wiki.svg" width="400">
+
+<br>
 
 
+Note that **variance** ($\sigma^2$) captures the **uncertainty** in the system and is the **square** of the standard deviation ($\sigma$).
+
+<img src="img/ekf/kalman/variance_uncertainty_examples.png" width="400">
+
+<br>
+
+More specific examples:
+
+<img src="img/ekf/kalman/uncertainty.1.png" width="200">
+<img src="img/ekf/kalman/uncertainty.2.png" width="200">
+<img src="img/ekf/kalman/uncertainty.3.png" width="200">
+
+<br>
+
+Some properties of Gaussians:
+
+1. **area** under the curve = `1` (since it is the sum of all the probabilities)
+
+$$
+area = \int_{-\infty}^{+\infty} \mathcal{N}\left(\mu, \sigma^{2}\right)
+$$
+
+Note that the curve approaches **infinity** ($\infty$) on **either side** &rarr; the probability of certain events is **never `0`**, no matter how small.
+
+Hence, 
+
+$$
+area = \int_{-\infty}^{+\infty} \frac{1}{\sqrt{2 \pi \sigma^{2}}} e^{-\frac{(x-\mu)^{2}}{2 \sigma^{2}}} = \textbf{1}
+$$
+
+2. probability that a value, $x$ &rarr; is in a **range**, $(a,b)$:
+
+$$
+\operatorname{Pr}(a \leq x \leq b)=\int_{a}^{b} \frac{1}{\sqrt{2 \pi \sigma^{2}}} e^{-\frac{(x-\mu)^{2}}{2 \sigma^{2}}} d x
+$$
+
+3. since it is often useful to find the probability **within one standard deviation** (on either side), 
+
+$$
+\operatorname{Pr}(\mu-\sigma \leq x \leq \mu+\sigma)=\int_{\mu-\sigma}^{\mu+\sigma} \frac{1}{\sqrt{2 \pi \sigma^{2}}} e^{-\frac{(x-\mu)^{2}}{2 \sigma^{2}}} d x \approx \textbf{68 \%}
+$$
+
+4. **sum** and **product** of two Gaussian distributions is fairly easy to calculate
+
+Given, two Gaussians,
+
+$X_{1} \sim \mathcal{N}\left(\mu_{1}, \sigma_{1}^{2}\right)$
+
+$X_{2} \sim \mathcal{N}\left(\mu_{2}, \sigma_{2}^{2}\right)
+$
+
+|result| sum | product|
+|------|-----|--------|
+| **new** Gaussian, $Z \sim \mathcal{N}\left(\mu, \sigma^{2}\right)$ | $Z=X_{1}+X_{2}$ | $Z=X_{1} X_{2}$ |
+| new **mean**, $\mu$ | $\mu_{1}+\mu_{2}$ | $\mu=\frac{\sigma_{2}^{2} \mu_{1}+\sigma_{1}^{2} \mu_{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}$ |
+| new **variance**, $\sigma^{2}$ | $\sigma_{1}^{2}+\sigma_{2}^{2}$ | $\sigma^{2}=\frac{\sigma_{1}^{2} \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}$ |
+||
+
+6. **closure** under **linear transformations**
+
+From [Probabilistic Robotics](https://soulhackerslabs.com/sensor-fusion-with-the-extended-kalman-filter-in-ros-2-d33dbab1829d):
+
+The advantage of using Gaussians (or Normals) lies in their mathematical properties, which simplify the Kalman Filter equations. A key property is their closure under linear transformations: when a Gaussian belief undergoes a linear transformation, the **result remains a Gaussian random variable**! This property ensures that the equations of the Kalman Filter remain,
+
+- elegant and 
+- manageable
+
+
+### **State** in Kalman Filters
+
+So, we can define state in this model as:
+
+<img src="img/ekf/kalman/kalman.state.png" width="400">
+
+<br>
+
+The **prior** &harr; **measurement** &harr; **update** process looks like:
+
+<img src="img/ekf/kalman/kalman.car.state.png" width="300">
+
+<br>
+
+As we see from this figure, the prediction and measurements are not just single points but a **distribution**.
+
+The various transitions look like:
+
+<img src="img/ekf/kalman/kalman.final.png" width="300">
+
+<br>
+
+Essentially the same as the Bayes Filter &rarr; the difference being that each of the edges is now a probabilistic Gaussian value.
+
+### Kalman Filter | **Prediction**
+
+First of all, we note that the **process model**, _i.e.,_ the model of how the system evolves over time (essentially the physics) is also a Gaussian! For instance, in the equations of motion, &rarr; _velocity_ follows a Gaussian distribution. 
+
+Suppose we want to track the motion of this car:
+
+<img src="img/ekf/kalman/kalman.predict.1.png" width="300">
+
+<br>
+
+From Newton's laws of motion we can **predict** the next state using the following **process model**:
+
+$$
+\overline{x_{k+1}}=x_{k} +v_{k} \Delta t
+$$
+
+where,
+
+|variable | description
+|---------|-----------|
+| $x_{k}$ | current state |
+| $x_{k+1}$ | **predicted** next state |
+| **$v_{k}$** | velocity|
+| $\Delta t$ | time difference |
+||
+
+Since velocity follows a Gaussian distribution, let's assume,
+
+$$
+v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)
+$$
+
+Now, if the current state, $x_k$ is a Gaussian, as we've established before,
+
+<img src="img/ekf/kalman/kalman.predict.3.png" width="300">
+
+<br>
+
+Now clearly, $x_{k+1}$ has to be a Gaussian as well &rarr; since at least one of the terms on the right is a Gaussian, _viz.,_ the current state **and** velocity.
+
+So, the question is &rarr; what is the value for,
+
+<img src="img/ekf/kalman/kalman.predict.4.png" width="300">
+
+<br>
+
+$$
+\overline{x_{k+1}} \sim \mathcal{N}\left(? \mathrm{~m}, ? \mathrm{~m}^{2}\right) 
+$$
+
+Recall, that the sum of two Gaussians is,
+
+$$
+\begin{aligned}
+\mu & =\mu_{1}+\mu_{2} \\
+\sigma^{2} & =\sigma_{1}^{2}+\sigma_{2}^{2}
+\end{aligned}
+$$
+
+Assume that $\Delta t = 1s$. Plugging in thes values,
+
+$$
+\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, 2 \mathrm{~m}^{2}\right)
+$$
+
+In this example, the second parameter in the velocity term is the **process noise** in the physics model:
+
+<img src="img/ekf/kalman/kalman.predict.6.png" width="300">
+
+<br>
+
+*Important Notes**: Kalman Filter is **unimodel**, _i.e.,_ there is a **single peak** each time.
+
+<img src="img/ekf/kalman/kalman_unimodal.png" width="300">
+
+<br>
+
+An obstacle is **not** both, $10m$ away with $90\%$ and $8m$ away with $70\%$ probability. It is:
+
+- **$9.7m$ away with $98\%$** or 
+- **nothing**
+
+Let's look at some examples for prediction. Consider the following velocity models:
+
+|||
+|----|----|
+| **A** | $$v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 0^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$$
+| **B** | $$v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$$
+| **C** | $$v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 2^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$$
+||
+
+And we have the following *predicted** states:
+
+|prediction| velocity model|
+|-----|----|
+| <img src="img/ekf/kalman/kalman.predict.7.png" width="300"> | <br> **A**, **B** or **C** ? |
+| <img src="img/ekf/kalman/kalman.predict.8.png" width="300"> | **A**, **B** or **C** ? |
+| <img src="img/ekf/kalman/kalman.predict.9.png" width="300"> | **A**, **B** or **C** ? |
+||
+
+<br>
+
+So, which one of the above is &rarr, **A**, **B** and **C**? Let us plug in the values:
+
+|prediction| velocity model|
+|-----|----|
+| <img src="img/ekf/kalman/kalman.predict.7.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**B**] |
+| <img src="img/ekf/kalman/kalman.predict.8.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 0^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**A**]|
+| <img src="img/ekf/kalman/kalman.predict.9.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 2^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**C**]|
+||
+
+So, what does the predicted state look like?
+
+|prediction| velocity model| predicted state |
+|-----|----|------|
+| <img src="img/ekf/kalman/kalman.predict.7.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**B**] | $\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, ? \mathrm{~m}^{2}\right)$|
+| <img src="img/ekf/kalman/kalman.predict.8.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 0^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**A**]| $\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, ? \mathrm{~m}^{2}\right)$|
+| <img src="img/ekf/kalman/kalman.predict.9.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 2^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**C**]| $\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, ? \mathrm{~m}^{2}\right)$|
+||
+
+<br>
+
+Coming back to the sum of two Gaussians, $\sigma^{2} =\sigma_{1}^{2}+\sigma_{2}^{2}$, and the current state, $\overline{x_{k}} \sim \mathcal{N}\left(3.5 \mathrm{~m}, 1 \mathrm{~m}^{2}\right)$,
+
+|prediction| velocity model| predicted state |
+|-----|----|------|
+| <img src="img/ekf/kalman/kalman.predict.7.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**B**] | $\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, 2 \mathrm{~m}^{2}\right)$|
+| <img src="img/ekf/kalman/kalman.predict.8.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 0^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**A**]| $\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, 1 \mathrm{~m}^{2}\right)$|
+| <img src="img/ekf/kalman/kalman.predict.9.png" width="300"> | $v_{k} \sim \mathcal{N}\left(3 \mathrm{~m} / \mathrm{s}, 2^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ [**C**]| $\overline{x_{k+1}} \sim \mathcal{N}\left(6.5 \mathrm{~m}, 5 \mathrm{~m}^{2}\right)$|
+||
+
+As we see from these examples, depending on the **noise** in the intial Gaussian, the **uncertainty increases** for the predicted state, even when the velocity model had `0` noise! 
+
+The problem is that we don't know &rarr; how **close** is our prediction to reality. Hence, we need an **update** step &rarr; measurements!
+
+
+### Kalman Filter | **Update**
+
+In the measurement (or sensor) model, the **measurement uncertainty** (aka "likelihood") is also represented as a Gaussian.
+
+<img src="img/ekf/equations/pngs/equations-2.png" width="500">
+
+<br>
+
+For instance, current temperature is $72^{\circ} \mathrm{F} \pm 1^{\circ} \mathrm{F}$.
+
+Now, recall that,
+
+$$
+posterior = prior \times likelihood
+$$
+
+$$
+posterior = \overline x_k \times z_k
+$$
+
+What does this **actually mean**?
+
+Let's consider a few examples.
+
+1. Example 1
+
+| prediction ($\overline x_{k}$) | measurement ($z_k$) | posterior ($\overline x_{k} \times z_k$) |
+|----------|----------|----------|
+|$\overline{x_{k}} \sim \mathcal{N}\left(5,1^{2}\right)$ | $z_{k} \sim \mathcal{N}\left(5,1^{2}\right)$ | **?** |
+||
+
+Let's plot these two Gaussians,
+
+<img src="img/ekf/kalman/kalman.update.1.png" width="300">
+
+<br>
+
+As we see from the figure, the two align perfectly &rarr; since they're the **same** distribution. What would $\overline{\mathrm{x}}_{\mathrm{k}} \times \mathrm{z}_{\mathrm{k}}$ look like?
+
+Recall the **product** of two Gaussians,
+
+$$
+\begin{aligned}
+\mu & =\frac{\sigma_{2}^{2} \mu_{1}+\sigma_{1}^{2} \mu_{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}} \\
+\sigma^{2} & =\frac{\sigma_{1}^{2} \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}
+\end{aligned}
+$$
+
+Hence, the posterior would be,
+
+| prediction ($\overline x_{k}$) | measurement ($z_k$) | posterior ($\overline x_{k} \times z_k$) |
+|----------|----------|----------|
+|$\overline{x_{k}} \sim \mathcal{N}\left(5,1^{2}\right)$ | $z_{k} \sim \mathcal{N}\left(5,1^{2}\right)$ | $\overline{\mathrm{x}}_{\mathrm{k}} \times \mathrm{z}_{\mathrm{k}} \sim \mathcal{N}(5,0.5)$ |
+||
+
+Graphically this looks like,
+
+<img src="img/ekf/kalman/kalman.update.4.png" width="300">
+
+<br>
+
+Hence, we see the following:
+
+- an **increase** in the probability around `5` (**taller** Gaussian)
+- a **decrease** in the uncertainty (**narrower** Gaussian)
+
+<br>
+
+2. Example 2: this time the initial Guassians differ slightly,
+
+| prediction ($\overline x_{k}$) | measurement ($z_k$) | posterior ($\overline x_{k} \times z_k$) |
+|----------|----------|----------|
+|$\overline{x_{k}} \sim \mathcal{N}\left(5,1^{2}\right)$ | $z_{k} \sim \mathcal{N}\left(5.4,1^{2}\right)$ | $\overline{\mathrm{x}}_{\mathrm{k}} \times \mathrm{z}_{\mathrm{k}} \sim \mathcal{N}(5.2,0.5)$ |
+||
+
+We see that the result is in the **midddle** of the two original Gaussians.
+
+<img src="img/ekf/kalman/kalman.update.5.png" width="300">
+
+<br>
+
+
+3. Example 3: let's see what happens if the Gaussian's differ significantly, _i.e.,_
+
+| prediction ($\overline x_{k}$) | measurement ($z_k$) | posterior ($\overline x_{k} \times z_k$) |
+|----------|----------|----------|
+|$\overline{x_{k}} \sim \mathcal{N}\left(4,1^{2}\right)$ | $z_{k} \sim \mathcal{N}\left(6,0.5^{2}\right)$ | $\overline{\mathrm{x}}_{\mathrm{k}} \times \mathrm{z}_{\mathrm{k}} \sim \mathcal{N}(?,?)$ |
+||
+
+<img src="img/ekf/kalman/kalman.update.6.png" width="300">
+
+<br>
+
+After the update, the resultant distribution looks like,
+
+| prediction ($\overline x_{k}$) | measurement ($z_k$) | posterior ($\overline x_{k} \times z_k$) |
+|----------|----------|----------|
+|$\overline{x_{k}} \sim \mathcal{N}\left(4,1^{2}\right)$ | $z_{k} \sim \mathcal{N}\left(6,0.5^{2}\right)$ | $\overline{\mathrm{x}}_{\mathrm{k}} \times \mathrm{z}_{\mathrm{k}} \sim \mathcal{N}(5.6,0.2)$ |
+||
+
+<img src="img/ekf/kalman/kalman.update.7.png" width="300">
+
+<br>
+
+What this tells us is &rarr; we give **more weight to more ‘certain’ information**, _i.e.,_ the measurement in this case that has a higher+narrower Gaussian. Which is as it should be.
+
+Hence, the **posterior** is,
+
+- between prediction ($\overline x_{k}$) and measurement ($z_k$)
+- closer to **more certain side* (based on the variances)
+- so, a ‘**weighted average**’
+
+<img src="img/ekf/kalman/kalman.update.8.png" width="300">
+
+<br>
+
+Let us look at a few more **detailed examples**.
+
+1. Example I
+
+| process model | measurement noise/sensor error |
+|---------------|--------------------|
+| $\overline{x_{k+1}}=x_{k}+v_{k} \Delta t$ | $\sigma^2 = 0.5^2$ |
+| $ v_{k} \sim \mathcal{N}\left(2 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ ||
+| $ \Delta t=1 \mathrm{~s}$ ||
+||
+
+<br>
+
+The initial state looks like,
+
+<img src="img/ekf/kalman/kalman.posterior_example.1.png" width="500">
+
+<br>
+
+If we plot this system, the actual position vs measurements (first graph) and afer applying the Kalman Filter.
+
+<img src="img/ekf/kalman/kalman.posterior_example.2.png" width="300">
+<img src="img/ekf/kalman/kalman.posterior_example.3.png" width="300">
+
+<br>
+
+We see the following properties:
+
+1. posterior &rarr; **always between** prior and measurement
+2. posterior is **closer to** measurement &rarr; sensor noise is small
+
+| $v_{k} \sim \mathcal{N}\left(2 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ <br> prior (prediction)  | $\sigma^{2}=0.5^{2}$ <br> measurement | posterior (with measurement) |
+| :---: | :---: |:---: |
+| $\mathcal{N}(2,101)$ | 1.555  | $\mathcal{N}(1.556,0.249) $ |
+| $\mathcal{N}(3.556,1.249)$ | 2.267 | $\mathcal{N}(2.482,0.208) $ |
+| $\mathcal{N}(4.482,1.208)$ | 1.233 | $\mathcal{N}(1.790,0.207) $ |
+| $\mathcal{N}(3.790,1.207)$ | 3.534 | $\mathcal{N}(3.578,0.207) $ |
+| $\mathcal{N}(5.578,1.207)$ | 4.644 | $\mathcal{N}(4.804,0.207)$ |
+||
+
+Note that the uncertainty ($\sigma^2$) values for the prior ($v_k$) are all **larger** than that for the measurement (`0.5`). Hence the prior is **almost useless** for the posterior. Whereas, the posterior is **very close** to the measurement! This shows us what a difference a good measurement makes.
+
+2. Example II: let's update the model so that the measurement error is $\sigma^2 = 1.5^2$
+
+How do you think this will change the posterior?
+
+Updated model:
+
+| process model | measurement noise/sensor error |
+|---------------|--------------------|
+| $\overline{x_{k+1}}=x_{k}+v_{k} \Delta t$ | **$\sigma^2 = 1.5^2$**  (**more inacccurary**!)|
+| $ v_{k} \sim \mathcal{N}\left(2 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ | |
+| $ \Delta t=1 \mathrm{~s}$ ||
+||
+
+<br>
+
+We see **more noise** in the measurements:
+
+<img src="img/ekf/kalman/kalman.posterior_example.4.png" width="300">
+
+<br>
+
+Let's look at the results of applying the Kalman Filter (side-by-side with the previous example):
+
+<img src="img/ekf/kalman/kalman.posterior_example.5.png" width="300">
+<img src="img/ekf/kalman/kalman.posterior_example.6.png" width="300">
+
+<br>
+
+Let's look at the detailed data:
+
+| $v_{k} \sim \mathcal{N}\left(2 \mathrm{~m} / \mathrm{s}, 1^{2} \mathrm{~m}^{2} / \mathrm{s}^{2}\right)$ <br> prior (prediction)  | $\sigma^{2}=1.5^{2}$ <br> measurement | posterior (with measurement) |
+| :---: | :---: |:---: |
+| $\mathcal{N}(2,101)$ | 1.499  | $\mathcal{N}(1.510,2.201) $ |
+| $\mathcal{N}(3.510,3.201)$ | 3.907 | $\mathcal{N}(3.743,1.321) $ |
+| $\mathcal{N}(5.743, 2.3218)$ | 0.391 | $\mathcal{N}(3.025,1.143) $ |
+| $\mathcal{N}(5.025,2.143)$ | 2.289 | $\mathcal{N}(3.690,1.097) $ |
+| $\mathcal{N}(5.690,2.097)$ | 3.735 | $\mathcal{N}(4.747,1.086)$ |
+||
+
+We see that the $\sigma^2$ for the prior is **similar to or better** than the measurement uncertainty ($\sigma^2 = 1.5^2$)!
+
+
+### Kalman Filter | **Kalman Gain**
+
+The **update** step for the Kalman Filter now (recall that the posterior is obtained by "mixing") looks like,
+
+<img src="img/ekf/kalman/kalman.gain.1.png" width="300">
+<img src="img/ekf/kalman/kalman.gain.2.png" width="300">
+
+<br>
+
+So, consider these simplifications,
+
+$$
+\begin{aligned}
+\mu & =\frac{\sigma_{z}^{2} \bar{\mu}+\bar{\sigma}^{2} \mu_{z}}{\bar{\sigma}^{2}+\sigma_{z}^{2}} \\
+& =K_{1} \mu_{z}+K_{2} \bar{\mu} \\
+& =K \mu_{z}+(1-K) \bar{\mu}
+\end{aligned}
+$$
+
+where $K_2 = 1-K$ is a simplification that works as follows &rarr; the final result tells us whether the posterior is **closer to the prior or the measurement**, _i.e.,_ where does it like on this line?
+
+<img src="img/ekf/kalman/kalman.gain.3.png" width="300">
+
+<br>
+
+Hence, the **Kalman Gain**, 
+
+$$
+K = \frac{\bar{\sigma}^{2}}{\bar{\sigma}^{2} + \sigma_{z}^{2}}
+$$
+
+The Kalman gains tells us,
+
+- **how much** measurement is **trusted**
+- **mixing ratio** between measurement and prior
+
+**Example**: measurement is **three times** more accurate than prior. What is the Kalman Gain?
+
+$$
+\begin{gathered}
+\bar{\sigma}^{2}=3 \sigma_{z}^{2} \\
+K=\frac{3 \sigma_{z}^{2}}{3 \sigma_{Z}^{2}+\sigma_{Z}^{2}}=\frac{3}{4}
+\end{gathered}
+$$
+
+Hence, the posterior is:
+
+<img src="img/ekf/kalman/kalman.gain.4.png" width="300">
+
+<br>
+
+Now we can write the posterior as:
+
+|||
+|----|----|
+| **residual** | $y = \mu_z - \bar{\mu}$|
+| posterior **mean** | $\mu = \bar{\mu} + Ky$|
+| posterior **noise** | $\sigma^2 = (1-K) \bar{\sigma^2}$|
+||
+
+(since $\sigma^{2} =\frac{\sigma_{1}^{2} \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}$).
+
+*Note:** **higher K** &rarr; **more certainty**!
+
+### Kalman Filter | **Summary**
+
+<img src="img/ekf/kalman/kalman.summary.png" width="500">
+
+<br>
+
+1. **Step 0**: **initialize** $x_{0} \sim \mathcal{N}\left(\mu_{0}, \sigma_{0}^{2}\right)$, the initial belief
+    - to reasonably random values or initial measurement
+
+2. **Step 1**: **predict**
+    -  calculate the prior, $\overline{x_{k}} \sim \mathcal{N}\left(\overline{\mu_{k}},{\overline{\sigma_{k}}}^{2}\right)$, from the previous posterior, $x_{k-1} \sim \mathcal{N}\left(\mu_{k-1}, \sigma_{k-1}^{2}\right)$
+    - by incorporating the process model, $f_{x} \sim \mathcal{N}\left(\mu_{f}, \sigma_{f}^{2}\right)$
+$$
+\begin{gathered}
+\overline{\mu_{k}}=\mu_{k-1}+\mu_{f} \\
+{\overline{\sigma_{k}}}^{2}=\sigma_{k-1}^{2}+\sigma_{f}^{2}
+\end{gathered}
+$$
+
+3. **Step 2**: **update**
+    - given a measurement, $z_{k}$, compute the residual and the Kalman gain
+    - set the posterior, $x_{k}$, between the prior, $\bar{x}_{k}$, and the measurement, $z_{k}$, based on the residual and the Kalman gain
+
+$$
+\begin{aligned}
+y_{k} & =\mu_{z, k}-\overline{\mu_{k}} \\
+K_{k} & =\frac{{\overline{\sigma_{k}}}^{2}}{{\overline{\sigma_{k}}}^{2}+\sigma_{z, k}^{2}} \\
+\mu_{k} & =\overline{\mu_{k}}+ K_{k}.y_{k} \\
+\sigma_{k}^{2} & =\left(1-K_{k}\right) \bar{\sigma}_{k}^{2}
+\end{aligned}
+$$
 
 
 

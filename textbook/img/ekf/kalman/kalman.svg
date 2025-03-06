@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   sodipodi:docname="kalman.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="437.6991"
+     inkscape:cy="520.43059"
+     inkscape:window-width="1808"
+     inkscape:window-height="1191"
+     inkscape:window-x="2201"
+     inkscape:window-y="140"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="marker8"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path8" />
+    </marker>
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect5"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,6.2502583,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,6.09076,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <marker
+       style="overflow:visible"
+       id="marker3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#f00f0f;stroke-width:0.4;stroke-linejoin:round"
+       id="rect8"
+       width="44.366627"
+       height="24.416533"
+       x="44.755299"
+       y="99.720436"
+       ry="1.6277546" />
+    <rect
+       style="fill:none;stroke:#0c7930;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       id="rect8-5"
+       width="44.366627"
+       height="24.416533"
+       x="134.89415"
+       y="99.720436"
+       ry="1.6277546" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.3;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="54.731243"
+       y="114.57384"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1;line-height:0.3"
+         x="54.731243"
+         y="114.57384">predict</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.3;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="144.8701"
+       y="114.57384"
+       id="text1-9"><tspan
+         sodipodi:role="line"
+         id="tspan1-7"
+         style="fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1;line-height:0.3"
+         x="144.8701"
+         y="114.57384">update</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.3;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="160.52037"
+       y="89.917976"
+       id="text1-9-6"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-5"
+         style="line-height:0.3;fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1"
+         x="160.52037"
+         y="89.917976">measurement</tspan></text>
+    <path
+       style="fill:#000000;stroke:#010402;stroke-width:0.698325;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+       d="M 89.121923,111.9287 H 129.25466"
+       id="path1" />
+    <path
+       style="fill:none;stroke:#010402;stroke-width:0.600001;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3)"
+       d="m 157.07746,124.13697 -0.11762,18.1129 A 6.2909784,6.2909784 135.18603 0 1 150.66899,148.5 H 105 73.029372 a 6.09076,6.09076 45 0 1 -6.09076,-6.09076 v -18.27227"
+       id="path2"
+       inkscape:original-d="M 157.07746,124.13697 156.91925,148.5 H 105 66.938612 v -24.36303"
+       inkscape:path-effect="#path-effect5" />
+    <path
+       style="fill:none;stroke:#010402;stroke-width:0.600001;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="M 66.938611,148.5 Z"
+       id="path4" />
+    <path
+       style="fill:none;stroke:#010402;stroke-width:0.600001;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker8)"
+       d="m 157.07746,79.110415 c 0,17.699604 0,17.699604 0,17.699604"
+       id="path6" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.3;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="103.71563"
+       y="107.68575"
+       id="text1-9-66"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-7"
+         style="line-height:0.3;fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1"
+         x="103.71563"
+         y="107.68575">prior</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="108.41975"
+       y="121.67992"
+       id="text1-9-66-7"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-7-7"
+         style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo Thin';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1"
+         x="108.41975"
+         y="121.67992">x<tspan
+   style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:65%;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo Thin';baseline-shift:sub"
+   id="tspan8">k</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.3;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="97.386047"
+       y="144.13016"
+       id="text1-9-66-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-7-3"
+         style="line-height:0.3;fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1"
+         x="97.386047"
+         y="144.13016">posterior</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="108.34976"
+       y="157.41772"
+       id="text1-9-66-7-0"
+       inkscape:export-filename="bayes_filter.final.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-7-7-6"
+         style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo Thin';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1"
+         x="108.34976"
+         y="157.41772">x<tspan
+   style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:65%;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo Thin';baseline-shift:sub"
+   id="tspan8-2">k</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.1139px;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-linejoin:round;stroke-opacity:1"
+       x="148.71815"
+       y="89.631432"
+       id="text1-9-66-7-0-2"
+       inkscape:export-filename="bayes_filter.final.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-7-7-6-9"
+         style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo Thin';fill:#000000;stroke:#010402;stroke-width:0.4;stroke-opacity:1"
+         x="148.71815"
+         y="89.631432">z<tspan
+   style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:65%;line-height:0.7;font-family:'Apple SD Gothic Neo';-inkscape-font-specification:'Apple SD Gothic Neo Thin';baseline-shift:sub"
+   id="tspan8-2-8">k</tspan></tspan></text>
+    <path
+       style="fill:none;stroke:#f00f0f;stroke-width:0.4;stroke-linejoin:round"
+       d="m 109.18829,111.9287 v 0 0"
+       id="path5" />
+    <path
+       style="fill:#000000;stroke:#060202;stroke-width:0.368549;stroke-linejoin:round;stroke-opacity:1"
+       d="m 107.46436,115.31158 h 6.81605"
+       id="path9"
+       inkscape:export-filename="kalman.final.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+  </g>
+</svg>
