@@ -5127,7 +5127,7 @@ $
 | new **variance**, $\sigma^{2}$ | $\sigma_{1}^{2}+\sigma_{2}^{2}$ | $\sigma^{2}=\frac{\sigma_{1}^{2} \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}$ |
 ||
 
-6. **closure** under **linear transformations**
+5. **closure** under **linear transformations**
 
 From [Probabilistic Robotics](https://soulhackerslabs.com/sensor-fusion-with-the-extended-kalman-filter-in-ros-2-d33dbab1829d):
 
