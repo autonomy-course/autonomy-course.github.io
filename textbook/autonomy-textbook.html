@@ -554,6 +554,22 @@ George Washington University</p></li>
         id="toc-summary-of-prediction-model"><span
         class="toc-section-number">8.4.3</span> Summary of Prediction
         Model</a></li>
+        <li><a href="#measurement-update"
+        id="toc-measurement-update"><span
+        class="toc-section-number">8.4.4</span> Measurement
+        Update</a></li>
+        <li><a href="#state-and-uncertainty-update"
+        id="toc-state-and-uncertainty-update"><span
+        class="toc-section-number">8.4.5</span> State and Uncertainty
+        Update</a></li>
+        <li><a href="#estimating-hidden-variables"
+        id="toc-estimating-hidden-variables"><span
+        class="toc-section-number">8.4.6</span> Estimating Hidden
+        Variables</a></li>
+        <li><a href="#multivariate-kalman-filter-summary"
+        id="toc-multivariate-kalman-filter-summary"><span
+        class="toc-section-number">8.4.7</span> Multivariate Kalman
+        Filter Summary</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -11465,7 +11481,7 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             <li>Represented by a <strong>multivariate
             gaussian</strong>:</li>
             </ul>
-            <p><img src="img/ekf/multi_kalman/n_dimensional.png" ></p>
+            <p><img src="img/ekf/multi_kalman/n_dimensional.png" width="300"></p>
             <p>Let’s look at [position, velocity] <span
             class="math inline"><sup>⊤</sup></span>,</p>
             <p><img src="img/ekf/multi_kalman/variance_velocity_position.png" width="300"></p>
@@ -11614,28 +11630,28 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             </thead>
             <tbody>
             <tr>
-            <td><img src="img/ekf/multi_kalman/multi_g.1.png"></td>
+            <td><img src="img/ekf/multi_kalman/multi_g.1.png" width="300"></td>
             <td style="text-align: left;"><span
             class="math inline"><em>x</em><sub>1</sub></span> and <span
             class="math inline"><em>x</em><sub>2</sub></span> are
             <strong>not</strong> correlated</td>
             </tr>
             <tr>
-            <td><img src="img/ekf/multi_kalman/multi_g.2.png"></td>
+            <td><img src="img/ekf/multi_kalman/multi_g.2.png" width="300"></td>
             <td style="text-align: left;"><span
             class="math inline"><em>x</em><sub>1</sub></span> and <span
             class="math inline"><em>x</em><sub>2</sub></span> are
             <strong>not</strong> correlated</td>
             </tr>
             <tr>
-            <td><img src="img/ekf/multi_kalman/multi_g.3.png"></td>
+            <td><img src="img/ekf/multi_kalman/multi_g.3.png" width="300"></td>
             <td style="text-align: left;"><span
             class="math inline"><em>x</em><sub>1</sub></span> and <span
             class="math inline"><em>x</em><sub>2</sub></span> are
             <strong>not</strong> correlated</td>
             </tr>
             <tr>
-            <td><img src="img/ekf/multi_kalman/multi_g.4.png"></td>
+            <td><img src="img/ekf/multi_kalman/multi_g.4.png" width="300"></td>
             <td style="text-align: left;"><span
             class="math inline"><em>x</em><sub>1</sub></span> and <span
             class="math inline"><em>x</em><sub>2</sub></span>
@@ -12114,6 +12130,684 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             can be used to provide additional information → better
             prediction</li>
             </ul>
+            </section>
+            <section id="measurement-update" class="level3"
+            data-number="8.4.4">
+            <h3 data-number="8.4.4"><span
+            class="header-section-number">8.4.4</span> Measurement
+            Update</h3>
+            <p>As with the simpler Kalman filter, we need to “fix” our
+            prediction using a measurement from the sensor(s) which is
+            essentially a <strong>Gaussian multiplication</strong> step
+            between → the prior and the measurement,</p>
+            <p><span class="math display">$$
+            \text{prior:} \quad
+            \mathbf{\mu_1} = \begin{bmatrix}
+            3.0\\
+            5.0
+            \end{bmatrix}
+            \quad
+            \mathbf{\Sigma_1} = \begin{bmatrix}
+            4 &amp; 3\\
+            3 &amp; 3
+            \end{bmatrix}
+            $$</span></p>
+            <p><span class="math display">$$
+            \text{measurement:} \quad
+            \mathbf{\mu_2} = \begin{bmatrix}
+            3.3\\
+            4.8
+            \end{bmatrix}
+            \quad
+            \mathbf{\Sigma_2} = \begin{bmatrix}
+            3 &amp; -1\\
+            -1 &amp; 1
+            \end{bmatrix}
+            $$</span></p>
+            <p>Visually, we can represent these as:</p>
+            <p><img src="img/ekf/multi_kalman/measure.1.png" width="300"></p>
+            <p><br></p>
+            <p>The multivariate Gaussian multiplication equations
+            are:</p>
+            <p><span
+            class="math display"><strong>μ</strong> = <strong>Σ</strong><sub><strong>2</strong></sub>(<strong>Σ</strong><sub><strong>1</strong></sub> + <strong>Σ</strong><sub>2</sub>)<sup>−<strong>1</strong></sup><strong>μ</strong><sub><strong>1</strong></sub> + <strong>Σ</strong><sub><strong>1</strong></sub>(<strong>Σ</strong><sub><strong>1</strong></sub> + <strong>Σ</strong><sub><strong>2</strong></sub>)<sup><strong>−</strong><strong>1</strong></sup><strong>μ</strong><sub><strong>2</strong></sub></span></p>
+            <p><span
+            class="math display"><strong>Σ</strong> = <strong>Σ</strong><sub><strong>1</strong></sub>(<strong>Σ</strong><sub><strong>1</strong></sub> + <strong>Σ</strong><sub><strong>2</strong></sub>)<sup>−<strong>1</strong></sup><strong>Σ</strong><sub><strong>2</strong></sub></span></p>
+            <p>Recall the univariate Gaussian equivalents:</p>
+            <p><span class="math display">$$
+            \mu=\frac{\sigma_{2}^{2} \mu_{1}+\sigma_{1}^{2}
+            \mu_{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}} \quad
+            \sigma^{2}=\frac{\sigma_{1}^{2}
+            \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}
+            $$</span></p>
+            <p>The net result is:</p>
+            <p><img src="img/ekf/multi_kalman/measure.2.png" width="300"></p>
+            <p><br></p>
+            <p>A problem with Gaussian multiplication is that the
+            dimensionalities of the state and the measurement
+            <strong>need not match</strong>! For instance,</p>
+            <ul>
+            <li>state → <span
+            class="math inline">[<em>p</em><em>o</em><em>s</em><em>i</em><em>t</em><em>i</em><em>o</em><em>n</em>, <em>v</em><em>e</em><em>l</em><em>o</em><em>c</em><em>i</em><em>t</em><em>y</em>]</span></li>
+            <li>measurement → <span
+            class="math inline">[<em>p</em><em>o</em><em>s</em><em>i</em><em>t</em><em>i</em><em>o</em><em>n</em>]</span></li>
+            </ul>
+            <p>Hence, we need a <strong>measurement function</strong> →
+            converts a state into a measurement space,
+            <em>e.g.,</em></p>
+            <ul>
+            <li>different dimensions and/or</li>
+            <li>different units (voltage → distance, celsius →
+            fahrenheit)</li>
+            </ul>
+            <p>So, incorporating the measurement function, <span
+            class="math inline"><strong>H</strong></span>, we get</p>
+            <p><img src="img/ekf/equations/pngs/equations-4.png" width="500"></p>
+            <p><br></p>
+            <p><strong>Note:</strong> the “<strong>residual</strong>” is
+            the difference between measurement and prediction.</p>
+            <p>If we have,</p>
+            <p><span class="math display">$$
+            \text{State:} \quad \mathbf{x}=\left[\begin{array}{l}x \\
+            \dot{x} \\ y \\ \dot{y}\end{array}\right]
+            \quad
+            \text{and \quad Measurement:} \quad
+            \mathbf{z}=\left[\begin{array}{l}x \\ y\end{array}\right]
+            $$</span></p>
+            <p>Then the <strong>measurement function</strong>, is</p>
+            <p><span class="math display">$$
+            \mathbf{H}=\left[\begin{array}{llll}1 &amp; 0 &amp; 0 &amp;
+            0 \\ 0 &amp; 0 &amp; 1 &amp; 0\end{array}\right]
+            $$</span></p>
+            <p>Recall that measurement → also follows a Gaussian and has
+            some noise. Hence it is represented as a
+            <strong>multivariate</strong> Gaussian,</p>
+            <p><span class="math display">$$
+            \mathcal{N}\left(\mathbf{z}_{\mathbf{k}},
+            \textcolor{orange}{\mathbf{R}}\right)
+            $$</span></p>
+            <p>where, the <strong>measurement noise</strong> is given
+            by,</p>
+            <p><span class="math display">$$
+            \mathbf{R}=\left[\begin{array}{ccc}
+            \square &amp; \ldots &amp; \square \\
+            \vdots &amp; \ddots &amp; \vdots \\
+            \square &amp; \cdots &amp; \square
+            \end{array}\right]
+            $$</span></p>
+            <p><span class="math inline"><strong>R</strong></span> →
+            models the <strong>accuracy</strong> of the sensor,</p>
+            <ul>
+            <li><span class="math inline"><em>m</em> × <em>m</em></span>
+            covariance matrix (<span
+            class="math inline"><em>m</em></span> → # of sensors)</li>
+            <li>also models correlations between sensors</li>
+            <li>typically <strong>constant</strong></li>
+            </ul>
+            </section>
+            <section id="state-and-uncertainty-update" class="level3"
+            data-number="8.4.5">
+            <h3 data-number="8.4.5"><span
+            class="header-section-number">8.4.5</span> State and
+            Uncertainty Update</h3>
+            <p>If this is the state of our system,</p>
+            <p><img src="img/ekf/multi_kalman/k_gain.1.png" width="300"></p>
+            <p><br></p>
+            <p>then let’s define <strong>system uncertainty</strong>
+            (<span
+            class="math inline"><strong>S</strong><sub><strong>k</strong></sub></span>)
+            as,</p>
+            <ul>
+            <li>the sum of (predicted) state noise and sensor noise</li>
+            <li>equivalent to <span
+            class="math inline"><em>σ̄</em><sup>2</sup> + <em>σ</em><sub><em>Z</em></sub><sup>2</sup></span>
+            in the univariate case</li>
+            </ul>
+            <p><span class="math display">$$
+            \mathbf{S}_{\mathbf{k}}=\mathbf{H}
+            \overline{\mathbf{P}_{\mathbf{k}}}
+            \mathbf{H}^{\mathrm{T}}+\mathbf{R}
+            $$</span></p>
+            <p>Bringing all of the prior terms together, we can now
+            define → the <strong>Kalman Gain</strong> (<span
+            class="math inline"><strong>K</strong><sub><strong>k</strong></sub></span>)
+            which is answering the question:</p>
+            <blockquote>
+            <p>“how much we can trust the predicted state vs the
+            measurement?”</p>
+            </blockquote>
+            <p><span class="math display">$$
+            \mathbf{K}_{\mathbf{k}}=\overline{\mathbf{P}_{\mathbf{k}}}
+            \mathbf{H}^{\mathrm{T}} \mathbf{S}_{\mathbf{k}}^{-1}
+            $$</span></p>
+            <p>So, to update the state and uncertainty,</p>
+            <p><img src="img/ekf/multi_kalman/update.png" width="300"></p>
+            <p><br></p>
+            <ol type="1">
+            <li><strong>state update</strong>:</li>
+            </ol>
+            <p><span class="math display">$$
+            \mathbf{x}_{\mathbf{k}}=\overline{\mathbf{x}}_{k}+\mathbf{K}_{\mathbf{k}}
+            \mathbf{y}_{\mathbf{k}}
+            $$</span></p>
+            <ol start="2" type="1">
+            <li><strong>state uncertainty update</strong>:</li>
+            </ol>
+            <p><span class="math display">$$
+            P_{k}=\left(I-K_{k} H\right) \overline{P_{k}}
+            $$</span></p>
+            <p><strong>Note</strong>: if <span
+            class="math inline"><strong>K</strong><sub><strong>k</strong></sub></span>
+            is large → then we’re <strong>closer to the
+            measurement</strong>.</p>
+            <p>Consider the following example:</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{x}_{1}}=\left[\begin{array}{l}
+            10 \\
+            10
+            \end{array}\right] \quad
+            \overline{\mathbf{P}_{1}}=\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]
+            $$</span></p>
+            <p>represented as:</p>
+            <p><img src="img/ekf/multi_kalman/update_example.1.png" width="300"></p>
+            <p>Now consider the following sensor measurement and noise
+            model:</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \mathbf{z}_{\mathbf{1}}=[12], \quad
+            \textcolor{orange}{\mathbf{R}=[1]} \quad \mathbf{H}=[1 0]\\
+            &amp;
+            \mathbf{y}_{\mathbf{1}}=\mathbf{z}_{\mathbf{1}}-\mathbf{H}
+            \overline{\mathbf{x}_{\mathbf{1}}}=\left[\begin{array}{ll}
+            12
+            \end{array}\right]-\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{l}
+            10 \\
+            10
+            \end{array}\right]=[2] \\
+            &amp; \mathbf{S}_{\mathbf{1}}=\mathbf{H}
+            \overline{\mathbf{P}_{\mathbf{1}}}
+            \mathbf{H}^{\mathrm{T}}+\mathbf{R}=\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]\left[\begin{array}{l}
+            1 \\
+            0
+            \end{array}\right]+[1]=[5] \\
+            &amp;
+            \mathbf{K}_{\mathbf{1}}=\overline{\mathbf{P}_{\mathbf{1}}}
+            \mathbf{H}^{\mathrm{T}}
+            \mathbf{S}_{\mathbf{1}}^{-1}=\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]\left[\begin{array}{l}
+            1 \\
+            0
+            \end{array}\right][1 / 5]=\left[\begin{array}{l}
+            4 / 5 \\
+            3 / 5
+            \end{array}\right] \\
+            &amp;
+            \mathbf{x}_{\mathbf{1}}=\overline{\mathbf{x}_{1}}+\mathbf{K}_{\mathbf{1}}
+            \mathbf{y}_{\mathbf{1}}=\left[\begin{array}{l}
+            10 \\
+            10
+            \end{array}\right]+\left[\begin{array}{l}
+            4 / 5 \\
+            3 / 5
+            \end{array}\right]
+            2=\textcolor{orange}{\left[\begin{array}{l}
+            11.6 \\
+            11.2
+            \end{array}\right]} \\
+            &amp;
+            \mathbf{P}_{\mathbf{1}}=\left(\mathbf{I}-\mathbf{K}_{\mathbf{1}}
+            \mathbf{H}\right)
+            \overline{\mathbf{P}_{1}}=\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]-\left[\begin{array}{l}
+            4 / 5 \\
+            3 / 5
+            \end{array}\right]\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right] \\
+            &amp; =\left[\begin{array}{ll}
+            0.8 &amp; 0.6 \\
+            0.6 &amp; 1.2
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p>The result looks like,</p>
+            <p><img src="img/ekf/multi_kalman/update_example.2.png" width="300"></p>
+            <p><br></p>
+            <p>Let’s see what happens if we change <span
+            class="math inline"><strong>R</strong></span>.</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \mathbf{z}_{\mathbf{1}}=[12], \quad
+            \textcolor{orange}{\mathbf{R}=[4]} \begin{array}{c}
+            \text {\textcolor{orange}{Degraded sensor accuracy}}
+            \end{array} \quad \mathbf{H}=\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right] \\
+            &amp;
+            \mathbf{y}_{\mathbf{1}}=\mathbf{z}_{\mathbf{1}}-\mathbf{H}
+            \overline{\mathbf{x}_{\mathbf{1}}}=[12]-\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{l}
+            10 \\
+            10
+            \end{array}\right]=[2] \\
+            &amp; \mathbf{S}_{\mathbf{1}}=\mathbf{H}
+            \overline{\mathbf{P}_{\mathbf{1}}}
+            \mathbf{H}^{\mathrm{T}}+\mathbf{R}=\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]\left[\begin{array}{l}
+            1 \\
+            0
+            \end{array}\right]+[4]=[8] \\
+            &amp;
+            \mathbf{K}_{\mathbf{1}}=\overline{\mathbf{P}_{\mathbf{1}}}
+            \mathbf{H}^{\mathrm{T}}
+            \mathbf{S}_{\mathbf{1}}^{-1}=\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]\left[\begin{array}{l}
+            1 \\
+            0
+            \end{array}\right][1 / 8]=\left[\begin{array}{l}
+            4 / 8 \\
+            3 / 8
+            \end{array}\right] \\
+            &amp;
+            \mathbf{x}_{1}=\overline{\mathbf{x}_{1}}+\mathbf{K}_{1}
+            \mathbf{y}_{1}=\left[\begin{array}{l}
+            10 \\
+            10
+            \end{array}\right]+\left[\begin{array}{l}
+            4 / 8 \\
+            3 / 8
+            \end{array}\right]
+            2=\textcolor{orange}{\left[\begin{array}{c}
+            11 \\
+            10.75
+            \end{array}\right]} \\
+            &amp;
+            \mathbf{P}_{\mathbf{1}}=\left(\mathbf{I}-\mathbf{K}_{\mathbf{1}}
+            \mathbf{H}\right)
+            \overline{\mathbf{P}_{1}}=\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]-\left[\begin{array}{l}
+            4 / 8 \\
+            3 / 8
+            \end{array}\right]\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right] \\
+            &amp; =\textcolor{orange}{\left[\begin{array}{cc}
+            2 &amp; 1.5 \\
+            1.5 &amp; 1.5
+            \end{array}\right]}
+            \end{aligned}
+            $$</span></p>
+            <p>And the result looks like,</p>
+            <p><img src="img/ekf/multi_kalman/update_example.3.png" width="300"></p>
+            <p><br></p>
+            <p>When compared with the previous result, we see that the
+            sensor’s accuracy isn’t very good so the update, while
+            narrowing things down, is <strong>still
+            imprecise</strong>.</p>
+            <p>As we increase the values of <span
+            class="math inline"><strong>R</strong></span>, we see that
+            the sensor measurements matter less → at <span
+            class="math inline"><strong>R</strong> = [200]</span>, the
+            sensor values don’t matter at all!</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \mathbf{z}_{\mathbf{1}}=[12], \quad
+            \textcolor{orange}{\mathbf{R}=[16]} \quad
+            \mathbf{H}=\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right] \\
+            &amp; \mathbf{x}_{\mathbf{1}}=\left[\begin{array}{l}
+            10.4 \\
+            10.3
+            \end{array}\right] \\
+            &amp; \mathbf{P}_{\mathbf{1}}=\left[\begin{array}{ll}
+            3.2 &amp; 2.4 \\
+            2.4 &amp; 2.4
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p><img src="img/ekf/multi_kalman/update_example.4.png" width="300"></p>
+            <p><br></p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \mathbf{z}_{\mathbf{1}}=[12], \quad
+            \textcolor{orange}{\mathbf{R}=[200]} \quad
+            \mathbf{H}=\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right] \\
+            &amp; \mathbf{x}_{\mathbf{1}}=\left[\begin{array}{l}
+            10.039 \\
+            10.029
+            \end{array}\right] \\
+            &amp; \mathbf{P}_{\mathbf{1}}=\left[\begin{array}{ll}
+            3.922 &amp; 2.941 \\
+            2.941 &amp; 2.941
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p><img src="img/ekf/multi_kalman/update_example.5.png" width="300"></p>
+            <p><br></p>
+            </section>
+            <section id="estimating-hidden-variables" class="level3"
+            data-number="8.4.6">
+            <h3 data-number="8.4.6"><span
+            class="header-section-number">8.4.6</span> Estimating Hidden
+            Variables</h3>
+            <p>In Kalman filter-based state estimations, <strong>hidden
+            variables</strong> (also called <strong>latent
+            variables</strong> or states) refer to those variables or
+            quantities that cannot be measured directly but influence
+            observable quantities. The Kalman filter estimates these
+            hidden variables by processing available measurements
+            through a mathematical model of system dynamics and
+            measurement processes.</p>
+            <p>Examples: velocity, attitude, orientation, angular
+            velocity, bias of sensors or internal temperature of a
+            component.</p>
+            <p>Let’s see how <strong>velocity</strong> can be
+            estimated.</p>
+            <p>Initially, the velocity <em>estimate</em> is, say, <span
+            class="math inline">10 m/s</span>, <em>i.e.,</em></p>
+            <p><span class="math display">$$
+            \overline{\mathbf{x}_{1}}=\left[\begin{array}{c}
+            10 \mathrm{~m} \\
+            10 \mathrm{~m} / \mathrm{s}
+            \end{array}\right]
+            $$</span></p>
+            <p><img src="img/ekf/multi_kalman/hidden.1.png" width="300"></p>
+            <p><br></p>
+            <p>As we get more measurements (of position) and we work
+            through the Kalman Filter predictions and state updates, we
+            can get more precise estimates for → velocity!</p>
+            <p><img src="img/ekf/multi_kalman/hidden.2.png" width="500"></p>
+            <p><br></p>
+            <p>The various values are:</p>
+            <table>
+            <colgroup>
+            <col style="width: 7%" />
+            <col style="width: 29%" />
+            <col style="width: 27%" />
+            <col style="width: 35%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>Time</th>
+            <th>Measurement ( z_k )</th>
+            <th>Posterior ( x_k )</th>
+            <th>Posterior ( _k )</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>1</td>
+            <td>12</td>
+            <td>11.60</td>
+            <td>11.20</td>
+            </tr>
+            <tr>
+            <td>2</td>
+            <td>17</td>
+            <td>18.38</td>
+            <td>8.71</td>
+            </tr>
+            <tr>
+            <td>3</td>
+            <td>22</td>
+            <td>23.67</td>
+            <td>7.28</td>
+            </tr>
+            <tr>
+            <td>4</td>
+            <td>27</td>
+            <td>28.63</td>
+            <td>6.52</td>
+            </tr>
+            <tr>
+            <td>5</td>
+            <td>32</td>
+            <td>33.52</td>
+            <td>6.07</td>
+            </tr>
+            <tr>
+            <td>6</td>
+            <td>37</td>
+            <td>38.40</td>
+            <td>5.80</td>
+            </tr>
+            <tr>
+            <td>7</td>
+            <td>42</td>
+            <td>43.29</td>
+            <td>5.62</td>
+            </tr>
+            <tr>
+            <td>8</td>
+            <td>47</td>
+            <td>48.19</td>
+            <td>5.49</td>
+            </tr>
+            <tr>
+            <td>9</td>
+            <td>52</td>
+            <td>53.10</td>
+            <td>5.40</td>
+            </tr>
+            <tr>
+            <td>10</td>
+            <td>57</td>
+            <td>58.03</td>
+            <td>5.33</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/ekf/multi_kalman/hidden.3.png" width="500"></p>
+            <p><br></p>
+            <p>so then, how is this velocity “inferred”? Let’s look at
+            the state equations:</p>
+            <p><span class="math display">$$
+            \begin{array}{ll}
+            \mathbf{S}=\mathbf{H} \overline{\mathbf{P}}
+            \mathbf{H}^{\mathrm{T}}+\mathbf{R} &amp;
+            \mathbf{S}=\mathbf{H} \overline{\mathbf{P}}
+            \mathbf{H}^{\mathrm{T}}+\mathbf{R}=\left[\begin{array}{ll}
+            1 &amp; 0
+            \end{array}\right]\left[\begin{array}{cc}
+            \sigma_{\bar{x}}^{2} &amp; \sigma_{\bar{x} \bar{x}} \\
+            \sigma_{\bar{x} \bar{x}} &amp; \sigma_{\bar{x}}^{2}
+            \end{array}\right]\left[\begin{array}{l}
+            1 \\
+            0
+            \end{array}\right]+\left[\sigma_{z}^{2}\right]=\left[\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right]
+            \\
+            \mathbf{K}=\overline{\mathbf{P}} \mathbf{H}^{\mathrm{T}}
+            \mathbf{S}^{-\mathbf{1}} &amp;
+            \mathbf{K}=\overline{\mathbf{P}} \mathbf{H}^{\mathrm{T}}
+            \mathbf{S}^{-\mathbf{1}}=\left[\begin{array}{cc}
+            \sigma_{\bar{x}}^{2} &amp; \sigma_{\bar{x} \bar{x}} \\
+            \sigma_{\bar{x} \bar{x}} &amp; \sigma_{\bar{x}}^{2}
+            \end{array}\right]\left[\begin{array}{l}
+            1 \\
+            0
+            \end{array}\right]\left[\begin{array}{c}
+            1 \\
+            \frac{\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}}{2}
+            \end{array}\right]=\left[\begin{array}{c}
+            \sigma_{\bar{x}}^{2}
+            /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right) \\
+            \sigma_{\bar{x} \bar{x}}^{2}
+            /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right)
+            \end{array}\right] \\
+            \mathbf{H}=\left[\begin{array}{cc}
+            1 &amp; 0
+            \end{array}\right] \quad
+            \mathbf{R}=\left[\sigma_{z}^{2}\right] &amp;
+            \mathbf{x}=\overline{\mathbf{x}}+\mathbf{K
+            y}=\left[\begin{array}{l}
+            \bar{x} \\
+            \overline{\dot{x}}
+            \end{array}\right]+\left[\begin{array}{c}
+            \sigma_{\bar{x}}^{2}
+            /\left(\sigma_{\bar{x}}^{2}+\sigma_{Z}^{2}\right) \\
+            \sigma_{\overline{\bar{x}} \bar{x}}^{2}
+            /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right)
+            \end{array}\right] y
+            \end{array}
+            $$</span></p>
+            <p>Recall that,</p>
+            <p><span class="math display">$$
+            \mathbf{\overline{P}} = \left[\begin{array}{c}
+            \sigma_{\bar{x}}^{2}
+            /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right) \\
+            \sigma_{\bar{x} \bar{x}}^{2}
+            /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right)
+            \end{array}\right]
+            $$</span></p>
+            <p>Hence, we can obtain the equation for the velocity,</p>
+            <p><span class="math display">$$
+            \dot{x}=\bar{x}+\frac{\sigma_{\bar{x}
+            \bar{x}}^{2}}{\sigma_{x}^{2}+\sigma_{z}^{2}} y
+            $$</span></p>
+            <p>From this equation,</p>
+            <table>
+            <thead>
+            <tr>
+            <th><span class="math inline"><strong>y</strong></span></th>
+            <th style="text-align: left;">meaning</th>
+            <th style="text-align: left;">result</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span class="math inline"><em>y</em> = 0</span></td>
+            <td style="text-align: left;"><strong>perfect</strong>
+            prediction</td>
+            <td style="text-align: left;">velocity → <strong>no
+            change</strong></td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>y</em> ≠ 0</span></td>
+            <td style="text-align: left;"><strong>wrong</strong>
+            prediction</td>
+            <td style="text-align: left;">velocity →
+            <strong>updated</strong></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>The delta of the update, in the second case, depends
+            on:</p>
+            <ul>
+            <li>residual and</li>
+            <li><span
+            class="math inline"><em>σ</em><sub><em>x̄</em><em>x̄</em></sub><sup>2</sup></span></li>
+            </ul>
+            </section>
+            <section id="multivariate-kalman-filter-summary"
+            class="level3" data-number="8.4.7">
+            <h3 data-number="8.4.7"><span
+            class="header-section-number">8.4.7</span> Multivariate
+            Kalman Filter Summary</h3>
+            <p>To summarize,</p>
+            <p><img src="img/ekf/multi_kalman/multivariate_summary.png" width="500"></p>
+            <p>where,</p>
+            <ol type="1">
+            <li><strong>prediction</strong></li>
+            </ol>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \overline{\mathbf{x}_k}=\mathbf{F}
+            \mathbf{x}_{k-1}+\mathbf{B} \mathbf{u} \\
+            &amp; \overline{\mathbf{P}_k}=\mathbf{F P}_{k-1}
+            \mathbf{F}^{\mathrm{T}}+\mathbf{Q}
+            \end{aligned}
+            $$</span></p>
+            <ol start="2" type="1">
+            <li><strong>update</strong></li>
+            </ol>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp;
+            \mathbf{x}_{\mathbf{k}}=\overline{\mathbf{x}_k}+\mathbf{K}_{\mathbf{k}}
+            \mathbf{y}_{\mathbf{k}} \\
+            &amp;
+            \mathbf{P}_{\mathbf{k}}=\left(\mathbf{I}-\mathbf{K}_{\mathbf{k}}
+            \mathbf{H}\right) \overline{\mathbf{P}_{\mathbf{k}}}
+            \end{aligned}
+            $$</span></p>
+            <p>where <span
+            class="math inline"><strong>K</strong><sub><strong>k</strong></sub></span>
+            and <span
+            class="math inline"><strong>y</strong><sub><strong>k</strong></sub></span>
+            are calculated as,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp;
+            \mathbf{y}_{\mathbf{k}}=\mathbf{z}_{\mathbf{k}}-\mathbf{H}
+            \overline{\mathbf{x}_{\mathbf{k}}} \\
+            &amp; \mathbf{S}_{\mathbf{k}}=\mathbf{H}
+            \overline{\mathbf{P}_{\mathbf{k}}}
+            \mathbf{H}^{\mathrm{T}}+\mathbf{R} \\
+            &amp;
+            \mathbf{K}_{\mathbf{k}}=\overline{\mathbf{P}_{\mathbf{k}}}
+            \mathbf{H}^{\mathrm{T}} \mathbf{S}_{\mathbf{k}}^{-1}
+            \end{aligned}
+            $$</span></p>
+            <p>An example of a 2D state estimation using multivariate
+            Kalman filters:</p>
+            <p><img src="img/ekf/multi_kalman/2d_estimation.png" width="500"></p>
+            <p><strong>Note</strong>: the problem with Kalman Filters is
+            that it only works for <strong>linear</strong> systems,
+            <em>i.e.,</em></p>
+            <ul>
+            <li>next state is a linear function of the previous
+            state</li>
+            <li>example of non-linear systems: falling object with air
+            resistance</li>
+            </ul>
+            <p>But the real world is actually
+            <strong>non-linear</strong>! To deal with non-linear
+            systems, we use → the <strong>extended Kalman
+            filter</strong> (EKF). We will explore this using an
+            important application → <strong>sensor fusion</strong>.</p>
             </section>
             </section>
             </section>

@@ -5601,7 +5601,7 @@ In reality state is _not_ single dimensional &rarr; it is **multi-dimensional**.
 - Example: [position, velocity] ${ }^{\top}$
 - Represented by a **multivariate gaussian**:
 
-<img src="img/ekf/multi_kalman/n_dimensional.png" >
+<img src="img/ekf/multi_kalman/n_dimensional.png" width="300">
 
 Let's look at [position, velocity] ${ }^{\top}$,
 
@@ -5676,10 +5676,10 @@ Let's look at some examples of multivariate Gaussians and corresponding values:
 
 |example|comments|
 |-------|:-------|
-|<img src="img/ekf/multi_kalman/multi_g.1.png">| $x_1$ and $x_2$ are **not** correlated|
-|<img src="img/ekf/multi_kalman/multi_g.2.png">| $x_1$ and $x_2$ are **not** correlated|
-|<img src="img/ekf/multi_kalman/multi_g.3.png">| $x_1$ and $x_2$ are **not** correlated|
-|<img src="img/ekf/multi_kalman/multi_g.4.png">| $x_1$ and $x_2$ **are** correlated &rarr; $x_{1}\left(x_{2}\right)$ gives us information about what $x_{2}\left(x_{1}\right)$ could be|
+|<img src="img/ekf/multi_kalman/multi_g.1.png" width="300">| $x_1$ and $x_2$ are **not** correlated|
+|<img src="img/ekf/multi_kalman/multi_g.2.png" width="300">| $x_1$ and $x_2$ are **not** correlated|
+|<img src="img/ekf/multi_kalman/multi_g.3.png" width="300">| $x_1$ and $x_2$ are **not** correlated|
+|<img src="img/ekf/multi_kalman/multi_g.4.png" width="300">| $x_1$ and $x_2$ **are** correlated &rarr; $x_{1}\left(x_{2}\right)$ gives us information about what $x_{2}\left(x_{1}\right)$ could be|
 
 ### Process Model and Noise
 
@@ -6078,4 +6078,528 @@ $$
 - $\mathbf{F}$ and $\mathbf{Q}$ are typically **constant**
 - $\mathbf{B u}$ can be set to `0` &rarr; if there is no explicit control input to the system
 - $\mathbf{B u}$ can be used to provide additional information &rarr; better prediction
+
+
+### Measurement Update
+
+As with the simpler Kalman filter, we need to "fix" our prediction using a measurement from the sensor(s) which is essentially a **Gaussian multiplication** step between &rarr; the prior and the measurement, 
+
+$$
+\text{prior:} \quad
+\mathbf{\mu_1} = \begin{bmatrix}
+3.0\\
+5.0
+\end{bmatrix}
+\quad
+\mathbf{\Sigma_1} = \begin{bmatrix}
+4 & 3\\
+3 & 3
+\end{bmatrix}
+$$
+
+$$
+\text{measurement:} \quad
+\mathbf{\mu_2} = \begin{bmatrix}
+3.3\\
+4.8
+\end{bmatrix}
+\quad
+\mathbf{\Sigma_2} = \begin{bmatrix}
+3 & -1\\
+-1 & 1
+\end{bmatrix}
+$$
+
+Visually, we can represent these as:
+
+<img src="img/ekf/multi_kalman/measure.1.png" width="300">
+
+<br>
+
+The multivariate Gaussian multiplication equations are:
+
+$$
+\boldsymbol{\mu}=\boldsymbol{\Sigma}_{\mathbf{2}}\left(\boldsymbol{\Sigma}_{\mathbf{1}}+\boldsymbol{\Sigma}_{2}\right)^{-\mathbf{1}} \boldsymbol{\mu}_{\mathbf{1}}+\boldsymbol{\Sigma}_{\mathbf{1}}\left(\boldsymbol{\Sigma}_{\mathbf{1}}+\boldsymbol{\Sigma}_{\mathbf{2}}\right)^{\mathbf{- 1}} \boldsymbol{\mu}_{\mathbf{2}} 
+$$
+
+$$
+\boldsymbol{\Sigma}=\boldsymbol{\Sigma}_{\mathbf{1}}\left(\boldsymbol{\Sigma}_{\mathbf{1}}+\boldsymbol{\Sigma}_{\mathbf{2}}\right)^{-\mathbf{1}} \boldsymbol{\Sigma}_{\mathbf{2}}
+$$
+
+Recall the univariate Gaussian equivalents:
+
+$$
+\mu=\frac{\sigma_{2}^{2} \mu_{1}+\sigma_{1}^{2} \mu_{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}} \quad \sigma^{2}=\frac{\sigma_{1}^{2} \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}
+$$
+
+The net result is:
+
+<img src="img/ekf/multi_kalman/measure.2.png" width="300">
+
+<br>
+
+A problem with Gaussian multiplication is that the dimensionalities of the state and the measurement **need not match**! For instance,
+
+- state &rarr; $[position, velocity]$
+- measurement &rarr; $[position]$
+
+Hence, we need a **measurement function** &rarr; converts a state into a measurement space, _e.g.,_
+
+- different dimensions and/or
+- different units (voltage &rarr; distance, celsius &rarr; fahrenheit)
+
+So, incorporating the measurement function, $\mathbf{H}$, we get
+
+<img src="img/ekf/equations/pngs/equations-4.png" width="500">
+
+<br>
+
+**Note:** the "**residual**" is the difference between measurement and prediction.
+
+If we have,
+
+$$
+\text{State:} \quad \mathbf{x}=\left[\begin{array}{l}x \\ \dot{x} \\ y \\ \dot{y}\end{array}\right]
+\quad
+\text{and \quad Measurement:} \quad \mathbf{z}=\left[\begin{array}{l}x \\ y\end{array}\right]
+$$
+
+Then the **measurement function**, is
+
+$$
+ \mathbf{H}=\left[\begin{array}{llll}1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0\end{array}\right]
+$$
+
+Recall that measurement &rarr; also follows a Gaussian and has some noise. Hence it is represented as a **multivariate** Gaussian,
+
+$$
+\mathcal{N}\left(\mathbf{z}_{\mathbf{k}}, \textcolor{orange}{\mathbf{R}}\right)
+$$
+
+where, the **measurement noise** is given by,
+
+$$
+\mathbf{R}=\left[\begin{array}{ccc} 
+\square & \ldots & \square \\
+\vdots & \ddots & \vdots \\
+\square & \cdots & \square
+\end{array}\right]
+$$
+
+$\mathbf{R}$ &rarr; models the **accuracy** of the sensor,
+
+- $m \times m$ covariance matrix ($m$ &rarr; \# of sensors)
+- also models correlations between sensors
+- typically **constant**
+
+
+### State and Uncertainty Update
+
+If this is the state of our system,
+
+<img src="img/ekf/multi_kalman/k_gain.1.png" width="300">
+
+<br>
+
+then let's define **system uncertainty** ($\mathbf{S_k}$) as,
+
+- the sum of (predicted) state noise and sensor noise
+- equivalent to $\bar{\sigma}^{2}+\sigma_{Z}^{2}$ in the univariate case
+
+$$
+\mathbf{S}_{\mathbf{k}}=\mathbf{H} \overline{\mathbf{P}_{\mathbf{k}}} \mathbf{H}^{\mathrm{T}}+\mathbf{R}
+$$
+
+Bringing all of the prior terms together, we can now define &rarr; the **Kalman Gain** ($\mathbf{K_k}$) which is answering the question:
+
+> "how much we can trust the predicted state vs the measurement?"
+
+$$
+\mathbf{K}_{\mathbf{k}}=\overline{\mathbf{P}_{\mathbf{k}}} \mathbf{H}^{\mathrm{T}} \mathbf{S}_{\mathbf{k}}^{-1}
+$$
+
+So, to update the state and uncertainty,
+
+<img src="img/ekf/multi_kalman/update.png" width="300">
+
+<br>
+
+1. **state update**:
+
+$$
+\mathbf{x}_{\mathbf{k}}=\overline{\mathbf{x}}_{k}+\mathbf{K}_{\mathbf{k}} \mathbf{y}_{\mathbf{k}}
+$$
+
+2. **state uncertainty update**:
+
+$$
+P_{k}=\left(I-K_{k} H\right) \overline{P_{k}}
+$$
+
+**Note**: if $\mathbf{K_k}$ is large &rarr; then we're **closer to the measurement**.
+
+
+Consider the following example:
+
+$$
+\overline{\mathbf{x}_{1}}=\left[\begin{array}{l}
+10 \\
+10
+\end{array}\right] \quad \overline{\mathbf{P}_{1}}=\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]
+$$
+
+represented as:
+
+<img src="img/ekf/multi_kalman/update_example.1.png" width="300">
+
+
+Now consider the following sensor measurement and noise model:
+
+$$
+\begin{aligned}
+& \mathbf{z}_{\mathbf{1}}=[12], \quad \textcolor{orange}{\mathbf{R}=[1]} \quad \mathbf{H}=[1 0]\\
+& \mathbf{y}_{\mathbf{1}}=\mathbf{z}_{\mathbf{1}}-\mathbf{H} \overline{\mathbf{x}_{\mathbf{1}}}=\left[\begin{array}{ll}
+12
+\end{array}\right]-\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{l}
+10 \\
+10
+\end{array}\right]=[2] \\
+& \mathbf{S}_{\mathbf{1}}=\mathbf{H} \overline{\mathbf{P}_{\mathbf{1}}} \mathbf{H}^{\mathrm{T}}+\mathbf{R}=\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]+[1]=[5] \\
+& \mathbf{K}_{\mathbf{1}}=\overline{\mathbf{P}_{\mathbf{1}}} \mathbf{H}^{\mathrm{T}} \mathbf{S}_{\mathbf{1}}^{-1}=\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right][1 / 5]=\left[\begin{array}{l}
+4 / 5 \\
+3 / 5
+\end{array}\right] \\
+& \mathbf{x}_{\mathbf{1}}=\overline{\mathbf{x}_{1}}+\mathbf{K}_{\mathbf{1}} \mathbf{y}_{\mathbf{1}}=\left[\begin{array}{l}
+10 \\
+10
+\end{array}\right]+\left[\begin{array}{l}
+4 / 5 \\
+3 / 5
+\end{array}\right] 2=\textcolor{orange}{\left[\begin{array}{l}
+11.6 \\
+11.2
+\end{array}\right]} \\
+& \mathbf{P}_{\mathbf{1}}=\left(\mathbf{I}-\mathbf{K}_{\mathbf{1}} \mathbf{H}\right) \overline{\mathbf{P}_{1}}=\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]-\left[\begin{array}{l}
+4 / 5 \\
+3 / 5
+\end{array}\right]\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right] \\
+& =\left[\begin{array}{ll}
+0.8 & 0.6 \\
+0.6 & 1.2
+\end{array}\right]
+\end{aligned}
+$$
+
+The result looks like,
+
+<img src="img/ekf/multi_kalman/update_example.2.png" width="300">
+
+<br>
+
+Let's see what happens if we change $\mathbf{R}$.
+
+
+$$
+\begin{aligned}
+& \mathbf{z}_{\mathbf{1}}=[12], \quad \textcolor{orange}{\mathbf{R}=[4]} \begin{array}{c}
+\text {\textcolor{orange}{Degraded sensor accuracy}}
+\end{array} \quad \mathbf{H}=\left[\begin{array}{ll}
+1 & 0
+\end{array}\right] \\
+& \mathbf{y}_{\mathbf{1}}=\mathbf{z}_{\mathbf{1}}-\mathbf{H} \overline{\mathbf{x}_{\mathbf{1}}}=[12]-\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{l}
+10 \\
+10
+\end{array}\right]=[2] \\
+& \mathbf{S}_{\mathbf{1}}=\mathbf{H} \overline{\mathbf{P}_{\mathbf{1}}} \mathbf{H}^{\mathrm{T}}+\mathbf{R}=\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]+[4]=[8] \\
+& \mathbf{K}_{\mathbf{1}}=\overline{\mathbf{P}_{\mathbf{1}}} \mathbf{H}^{\mathrm{T}} \mathbf{S}_{\mathbf{1}}^{-1}=\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right][1 / 8]=\left[\begin{array}{l}
+4 / 8 \\
+3 / 8
+\end{array}\right] \\
+& \mathbf{x}_{1}=\overline{\mathbf{x}_{1}}+\mathbf{K}_{1} \mathbf{y}_{1}=\left[\begin{array}{l}
+10 \\
+10
+\end{array}\right]+\left[\begin{array}{l}
+4 / 8 \\
+3 / 8
+\end{array}\right] 2=\textcolor{orange}{\left[\begin{array}{c}
+11 \\
+10.75
+\end{array}\right]} \\
+& \mathbf{P}_{\mathbf{1}}=\left(\mathbf{I}-\mathbf{K}_{\mathbf{1}} \mathbf{H}\right) \overline{\mathbf{P}_{1}}=\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]-\left[\begin{array}{l}
+4 / 8 \\
+3 / 8
+\end{array}\right]\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right] \\
+& =\textcolor{orange}{\left[\begin{array}{cc}
+2 & 1.5 \\
+1.5 & 1.5
+\end{array}\right]}
+\end{aligned}
+$$
+
+And the result looks like,
+
+<img src="img/ekf/multi_kalman/update_example.3.png" width="300">
+
+<br>
+
+When compared with the previous result, we see that the sensor's accuracy isn't very good so the update, while narrowing things down, is **still imprecise**. 
+
+As we increase the values of $\mathbf{R}$, we see that the sensor measurements matter less &rarr; at $\mathbf{R} = \left[200\right]$, the sensor values don't matter at all! 
+
+$$
+\begin{aligned}
+& \mathbf{z}_{\mathbf{1}}=[12], \quad \textcolor{orange}{\mathbf{R}=[16]} \quad \mathbf{H}=\left[\begin{array}{ll}
+1 & 0
+\end{array}\right] \\
+& \mathbf{x}_{\mathbf{1}}=\left[\begin{array}{l}
+10.4 \\
+10.3
+\end{array}\right] \\
+& \mathbf{P}_{\mathbf{1}}=\left[\begin{array}{ll}
+3.2 & 2.4 \\
+2.4 & 2.4
+\end{array}\right]
+\end{aligned}
+$$
+
+<img src="img/ekf/multi_kalman/update_example.4.png" width="300">
+
+<br>
+
+$$
+\begin{aligned}
+& \mathbf{z}_{\mathbf{1}}=[12], \quad \textcolor{orange}{\mathbf{R}=[200]} \quad \mathbf{H}=\left[\begin{array}{ll}
+1 & 0
+\end{array}\right] \\
+& \mathbf{x}_{\mathbf{1}}=\left[\begin{array}{l}
+10.039 \\
+10.029
+\end{array}\right] \\
+& \mathbf{P}_{\mathbf{1}}=\left[\begin{array}{ll}
+3.922 & 2.941 \\
+2.941 & 2.941
+\end{array}\right]
+\end{aligned}
+$$
+
+<img src="img/ekf/multi_kalman/update_example.5.png" width="300">
+
+<br>
+
+
+### Estimating Hidden Variables
+
+In Kalman filter-based state estimations, **hidden variables** (also called **latent variables** or states) refer to those variables or quantities that cannot be measured directly but influence observable quantities. The Kalman filter estimates these hidden variables by processing available measurements through a mathematical model of system dynamics and measurement processes.
+
+Examples: velocity, attitude, orientation, angular velocity, bias of sensors or internal temperature of a component.
+
+Let's see how **velocity** can be estimated.
+
+Initially, the velocity _estimate_ is, say, $10 \mathrm{~m} / \mathrm{s}$, _i.e.,_
+
+$$
+\overline{\mathbf{x}_{1}}=\left[\begin{array}{c}
+10 \mathrm{~m} \\
+10 \mathrm{~m} / \mathrm{s}
+\end{array}\right]
+$$
+
+<img src="img/ekf/multi_kalman/hidden.1.png" width="300">
+
+<br>
+
+As we get more measurements (of position) and we work through the Kalman Filter predictions and state updates, we can get more precise estimates for &rarr; velocity!
+
+<img src="img/ekf/multi_kalman/hidden.2.png" width="500">
+
+<br>
+
+The various values are:
+
+| Time | Measurement \( z_k \) | Posterior \( x_k \) | Posterior \( \dot{x}_k \) |
+|------|-----------------------|---------------------|---------------------------|
+| 1 | 12 | 11.60 | 11.20 |
+| 2 | 17 | 18.38 | 8.71  |
+| 3 | 22 | 23.67 | 7.28  |
+| 4 | 27 | 28.63 | 6.52  |
+| 5 | 32 | 33.52 | 6.07  |
+| 6 | 37 | 38.40 | 5.80  |
+| 7 | 42 | 43.29 | 5.62  |
+| 8 | 47 | 48.19 | 5.49  |
+| 9 | 52 | 53.10 | 5.40  |
+| 10 | 57 | 58.03 | 5.33  |
+||
+
+<img src="img/ekf/multi_kalman/hidden.3.png" width="500">
+
+<br>
+
+so then, how is this velocity "inferred"? Let's look at the state equations:
+
+
+$$
+\begin{array}{ll}
+\mathbf{S}=\mathbf{H} \overline{\mathbf{P}} \mathbf{H}^{\mathrm{T}}+\mathbf{R} & \mathbf{S}=\mathbf{H} \overline{\mathbf{P}} \mathbf{H}^{\mathrm{T}}+\mathbf{R}=\left[\begin{array}{ll}
+1 & 0
+\end{array}\right]\left[\begin{array}{cc}
+\sigma_{\bar{x}}^{2} & \sigma_{\bar{x} \bar{x}} \\
+\sigma_{\bar{x} \bar{x}} & \sigma_{\bar{x}}^{2}
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]+\left[\sigma_{z}^{2}\right]=\left[\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right] \\
+\mathbf{K}=\overline{\mathbf{P}} \mathbf{H}^{\mathrm{T}} \mathbf{S}^{-\mathbf{1}} & \mathbf{K}=\overline{\mathbf{P}} \mathbf{H}^{\mathrm{T}} \mathbf{S}^{-\mathbf{1}}=\left[\begin{array}{cc}
+\sigma_{\bar{x}}^{2} & \sigma_{\bar{x} \bar{x}} \\
+\sigma_{\bar{x} \bar{x}} & \sigma_{\bar{x}}^{2}
+\end{array}\right]\left[\begin{array}{l}
+1 \\
+0
+\end{array}\right]\left[\begin{array}{c}
+1 \\
+\frac{\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}}{2}
+\end{array}\right]=\left[\begin{array}{c}
+\sigma_{\bar{x}}^{2} /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right) \\
+\sigma_{\bar{x} \bar{x}}^{2} /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right)
+\end{array}\right] \\
+\mathbf{H}=\left[\begin{array}{cc}
+1 & 0
+\end{array}\right] \quad \mathbf{R}=\left[\sigma_{z}^{2}\right] & \mathbf{x}=\overline{\mathbf{x}}+\mathbf{K y}=\left[\begin{array}{l}
+\bar{x} \\
+\overline{\dot{x}}
+\end{array}\right]+\left[\begin{array}{c}
+\sigma_{\bar{x}}^{2} /\left(\sigma_{\bar{x}}^{2}+\sigma_{Z}^{2}\right) \\
+\sigma_{\overline{\bar{x}} \bar{x}}^{2} /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right)
+\end{array}\right] y
+\end{array}
+$$
+
+Recall that,
+
+$$
+\mathbf{\overline{P}} = \left[\begin{array}{c}
+\sigma_{\bar{x}}^{2} /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right) \\
+\sigma_{\bar{x} \bar{x}}^{2} /\left(\sigma_{\bar{x}}^{2}+\sigma_{z}^{2}\right)
+\end{array}\right] 
+$$
+
+
+Hence, we can obtain the equation for the velocity,
+
+$$
+\dot{x}=\bar{x}+\frac{\sigma_{\bar{x} \bar{x}}^{2}}{\sigma_{x}^{2}+\sigma_{z}^{2}} y 
+$$
+
+From this equation,
+
+|$\mathbf{y}$|meaning|result|
+|------------|:------|:-----|
+| $y = 0$ | **perfect** prediction | velocity &rarr; **no change** |
+| $y \ne 0$ | **wrong** prediction | velocity &rarr; **updated** |
+||
+
+The delta of the update, in the second case, depends on:
+
+- residual and
+- $\sigma_{\bar{x} \bar{x}}^2$
+
+
+### Multivariate Kalman Filter Summary
+
+To summarize, 
+
+<img src="img/ekf/multi_kalman/multivariate_summary.png" width="500">
+
+where,
+
+1. **prediction**
+
+$$
+\begin{aligned}
+& \overline{\mathbf{x}_k}=\mathbf{F} \mathbf{x}_{k-1}+\mathbf{B} \mathbf{u} \\
+& \overline{\mathbf{P}_k}=\mathbf{F P}_{k-1} \mathbf{F}^{\mathrm{T}}+\mathbf{Q}
+\end{aligned}
+$$
+
+2. **update**
+
+$$
+\begin{aligned}
+& \mathbf{x}_{\mathbf{k}}=\overline{\mathbf{x}_k}+\mathbf{K}_{\mathbf{k}} \mathbf{y}_{\mathbf{k}} \\
+& \mathbf{P}_{\mathbf{k}}=\left(\mathbf{I}-\mathbf{K}_{\mathbf{k}} \mathbf{H}\right) \overline{\mathbf{P}_{\mathbf{k}}}
+\end{aligned}
+$$
+
+where $\mathbf{K_k}$ and $\mathbf{y_k}$ are calculated as, 
+
+$$
+\begin{aligned}
+& \mathbf{y}_{\mathbf{k}}=\mathbf{z}_{\mathbf{k}}-\mathbf{H} \overline{\mathbf{x}_{\mathbf{k}}} \\
+& \mathbf{S}_{\mathbf{k}}=\mathbf{H} \overline{\mathbf{P}_{\mathbf{k}}} \mathbf{H}^{\mathrm{T}}+\mathbf{R} \\
+& \mathbf{K}_{\mathbf{k}}=\overline{\mathbf{P}_{\mathbf{k}}} \mathbf{H}^{\mathrm{T}} \mathbf{S}_{\mathbf{k}}^{-1}
+\end{aligned}
+$$
+
+An example of a 2D state estimation using multivariate Kalman filters:
+
+<img src="img/ekf/multi_kalman/2d_estimation.png" width="500">
+
+
+**Note**: the problem with Kalman Filters is that it only works for **linear** systems, _i.e.,_
+
+- next state is a linear function of the previous state
+- example of non-linear systems: falling object with air resistance
+
+But the real world is actually **non-linear**! To deal with non-linear systems, we use &rarr; the **extended Kalman filter** (EKF). We will explore this using an important application &rarr; **sensor fusion**.
+
 
