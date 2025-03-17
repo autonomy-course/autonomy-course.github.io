@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-03-07" />
+  <meta name="date" content="2025-03-17" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">March 07,
+                              <li><p class="navbar-text">March 17,
 2025</p></li>
                   </ul>
       </div>
@@ -471,10 +471,11 @@ George Washington University</p></li>
         Microcontrollers</a></li>
         </ul></li>
         </ul></li>
-        <li><a href="#ekf" id="toc-ekf"><span
-        class="toc-section-number">8</span> EKF</a>
-        <ul>
         <li><a href="#state-estimation" id="toc-state-estimation"><span
+        class="toc-section-number">8</span> State Estimation</a>
+        <ul>
+        <li><a href="#state-estimation-1"
+        id="toc-state-estimation-1"><span
         class="toc-section-number">8.1</span> State Estimation</a>
         <ul>
         <li><a href="#how-to-estimate-state"
@@ -537,6 +538,22 @@ George Washington University</p></li>
         id="toc-kalman-filter-summary"><span
         class="toc-section-number">8.3.6</span> Kalman Filter |
         <strong>Summary</strong></a></li>
+        </ul></li>
+        <li><a href="#multivariate-kalman-filter"
+        id="toc-multivariate-kalman-filter"><span
+        class="toc-section-number">8.4</span> Multivariate Kalman
+        Filter</a>
+        <ul>
+        <li><a href="#process-model-and-noise"
+        id="toc-process-model-and-noise"><span
+        class="toc-section-number">8.4.1</span> Process Model and
+        Noise</a></li>
+        <li><a href="#control-input" id="toc-control-input"><span
+        class="toc-section-number">8.4.2</span> Control Input</a></li>
+        <li><a href="#summary-of-prediction-model"
+        id="toc-summary-of-prediction-model"><span
+        class="toc-section-number">8.4.3</span> Summary of Prediction
+        Model</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -8367,9 +8384,10 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             </section>
             </section>
             </section>
-            <section id="ekf" class="level1" data-number="8">
+            <section id="state-estimation" class="level1"
+            data-number="8">
             <h1 data-number="8"><span
-            class="header-section-number">8</span> EKF</h1>
+            class="header-section-number">8</span> State Estimation</h1>
             <p>Consider a robot in a simple grid starting at <span
             class="math inline">(0, 0)</span> with the intention of
             moving to <span class="math inline">(2, 2)</span>:</p>
@@ -8419,7 +8437,7 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             <p><img src="img/ekf/robot_grid.7.png" width="200">
             <img src="img/ekf/robot_grid.8.png" width="200">
             <img src="img/ekf/robot_grid.9.png" width="200"></p>
-            <section id="state-estimation" class="level2"
+            <section id="state-estimation-1" class="level2"
             data-number="8.1">
             <h2 data-number="8.1"><span
             class="header-section-number">8.1</span> State
@@ -11431,6 +11449,671 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             \bar{\sigma}_{k}^{2}
             \end{aligned}
             $$</span></p>
+            </section>
+            </section>
+            <section id="multivariate-kalman-filter" class="level2"
+            data-number="8.4">
+            <h2 data-number="8.4"><span
+            class="header-section-number">8.4</span> Multivariate Kalman
+            Filter</h2>
+            <p>In reality state is <em>not</em> single dimensional → it
+            is <strong>multi-dimensional</strong>. In fact, it is a
+            multi-dimensional <strong>vector</strong>, for instance,</p>
+            <ul>
+            <li>Example: [position, velocity] <span
+            class="math inline"><sup>⊤</sup></span></li>
+            <li>Represented by a <strong>multivariate
+            gaussian</strong>:</li>
+            </ul>
+            <p><img src="img/ekf/multi_kalman/n_dimensional.png" ></p>
+            <p>Let’s look at [position, velocity] <span
+            class="math inline"><sup>⊤</sup></span>,</p>
+            <p><img src="img/ekf/multi_kalman/variance_velocity_position.png" width="300"></p>
+            <p>How do we represent this? They’re two <em>different</em>
+            Gaussians, with different properties. We use an
+            <strong>ellipse</strong> (from <a
+            href="https://engineeringmedia.com/controlblog/the-kalman-filter">Engineering
+            Media</a>),</p>
+            <p><img src="img/ekf/multi_kalman/variances_ellipse.png" width="300"></p>
+            <p>We represent these unequal variances as an ellipse, where
+            the major and minor axes are set to the variance for that
+            dimension. The above image is graphically showing that we
+            have <em>more uncertainty in position than we do in
+            velocity</em>.</p>
+            <p>This is great for combining the means but what about the
+            <strong>variance</strong>? We need to understand how the two
+            variables, velocity and position, <em>relate</em> to each
+            other, since the state of one variable depends on the other.
+            For instance, the faster that an object is traveling, the
+            <strong>further the position will be from the actual
+            measurements</strong>. Hence, capturing the velocity will
+            allow us to better estimate the position. On the other hand,
+            a better estimation of the position tells us whether our
+            velocity measurements were accurate.</p>
+            <p>So what we need to really capture is →
+            <strong>covariance</strong> between the two variables.</p>
+            <p><img src="img/ekf/multi_kalman/covariance_velocity_position.png" width="300"></p>
+            <p>Covariance is captured using the <strong>covariance
+            matrix</strong> → a square matrix with the number of rows
+            and columns equal to the number of state variables. So, our
+            position and velocity system would have a <span
+            class="math inline">2 × 2</span> covariance matrix, <span
+            class="math inline"><em>P</em></span> where,</p>
+            <table>
+            <thead>
+            <tr>
+            <th>terms</th>
+            <th>meaning</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>diagonal</td>
+            <td>variances with <strong>itself</strong></td>
+            </tr>
+            <tr>
+            <td>off-diagonal</td>
+            <td><strong>covariances</strong> of each state w.r.t.
+            <strong>other</strong> states</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>The <strong>state vector</strong> for our system (also a
+            matrix):</p>
+            <p><span class="math display">$$
+            \hat{x} =
+            \begin{bmatrix}
+            position\\
+            velocity
+            \end{bmatrix}
+            $$</span></p>
+            <p>So, our position and velocity co-variance can be
+            represented as:</p>
+            <p><span class="math display">$$
+            \Sigma =
+            \begin{bmatrix}
+            \text{how pos varies with pos} &amp; \text{how vel varies
+            with pos}\\
+            \text{how pos varies with vel} &amp; \text{how vel varies
+            with vel}
+            \end{bmatrix}
+            $$</span></p>
+            <p>Using the actual terms for variance,</p>
+            <p><span class="math display">$$
+            \Sigma =
+            \begin{bmatrix}
+            \sigma^2_{11} &amp; \sigma^2_{12} \\
+            \sigma^2_{21} &amp; \sigma^2_{22}
+            \end{bmatrix}
+            $$</span></p>
+            <p>So now, we can represent our multivariate Gaussian
+            as:</p>
+            <p><span class="math display">$$
+            \mathcal{N}(\boldsymbol{\mu},
+            \boldsymbol{\Sigma})=\frac{1}{(2 \pi)^{n /
+            2}|\boldsymbol{\Sigma}|^{1 / 2}}
+            e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T}
+            \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+            $$</span></p>
+            <p>where,</p>
+            <table>
+            <colgroup>
+            <col style="width: 27%" />
+            <col style="width: 31%" />
+            <col style="width: 41%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>variable</th>
+            <th>definition</th>
+            <th>meaning</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><span class="math inline"><strong>x</strong></span></td>
+            <td><span
+            class="math inline">(<em>x</em><sub>1</sub>, <em>x</em><sub>2</sub>, …, <em>x</em><sub><em>n</em></sub>)</span></td>
+            <td>state variable</td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><strong>μ</strong></span></td>
+            <td><span
+            class="math inline">(<em>μ</em><sub>1</sub>, <em>μ</em><sub>2</sub>, …, <em>μ</em><sub><em>n</em></sub>)</span></td>
+            <td>mean vector</td>
+            </tr>
+            <tr>
+            <td><span class="math inline"><em>Σ</em></span></td>
+            <td><span
+            class="math inline"><em>Σ</em><sub>i, j</sub> = Cov (x<sub>i</sub>, x<sub>j</sub>)</span></td>
+            <td>covariance matrix</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Let’s look at some examples of multivariate Gaussians and
+            corresponding values:</p>
+            <table>
+            <colgroup>
+            <col style="width: 46%" />
+            <col style="width: 53%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>example</th>
+            <th style="text-align: left;">comments</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><img src="img/ekf/multi_kalman/multi_g.1.png"></td>
+            <td style="text-align: left;"><span
+            class="math inline"><em>x</em><sub>1</sub></span> and <span
+            class="math inline"><em>x</em><sub>2</sub></span> are
+            <strong>not</strong> correlated</td>
+            </tr>
+            <tr>
+            <td><img src="img/ekf/multi_kalman/multi_g.2.png"></td>
+            <td style="text-align: left;"><span
+            class="math inline"><em>x</em><sub>1</sub></span> and <span
+            class="math inline"><em>x</em><sub>2</sub></span> are
+            <strong>not</strong> correlated</td>
+            </tr>
+            <tr>
+            <td><img src="img/ekf/multi_kalman/multi_g.3.png"></td>
+            <td style="text-align: left;"><span
+            class="math inline"><em>x</em><sub>1</sub></span> and <span
+            class="math inline"><em>x</em><sub>2</sub></span> are
+            <strong>not</strong> correlated</td>
+            </tr>
+            <tr>
+            <td><img src="img/ekf/multi_kalman/multi_g.4.png"></td>
+            <td style="text-align: left;"><span
+            class="math inline"><em>x</em><sub>1</sub></span> and <span
+            class="math inline"><em>x</em><sub>2</sub></span>
+            <strong>are</strong> correlated → <span
+            class="math inline"><em>x</em><sub>1</sub>(<em>x</em><sub>2</sub>)</span>
+            gives us information about what <span
+            class="math inline"><em>x</em><sub>2</sub>(<em>x</em><sub>1</sub>)</span>
+            could be</td>
+            </tr>
+            </tbody>
+            </table>
+            <section id="process-model-and-noise" class="level3"
+            data-number="8.4.1">
+            <h3 data-number="8.4.1"><span
+            class="header-section-number">8.4.1</span> Process Model and
+            Noise</h3>
+            <p>Now, we need to figure out how to model the system with
+            these updates to the system model, covariance, multivariate
+            gaussians and what not. Let’s look at the position and
+            velocity as examples.</p>
+            <p>Recall the state is,</p>
+            <p><span class="math display">$$
+            \hat{x} =
+            \begin{bmatrix}
+            position\\
+            velocity
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            x_{k}\\
+            \dot{x}_{k}
+            \end{bmatrix}
+            $$</span></p>
+            <blockquote>
+            <p>Why is velocity represented as: <span
+            class="math inline"><em>ẋ</em><sub><em>k</em></sub></span>?</p>
+            </blockquote>
+            <p>Now, in the original model, our physical equation
+            was:</p>
+            <ul>
+            <li><span
+            class="math inline">$\overline{x_{k+1}}=x_{k}+\dot{x}_{k}
+            \Delta t$</span></li>
+            <li><span class="math inline"><em>ẋ</em></span> remains
+            <strong>constant</strong> (<em>i.e.,</em> <span
+            class="math inline">$\overline{\dot{x}_{k+1}}=\dot{x}_{k}$</span>
+            )</li>
+            </ul>
+            <p>But, in this multivariate Gaussian version of things,
+            velocity and position are correlated. So,</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{x}_{k+1}}=\left[\begin{array}{cc}
+            \square &amp; \square \\
+            \square &amp; \square \\
+            \end{array}\right] \mathbf{x}_{k}
+            $$</span></p>
+            <p>Because the transition from <span
+            class="math inline"><strong>x</strong><sub><strong>k</strong></sub></span>
+            → <span
+            class="math inline">$\overline{\mathbf{x}_{k+1}}$</span>
+            requires a <strong>vector</strong>!</p>
+            <p><strong>Note:</strong> <strong>bold</strong> variables
+            indicate vectors, non bold variables indicate scalars.</p>
+            <p>Plugging in the remanining parts from the motion equation
+            (<span
+            class="math inline">$\overline{x_{k+1}}=x_{k}+\dot{x}_{k}
+            \Delta t$</span>) we get,</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{x}_{k+1}}=\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right] \mathbf{x}_{k}
+            $$</span></p>
+            <p>The matrix,</p>
+            <p><span class="math display">$$
+            \mathbf{F}=\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right]
+            $$</span></p>
+            <p>is known as the <strong>state transition
+            matrix</strong>.</p>
+            <p>So we write the equation as:</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{x}_{k+1}} = \mathbf{F} \mathbf{x}_{k}
+            $$</span></p>
+            <p>Let’s revisit out multivariate Gaussian definition,</p>
+            <p><span class="math display">$$
+            \mathcal{N}(\boldsymbol{\mu}, \Sigma)=\frac{1}{(2 \pi)^{n /
+            2}|\Sigma|^{1 / 2}}
+            e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T}
+            \Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+            $$</span></p>
+            <p>We particularly care about <span
+            class="math inline">$\textcolor{orange}{\Sigma}$</span>,</p>
+            <p><span class="math display">$$
+            \mathcal{N}(\boldsymbol{\mu},
+            \textcolor{orange}{\Sigma})=\frac{1}{(2 \pi)^{n /
+            2}|\textcolor{orange}{\Sigma}|^{1 / 2}}
+            e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T}
+            \textcolor{orange}{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+            $$</span></p>
+            <p><span
+            class="math inline">$\textcolor{orange}{\Sigma}$</span> →
+            <strong>error covariance</strong> (or state covariance):</p>
+            <ul>
+            <li>represents the state uncertainty</li>
+            <li>typically denoted by → <span
+            class="math inline"><strong>P</strong></span></li>
+            </ul>
+            <p>So,</p>
+            <p><span class="math display">$$
+            \mathbf{P} =
+            \begin{bmatrix}
+            \sigma^2_{11} &amp; \sigma^2_{12} \\
+            \sigma^2_{21} &amp; \sigma^2_{22}
+            \end{bmatrix}
+            $$</span></p>
+            <p>We also need to worry about →
+            <strong>noise/uncertainty</strong> during state transitions
+            because, well, we live in the real world. Hence, there is a
+            matrix <span class="math inline"><strong>Q</strong></span>
+            used to represent this,</p>
+            <ul>
+            <li>uncertainty in state transition (<em>e.g.,</em>
+            friction, winds, etc.)</li>
+            <li>white noise (<em>i.e.,</em> zero mean)</li>
+            </ul>
+            <p>So, looking at the state transition, <span
+            class="math inline"><em>k</em> → <em>k</em> + 1</span>, can
+            we write?</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{P}_{k+1}}=\mathbf{P}_{k}+\mathbf{Q}
+            $$</span></p>
+            <p>This is incorrect! The right way to do this is as
+            follows:</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{P}_{k+1}}=\mathbf{F P}_{k}
+            \mathbf{F}^{\mathrm{T}}+\mathbf{Q}
+            $$</span></p>
+            <p>Where, <span
+            class="math inline"><strong>F</strong><sup>T</sup></span> is
+            the <strong><a
+            href="https://en.wikipedia.org/wiki/Transpose">transpose</a></strong>
+            of matrix <span
+            class="math inline"><strong>F</strong></span>.</p>
+            <details>
+            <summary>
+            Proof and Further Details
+            </summary>
+            <p>In the given equations, the symbol <span
+            class="math inline"><em>E</em>[.]</span> represents the
+            expectation operator, also known as the expected value.</p>
+            <ul>
+            <li>for <em>scalar</em> random variables, the expectation is
+            the <strong>arithmetic average value</strong> you’d expect
+            to observe if you repeated the experiment infinitely many
+            times</li>
+            <li>for random <em>vectors</em>, the expectation denotes the
+            <strong>vector of expectations of each
+            component</strong>:</li>
+            </ul>
+            <p>Given a random vector:</p>
+            <p><span class="math display">$$
+            \mathbf{x} = \begin{bmatrix}
+            x_1 \\
+            x_2 \\
+            \vdots \\
+            x_n
+            \end{bmatrix},
+            $$</span></p>
+            <p>the expectation is defined component-wise as:</p>
+            <p><span class="math display">$$
+            \mathrm{E}[\mathbf{x}] = \begin{bmatrix}
+            \mathrm{E}[x_1] \\
+            \mathrm{E}[x_2] \\
+            \vdots \\
+            \mathrm{E}[x_n]
+            \end{bmatrix}.
+            $$</span></p>
+            <p>Additionally, the expression,</p>
+            <p><span
+            class="math display">E[(<strong>x</strong> − <strong>μ</strong>)(<strong>x</strong> − <strong>μ</strong>)<sup><em>T</em></sup>]</span></p>
+            <p>represents the covariance matrix of the random vector
+            <span class="math inline"><em>x</em></span>, typically
+            denoted by: <span
+            class="math display">Var (<strong>x</strong>)  or  <strong>Σ</strong></span></p>
+            <p>Now, we have:</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \operatorname{Var}(\mathbf{A x}) &amp;
+            =\mathrm{E}\left[(\mathbf{A}(\mathbf{x}-\boldsymbol{\mu}))(\mathrm{A}(\mathbf{x}-\boldsymbol{\mu}))^{\mathrm{T}}\right]
+            \\
+            &amp;
+            =\mathrm{E}\left[\left(\mathbf{A}(\mathbf{x}-\boldsymbol{\mu})(\mathbf{x}-\boldsymbol{\mu})^{T}\right)
+            \mathbf{A}^{\mathrm{T}}\right] \\
+            &amp;
+            \left.=\operatorname{AE}\left[(\mathbf{x}-\boldsymbol{\mu})(\mathbf{x}-\boldsymbol{\mu})^{T}\right)\right]
+            \mathbf{A}^{\mathrm{T}} \\
+            &amp; =\operatorname{AVar}(\mathbf{x})
+            \mathbf{A}^{\mathrm{T}}
+            \end{aligned}
+            $$</span></p>
+            <p>Going back to our state transition model, recall,</p>
+            <p><span class="math display">$$
+            \overline{\mathbf{x}_{k+1}}=\mathbf{F} \mathbf{x}_{k}
+            $$</span></p>
+            <p>We have seen, from above,</p>
+            <p><span
+            class="math display">Var (<strong>A</strong><strong>x</strong>) = <strong>A</strong><strong>V</strong><strong>a</strong><strong>r</strong>(<strong>x</strong>)<strong>A</strong><sup>T</sup></span></p>
+            <p>Replacing with the right vectors/paramters,</p>
+            <p><span
+            class="math display">Var (<strong>F</strong><strong>x</strong><sub><em>k</em></sub>) = <strong>F</strong>Var (<strong>x</strong><sub><em>k</em></sub>)<strong>F</strong><sup>T</sup> = <strong>F</strong><strong>P</strong><sub><em>k</em></sub><strong>F</strong><sup><strong>T</strong></sup></span></p>
+            <p>since, <span
+            class="math inline"><strong>P</strong><sub><em>k</em></sub></span>
+            is the (state/error) <strong>covariance</strong> matrix.</p>
+            </details>
+            <p>Now, at the system start, we have:</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \mathbf{F} &amp; =\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right] \quad
+            \text{and} \quad
+            \mathbf{P}_{\mathbf{k}} &amp; =\left[\begin{array}{cc}
+            \sigma_{x_{k}}^{2} &amp; 0 \\
+            0 &amp; \sigma_{x_{k}}^{2}
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p><em>i.e.,</em> <strong>no correlation</strong> between
+            position and velocity.</p>
+            <p>But, after <em>one</em> step (<em>i.e.,</em>
+            <strong>prediction</strong>),</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \overline{\mathbf{P}_{k+1}} &amp; =\mathbf{F P}_{k}
+            \mathbf{F}^{\mathrm{T}} \\
+            &amp; =\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right]\left[\begin{array}{cc}
+            \sigma_{x_{k}}^{2} &amp; 0 \\
+            0 &amp; \sigma_{x_{k}}^{2}
+            \end{array}\right]\left[\begin{array}{cc}
+            1 &amp; 0 \\
+            \Delta t &amp; 1
+            \end{array}\right] \\
+            &amp; =\left[\begin{array}{cc}
+            \sigma_{x_{k}}^{2}+\sigma_{x_{k}}^{2} \Delta t^{2} &amp;
+            \textcolor{orange}{\sigma_{x_{k}}^{2} \Delta t} \\
+            \textcolor{orange}{\sigma_{x_{k}}^{2} \Delta t} &amp;
+            \sigma_{x_{k}}^{2}
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p>Position and velocity → <strong>correlated</strong>!</p>
+            <p>Let’s look at an example:</p>
+            <p><span class="math display">$$
+            \begin{array}{llll}
+            \mathbf{x}_{0}=\left[\begin{array}{l}
+            x_{0} \\
+            \dot{x}_{0}
+            \end{array}\right]=\left[\begin{array}{c}
+            0 \\
+            10
+            \end{array}\right] &amp; \mathbf{F}=\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right] &amp; \Delta t=1 \mathrm{~s} &amp;
+            \mathbf{P}_{\mathbf{0}}=\left[\begin{array}{ll}
+            1 &amp; 0 \\
+            0 &amp; 3
+            \end{array}\right] \\
+            \begin{array}{l}
+            \text { Initial position }=0 \mathrm{~m}
+            \end{array} &amp; \overline{x_{k+1}}=x_{k}+\dot{x}_{k}
+            \Delta t &amp; &amp; \text { Initial state covariance } \\
+            \text { Initial velocity }=10 \mathrm{~m} / \mathrm{s} &amp;
+            \overline{\dot{x}_{k+1}}=\dot{x}_{k} &amp;
+            \end{array}
+            $$</span></p>
+            <details>
+            <summary>
+            Example Details
+            </summary>
+            <p>Recall that we write our model as,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \overline{\mathbf{x}_{k+1}}=\mathbf{F} \mathbf{x}_{k}
+            \\
+            &amp; \overline{\mathbf{P}_{k+1}}=\mathbf{F} \mathbf{P}_{k}
+            \mathbf{F}^{\mathrm{T}}+\boldsymbol{Q}
+            \end{aligned}
+            $$</span></p>
+            <p>Let’s forget about <span
+            class="math inline"><strong>Q</strong></span> for now,</p>
+            <p>So, our starting state can be represented as (we see that
+            velocty and position are <strong>not
+            correlated</strong>):</p>
+            <p><img src="img/ekf/multi_kalman/process_model.1.png" width ="300"></p>
+            <p>Now, after one iteration/prediction,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \overline{\mathbf{x}_{1}}=\mathbf{F} \mathbf{x}_{0} &amp;
+            =\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right]\left[\begin{array}{c}
+            0 \\
+            10
+            \end{array}\right]=\left[\begin{array}{l}
+            10 \\
+            10
+            \end{array}\right] \\
+            \overline{\mathbf{P}_{1}}=\mathbf{F P}_{0}
+            \mathbf{F}^{\mathrm{T}} &amp; =\left[\begin{array}{cc}
+            1 &amp; \Delta t \\
+            0 &amp; 1
+            \end{array}\right]\left[\begin{array}{cc}
+            1 &amp; 0 \\
+            0 &amp; 3
+            \end{array}\right]\left[\begin{array}{cc}
+            1 &amp; 0 \\
+            \Delta t &amp; 1
+            \end{array}\right] \\
+            &amp; =\left[\begin{array}{ll}
+            1 &amp; 3 \\
+            0 &amp; 3
+            \end{array}\right]\left[\begin{array}{cc}
+            1 &amp; 0 \\
+            \Delta t &amp; 1
+            \end{array}\right]=\left[\begin{array}{ll}
+            4 &amp; 3 \\
+            3 &amp; 3
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p>If we plot this, we see that <strong>velocity and
+            position are now correlated</strong>:</p>
+            <p><img src="img/ekf/multi_kalman/process_model.2.png" width ="300"></p>
+            <p>A couple more iterations,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \overline{\mathbf{x}_{2}}=\left[\begin{array}{l}
+            20 \\
+            10
+            \end{array}\right] \\
+            &amp; \overline{\mathbf{P}_{2}}=\left[\begin{array}{cc}
+            13 &amp; 6 \\
+            6 &amp; 3
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p><img src="img/ekf/multi_kalman/process_model.3.png" width ="300"></p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \overline{\mathbf{x}_{3}}=\left[\begin{array}{l}
+            30 \\
+            10
+            \end{array}\right] \\
+            &amp; \overline{\mathbf{P}_{3}}=\left[\begin{array}{cc}
+            28 &amp; 9 \\
+            9 &amp; 3
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            </details>
+            <p><br></p>
+            <p><img src="img/ekf/multi_kalman/process_model.4.png" width ="300"></p>
+            <p><br></p>
+            <p>Hence, after multiple iterations,</p>
+            <ul>
+            <li>we started with <span
+            class="math inline">$\mathbf{x}_{0}=\left[\begin{array}{c}0
+            \mathrm{~m} \\ 10 \mathrm{~m} /
+            \mathrm{s}\end{array}\right]$</span></li>
+            <li>position moves by <span
+            class="math inline">10<em>m</em></span> in each step due to
+            the velocity estimate <span
+            class="math inline"> = 10 m/s</span></li>
+            <li>velocity estimate <strong>does not change</strong>
+            because we <strong>predict</strong> it based on <span
+            class="math inline">${\overline{\dot{x}_{k+1}}}=\dot{x}_{k}$</span></li>
+            <li>position <strong>uncertainty increases</strong></li>
+            <li>position and velocity become more
+            <strong>correlated</strong> because <span
+            class="math inline">$\overline{x_{k+1}}=x_{k}+\dot{x}_{k}
+            \Delta t$</span></li>
+            </ul>
+            </section>
+            <section id="control-input" class="level3"
+            data-number="8.4.2">
+            <h3 data-number="8.4.2"><span
+            class="header-section-number">8.4.2</span> Control
+            Input</h3>
+            <p>The state of the system is not only dependant on the
+            sensor and model. Recall that <strong>control input</strong>
+            is meant to drive the system to a particular state. So, we
+            must include it (if it is present) as,</p>
+            <p>&lt;!–&gt; <span class="math display">$$
+            \overline{\mathbf{x}_{k+1}}=\mathbf{F}
+            \mathbf{x}_{k}+\mathbf{\textcolor{orange}{B u}}
+            $$</span> &lt;–&gt;</p>
+            <p><img src="img/ekf/equations/pngs/equations-3.png" width="500"></p>
+            <p>where,</p>
+            <table>
+            <colgroup>
+            <col style="width: 16%" />
+            <col style="width: 50%" />
+            <col style="width: 33%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">term</th>
+            <th style="text-align: left;">definition</th>
+            <th style="text-align: left;">details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><span
+            class="math inline"><strong>u</strong></span></td>
+            <td style="text-align: left;">control input</td>
+            <td style="text-align: left;">example: input to motor
+            <code>ESC</code></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><span
+            class="math inline"><strong>B</strong></span></td>
+            <td style="text-align: left;">control input model</td>
+            <td style="text-align: left;">models the contribution of
+            control input to the state transition</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Note: <span
+            class="math inline"><strong>B</strong> = <strong>0</strong></span>
+            if there is no control input.</p>
+            </section>
+            <section id="summary-of-prediction-model" class="level3"
+            data-number="8.4.3">
+            <h3 data-number="8.4.3"><span
+            class="header-section-number">8.4.3</span> Summary of
+            Prediction Model</h3>
+            <p>To summarize,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            &amp; \overline{\mathbf{x}_{k+1}}=\mathbf{F}
+            \mathbf{x}_{k}+\mathbf{B} \mathbf{u} \\
+            &amp; \overline{\mathbf{P}_{k+1}}=\mathbf{F P}_{k}
+            \mathbf{F}^{\mathrm{T}}+\mathbf{Q}
+            \end{aligned}
+            $$</span></p>
+            <ul>
+            <li>from <span
+            class="math inline"><strong>x</strong><sub><em>k</em></sub></span>,
+            we predict the next state <span
+            class="math inline">$\overline{\mathbf{x}_{k+1}}$</span>
+            (i.e., prior)</li>
+            <li><span class="math inline"><strong>F</strong></span> and
+            <span class="math inline"><strong>Q</strong></span> are
+            typically <strong>constant</strong></li>
+            <li><span
+            class="math inline"><strong>B</strong><strong>u</strong></span>
+            can be set to <code>0</code> → if there is no explicit
+            control input to the system</li>
+            <li><span
+            class="math inline"><strong>B</strong><strong>u</strong></span>
+            can be used to provide additional information → better
+            prediction</li>
+            </ul>
             </section>
             </section>
             </section>

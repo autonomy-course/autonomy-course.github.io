@@ -3932,7 +3932,7 @@ Additional reading/examples/etc. if you want to learn more about PWMs, programmi
 9. [Actuation and Avionics](https://www.collinsaerospace.com/what-we-do/industries/business-aviation/power-controls-actuation/actuation)<!--rel="stylesheet" href="./custom.sibin.css"-->
 
 
-# EKF
+# State Estimation
 
 Consider a robot in a simple grid starting at $(0,0)$ with the intention of moving to $(2,2)$:
 
@@ -5594,12 +5594,488 @@ K_{k} & =\frac{{\overline{\sigma_{k}}}^{2}}{{\overline{\sigma_{k}}}^{2}+\sigma_{
 $$
 
 
+## Multivariate Kalman Filter
+
+In reality state is _not_ single dimensional &rarr; it is **multi-dimensional**. In fact, it is a multi-dimensional **vector**, for instance,
+
+- Example: [position, velocity] ${ }^{\top}$
+- Represented by a **multivariate gaussian**:
+
+<img src="img/ekf/multi_kalman/n_dimensional.png" >
+
+Let's look at [position, velocity] ${ }^{\top}$,
+
+<img src="img/ekf/multi_kalman/variance_velocity_position.png" width="300">
+
+How do we represent this? They're two _different_ Gaussians, with different properties. We use an **ellipse** (from [Engineering Media](https://engineeringmedia.com/controlblog/the-kalman-filter)),
+
+<img src="img/ekf/multi_kalman/variances_ellipse.png" width="300">
+
+We represent these unequal variances as an ellipse, where the major and minor axes are set to the variance for that dimension. The above image is graphically showing that we have _more uncertainty in position than we do in velocity_.
+
+This is great for combining the means but what about the **variance**? We need to understand how the two variables, velocity and position, _relate_ to each other, since the state of one variable depends on the other. For instance, the faster that an object is traveling, the **further the position will be from the actual measurements**. Hence, capturing the velocity will allow us to better estimate the position. On the other hand, a better estimation of the position tells us whether our velocity measurements were accurate. 
+
+So what we need to really capture is &rarr; **covariance** between the two variables.  
+
+<img src="img/ekf/multi_kalman/covariance_velocity_position.png" width="300">
+
+Covariance is captured using the **covariance matrix** &rarr; a square matrix with the number of rows and columns equal to the number of state variables. So, our position and velocity system would have a $2 \times 2$ covariance matrix, $P$ where,
+
+|terms| meaning|
+|-----|--------|
+|diagonal| variances with **itself**|
+|off-diagonal| **covariances** of each state w.r.t. **other** states|
+||
+
+The **state vector** for our system (also a matrix):
+
+$$
+\hat{x} = 
+\begin{bmatrix}
+position\\
+velocity
+\end{bmatrix}
+$$
+
+So, our position and velocity co-variance can be represented as:
+
+$$
+\Sigma = 
+\begin{bmatrix}
+\text{how pos varies with pos} & \text{how vel varies with pos}\\
+\text{how pos varies with vel} & \text{how vel varies with vel}
+\end{bmatrix}
+$$
+
+Using the actual terms for variance,
+
+$$
+\Sigma = 
+\begin{bmatrix}
+\sigma^2_{11} & \sigma^2_{12} \\
+\sigma^2_{21} & \sigma^2_{22} 
+\end{bmatrix}
+$$
+
+So now, we can represent our multivariate Gaussian as:
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})=\frac{1}{(2 \pi)^{n / 2}|\boldsymbol{\Sigma}|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+where,
+
+|variable| definition | meaning |
+|--------|---------|------------|
+|$\mathbf{x}$ | $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ |state variable |
+|$\boldsymbol{\mu}$ | $\left(\mu_{1}, \mu_{2}, \ldots, \mu_{n}\right)$ | mean vector |
+| $\Sigma$ | $\Sigma_{\mathrm{i}, \mathrm{j}}=\operatorname{Cov}\left(\mathrm{x}_{\mathrm{i}}, \mathrm{x}_{\mathrm{j}}\right)$ | covariance matrix|
+||
+
+Let's look at some examples of multivariate Gaussians and corresponding values:
+
+|example|comments|
+|-------|:-------|
+|<img src="img/ekf/multi_kalman/multi_g.1.png">| $x_1$ and $x_2$ are **not** correlated|
+|<img src="img/ekf/multi_kalman/multi_g.2.png">| $x_1$ and $x_2$ are **not** correlated|
+|<img src="img/ekf/multi_kalman/multi_g.3.png">| $x_1$ and $x_2$ are **not** correlated|
+|<img src="img/ekf/multi_kalman/multi_g.4.png">| $x_1$ and $x_2$ **are** correlated &rarr; $x_{1}\left(x_{2}\right)$ gives us information about what $x_{2}\left(x_{1}\right)$ could be|
+
+### Process Model and Noise
+
+Now, we need to figure out how to model the system with these updates to the system model, covariance, multivariate gaussians and what not. Let's look at the position and velocity as examples. 
+
+Recall the state is,
+
+$$
+\hat{x} = 
+\begin{bmatrix}
+position\\
+velocity
+\end{bmatrix}
+=
+\begin{bmatrix}
+x_{k}\\
+\dot{x}_{k}
+\end{bmatrix}
+$$
+
+> Why is velocity represented as: $\dot{x}_{k}$?
+
+Now, in the original model, our physical equation was:
+
+- $\overline{x_{k+1}}=x_{k}+\dot{x}_{k} \Delta t$
+- $\dot{x}$ remains **constant** (_i.e.,_ $\overline{\dot{x}_{k+1}}=\dot{x}_{k}$ )
+
+But, in this multivariate Gaussian version of things, velocity and position are correlated. So,
+
+$$
+\overline{\mathbf{x}_{k+1}}=\left[\begin{array}{cc}
+\square & \square \\
+\square & \square \\
+\end{array}\right] \mathbf{x}_{k}
+$$
+
+Because the transition from $\mathbf{x_k}$ &rarr; $\overline{\mathbf{x}_{k+1}}$ requires a **vector**!
+
+**Note:** **bold** variables indicate vectors, non bold variables indicate scalars.
+
+Plugging in the remanining parts from the motion equation ($\overline{x_{k+1}}=x_{k}+\dot{x}_{k} \Delta t$) we get,
 
 
+$$
+\overline{\mathbf{x}_{k+1}}=\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right] \mathbf{x}_{k}
+$$
+
+The matrix, 
+
+$$
+\mathbf{F}=\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right]
+$$
+
+is known as the **state transition matrix**.
+
+So we write the equation as:
+
+$$
+\overline{\mathbf{x}_{k+1}} = \mathbf{F} \mathbf{x}_{k}
+$$
+
+Let's revisit out multivariate Gaussian definition,
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \Sigma)=\frac{1}{(2 \pi)^{n / 2}|\Sigma|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+We particularly care about $\textcolor{orange}{\Sigma}$,
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \textcolor{orange}{\Sigma})=\frac{1}{(2 \pi)^{n / 2}|\textcolor{orange}{\Sigma}|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \textcolor{orange}{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+$\textcolor{orange}{\Sigma}$ &rarr; **error covariance** (or state covariance):
+
+- represents the state uncertainty
+- typically denoted by &rarr; $\mathbf{P}$
+
+So,
+
+$$
+\mathbf{P} = 
+\begin{bmatrix}
+\sigma^2_{11} & \sigma^2_{12} \\
+\sigma^2_{21} & \sigma^2_{22} 
+\end{bmatrix}
+$$
+
+We also need to worry about &rarr; **noise/uncertainty** during state transitions because, well, we live in the real world. Hence, there is a matrix $\mathbf{Q}$ used to represent this,
+
+- uncertainty in state transition (_e.g.,_ friction, winds, etc.)
+- white noise (_i.e.,_ zero mean)
+
+So, looking at the state transition, $k \rightarrow k+1$, can we write?
+
+$$
+\overline{\mathbf{P}_{k+1}}=\mathbf{P}_{k}+\mathbf{Q} 
+$$
+
+This is incorrect! The right way to do this is as follows:
+
+$$
+\overline{\mathbf{P}_{k+1}}=\mathbf{F P}_{k} \mathbf{F}^{\mathrm{T}}+\mathbf{Q}
+$$
+
+Where, $\mathbf{F}^{\mathrm{T}}$ is the **[transpose](https://en.wikipedia.org/wiki/Transpose)** of matrix $\mathbf{F}$. 
 
 
+<details>
+<summary>Proof and Further Details</summary>
+
+In the given equations, the symbol $E[.]$ represents the expectation operator, also known as the expected value.
+
+- for _scalar_ random variables, the expectation is the **arithmetic average value** you’d expect to observe if you repeated the experiment infinitely many times
+- for random _vectors_, the expectation denotes the **vector of expectations of each component**:
+
+Given a random vector:
+
+$$
+\mathbf{x} = \begin{bmatrix}
+x_1 \\
+x_2 \\
+\vdots \\
+x_n
+\end{bmatrix},
+$$
+
+the expectation is defined component-wise as:
+
+$$
+\mathrm{E}[\mathbf{x}] = \begin{bmatrix}
+\mathrm{E}[x_1] \\
+\mathrm{E}[x_2] \\
+\vdots \\
+\mathrm{E}[x_n]
+\end{bmatrix}.
+$$
+
+Additionally, the expression,
+
+$$
+\mathrm{E}\left[(\mathbf{x}-\boldsymbol{\mu})(\mathbf{x}-\boldsymbol{\mu})^{T}\right]
+$$
+
+represents the covariance matrix of the random vector $x$, typically denoted by:
+$$
+\operatorname{Var}(\mathbf{x}) \quad \text{or} \quad \boldsymbol{\Sigma}
+$$
+
+Now, we have:
+
+$$
+\begin{aligned}
+\operatorname{Var}(\mathbf{A x}) & =\mathrm{E}\left[(\mathbf{A}(\mathbf{x}-\boldsymbol{\mu}))(\mathrm{A}(\mathbf{x}-\boldsymbol{\mu}))^{\mathrm{T}}\right] \\
+& =\mathrm{E}\left[\left(\mathbf{A}(\mathbf{x}-\boldsymbol{\mu})(\mathbf{x}-\boldsymbol{\mu})^{T}\right) \mathbf{A}^{\mathrm{T}}\right] \\
+& \left.=\operatorname{AE}\left[(\mathbf{x}-\boldsymbol{\mu})(\mathbf{x}-\boldsymbol{\mu})^{T}\right)\right] \mathbf{A}^{\mathrm{T}} \\
+& =\operatorname{AVar}(\mathbf{x}) \mathbf{A}^{\mathrm{T}}
+\end{aligned}
+$$
+
+Going back to our state transition model, recall,
+
+$$
+\overline{\mathbf{x}_{k+1}}=\mathbf{F} \mathbf{x}_{k}
+$$
+
+We have seen, from above, 
+
+$$
+\operatorname{Var}(\mathbf{A x})=\mathbf{A V a r}(\mathbf{x}) \mathbf{A}^{\mathrm{T}}
+$$
+
+Replacing with the right vectors/paramters,
+
+$$
+\operatorname{Var}\left(\mathbf{F x}_{k}\right)=\mathbf{F} \operatorname{Var}\left(\mathbf{x}_{k}\right) \mathbf{F}^{\mathrm{T}}=\mathbf{F P}_{k} \mathbf{F}^{\mathbf{T}}
+$$
+
+since, $\mathbf{P}_{k}$ is the (state/error) **covariance** matrix.
+
+</details>
+
+Now, at the system start, we have:
+
+$$
+\begin{aligned}
+\mathbf{F} & =\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right] \quad
+\text{and} \quad
+\mathbf{P}_{\mathbf{k}} & =\left[\begin{array}{cc}
+\sigma_{x_{k}}^{2} & 0 \\
+0 & \sigma_{x_{k}}^{2}
+\end{array}\right]
+\end{aligned}
+$$
+
+_i.e.,_ **no correlation** between position and velocity. 
+
+But, after _one_ step (_i.e.,_ **prediction**), 
+
+$$
+\begin{aligned}
+\overline{\mathbf{P}_{k+1}} & =\mathbf{F P}_{k} \mathbf{F}^{\mathrm{T}} \\
+& =\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+\sigma_{x_{k}}^{2} & 0 \\
+0 & \sigma_{x_{k}}^{2}
+\end{array}\right]\left[\begin{array}{cc}
+1 & 0 \\
+\Delta t & 1
+\end{array}\right] \\
+& =\left[\begin{array}{cc}
+\sigma_{x_{k}}^{2}+\sigma_{x_{k}}^{2} \Delta t^{2} & \textcolor{orange}{\sigma_{x_{k}}^{2} \Delta t} \\
+\textcolor{orange}{\sigma_{x_{k}}^{2} \Delta t} & \sigma_{x_{k}}^{2}
+\end{array}\right]
+\end{aligned}
+$$
+
+Position and velocity &rarr; **correlated**!
+
+Let's look at an example:
+
+$$
+\begin{array}{llll}
+\mathbf{x}_{0}=\left[\begin{array}{l}
+x_{0} \\
+\dot{x}_{0}
+\end{array}\right]=\left[\begin{array}{c}
+0 \\
+10
+\end{array}\right] & \mathbf{F}=\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right] & \Delta t=1 \mathrm{~s} & \mathbf{P}_{\mathbf{0}}=\left[\begin{array}{ll}
+1 & 0 \\
+0 & 3
+\end{array}\right] \\
+\begin{array}{l}
+\text { Initial position }=0 \mathrm{~m}
+\end{array} & \overline{x_{k+1}}=x_{k}+\dot{x}_{k} \Delta t & & \text { Initial state covariance } \\
+\text { Initial velocity }=10 \mathrm{~m} / \mathrm{s} & \overline{\dot{x}_{k+1}}=\dot{x}_{k} &
+\end{array}
+$$
+
+<details>
+<summary>Example Details</summary>
+
+Recall that we write our model as,
+
+$$
+\begin{aligned}
+& \overline{\mathbf{x}_{k+1}}=\mathbf{F} \mathbf{x}_{k} \\
+& \overline{\mathbf{P}_{k+1}}=\mathbf{F} \mathbf{P}_{k} \mathbf{F}^{\mathrm{T}}+\boldsymbol{Q}
+\end{aligned}
+$$
+
+Let's forget about $\mathbf{Q}$ for now,
+
+So, our starting state can be represented as (we see that velocty and position are **not correlated**):
+
+<img src="img/ekf/multi_kalman/process_model.1.png" width ="300">
+
+Now, after one iteration/prediction,
+
+$$
+\begin{aligned}
+\overline{\mathbf{x}_{1}}=\mathbf{F} \mathbf{x}_{0} & =\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right]\left[\begin{array}{c}
+0 \\
+10
+\end{array}\right]=\left[\begin{array}{l}
+10 \\
+10
+\end{array}\right] \\
+\overline{\mathbf{P}_{1}}=\mathbf{F P}_{0} \mathbf{F}^{\mathrm{T}} & =\left[\begin{array}{cc}
+1 & \Delta t \\
+0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+1 & 0 \\
+0 & 3
+\end{array}\right]\left[\begin{array}{cc}
+1 & 0 \\
+\Delta t & 1
+\end{array}\right] \\
+& =\left[\begin{array}{ll}
+1 & 3 \\
+0 & 3
+\end{array}\right]\left[\begin{array}{cc}
+1 & 0 \\
+\Delta t & 1
+\end{array}\right]=\left[\begin{array}{ll}
+4 & 3 \\
+3 & 3
+\end{array}\right]
+\end{aligned}
+$$
+
+If we plot this, we see that **velocity and position are now correlated**:
+
+<img src="img/ekf/multi_kalman/process_model.2.png" width ="300">
+
+A couple more iterations,
+
+$$
+\begin{aligned}
+& \overline{\mathbf{x}_{2}}=\left[\begin{array}{l}
+20 \\
+10
+\end{array}\right] \\
+& \overline{\mathbf{P}_{2}}=\left[\begin{array}{cc}
+13 & 6 \\
+6 & 3
+\end{array}\right]
+\end{aligned}
+$$
+
+<img src="img/ekf/multi_kalman/process_model.3.png" width ="300">
+
+$$
+\begin{aligned}
+& \overline{\mathbf{x}_{3}}=\left[\begin{array}{l}
+30 \\
+10
+\end{array}\right] \\
+& \overline{\mathbf{P}_{3}}=\left[\begin{array}{cc}
+28 & 9 \\
+9 & 3
+\end{array}\right]
+\end{aligned}
+$$
+
+</details>
+
+<br>
+
+<img src="img/ekf/multi_kalman/process_model.4.png" width ="300">
+
+<br>
+
+Hence, after multiple iterations,
+
+- we started with $\mathbf{x}_{0}=\left[\begin{array}{c}0 \mathrm{~m} \\ 10 \mathrm{~m} / \mathrm{s}\end{array}\right]$
+- position moves by $10 m$ in each step due to the velocity estimate $=10 \mathrm{~m} / \mathrm{s}$
+- velocity estimate **does not change** because we **predict** it based on ${\overline{\dot{x}_{k+1}}}=\dot{x}_{k}$
+- position **uncertainty increases**
+- position and velocity become more **correlated** because $\overline{x_{k+1}}=x_{k}+\dot{x}_{k} \Delta t$
 
 
+### Control Input
+
+The state of the system is not only dependant on the sensor and model. Recall that **control input** is meant to drive the system to a particular state. So, we must include it (if it is present) as,
+
+<!-->
+$$
+\overline{\mathbf{x}_{k+1}}=\mathbf{F} \mathbf{x}_{k}+\mathbf{\textcolor{orange}{B u}}
+$$
+<-->
+
+<img src="img/ekf/equations/pngs/equations-3.png" width="500">
+
+where,
+
+|term| definition | details|
+|:---|:-----------|:-------|
+|$\mathbf{u}$ | control input | example: input to motor `ESC`|
+|$\mathbf{B}$ |control input model |models the contribution of control input to the state transition|
+||
+
+Note: $\mathbf{B}=\mathbf{0}$ if there is no control input.
 
 
+### Summary of Prediction Model
+
+To summarize,
+
+$$
+\begin{aligned}
+& \overline{\mathbf{x}_{k+1}}=\mathbf{F} \mathbf{x}_{k}+\mathbf{B} \mathbf{u} \\
+& \overline{\mathbf{P}_{k+1}}=\mathbf{F P}_{k} \mathbf{F}^{\mathrm{T}}+\mathbf{Q}
+\end{aligned}
+$$
+
+- from $\mathbf{x}_{k}$, we predict the next state $\overline{\mathbf{x}_{k+1}}$ (i.e., prior)
+- $\mathbf{F}$ and $\mathbf{Q}$ are typically **constant**
+- $\mathbf{B u}$ can be set to `0` &rarr; if there is no explicit control input to the system
+- $\mathbf{B u}$ can be used to provide additional information &rarr; better prediction
 
