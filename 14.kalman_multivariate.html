@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        # **Multivariate** Kalman Filter
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+reality &rarr; state is a **multi-dimensional** vector
+
+---
+
+$$
+state = 
+\begin{bmatrix}
+position \newline
+velocity
+\end{bmatrix}
+$$
+
+---
+
+$$
+state = 
+\begin{bmatrix}
+position, 
+velocity
+\end{bmatrix}^T
+$$
+
+---
+
+<!-- .slide: data-background="white" -->
+
+$$
+state = 
+\begin{bmatrix}
+position, 
+velocity
+\end{bmatrix}^T
+$$
+
+<img src="img/ekf/multi_kalman/n_dimensional.png" width="1100">
+
+**multivariate** Gaussian
+
+---
+
+**multivariate** Gaussian
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})=\frac{1}{(2 \pi)^{n / 2}|\boldsymbol{\Sigma}|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+---
+
+**multivariate** Gaussian
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})=\frac{1}{(2 \pi)^{n / 2}|\boldsymbol{\Sigma}|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+|variable| definition | meaning |
+|--------|---------|------------|
+|$\mathbf{x}$ | $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ |state variable |
+
+---
+
+**multivariate** Gaussian
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})=\frac{1}{(2 \pi)^{n / 2}|\boldsymbol{\Sigma}|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+|variable| definition | meaning |
+|--------|---------|------------|
+|$\mathbf{x}$ | $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ |state variable |
+|$\boldsymbol{\mu}$ | $\left(\mu_{1}, \mu_{2}, \ldots, \mu_{n}\right)$ | mean vector |
+
+---
+
+**multivariate** Gaussian
+
+$$
+\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})=\frac{1}{(2 \pi)^{n / 2}|\boldsymbol{\Sigma}|^{1 / 2}} e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{T} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
+$$
+
+|variable| definition | meaning |
+|--------|---------|------------|
+|$\mathbf{x}$ | $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ |state variable |
+|$\boldsymbol{\mu}$ | $\left(\mu_{1}, \mu_{2}, \ldots, \mu_{n}\right)$ | mean vector |
+| $\Sigma$ | $\Sigma_{{i}, {j}}=\operatorname{Cov}\left(x_{i}, x_{j}\right)$ | covariance matrix|
+||
+
+---
+
+<!-- .slide: data-background="black" -->
+
+<img src="img/ekf/multi_kalman/few_moments_later.jpeg" width="1100">
+
+---
+
+but read the textbook chapter on [multivariate Kalman Filters](https://autonomy-course.github.io/textbook/autonomy-textbook.html#multivariate-kalman-filter) please!
+
+---
+
+### multivariate kalman filter | **summary**
+
+<img src="img/ekf/multi_kalman/multivariate_summary.png" width="1100">
+
+---
+
+### multivariate kalman filter | **1. prediction**
+
+<br>
+
+<img src="img/ekf/multi_kalman/simplified_equation.predict.png" width="1500">
+
+---
+
+### multivariate kalman filter | **1. prediction**
+
+<img src="img/ekf/multi_kalman/simplified_equation.predict.png" width="1500">
+<img src="img/ekf/multi_kalman/simplified_equation.predict_uncertainty.png" width="1500">
+
+---
+
+### multivariate kalman filter | **2. measurement update**
+
+
+---
+
+### multivariate kalman filter | **2. measurement update**
+
+<br>
+
+<img src="img/ekf/multi_kalman/simplified_equation.update.png" width="1500">
+
+
+---
+
+### multivariate kalman filter | **2. measurement update**
+
+<img src="img/ekf/multi_kalman/simplified_equation.update.png" width="1500">
+<img src="img/ekf/multi_kalman/simplified_equation.update_error.png" width="700">
+
+
+---
+
+### multivariate kalman filter | **2. measurement update**
+
+<img src="img/ekf/multi_kalman/simplified_equation.update.png" width="1500">
+<img src="img/ekf/multi_kalman/simplified_equation.update_error.png" width="700">
+$\quad$
+<img src="img/ekf/multi_kalman/simplified_equation.update_kalmangain.png" width="600">
+
+
+---
+
+### multivariate kalman filter | **3. final update**
+
+<br>
+
+<img src="img/ekf/multi_kalman/simplified_equation.final_update.png" width="700">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**example**: 2D state estimation using multivariate Kalman filters
+
+<img src="img/ekf/multi_kalman/2d_estimation.png" width="1500">
+
+
+---
+
+### problems with Kalman Filters
+
+---
+
+### problems with Kalman Filters
+
+- only works for **linear** systems
+
+---
+
+### problems with Kalman Filters
+
+- only works for **linear** systems
+    - next state &rarr; linear function of previous state
+
+---
+
+### problems with Kalman Filters
+
+- only works for **linear** systems
+    - next state &rarr; linear function of previous state
+- non-linear system example &rarr; falling object with air resistance 
+
+---
+
+### real world &rarr; **non-linear**!
+
+---
+
+### enter **extended kalman filter** (ekf)
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal-js/dist/reveal.js"></script>
+        <script src="assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
