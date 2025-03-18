@@ -3931,7 +3931,6 @@ Additional reading/examples/etc. if you want to learn more about PWMs, programmi
 8. [Raspberry Pi PWM tutorial](https://circuitdigest.com/microcontroller-projects/raspberry-pi-pwm-tutorial)
 9. [Actuation and Avionics](https://www.collinsaerospace.com/what-we-do/industries/business-aviation/power-controls-actuation/actuation)<!--rel="stylesheet" href="./custom.sibin.css"-->
 
-
 # State Estimation
 
 Consider a robot in a simple grid starting at $(0,0)$ with the intention of moving to $(2,2)$:
@@ -4708,7 +4707,7 @@ We use a **measurement** to "fix" the problem of divergence between the actual s
 
 Let the **first** sensor reading &rarr; $z_0 = 2$. But the sensor is **noisy**. Let's also assume it has a probability of $90 \%$.
 
-> Note: in the "predict" stage, we were using "noisy" sensors as well, but those were measuring **different* quantities. In that case, the sensor could be from the car engine or the wheels (or odometers) that say how much we "**intended**" to move, _e.g., "we generated enough torque in the engine to move forward by `3` slots.
+> Note: in the "predict" stage, we were using "noisy" sensors as well, but those were measuring **different** quantities. In that case, the sensor could be from the car engine or the wheels (or odometers) that say how much we "**intended**" to move, _e.g., "we generated enough torque in the engine to move forward by `3` slots.
 > <br>
 > In contrast, the sensors in this section **measure** &rarr; "how much was **actually** moved?". This could be via other types of sensors, _e.g.,_ GPS.
 > <br>
@@ -6601,5 +6600,466 @@ An example of a 2D state estimation using multivariate Kalman filters:
 - example of non-linear systems: falling object with air resistance
 
 But the real world is actually **non-linear**! To deal with non-linear systems, we use &rarr; the **extended Kalman filter** (EKF). We will explore this using an important application &rarr; **sensor fusion**.
+
+
+**References:**
+
+1. Kalman, R. E. (1960). [A New Approach to Linear Filtering and Prediction Problems](https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html). Journal of Basic Engineering, 82(1), 35-45.
+
+2. Bar-Shalom, Y., Li, X. R., & Kirubarajan, T. (2001). [Estimation with Applications to Tracking and Navigation](https://onlinelibrary.wiley.com/doi/book/10.1002/0471221279). Wiley-Interscience.
+
+3. Simon, D. (2006). [Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches](https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345). Wiley-Interscience.
+
+4. Thrun, S., Burgard, W., & Fox, D. (2005). [Probabilistic Robotics](https://mitpress.mit.edu/books/probabilistic-robotics). MIT Press.
+
+5. Welch, G., & Bishop, G. (2006). [An Introduction to the Kalman Filter](https://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf). University of North Carolina at Chapel Hill.
+
+6. Julier, S. J., & Uhlmann, J. K. (1997). [A New Extension of the Kalman Filter to Nonlinear Systems](https://www.cs.unc.edu/~welch/kalman/media/pdf/Julier1997_SPIE_KF.pdf). Proc. SPIE 3068, Signal Processing, Sensor Fusion, and Target Recognition VI.
+
+7. [Kalman Filter Tutorial](https://www.kalmanfilter.net) - A comprehensive online resource with examples and applications.
+
+8. [Kalman and Bayesian Filters in Python](https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python) - A free interactive book and Python library by Roger Labbe.
+
+9. [FilterPy](https://filterpy.readthedocs.io) - A Python library for Kalman filtering and optimal estimation.
+
+10. Särkkä, S. (2013). [Bayesian Filtering and Smoothing](https://www.cambridge.org/core/books/bayesian-filtering-and-smoothing/C372FB31C5D9A100F8476C1A41A5B700). Cambridge University Press.<!--rel="stylesheet" href="./custom.sibin.css"-->
+
+# Sensor Fusion 
+
+As we've discussed so far, sensors and state estimation, by its very probabilistic and noisy nature, introduces **errors**. The [example from Bayes' Filter](#bayes-filter) where two (seemingly identical) sensors measure the same object differently, highlights this:
+
+<img src="img/ekf/bayes.lidar.4.png" width="400">
+
+<br>
+
+So, the question is &rarr; _"which sensor do we believe?"_
+
+Maybe, instead of framing it as picking one sensor vs. the other, perhaps we can use **both**? This is the objective of **sensor fusion**.
+
+> Sensor fusion is the process of combining sensory data from multiple sources to obtain more accurate information than would be possible using individual sensors alone.
+
+Recall that individual sensors have inherent limitations:
+
+- **limited accuracy**: each sensor has measurement errors
+- **limited range/coverage**: sensors may only work reliably in certain conditions
+- **limited sampling rates**: some sensors cannot provide updates fast enough
+- **sensor-specific weaknesses**: GPS fails indoors, cameras struggle in darkness, etc.
+
+Sensor fusion addresses these limitations by combining complementary data from multiple sensors, each with different strengths and weaknesses. The goal is to produce a combined result that is more accurate, complete, and robust than any single sensor could provide.
+
+
+### Kalman Filter for Sensor Fusion
+
+We can, of course, use the Kalman Filter to carry out the sensor fusion. For instance,
+
+- consider State, $\mathbf{x}=\left[\begin{array}{l}x \\ \dot{x}\end{array}\right]$
+- **two sensors**, GPS (in metres), odometry (in feet): $\mathbf{z}=\left[\begin{array}{c}z_{G P S} \\ z_{\text {odom }}\end{array}\right]$
+
+So, by using the parameters for the Kalman Filter,
+
+$$
+\begin{aligned}
+\mathbf{H} & =\left[\begin{array}{cc}
+1 & 0 \\
+1 / 0.3048 & 0
+\end{array}\right] \\
+\mathbf{R} & =\left[\begin{array}{cc}
+\sigma_{\text {GPS }}^{2} & 0 \\
+0 & \sigma_{\text {Odom }}^{2}
+\end{array}\right]
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\mathbf{y}= & \mathbf{z}-\mathbf{H} \overline{\mathbf{x}} \\
+\mathbf{y}= & {\left[\begin{array}{c}
+z_{G P S} \\
+z_{\text {Odom }}
+\end{array}\right]-\left[\begin{array}{cc}
+1 & 0 \\
+1 / 0.3048 & 0
+\end{array}\right]\left[\begin{array}{l}
+\bar{x} \\
+\bar{x}
+\end{array}\right] } \\
+\mathbf{x}= & \overline{\mathbf{x}}+{\mathbf{K} \mathbf{y}} \\
+\end{aligned}
+$$
+
+Note that $\mathbf{K}$ and $\mathbf{y}$ are $2 \times 2$ matrices &rarr; it **mixes the GPS and odometry**!
+
+As mentioned earlier, the Kalman Filter doesn't work well with *non-linear** systems. But what _exactly_ is the problem with nonlinear systems?
+
+Recall that Kalman Filter (and any Bayes' Filter) requires the use of Gaussians that has some nice properties but that breaks down in the face of non-linearities:
+
+|mixing of|result |
+|:--------|:------|
+| two Gaussians | Gaussian |
+| Gaussian and linear function | Gaussian |
+| Gaussian and non-linear function | **non-Gaussian**|
+| linear and non-linear function | **non-Gaussian** |
+| two non-linear function | **non-Gaussian** |
+||
+
+So, all the nice Kalman filter steps (prediction, measurement, update) **falls apart** when the results are no longer Gaussians. Let's see [two instances of passing a Gaussian through other functions](https://soulhackerslabs.com/sensor-fusion-with-the-extended-kalman-filter-in-ros-2-d33dbab1829d), $y = g(x)$
+
+- a linear one, $g = 0.5*x + 1$
+- a non-linear one, $g = \cos(3 * (\frac{x}{2} + 0.7)) * \sin(1.3 * x) — 1.6 * x$
+
+<img src="img/fusion/ekf/gaussian_linear.gif" width="300">
+<img src="img/fusion/ekf/gaussian_non_linear.gif" width="300">
+
+<br>
+
+As we see from the second animation, the **output is no longer a Gaussian**.
+
+**Note:** This output distribution also violates the **unimodality assumption** of the Kalman Filter, which requires a single peak. Hence, all of our elegant Kalman filter equations are rendered useless!
+
+Of course, we can try to compute an equivalent of a Gaussian using,
+
+- [Monte Carlo simulations](https://en.wikipedia.org/wiki/Monte_Carlo_method) that uses **repeated random sampling** to obtain numerical results
+
+<img src="img/fusion/ekf/monte_carlo_wiki.gif" width="300" title="Monte Carlo Animation By Titouan Christophe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=30599003">
+
+The problem is that this is **not a closed form**, _i.e.,_ it **cannot** be represented as s combination of,
+
+-  constants
+- variables
+- a finite set of basic functions connected by arithmetic operations (+, −, ×, /, and integer powers)
+- function composition
+
+Hence, we still do not have a mathematical function for the Gaussian that can be plugged into the Kalman Equations.
+
+Enter the **[Extended Kalman Filter (EKF)](#extended-kalman-filter-ekf)** that uses **linearization** &rarr; to **approximate** a non-linear function, $g(.)$, by a **linear function that is tangent to $g(.)$** at the **point of interest**. 
+
+EKF achieves this by use of the [Taylor Series Expansion](#taylor-series).
+
+### Taylor Series 
+
+Before diving into the Extended Kalman Filter, it's important to understand Taylor series expansions, which are the mathematical foundation for linearization in EKF.
+
+A Taylor series expansion approximates a function around a specific point using polynomial terms. The Taylor Expansion of a function is an infinite sum of terms (polynomials) expressed in terms of the function’s derivatives at a single point, $a$, expanded as:
+
+$$
+f(x) = f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^2 + \frac{f'''(a)}{3!}(x-a)^3 + \ldots
+$$
+
+where:
+
+| term | description |
+|:-----|:------------|
+| $f(a)$ | the function value at point $a$ |
+| $f'(a)$, $f''(a)$, etc. | the derivatives of $f$ evaluated at point $a$ |
+| $(x-a)$ | represents the deviation from the expansion point |
+||
+
+<br>
+
+<img src="img/fusion/ekf/taylor_series_degrees.webp" width="300">
+
+<br>
+
+Note that the higher-order Taylor Expansions provide a **closer approximation** of the original function. But the amount of computation required quickly makes it **intractable**! There is still a use for it though, as we shall see shortly.
+
+For multivariate functions $f(\mathbf{x})$ where $\mathbf{x}$ is a vector, the first-order Taylor expansion around a point $\mathbf{a}$ is:
+
+$f(\mathbf{x}) \approx f(\mathbf{a}) + \nabla f(\mathbf{a})^T(\mathbf{x}-\mathbf{a})$
+
+Where $\nabla f(\mathbf{a})$ is the gradient of $f$ evaluated at $\mathbf{a}$, containing all partial derivatives.
+
+**Example**: Consider a simple nonlinear function $f(x) = x^2$ expanded around $a = 1$:
+1. $f(1) = 1$
+2. $f'(x) = 2x$, so $f'(1) = 2$
+3. First-order Taylor approximation: $f(x) \approx 1 + 2(x-1)$
+4. This gives us a linear approximation: $f(x) \approx 2x - 1$
+
+This linear approximation is accurate near $x = 1$ but becomes less accurate as we move away from this point.
+
+**Example 1**: Consider a simple nonlinear function $f(x) = x^2$ expanded around $a = 1$:
+
+1. $f(1) = 1$
+2. $f'(x) = 2x$, so $f'(1) = 2$
+3. First-order Taylor approximation: $f(x) \approx 1 + 2(x-1)$
+4. This gives us a linear approximation: $f(x) \approx 2x - 1$
+
+This linear approximation is accurate near $x = 1$ but becomes less accurate as we move away from this point.
+
+<img src="img/fusion/ekf/taylor-series-fixed.svg" width="300">
+
+<br>
+
+**Example 2**: consider the non-linear function we discussed earlier, 
+
+$$
+g = \cos(3 * (\frac{x}{2} + 0.7)) * \sin(1.3 * x) — 1.6 * x
+$$
+
+The first-order Taylor expansion of g at a point a is shown below in red. It clearly **does not provide a good approximation** &rarr; if we observe it over a large range of values for $x$.
+
+<img src="img/fusion/ekf/taylor.1.webp" width="300">
+
+<br>
+
+Remember that
+
+- we are only concerned with the approximation at the values of &rarr; the posterior
+- we will be **recomputing** such approximations for the new posteriors **after a very short period of time**
+- our approximation &rarr; is **quite good** in the **close vicinity of the point of interest**
+
+<img src="img/fusion/ekf/taylor.2.webp" width="300">
+
+<br>
+
+For EKF, we use **first-order Taylor expansions** to &rarr; linearize our nonlinear system and measurement functions.
+
+
+## Extended Kalman Filter (EKF)
+
+The Extended Kalman Filter addresses the limitations of the linear Kalman Filter by linearizing nonlinear functions **around the current estimate**. For nonlinear systems of the form:
+
+**State Equation**:
+$x_k = f(x_{k-1}, u_k) + w_k$
+
+**Measurement Equation**:
+$z_k = h(x_k) + v_k$
+
+The EKF linearizes these equations using first-order Taylor series expansions:
+
+$f(x_{k-1}, u_k) \approx f(\hat{x}_{k-1|k-1}, u_k) + F_k(x_{k-1} - \hat{x}_{k-1|k-1})$
+$h(x_k) \approx h(\hat{x}_{k|k-1}) + H_k(x_k - \hat{x}_{k|k-1})$
+
+Where:
+- $F_k = \left.\frac{\partial f}{\partial x}\right|_{\hat{x}_{k-1|k-1},u_k}$ is the Jacobian of $f$ with respect to $x$
+- $H_k = \left.\frac{\partial h}{\partial x}\right|_{\hat{x}_{k|k-1}}$ is the Jacobian of $h$ with respect to $x$
+
+These Jacobian matrices contain all the partial derivatives of the nonlinear functions with respect to each state variable, evaluated at the current estimate. They represent the sensitivity of the functions to small changes in the state.
+
+This linearization allows us to
+
+-  apply the Kalman filter equations to nonlinear systems
+- but introduces **approximation errors** when the system is highly nonlinear or when the state estimate is far from the true state.
+
+Let's revisit our earlie example function, $g(.)$ and see what happens when we use the linearized functions (as compared to the Monte-Carlo output):
+
+<img src="img/fusion/ekf/gaussian_linearization.2.webp" width="500">
+
+<br>
+
+We see that the EKF Gaussian is **not exactly the same** as the one fitted from the Monte Carlo simulation, but it is **close enough**. This discrepancy (albeit small) is the price we pay for,
+
+- obtaining a closed form estimate and 
+- the low computational costs.
+
+**Note**: these graphs show the results of EKF approximations applied to **scalar** functions but our **state is a vector** so we need to:
+
+- we compute the partial derivative of g with respect to the state
+- use [Jacobian matrices](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant).
+
+
+### EKF Algorithm
+
+The EKF algorithm follows these steps:
+
+**1. Prediction Step**:
+$$\hat{x}_{k|k-1} = f(\hat{x}_{k-1|k-1}, u_k)$$
+$$P_{k|k-1} = F_kP_{k-1|k-1}F_k^T + Q_k$$
+
+**2. Update Step**:
+$$K_k = P_{k|k-1}H_k^T(H_kP_{k|k-1}H_k^T + R_k)^{-1}$$
+$$\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k(z_k - h(\hat{x}_{k|k-1}))$$
+$$P_{k|k} = (I - K_kH_k)P_{k|k-1}$$
+
+The key difference compared to the linear Kalman filter is that we use the **nonlinear functions**,
+- $f$ &rarr; state
+- $h$ directly &rarr; measurement prediction
+
+but use their **linearized versions** (Jacobians) for &rarr; covariance calculation.
+
+
+### EKF and Sensor Fusion
+
+There are **two main approaches** to multi-sensor fusion with EKF:
+
+1. **Centralized Fusion**:
+    
+- all sensor measurements are processed in a single EKF
+- the measurement vector combines all sensor readings:
+
+$$z_k = \begin{bmatrix} z_k^1 \\ z_k^2 \\ \vdots \\ z_k^n \end{bmatrix}$$
+
+- the measurement function and noise covariance are:
+
+$$h(x_k) = \begin{bmatrix} h^1(x_k) \\ h^2(x_k) \\ \vdots \\ h^n(x_k) \end{bmatrix}, \quad R_k = \begin{bmatrix} R_k^1 & 0 & \cdots & 0 \\ 0 & R_k^2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & R_k^n \end{bmatrix}$$
+
+3. **Decentralized Fusion**:
+
+- each sensor &rarr; has its own local filter
+- the results are combined at a **fusion center**
+
+This approach is **more modular** and **fault-tolerant**.
+
+- the state estimates from individual filters can be combined using covariance intersection:
+
+$$P_{fused}^{-1} = \sum_{i=1}^n P_i^{-1}$$
+$$P_{fused}^{-1}\hat{x}_{fused} = \sum_{i=1}^n P_i^{-1}\hat{x}_i$$
+
+
+**Sensor Covariance and Weighting**
+
+The measurement noise covariance matrix $R_k$ determines how much weight each sensor's measurements receive during fusion. Sensors with **lower measurement uncertainty** (smaller values in $R_k$) &rarr; have **more influence on final state estimate**.
+
+Adaptive methods can dynamically adjust these covariances based on:
+
+- current operating conditions
+- sensor health monitoring
+- consistency checks between sensors
+- historical performance
+
+For example, GPS accuracy might degrade in urban canyons, so its covariance should increase in those environments.
+
+### Example: IMU and GPS Fusion using EKF
+
+Let's consider a common problem: fusing IMU (accelerometer and gyroscope) and GPS data for position tracking.
+
+**State Vector**:
+$$
+x = [\text{position}_x, \text{position}_y, \text{velocity}_x, \text{velocity}_y, \text{heading}]^T
+$$
+
+**Note:** The "$T$" as a superscript after the closing bracket indicates that this is a column vector (transposed from a row vector). This is standard mathematical notation for representing a column vector in a single line of text.
+
+**State Transition**:
+Using a constant velocity model with heading changes from gyroscope:
+
+$$f(x_{k-1}, u_k) = \begin{bmatrix}
+\text{position}_x + \text{velocity}_x \Delta t \\
+\text{position}_y + \text{velocity}_y \Delta t \\
+\text{velocity}_x + a_x \Delta t \\
+\text{velocity}_y + a_y \Delta t \\
+\text{heading} + \omega_z \Delta t
+\end{bmatrix}$$
+
+Where $a_x, a_y$ are accelerometer readings and $\omega_z$ is the gyroscope reading (yaw rate).
+
+**Measurement Models**:
+- GPS: $h_{GPS}(x_k) = [\text{position}_x, \text{position}_y]^T$
+- IMU (for update): $h_{IMU}(x_k) = [\text{velocity}_x, \text{velocity}_y, \text{heading}]^T$
+
+**Jacobian Matrices**:
+The state transition Jacobian $F_k$ is:
+
+$$F_k = \begin{bmatrix}
+1 & 0 & \Delta t & 0 & 0 \\
+0 & 1 & 0 & \Delta t & 0 \\
+0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 1
+\end{bmatrix}$$
+
+The measurement Jacobians for GPS and IMU are:
+
+$$H_{GPS} = \begin{bmatrix}
+1 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0
+\end{bmatrix}$$
+
+$$H_{IMU} = \begin{bmatrix}
+0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 1
+\end{bmatrix}$$
+
+
+**Pseudocode for Implementation**
+
+```python
+# Initialize state and covariance
+x_hat = np.zeros(5)  # [pos_x, pos_y, vel_x, vel_y, heading]
+P = np.eye(5) * 1000  # Initial uncertainty
+
+# Process noise covariance
+Q = np.diag([0.1, 0.1, 1.0, 1.0, 0.01])
+
+# Measurement noise covariance
+R_gps = np.diag([5.0, 5.0])  # GPS position accuracy (in meters)
+R_imu = np.diag([0.5, 0.5, 0.1])  # IMU velocity and heading accuracy
+
+while True:
+    # Get IMU data (acceleration and angular velocity)
+    accel_x, accel_y, gyro_z = read_imu()
+    
+    # Prediction step
+    dt = time_since_last_update()
+    
+    # State transition
+    x_hat[0] += x_hat[2] * dt  # pos_x += vel_x * dt
+    x_hat[1] += x_hat[3] * dt  # pos_y += vel_y * dt
+    x_hat[2] += accel_x * dt   # vel_x += accel_x * dt
+    x_hat[3] += accel_y * dt   # vel_y += accel_y * dt
+    x_hat[4] += gyro_z * dt    # heading += gyro_z * dt
+    
+    # State transition Jacobian
+    F = np.eye(5)
+    F[0, 2] = dt
+    F[1, 3] = dt
+    
+    # Update covariance
+    P = F @ P @ F.T + Q
+    
+    # Check if GPS reading is available
+    if gps_available():
+        # Get GPS position
+        gps_x, gps_y = read_gps()
+        
+        # GPS measurement Jacobian
+        H_gps = np.zeros((2, 5))
+        H_gps[0, 0] = 1.0
+        H_gps[1, 1] = 1.0
+        
+        # Innovation
+        y = np.array([gps_x, gps_y]) - x_hat[0:2]
+        
+        # Innovation covariance
+        S = H_gps @ P @ H_gps.T + R_gps
+        
+        # Kalman gain
+        K = P @ H_gps.T @ np.linalg.inv(S)
+        
+        # Update state
+        x_hat += K @ y
+        
+        # Update covariance
+        P = (np.eye(5) - K @ H_gps) @ P
+```
+
+**Analysis**
+
+1. **high-frequency updates** &rarr; IMU provides updates at $100-1000$ Hz, allowing for **smooth tracking**
+2. **drift correction** &rarr; GPS (updating at $1-10$ Hz) corrects the **accumulated drift** from IMU integration
+3. **robustness to GPS outages** &rarr; system can continue to provide **reasonable position estimates during short GPS outages**!
+
+The following graph shows a typical position tracking result comparing:
+
+| **data source** | **description** |
+|:----------------|:----------------|
+| **<span style="color:blue">blue dots</span>** | raw gps data |
+| **<span style="color:red">red line</span>** | dead reckoning using only imu data |
+| **<span style="color:green">green line</span>** | ekf fusion of gps and imu |
+||
+
+<img src="img/fusion/ekf/positional-tracking.svg" width="300">
+
+<br>
+
+
+
+
+
+
+
+
+
+
 
 

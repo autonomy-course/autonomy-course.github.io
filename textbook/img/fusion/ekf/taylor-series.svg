@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300">
+  <!-- Background -->
+  <rect x="0" y="0" width="500" height="300" fill="#f8f9fa"/>
+  
+  <!-- Grid lines -->
+  <g stroke="#DDDDDD" stroke-width="1">
+    <line x1="50" y1="50" x2="50" y2="250"/>
+    <line x1="150" y1="50" x2="150" y2="250"/>
+    <line x1="250" y1="50" x2="250" y2="250"/>
+    <line x1="350" y1="50" x2="350" y2="250"/>
+    <line x1="450" y1="50" x2="450" y2="250"/>
+    
+    <line x1="50" y1="50" x2="450" y2="50"/>
+    <line x1="50" y1="100" x2="450" y2="100"/>
+    <line x1="50" y1="150" x2="450" y2="150"/>
+    <line x1="50" y1="200" x2="450" y2="200"/>
+    <line x1="50" y1="250" x2="450" y2="250"/>
+  </g>
+  
+  <!-- Axis -->
+  <line x1="50" y1="250" x2="450" y2="250" stroke="black" stroke-width="2"/>
+  <line x1="50" y1="50" x2="50" y2="250" stroke="black" stroke-width="2"/>
+  
+  <!-- Axis labels -->
+  <text x="250" y="280" font-size="16" text-anchor="middle">x</text>
+  <text x="25" y="150" font-size="16" text-anchor="middle" transform="rotate(-90,25,150)">f(x)</text>
+  
+  <!-- Tick marks and labels -->
+  <g font-size="12" text-anchor="middle">
+    <text x="50" y="265">0</text>
+    <text x="150" y="265">0.5</text>
+    <text x="250" y="265">1.0</text>
+    <text x="350" y="265">1.5</text>
+    <text x="450" y="265">2.0</text>
+    
+    <text x="35" y="250">0</text>
+    <text x="35" y="200">1</text>
+    <text x="35" y="150">2</text>
+    <text x="35" y="100">3</text>
+    <text x="35" y="50">4</text>
+  </g>
+  
+  <!-- Title -->
+  <text x="250" y="30" font-size="18" text-anchor="middle" font-weight="bold">Taylor Series Approximation of f(x) = x²</text>
+  
+  <!-- True function: f(x) = x² -->
+  <path d="M 50,250
+           Q 100,220 150,150
+           Q 200,100 250,50
+           Q 300,0 350,-50
+           Q 400,-100 450,-150"
+        stroke="#3366CC" stroke-width="3" fill="none"/>
+        
+  <!-- Taylor approximation at x=1: f(x) ≈ 1 + 2(x-1) = 2x - 1 -->
+  <path d="M 50,350
+           L 150,300
+           L 250,250
+           L 350,200
+           L 450,150"
+        stroke="#FF9900" stroke-width="3" fill="none" stroke-dasharray=""/>
+        
+  <!-- Second-order Taylor approximation: f(x) ≈ 1 + 2(x-1) + (x-1)² = x² -->
+  <path d="M 50,250
+           Q 100,220 150,150
+           Q 200,100 250,50
+           Q 300,0 350,-50
+           Q 400,-100 450,-150"
+        stroke="#009900" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+  
+  <!-- Point of expansion x=1 -->
+  <circle cx="250" cy="50" r="6" fill="#FF0000"/>
+  <text x="260" y="40" font-size="14">Expansion point (1,1)</text>
+  
+  <!-- Legend -->
+  <rect x="280" y="200" width="160" height="90" fill="white" stroke="#AAAAAA" stroke-width="1"/>
+  <text x="360" y="220" font-size="14" text-anchor="middle" font-weight="bold">Legend</text>
+  
+  <line x1="290" y1="235" x2="320" y2="235" stroke="#3366CC" stroke-width="3"/>
+  <text x="330" y="240" font-size="12" text-anchor="start">Actual: f(x) = x²</text>
+  
+  <line x1="290" y1="260" x2="320" y2="260" stroke="#FF9900" stroke-width="3"/>
+  <text x="330" y="265" font-size="12" text-anchor="start">Linear: f(x) ≈ 2x-1</text>
+  
+  <line x1="290" y1="285" x2="320" y2="285" stroke="#009900" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="330" y="290" font-size="12" text-anchor="start">Quadratic: f(x) ≈ x²</text>
+</svg>

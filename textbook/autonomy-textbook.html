@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-03-17" />
+  <meta name="date" content="2025-03-18" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">March 17,
+                              <li><p class="navbar-text">March 18,
 2025</p></li>
                   </ul>
       </div>
@@ -570,6 +570,32 @@ George Washington University</p></li>
         id="toc-multivariate-kalman-filter-summary"><span
         class="toc-section-number">8.4.7</span> Multivariate Kalman
         Filter Summary</a></li>
+        </ul></li>
+        </ul></li>
+        <li><a href="#sensor-fusion" id="toc-sensor-fusion"><span
+        class="toc-section-number">9</span> Sensor Fusion</a>
+        <ul>
+        <li><a href="#kalman-filter-for-sensor-fusion"
+        id="toc-kalman-filter-for-sensor-fusion"><span
+        class="toc-section-number">9.0.1</span> Kalman Filter for Sensor
+        Fusion</a></li>
+        <li><a href="#taylor-series" id="toc-taylor-series"><span
+        class="toc-section-number">9.0.2</span> Taylor Series</a></li>
+        <li><a href="#extended-kalman-filter-ekf"
+        id="toc-extended-kalman-filter-ekf"><span
+        class="toc-section-number">9.1</span> Extended Kalman Filter
+        (EKF)</a>
+        <ul>
+        <li><a href="#ekf-algorithm" id="toc-ekf-algorithm"><span
+        class="toc-section-number">9.1.1</span> EKF Algorithm</a></li>
+        <li><a href="#ekf-and-sensor-fusion"
+        id="toc-ekf-and-sensor-fusion"><span
+        class="toc-section-number">9.1.2</span> EKF and Sensor
+        Fusion</a></li>
+        <li><a href="#example-imu-and-gps-fusion-using-ekf"
+        id="toc-example-imu-and-gps-fusion-using-ekf"><span
+        class="toc-section-number">9.1.3</span> Example: IMU and GPS
+        Fusion using EKF</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -9933,15 +9959,15 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             class="math inline">90%</span>.</p>
             <blockquote>
             <p>Note: in the “predict” stage, we were using “noisy”
-            sensors as well, but those were measuring **different*
-            quantities. In that case, the sensor could be from the car
-            engine or the wheels (or odometers) that say how much we
-            “<strong>intended</strong>” to move, _e.g., “we generated
-            enough torque in the engine to move forward by
-            <code>3</code> slots. <br> In contrast, the sensors in this
-            section <strong>measure</strong> →”how much was
-            <strong>actually</strong> moved?“. This could be via other
-            types of sensors, <em>e.g.,</em> GPS. <br>
+            sensors as well, but those were measuring
+            <strong>different</strong> quantities. In that case, the
+            sensor could be from the car engine or the wheels (or
+            odometers) that say how much we “<strong>intended</strong>”
+            to move, _e.g., “we generated enough torque in the engine to
+            move forward by <code>3</code> slots. <br> In contrast, the
+            sensors in this section <strong>measure</strong> →”how much
+            was <strong>actually</strong> moved?“. This could be via
+            other types of sensors, <em>e.g.,</em> GPS. <br>
             <strong>Both</strong> of these sensors can, and will, of
             course have noise and probabilities associated with them.
             The question then, is →”how to <strong>reconcile</strong>
@@ -12808,6 +12834,711 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             systems, we use → the <strong>extended Kalman
             filter</strong> (EKF). We will explore this using an
             important application → <strong>sensor fusion</strong>.</p>
+            <p><strong>References:</strong></p>
+            <ol type="1">
+            <li><p>Kalman, R. E. (1960). <a
+            href="https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html">A
+            New Approach to Linear Filtering and Prediction
+            Problems</a>. Journal of Basic Engineering, 82(1),
+            35-45.</p></li>
+            <li><p>Bar-Shalom, Y., Li, X. R., &amp; Kirubarajan, T.
+            (2001). <a
+            href="https://onlinelibrary.wiley.com/doi/book/10.1002/0471221279">Estimation
+            with Applications to Tracking and Navigation</a>.
+            Wiley-Interscience.</p></li>
+            <li><p>Simon, D. (2006). <a
+            href="https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345">Optimal
+            State Estimation: Kalman, H∞, and Nonlinear Approaches</a>.
+            Wiley-Interscience.</p></li>
+            <li><p>Thrun, S., Burgard, W., &amp; Fox, D. (2005). <a
+            href="https://mitpress.mit.edu/books/probabilistic-robotics">Probabilistic
+            Robotics</a>. MIT Press.</p></li>
+            <li><p>Welch, G., &amp; Bishop, G. (2006). <a
+            href="https://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf">An
+            Introduction to the Kalman Filter</a>. University of North
+            Carolina at Chapel Hill.</p></li>
+            <li><p>Julier, S. J., &amp; Uhlmann, J. K. (1997). <a
+            href="https://www.cs.unc.edu/~welch/kalman/media/pdf/Julier1997_SPIE_KF.pdf">A
+            New Extension of the Kalman Filter to Nonlinear Systems</a>.
+            Proc. SPIE 3068, Signal Processing, Sensor Fusion, and
+            Target Recognition VI.</p></li>
+            <li><p><a href="https://www.kalmanfilter.net">Kalman Filter
+            Tutorial</a> - A comprehensive online resource with examples
+            and applications.</p></li>
+            <li><p><a
+            href="https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python">Kalman
+            and Bayesian Filters in Python</a> - A free interactive book
+            and Python library by Roger Labbe.</p></li>
+            <li><p><a
+            href="https://filterpy.readthedocs.io">FilterPy</a> - A
+            Python library for Kalman filtering and optimal
+            estimation.</p></li>
+            <li><p>Särkkä, S. (2013). <a
+            href="https://www.cambridge.org/core/books/bayesian-filtering-and-smoothing/C372FB31C5D9A100F8476C1A41A5B700">Bayesian
+            Filtering and Smoothing</a>. Cambridge University
+            Press.<!--rel="stylesheet" href="./custom.sibin.css"--></p></li>
+            </ol>
+            </section>
+            </section>
+            </section>
+            <section id="sensor-fusion" class="level1" data-number="9">
+            <h1 data-number="9"><span
+            class="header-section-number">9</span> Sensor Fusion</h1>
+            <p>As we’ve discussed so far, sensors and state estimation,
+            by its very probabilistic and noisy nature, introduces
+            <strong>errors</strong>. The <a href="#bayes-filter">example
+            from Bayes’ Filter</a> where two (seemingly identical)
+            sensors measure the same object differently, highlights
+            this:</p>
+            <p><img src="img/ekf/bayes.lidar.4.png" width="400"></p>
+            <p><br></p>
+            <p>So, the question is → <em>“which sensor do we
+            believe?”</em></p>
+            <p>Maybe, instead of framing it as picking one sensor
+            vs. the other, perhaps we can use <strong>both</strong>?
+            This is the objective of <strong>sensor fusion</strong>.</p>
+            <blockquote>
+            <p>Sensor fusion is the process of combining sensory data
+            from multiple sources to obtain more accurate information
+            than would be possible using individual sensors alone.</p>
+            </blockquote>
+            <p>Recall that individual sensors have inherent
+            limitations:</p>
+            <ul>
+            <li><strong>limited accuracy</strong>: each sensor has
+            measurement errors</li>
+            <li><strong>limited range/coverage</strong>: sensors may
+            only work reliably in certain conditions</li>
+            <li><strong>limited sampling rates</strong>: some sensors
+            cannot provide updates fast enough</li>
+            <li><strong>sensor-specific weaknesses</strong>: GPS fails
+            indoors, cameras struggle in darkness, etc.</li>
+            </ul>
+            <p>Sensor fusion addresses these limitations by combining
+            complementary data from multiple sensors, each with
+            different strengths and weaknesses. The goal is to produce a
+            combined result that is more accurate, complete, and robust
+            than any single sensor could provide.</p>
+            <section id="kalman-filter-for-sensor-fusion" class="level3"
+            data-number="9.0.1">
+            <h3 data-number="9.0.1"><span
+            class="header-section-number">9.0.1</span> Kalman Filter for
+            Sensor Fusion</h3>
+            <p>We can, of course, use the Kalman Filter to carry out the
+            sensor fusion. For instance,</p>
+            <ul>
+            <li>consider State, <span
+            class="math inline">$\mathbf{x}=\left[\begin{array}{l}x \\
+            \dot{x}\end{array}\right]$</span></li>
+            <li><strong>two sensors</strong>, GPS (in metres), odometry
+            (in feet): <span
+            class="math inline">$\mathbf{z}=\left[\begin{array}{c}z_{G P
+            S} \\ z_{\text {odom }}\end{array}\right]$</span></li>
+            </ul>
+            <p>So, by using the parameters for the Kalman Filter,</p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \mathbf{H} &amp; =\left[\begin{array}{cc}
+            1 &amp; 0 \\
+            1 / 0.3048 &amp; 0
+            \end{array}\right] \\
+            \mathbf{R} &amp; =\left[\begin{array}{cc}
+            \sigma_{\text {GPS }}^{2} &amp; 0 \\
+            0 &amp; \sigma_{\text {Odom }}^{2}
+            \end{array}\right]
+            \end{aligned}
+            $$</span></p>
+            <p><span class="math display">$$
+            \begin{aligned}
+            \mathbf{y}= &amp; \mathbf{z}-\mathbf{H}
+            \overline{\mathbf{x}} \\
+            \mathbf{y}= &amp; {\left[\begin{array}{c}
+            z_{G P S} \\
+            z_{\text {Odom }}
+            \end{array}\right]-\left[\begin{array}{cc}
+            1 &amp; 0 \\
+            1 / 0.3048 &amp; 0
+            \end{array}\right]\left[\begin{array}{l}
+            \bar{x} \\
+            \bar{x}
+            \end{array}\right] } \\
+            \mathbf{x}= &amp; \overline{\mathbf{x}}+{\mathbf{K}
+            \mathbf{y}} \\
+            \end{aligned}
+            $$</span></p>
+            <p>Note that <span
+            class="math inline"><strong>K</strong></span> and <span
+            class="math inline"><strong>y</strong></span> are <span
+            class="math inline">2 × 2</span> matrices → it <strong>mixes
+            the GPS and odometry</strong>!</p>
+            <p>As mentioned earlier, the Kalman Filter doesn’t work well
+            with *non-linear** systems. But what <em>exactly</em> is the
+            problem with nonlinear systems?</p>
+            <p>Recall that Kalman Filter (and any Bayes’ Filter)
+            requires the use of Gaussians that has some nice properties
+            but that breaks down in the face of non-linearities:</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: left;">mixing of</th>
+            <th style="text-align: left;">result</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;">two Gaussians</td>
+            <td style="text-align: left;">Gaussian</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">Gaussian and linear
+            function</td>
+            <td style="text-align: left;">Gaussian</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">Gaussian and non-linear
+            function</td>
+            <td
+            style="text-align: left;"><strong>non-Gaussian</strong></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">linear and non-linear
+            function</td>
+            <td
+            style="text-align: left;"><strong>non-Gaussian</strong></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">two non-linear function</td>
+            <td
+            style="text-align: left;"><strong>non-Gaussian</strong></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>So, all the nice Kalman filter steps (prediction,
+            measurement, update) <strong>falls apart</strong> when the
+            results are no longer Gaussians. Let’s see <a
+            href="https://soulhackerslabs.com/sensor-fusion-with-the-extended-kalman-filter-in-ros-2-d33dbab1829d">two
+            instances of passing a Gaussian through other functions</a>,
+            <span
+            class="math inline"><em>y</em> = <em>g</em>(<em>x</em>)</span></p>
+            <ul>
+            <li>a linear one, <span
+            class="math inline"><em>g</em> = 0.5 * <em>x</em> + 1</span></li>
+            <li>a non-linear one, <span class="math inline">$g = \cos(3
+            * (\frac{x}{2} + 0.7)) * \sin(1.3 * x) — 1.6 *
+            x$</span></li>
+            </ul>
+            <p><img src="img/fusion/ekf/gaussian_linear.gif" width="300">
+            <img src="img/fusion/ekf/gaussian_non_linear.gif" width="300"></p>
+            <p><br></p>
+            <p>As we see from the second animation, the <strong>output
+            is no longer a Gaussian</strong>.</p>
+            <p><strong>Note:</strong> This output distribution also
+            violates the <strong>unimodality assumption</strong> of the
+            Kalman Filter, which requires a single peak. Hence, all of
+            our elegant Kalman filter equations are rendered
+            useless!</p>
+            <p>Of course, we can try to compute an equivalent of a
+            Gaussian using,</p>
+            <ul>
+            <li><a
+            href="https://en.wikipedia.org/wiki/Monte_Carlo_method">Monte
+            Carlo simulations</a> that uses <strong>repeated random
+            sampling</strong> to obtain numerical results</li>
+            </ul>
+            <p><img src="img/fusion/ekf/monte_carlo_wiki.gif" width="300" title="Monte Carlo Animation By Titouan Christophe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=30599003"></p>
+            <p>The problem is that this is <strong>not a closed
+            form</strong>, <em>i.e.,</em> it <strong>cannot</strong> be
+            represented as s combination of,</p>
+            <ul>
+            <li>constants</li>
+            <li>variables</li>
+            <li>a finite set of basic functions connected by arithmetic
+            operations (+, −, ×, /, and integer powers)</li>
+            <li>function composition</li>
+            </ul>
+            <p>Hence, we still do not have a mathematical function for
+            the Gaussian that can be plugged into the Kalman
+            Equations.</p>
+            <p>Enter the <strong><a
+            href="#extended-kalman-filter-ekf">Extended Kalman Filter
+            (EKF)</a></strong> that uses <strong>linearization</strong>
+            → to <strong>approximate</strong> a non-linear function,
+            <span class="math inline"><em>g</em>(.)</span>, by a
+            <strong>linear function that is tangent to <span
+            class="math inline"><em>g</em>(.)</span></strong> at the
+            <strong>point of interest</strong>.</p>
+            <p>EKF achieves this by use of the <a
+            href="#taylor-series">Taylor Series Expansion</a>.</p>
+            </section>
+            <section id="taylor-series" class="level3"
+            data-number="9.0.2">
+            <h3 data-number="9.0.2"><span
+            class="header-section-number">9.0.2</span> Taylor
+            Series</h3>
+            <p>Before diving into the Extended Kalman Filter, it’s
+            important to understand Taylor series expansions, which are
+            the mathematical foundation for linearization in EKF.</p>
+            <p>A Taylor series expansion approximates a function around
+            a specific point using polynomial terms. The Taylor
+            Expansion of a function is an infinite sum of terms
+            (polynomials) expressed in terms of the function’s
+            derivatives at a single point, <span
+            class="math inline"><em>a</em></span>, expanded as:</p>
+            <p><span class="math display">$$
+            f(x) = f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^2 +
+            \frac{f'''(a)}{3!}(x-a)^3 + \ldots
+            $$</span></p>
+            <p>where:</p>
+            <table>
+            <colgroup>
+            <col style="width: 31%" />
+            <col style="width: 68%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">term</th>
+            <th style="text-align: left;">description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><span
+            class="math inline"><em>f</em>(<em>a</em>)</span></td>
+            <td style="text-align: left;">the function value at point
+            <span class="math inline"><em>a</em></span></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><span
+            class="math inline"><em>f</em>′(<em>a</em>)</span>, <span
+            class="math inline"><em>f</em>″(<em>a</em>)</span>,
+            etc.</td>
+            <td style="text-align: left;">the derivatives of <span
+            class="math inline"><em>f</em></span> evaluated at point
+            <span class="math inline"><em>a</em></span></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><span
+            class="math inline">(<em>x</em> − <em>a</em>)</span></td>
+            <td style="text-align: left;">represents the deviation from
+            the expansion point</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p><img src="img/fusion/ekf/taylor_series_degrees.webp" width="300"></p>
+            <p><br></p>
+            <p>Note that the higher-order Taylor Expansions provide a
+            <strong>closer approximation</strong> of the original
+            function. But the amount of computation required quickly
+            makes it <strong>intractable</strong>! There is still a use
+            for it though, as we shall see shortly.</p>
+            <p>For multivariate functions <span
+            class="math inline"><em>f</em>(<strong>x</strong>)</span>
+            where <span class="math inline"><strong>x</strong></span> is
+            a vector, the first-order Taylor expansion around a point
+            <span class="math inline"><strong>a</strong></span> is:</p>
+            <p><span
+            class="math inline"><em>f</em>(<strong>x</strong>) ≈ <em>f</em>(<strong>a</strong>) + ∇<em>f</em>(<strong>a</strong>)<sup><em>T</em></sup>(<strong>x</strong> − <strong>a</strong>)</span></p>
+            <p>Where <span
+            class="math inline">∇<em>f</em>(<strong>a</strong>)</span>
+            is the gradient of <span
+            class="math inline"><em>f</em></span> evaluated at <span
+            class="math inline"><strong>a</strong></span>, containing
+            all partial derivatives.</p>
+            <p><strong>Example</strong>: Consider a simple nonlinear
+            function <span
+            class="math inline"><em>f</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>
+            expanded around <span
+            class="math inline"><em>a</em> = 1</span>: 1. <span
+            class="math inline"><em>f</em>(1) = 1</span> 2. <span
+            class="math inline"><em>f</em>′(<em>x</em>) = 2<em>x</em></span>,
+            so <span class="math inline"><em>f</em>′(1) = 2</span> 3.
+            First-order Taylor approximation: <span
+            class="math inline"><em>f</em>(<em>x</em>) ≈ 1 + 2(<em>x</em> − 1)</span>
+            4. This gives us a linear approximation: <span
+            class="math inline"><em>f</em>(<em>x</em>) ≈ 2<em>x</em> − 1</span></p>
+            <p>This linear approximation is accurate near <span
+            class="math inline"><em>x</em> = 1</span> but becomes less
+            accurate as we move away from this point.</p>
+            <p><strong>Example 1</strong>: Consider a simple nonlinear
+            function <span
+            class="math inline"><em>f</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>
+            expanded around <span
+            class="math inline"><em>a</em> = 1</span>:</p>
+            <ol type="1">
+            <li><span class="math inline"><em>f</em>(1) = 1</span></li>
+            <li><span
+            class="math inline"><em>f</em>′(<em>x</em>) = 2<em>x</em></span>,
+            so <span class="math inline"><em>f</em>′(1) = 2</span></li>
+            <li>First-order Taylor approximation: <span
+            class="math inline"><em>f</em>(<em>x</em>) ≈ 1 + 2(<em>x</em> − 1)</span></li>
+            <li>This gives us a linear approximation: <span
+            class="math inline"><em>f</em>(<em>x</em>) ≈ 2<em>x</em> − 1</span></li>
+            </ol>
+            <p>This linear approximation is accurate near <span
+            class="math inline"><em>x</em> = 1</span> but becomes less
+            accurate as we move away from this point.</p>
+            <p><img src="img/fusion/ekf/taylor-series-fixed.svg" width="300"></p>
+            <p><br></p>
+            <p><strong>Example 2</strong>: consider the non-linear
+            function we discussed earlier,</p>
+            <p><span class="math display">$$
+            g = \cos(3 * (\frac{x}{2} + 0.7)) * \sin(1.3 * x) — 1.6 * x
+            $$</span></p>
+            <p>The first-order Taylor expansion of g at a point a is
+            shown below in red. It clearly <strong>does not provide a
+            good approximation</strong> → if we observe it over a large
+            range of values for <span
+            class="math inline"><em>x</em></span>.</p>
+            <p><img src="img/fusion/ekf/taylor.1.webp" width="300"></p>
+            <p><br></p>
+            <p>Remember that</p>
+            <ul>
+            <li>we are only concerned with the approximation at the
+            values of → the posterior</li>
+            <li>we will be <strong>recomputing</strong> such
+            approximations for the new posteriors <strong>after a very
+            short period of time</strong></li>
+            <li>our approximation → is <strong>quite good</strong> in
+            the <strong>close vicinity of the point of
+            interest</strong></li>
+            </ul>
+            <p><img src="img/fusion/ekf/taylor.2.webp" width="300"></p>
+            <p><br></p>
+            <p>For EKF, we use <strong>first-order Taylor
+            expansions</strong> to → linearize our nonlinear system and
+            measurement functions.</p>
+            </section>
+            <section id="extended-kalman-filter-ekf" class="level2"
+            data-number="9.1">
+            <h2 data-number="9.1"><span
+            class="header-section-number">9.1</span> Extended Kalman
+            Filter (EKF)</h2>
+            <p>The Extended Kalman Filter addresses the limitations of
+            the linear Kalman Filter by linearizing nonlinear functions
+            <strong>around the current estimate</strong>. For nonlinear
+            systems of the form:</p>
+            <p><strong>State Equation</strong>: <span
+            class="math inline"><em>x</em><sub><em>k</em></sub> = <em>f</em>(<em>x</em><sub><em>k</em> − 1</sub>, <em>u</em><sub><em>k</em></sub>) + <em>w</em><sub><em>k</em></sub></span></p>
+            <p><strong>Measurement Equation</strong>: <span
+            class="math inline"><em>z</em><sub><em>k</em></sub> = <em>h</em>(<em>x</em><sub><em>k</em></sub>) + <em>v</em><sub><em>k</em></sub></span></p>
+            <p>The EKF linearizes these equations using first-order
+            Taylor series expansions:</p>
+            <p><span
+            class="math inline"><em>f</em>(<em>x</em><sub><em>k</em> − 1</sub>, <em>u</em><sub><em>k</em></sub>) ≈ <em>f</em>(<em>x̂</em><sub><em>k</em> − 1|<em>k</em> − 1</sub>, <em>u</em><sub><em>k</em></sub>) + <em>F</em><sub><em>k</em></sub>(<em>x</em><sub><em>k</em> − 1</sub> − <em>x̂</em><sub><em>k</em> − 1|<em>k</em> − 1</sub>)</span>
+            <span
+            class="math inline"><em>h</em>(<em>x</em><sub><em>k</em></sub>) ≈ <em>h</em>(<em>x̂</em><sub><em>k</em>|<em>k</em> − 1</sub>) + <em>H</em><sub><em>k</em></sub>(<em>x</em><sub><em>k</em></sub> − <em>x̂</em><sub><em>k</em>|<em>k</em> − 1</sub>)</span></p>
+            <p>Where: - <span class="math inline">$F_k =
+            \left.\frac{\partial f}{\partial
+            x}\right|_{\hat{x}_{k-1|k-1},u_k}$</span> is the Jacobian of
+            <span class="math inline"><em>f</em></span> with respect to
+            <span class="math inline"><em>x</em></span> - <span
+            class="math inline">$H_k = \left.\frac{\partial h}{\partial
+            x}\right|_{\hat{x}_{k|k-1}}$</span> is the Jacobian of <span
+            class="math inline"><em>h</em></span> with respect to <span
+            class="math inline"><em>x</em></span></p>
+            <p>These Jacobian matrices contain all the partial
+            derivatives of the nonlinear functions with respect to each
+            state variable, evaluated at the current estimate. They
+            represent the sensitivity of the functions to small changes
+            in the state.</p>
+            <p>This linearization allows us to</p>
+            <ul>
+            <li>apply the Kalman filter equations to nonlinear
+            systems</li>
+            <li>but introduces <strong>approximation errors</strong>
+            when the system is highly nonlinear or when the state
+            estimate is far from the true state.</li>
+            </ul>
+            <p>Let’s revisit our earlie example function, <span
+            class="math inline"><em>g</em>(.)</span> and see what
+            happens when we use the linearized functions (as compared to
+            the Monte-Carlo output):</p>
+            <p><img src="img/fusion/ekf/gaussian_linearization.2.webp" width="500"></p>
+            <p><br></p>
+            <p>We see that the EKF Gaussian is <strong>not exactly the
+            same</strong> as the one fitted from the Monte Carlo
+            simulation, but it is <strong>close enough</strong>. This
+            discrepancy (albeit small) is the price we pay for,</p>
+            <ul>
+            <li>obtaining a closed form estimate and</li>
+            <li>the low computational costs.</li>
+            </ul>
+            <p><strong>Note</strong>: these graphs show the results of
+            EKF approximations applied to <strong>scalar</strong>
+            functions but our <strong>state is a vector</strong> so we
+            need to:</p>
+            <ul>
+            <li>we compute the partial derivative of g with respect to
+            the state</li>
+            <li>use <a
+            href="https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant">Jacobian
+            matrices</a>.</li>
+            </ul>
+            <section id="ekf-algorithm" class="level3"
+            data-number="9.1.1">
+            <h3 data-number="9.1.1"><span
+            class="header-section-number">9.1.1</span> EKF
+            Algorithm</h3>
+            <p>The EKF algorithm follows these steps:</p>
+            <p><strong>1. Prediction Step</strong>: <span
+            class="math display"><em>x̂</em><sub><em>k</em>|<em>k</em> − 1</sub> = <em>f</em>(<em>x̂</em><sub><em>k</em> − 1|<em>k</em> − 1</sub>, <em>u</em><sub><em>k</em></sub>)</span>
+            <span
+            class="math display"><em>P</em><sub><em>k</em>|<em>k</em> − 1</sub> = <em>F</em><sub><em>k</em></sub><em>P</em><sub><em>k</em> − 1|<em>k</em> − 1</sub><em>F</em><sub><em>k</em></sub><sup><em>T</em></sup> + <em>Q</em><sub><em>k</em></sub></span></p>
+            <p><strong>2. Update Step</strong>: <span
+            class="math display"><em>K</em><sub><em>k</em></sub> = <em>P</em><sub><em>k</em>|<em>k</em> − 1</sub><em>H</em><sub><em>k</em></sub><sup><em>T</em></sup>(<em>H</em><sub><em>k</em></sub><em>P</em><sub><em>k</em>|<em>k</em> − 1</sub><em>H</em><sub><em>k</em></sub><sup><em>T</em></sup> + <em>R</em><sub><em>k</em></sub>)<sup>−1</sup></span>
+            <span
+            class="math display"><em>x̂</em><sub><em>k</em>|<em>k</em></sub> = <em>x̂</em><sub><em>k</em>|<em>k</em> − 1</sub> + <em>K</em><sub><em>k</em></sub>(<em>z</em><sub><em>k</em></sub> − <em>h</em>(<em>x̂</em><sub><em>k</em>|<em>k</em> − 1</sub>))</span>
+            <span
+            class="math display"><em>P</em><sub><em>k</em>|<em>k</em></sub> = (<em>I</em> − <em>K</em><sub><em>k</em></sub><em>H</em><sub><em>k</em></sub>)<em>P</em><sub><em>k</em>|<em>k</em> − 1</sub></span></p>
+            <p>The key difference compared to the linear Kalman filter
+            is that we use the <strong>nonlinear functions</strong>, -
+            <span class="math inline"><em>f</em></span> → state - <span
+            class="math inline"><em>h</em></span> directly → measurement
+            prediction</p>
+            <p>but use their <strong>linearized versions</strong>
+            (Jacobians) for → covariance calculation.</p>
+            </section>
+            <section id="ekf-and-sensor-fusion" class="level3"
+            data-number="9.1.2">
+            <h3 data-number="9.1.2"><span
+            class="header-section-number">9.1.2</span> EKF and Sensor
+            Fusion</h3>
+            <p>There are <strong>two main approaches</strong> to
+            multi-sensor fusion with EKF:</p>
+            <ol type="1">
+            <li><strong>Centralized Fusion</strong>:</li>
+            </ol>
+            <ul>
+            <li>all sensor measurements are processed in a single
+            EKF</li>
+            <li>the measurement vector combines all sensor
+            readings:</li>
+            </ul>
+            <p><span class="math display">$$z_k = \begin{bmatrix} z_k^1
+            \\ z_k^2 \\ \vdots \\ z_k^n \end{bmatrix}$$</span></p>
+            <ul>
+            <li>the measurement function and noise covariance are:</li>
+            </ul>
+            <p><span class="math display">$$h(x_k) = \begin{bmatrix}
+            h^1(x_k) \\ h^2(x_k) \\ \vdots \\ h^n(x_k) \end{bmatrix},
+            \quad R_k = \begin{bmatrix} R_k^1 &amp; 0 &amp; \cdots &amp;
+            0 \\ 0 &amp; R_k^2 &amp; \cdots &amp; 0 \\ \vdots &amp;
+            \vdots &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \cdots
+            &amp; R_k^n \end{bmatrix}$$</span></p>
+            <ol start="3" type="1">
+            <li><strong>Decentralized Fusion</strong>:</li>
+            </ol>
+            <ul>
+            <li>each sensor → has its own local filter</li>
+            <li>the results are combined at a <strong>fusion
+            center</strong></li>
+            </ul>
+            <p>This approach is <strong>more modular</strong> and
+            <strong>fault-tolerant</strong>.</p>
+            <ul>
+            <li>the state estimates from individual filters can be
+            combined using covariance intersection:</li>
+            </ul>
+            <p><span class="math display">$$P_{fused}^{-1} =
+            \sum_{i=1}^n P_i^{-1}$$</span> <span
+            class="math display">$$P_{fused}^{-1}\hat{x}_{fused} =
+            \sum_{i=1}^n P_i^{-1}\hat{x}_i$$</span></p>
+            <p><strong>Sensor Covariance and Weighting</strong></p>
+            <p>The measurement noise covariance matrix <span
+            class="math inline"><em>R</em><sub><em>k</em></sub></span>
+            determines how much weight each sensor’s measurements
+            receive during fusion. Sensors with <strong>lower
+            measurement uncertainty</strong> (smaller values in <span
+            class="math inline"><em>R</em><sub><em>k</em></sub></span>)
+            → have <strong>more influence on final state
+            estimate</strong>.</p>
+            <p>Adaptive methods can dynamically adjust these covariances
+            based on:</p>
+            <ul>
+            <li>current operating conditions</li>
+            <li>sensor health monitoring</li>
+            <li>consistency checks between sensors</li>
+            <li>historical performance</li>
+            </ul>
+            <p>For example, GPS accuracy might degrade in urban canyons,
+            so its covariance should increase in those environments.</p>
+            </section>
+            <section id="example-imu-and-gps-fusion-using-ekf"
+            class="level3" data-number="9.1.3">
+            <h3 data-number="9.1.3"><span
+            class="header-section-number">9.1.3</span> Example: IMU and
+            GPS Fusion using EKF</h3>
+            <p>Let’s consider a common problem: fusing IMU
+            (accelerometer and gyroscope) and GPS data for position
+            tracking.</p>
+            <p><strong>State Vector</strong>: <span
+            class="math display"><em>x</em> = [position<sub><em>x</em></sub>, position<sub><em>y</em></sub>, velocity<sub><em>x</em></sub>, velocity<sub><em>y</em></sub>, heading]<sup><em>T</em></sup></span></p>
+            <p><strong>Note:</strong> The “<span
+            class="math inline"><em>T</em></span>” as a superscript
+            after the closing bracket indicates that this is a column
+            vector (transposed from a row vector). This is standard
+            mathematical notation for representing a column vector in a
+            single line of text.</p>
+            <p><strong>State Transition</strong>: Using a constant
+            velocity model with heading changes from gyroscope:</p>
+            <p><span class="math display">$$f(x_{k-1}, u_k) =
+            \begin{bmatrix}
+            \text{position}_x + \text{velocity}_x \Delta t \\
+            \text{position}_y + \text{velocity}_y \Delta t \\
+            \text{velocity}_x + a_x \Delta t \\
+            \text{velocity}_y + a_y \Delta t \\
+            \text{heading} + \omega_z \Delta t
+            \end{bmatrix}$$</span></p>
+            <p>Where <span
+            class="math inline"><em>a</em><sub><em>x</em></sub>, <em>a</em><sub><em>y</em></sub></span>
+            are accelerometer readings and <span
+            class="math inline"><em>ω</em><sub><em>z</em></sub></span>
+            is the gyroscope reading (yaw rate).</p>
+            <p><strong>Measurement Models</strong>: - GPS: <span
+            class="math inline"><em>h</em><sub><em>G</em><em>P</em><em>S</em></sub>(<em>x</em><sub><em>k</em></sub>) = [position<sub><em>x</em></sub>, position<sub><em>y</em></sub>]<sup><em>T</em></sup></span>
+            - IMU (for update): <span
+            class="math inline"><em>h</em><sub><em>I</em><em>M</em><em>U</em></sub>(<em>x</em><sub><em>k</em></sub>) = [velocity<sub><em>x</em></sub>, velocity<sub><em>y</em></sub>, heading]<sup><em>T</em></sup></span></p>
+            <p><strong>Jacobian Matrices</strong>: The state transition
+            Jacobian <span
+            class="math inline"><em>F</em><sub><em>k</em></sub></span>
+            is:</p>
+            <p><span class="math display">$$F_k = \begin{bmatrix}
+            1 &amp; 0 &amp; \Delta t &amp; 0 &amp; 0 \\
+            0 &amp; 1 &amp; 0 &amp; \Delta t &amp; 0 \\
+            0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 \\
+            0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+            0 &amp; 0 &amp; 0 &amp; 0 &amp; 1
+            \end{bmatrix}$$</span></p>
+            <p>The measurement Jacobians for GPS and IMU are:</p>
+            <p><span class="math display">$$H_{GPS} = \begin{bmatrix}
+            1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+            0 &amp; 1 &amp; 0 &amp; 0 &amp; 0
+            \end{bmatrix}$$</span></p>
+            <p><span class="math display">$$H_{IMU} = \begin{bmatrix}
+            0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 \\
+            0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+            0 &amp; 0 &amp; 0 &amp; 0 &amp; 1
+            \end{bmatrix}$$</span></p>
+            <p><strong>Pseudocode for Implementation</strong></p>
+            <div class="sourceCode" id="cb21"><pre
+            class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize state and covariance</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>x_hat <span class="op">=</span> np.zeros(<span class="dv">5</span>)  <span class="co"># [pos_x, pos_y, vel_x, vel_y, heading]</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.eye(<span class="dv">5</span>) <span class="op">*</span> <span class="dv">1000</span>  <span class="co"># Initial uncertainty</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Process noise covariance</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>Q <span class="op">=</span> np.diag([<span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">0.01</span>])</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Measurement noise covariance</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>R_gps <span class="op">=</span> np.diag([<span class="fl">5.0</span>, <span class="fl">5.0</span>])  <span class="co"># GPS position accuracy (in meters)</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>R_imu <span class="op">=</span> np.diag([<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>])  <span class="co"># IMU velocity and heading accuracy</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get IMU data (acceleration and angular velocity)</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    accel_x, accel_y, gyro_z <span class="op">=</span> read_imu()</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prediction step</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    dt <span class="op">=</span> time_since_last_update()</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># State transition</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    x_hat[<span class="dv">0</span>] <span class="op">+=</span> x_hat[<span class="dv">2</span>] <span class="op">*</span> dt  <span class="co"># pos_x += vel_x * dt</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    x_hat[<span class="dv">1</span>] <span class="op">+=</span> x_hat[<span class="dv">3</span>] <span class="op">*</span> dt  <span class="co"># pos_y += vel_y * dt</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    x_hat[<span class="dv">2</span>] <span class="op">+=</span> accel_x <span class="op">*</span> dt   <span class="co"># vel_x += accel_x * dt</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    x_hat[<span class="dv">3</span>] <span class="op">+=</span> accel_y <span class="op">*</span> dt   <span class="co"># vel_y += accel_y * dt</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    x_hat[<span class="dv">4</span>] <span class="op">+=</span> gyro_z <span class="op">*</span> dt    <span class="co"># heading += gyro_z * dt</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># State transition Jacobian</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    F <span class="op">=</span> np.eye(<span class="dv">5</span>)</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    F[<span class="dv">0</span>, <span class="dv">2</span>] <span class="op">=</span> dt</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    F[<span class="dv">1</span>, <span class="dv">3</span>] <span class="op">=</span> dt</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update covariance</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>    P <span class="op">=</span> F <span class="op">@</span> P <span class="op">@</span> F.T <span class="op">+</span> Q</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if GPS reading is available</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> gps_available():</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get GPS position</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        gps_x, gps_y <span class="op">=</span> read_gps()</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># GPS measurement Jacobian</span></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>        H_gps <span class="op">=</span> np.zeros((<span class="dv">2</span>, <span class="dv">5</span>))</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>        H_gps[<span class="dv">0</span>, <span class="dv">0</span>] <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>        H_gps[<span class="dv">1</span>, <span class="dv">1</span>] <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Innovation</span></span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> np.array([gps_x, gps_y]) <span class="op">-</span> x_hat[<span class="dv">0</span>:<span class="dv">2</span>]</span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Innovation covariance</span></span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>        S <span class="op">=</span> H_gps <span class="op">@</span> P <span class="op">@</span> H_gps.T <span class="op">+</span> R_gps</span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Kalman gain</span></span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a>        K <span class="op">=</span> P <span class="op">@</span> H_gps.T <span class="op">@</span> np.linalg.inv(S)</span>
+<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update state</span></span>
+<span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a>        x_hat <span class="op">+=</span> K <span class="op">@</span> y</span>
+<span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update covariance</span></span>
+<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a>        P <span class="op">=</span> (np.eye(<span class="dv">5</span>) <span class="op">-</span> K <span class="op">@</span> H_gps) <span class="op">@</span> P</span></code></pre></div>
+            <p><strong>Analysis</strong></p>
+            <ol type="1">
+            <li><strong>high-frequency updates</strong> → IMU provides
+            updates at <span class="math inline">100 − 1000</span> Hz,
+            allowing for <strong>smooth tracking</strong></li>
+            <li><strong>drift correction</strong> → GPS (updating at
+            <span class="math inline">1 − 10</span> Hz) corrects the
+            <strong>accumulated drift</strong> from IMU integration</li>
+            <li><strong>robustness to GPS outages</strong> → system can
+            continue to provide <strong>reasonable position estimates
+            during short GPS outages</strong>!</li>
+            </ol>
+            <p>The following graph shows a typical position tracking
+            result comparing:</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;"><strong>data
+            source</strong></th>
+            <th
+            style="text-align: left;"><strong>description</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><strong><span
+            style="color:blue">blue dots</span></strong></td>
+            <td style="text-align: left;">raw gps data</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong><span
+            style="color:red">red line</span></strong></td>
+            <td style="text-align: left;">dead reckoning using only imu
+            data</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong><span
+            style="color:green">green line</span></strong></td>
+            <td style="text-align: left;">ekf fusion of gps and imu</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/fusion/ekf/positional-tracking.svg" width="300"></p>
+            <p><br></p>
             </section>
             </section>
             </section>
