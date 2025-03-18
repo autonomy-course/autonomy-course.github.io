@@ -596,6 +596,14 @@ George Washington University</p></li>
         id="toc-example-imu-and-gps-fusion-using-ekf"><span
         class="toc-section-number">9.1.3</span> Example: IMU and GPS
         Fusion using EKF</a></li>
+        <li><a href="#miscellaneous-and-advanced-topics"
+        id="toc-miscellaneous-and-advanced-topics"><span
+        class="toc-section-number">9.1.4</span> Miscellaneous and
+        Advanced Topics</a></li>
+        <li><a href="#unscented-kalman-filter-comparison"
+        id="toc-unscented-kalman-filter-comparison"><span
+        class="toc-section-number">9.1.5</span> Unscented Kalman Filter
+        Comparison</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -12835,49 +12843,58 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             filter</strong> (EKF). We will explore this using an
             important application → <strong>sensor fusion</strong>.</p>
             <p><strong>References:</strong></p>
-            <ol type="1">
-            <li><p>Kalman, R. E. (1960). <a
+            <ul>
+            <li>Kalman, R. E. (1960). <a
             href="https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html">A
             New Approach to Linear Filtering and Prediction
             Problems</a>. Journal of Basic Engineering, 82(1),
-            35-45.</p></li>
-            <li><p>Bar-Shalom, Y., Li, X. R., &amp; Kirubarajan, T.
-            (2001). <a
+            35-45.</li>
+            <li>Bar-Shalom, Y., Li, X. R., &amp; Kirubarajan, T. (2001).
+            <a
             href="https://onlinelibrary.wiley.com/doi/book/10.1002/0471221279">Estimation
             with Applications to Tracking and Navigation</a>.
-            Wiley-Interscience.</p></li>
-            <li><p>Simon, D. (2006). <a
+            Wiley-Interscience.</li>
+            <li>Simon, D. (2006). <a
             href="https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345">Optimal
             State Estimation: Kalman, H∞, and Nonlinear Approaches</a>.
-            Wiley-Interscience.</p></li>
-            <li><p>Thrun, S., Burgard, W., &amp; Fox, D. (2005). <a
+            Wiley-Interscience.</li>
+            <li>Thrun, S., Burgard, W., &amp; Fox, D. (2005). <a
             href="https://mitpress.mit.edu/books/probabilistic-robotics">Probabilistic
-            Robotics</a>. MIT Press.</p></li>
-            <li><p>Welch, G., &amp; Bishop, G. (2006). <a
+            Robotics</a>. MIT Press.</li>
+            <li>Welch, G., &amp; Bishop, G. (2006). <a
             href="https://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf">An
             Introduction to the Kalman Filter</a>. University of North
-            Carolina at Chapel Hill.</p></li>
-            <li><p>Julier, S. J., &amp; Uhlmann, J. K. (1997). <a
+            Carolina at Chapel Hill.</li>
+            <li>Julier, S. J., &amp; Uhlmann, J. K. (1997). <a
             href="https://www.cs.unc.edu/~welch/kalman/media/pdf/Julier1997_SPIE_KF.pdf">A
             New Extension of the Kalman Filter to Nonlinear Systems</a>.
             Proc. SPIE 3068, Signal Processing, Sensor Fusion, and
-            Target Recognition VI.</p></li>
-            <li><p><a href="https://www.kalmanfilter.net">Kalman Filter
+            Target Recognition VI.</li>
+            <li><a href="https://www.kalmanfilter.net">Kalman Filter
             Tutorial</a> - A comprehensive online resource with examples
-            and applications.</p></li>
-            <li><p><a
+            and applications.</li>
+            <li><a
             href="https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python">Kalman
             and Bayesian Filters in Python</a> - A free interactive book
-            and Python library by Roger Labbe.</p></li>
-            <li><p><a
-            href="https://filterpy.readthedocs.io">FilterPy</a> - A
-            Python library for Kalman filtering and optimal
-            estimation.</p></li>
-            <li><p>Särkkä, S. (2013). <a
+            and Python library by Roger Labbe.</li>
+            <li><a href="https://filterpy.readthedocs.io">FilterPy</a> -
+            A Python library for Kalman filtering and optimal
+            estimation.</li>
+            <li>Särkkä, S. (2013). <a
             href="https://www.cambridge.org/core/books/bayesian-filtering-and-smoothing/C372FB31C5D9A100F8476C1A41A5B700">Bayesian
             Filtering and Smoothing</a>. Cambridge University
-            Press.<!--rel="stylesheet" href="./custom.sibin.css"--></p></li>
-            </ol>
+            Press.</li>
+            <li><a
+            href="https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/">How
+            a Kalman filter works, in pictures</a></li>
+            <li><a
+            href="https://engineeringmedia.com/controlblog/the-kalman-filter">#2:
+            The Kalman Filter</a> by Brian Douglas</li>
+            <li><a
+            href="https://web.mat.upc.edu/josep.fabrega/pipe/gaussianes_ndim-e-handout-4pp.pdf">The
+            multivariate gaussian distribution</a> by Josep
+            FÀBREGA<!--rel="stylesheet" href="./custom.sibin.css"--></li>
+            </ul>
             </section>
             </section>
             </section>
@@ -13539,6 +13556,241 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             </table>
             <p><img src="img/fusion/ekf/positional-tracking.svg" width="300"></p>
             <p><br></p>
+            </section>
+            <section id="miscellaneous-and-advanced-topics"
+            class="level3" data-number="9.1.4">
+            <h3 data-number="9.1.4"><span
+            class="header-section-number">9.1.4</span> Miscellaneous and
+            Advanced Topics</h3>
+            <p><strong>Best Practices</strong> when implementing EKF for
+            sensor fusion,</p>
+            <table>
+            <colgroup>
+            <col style="width: 60%" />
+            <col style="width: 39%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;"><strong>best
+            practices</strong></th>
+            <th style="text-align: left;">description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><strong>careful state
+            selection</strong></td>
+            <td style="text-align: left;">include only necessary states
+            to avoid computational burden</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>proper
+            initialization</strong></td>
+            <td style="text-align: left;">set initial covariance to
+            reflect actual uncertainty</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>tuning noise
+            parameters</strong></td>
+            <td style="text-align: left;">adjust <span
+            class="math inline"><em>Q</em></span> and <span
+            class="math inline"><em>R</em></span> based on empirical
+            data</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>consistency
+            monitoring</strong></td>
+            <td style="text-align: left;">check filter consistency using
+            normalized innovation squared (NIS)</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>fault
+            detection</strong></td>
+            <td style="text-align: left;">implement mechanisms to detect
+            sensor failures</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>numerical
+            stability</strong></td>
+            <td style="text-align: left;">use square-root or UD
+            factorization for improved numerical properties</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p><strong>Handling Non-Gaussian Noise</strong></p>
+            <p>EKF assumes that both process and measurement noise are
+            Gaussian. For systems with non-Gaussian noise, consider: |
+            <strong>method</strong> | description | |:———–|:————| |
+            <strong>particle filters</strong> | represent the
+            probability distribution using samples | | <strong>robust
+            kalman filters</strong> | use heavy-tailed distributions to
+            model outliers | | <strong>pre-filtering</strong> | apply
+            outlier rejection before using EKF | ||</p>
+            <p>The Extended Kalman Filter is a powerful tool for sensor
+            fusion in nonlinear systems. It provides a principled
+            approach for combining measurements from multiple sensors
+            with different characteristics, rates and accuracies.</p>
+            <p>Despite its limitations with highly nonlinear systems,
+            EKF remains the workhorse of many practical sensor fusion
+            applications due to its relatively simple implementation and
+            computational efficiency.</p>
+            <p>For more complex scenarios, consider alternatives like
+            the <a href="#unscented-kalman-filter-comparison">Unscented
+            Kalman Filter</a>, [Particle
+            Filters[(https://en.wikipedia.org/wiki/Monte_Carlo_localization)]
+            or more recent developments in factor graph-based
+            fusion.</p>
+            </section>
+            <section id="unscented-kalman-filter-comparison"
+            class="level3" data-number="9.1.5">
+            <h3 data-number="9.1.5"><span
+            class="header-section-number">9.1.5</span> Unscented Kalman
+            Filter Comparison</h3>
+            <p>The EKF uses first-order linearization, which can
+            introduce significant errors for highly nonlinear systems.
+            The <strong><a
+            href="https://soulhackerslabs.com/the-unreasonable-power-of-the-unscented-kalman-filter-with-ros-2-d4c97d4b4bb9">Unscented
+            Kalman Filter (UKF)</a></strong> is an alternative that:</p>
+            <ol type="1">
+            <li>selects a set of sigma points around the current state
+            estimate</li>
+            <li>propagates these points through the nonlinear
+            functions</li>
+            <li>computes a weighted mean and covariance from the
+            transformed points</li>
+            </ol>
+            <p>This <strong>avoids the need for explicit Jacobian
+            calculations</strong> and can <strong>handle nonlinearities
+            better</strong>. The computational complexity is similar to
+            EKF for most practical applications.</p>
+            <p><strong>Example</strong>: Target Tracking with Radar</p>
+            <p>To illustrate the difference between EKF and UKF
+            performance, consider a radar-based target tracking
+            scenario:</p>
+            <p><strong>System Configuration:</strong></p>
+            <ul>
+            <li>single radar measuring range, azimuth, and range-rate to
+            a target</li>
+            <li>target following a coordinated turn trajectory (highly
+            nonlinear dynamics)</li>
+            <li>measurement frequency: 1 Hz</li>
+            <li>state vector: <span
+            class="math inline">[<em>x</em>, <em>y</em>, <em>v</em><em>e</em><em>l</em><em>o</em><em>c</em><em>i</em><em>t</em><em>y</em><sub><em>x</em></sub>, <em>v</em><em>e</em><em>l</em><em>o</em><em>c</em><em>i</em><em>t</em><em>y</em><sub><em>y</em></sub>, <em>t</em><em>u</em><em>r</em><em>n</em>_<em>r</em><em>a</em><em>t</em><em>e</em>]</span></li>
+            </ul>
+            <p><strong>Nonlinearity Challenges:</strong></p>
+            <ol type="1">
+            <li>coordinate conversion (polar to Cartesian)</li>
+            <li>rotational motion during turns</li>
+            <li>range-dependent measurement noise</li>
+            </ol>
+            <p><strong>Testing Methodology:</strong></p>
+            <ul>
+            <li>100 Monte Carlo simulations of 120-second
+            trajectories</li>
+            <li>Process noise: Medium (acceleration uncertainty σ = 0.5
+            m/s²)</li>
+            <li>Measurement noise: Range (σ = 25m), Azimuth (σ = 0.5°),
+            Range-rate (σ = 3m/s)</li>
+            </ul>
+            <p>Comparison of EKF vs UKF error performance:</p>
+            <p><img src="img/fusion/ekf/ukf-radar-diagram.svg" width="300"></p>
+            <p><br></p>
+            <table>
+            <thead>
+            <tr>
+            <th>Parameter</th>
+            <th>EKF Error</th>
+            <th>UKF Error</th>
+            <th>Improvement</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>Position</td>
+            <td>1.45 m</td>
+            <td>0.95 m</td>
+            <td>34.5%</td>
+            </tr>
+            <tr>
+            <td>Velocity</td>
+            <td>0.32 m/s</td>
+            <td>0.25 m/s</td>
+            <td>21.9%</td>
+            </tr>
+            <tr>
+            <td>Heading</td>
+            <td>2.1 deg</td>
+            <td>1.7 deg</td>
+            <td>19.0%</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><strong>Analysis:</strong></p>
+            <ul>
+            <li>UKF <strong>outperforms</strong> the EKF in all state
+            variables</li>
+            <li>most significant improvement is in <strong>position
+            estimation</strong> (34.5%)</li>
+            <li>improvement becomes more pronounced during
+            <strong>high-rate turns</strong></li>
+            <li><strong>computational load increased</strong> by
+            approximately <span class="math inline">15%</span> for the
+            UKF</li>
+            </ul>
+            <p><strong>When to Use UKF Instead of EKF:</strong></p>
+            <ul>
+            <li>dealing with highly nonlinear system or measurement
+            models</li>
+            <li>high accuracy is needed during rapid maneuvers</li>
+            <li>Jacobian matrices are difficult to derive or
+            implement</li>
+            <li>the additional computational cost is acceptable</li>
+            </ul>
+            <p>The UKF’s ability to better capture nonlinear
+            transformations makes it particularly valuable for
+            aerospace, underwater navigation and other domains with
+            complex motion models.</p>
+            <p><strong>References</strong>:</p>
+            <ul>
+            <li>Thrun, S., Burgard, W., &amp; Fox, D. (2005). <a
+            href="http://www.probabilistic-robotics.org">Probabilistic
+            Robotics</a>. MIT Press. <a
+            href="http://probabilistic-robotics.informatik.uni-freiburg.de/ppt/">Slides</a></li>
+            <li>Bar-Shalom, Y., Li, X.R., &amp; Kirubarajan, T. (2001).
+            Estimation with Applications to Tracking and Navigation.
+            Wiley-Interscience.</li>
+            <li>Grewal, M.S., &amp; Andrews, A.P. (2014). Kalman
+            Filtering: Theory and Practice Using MATLAB (4th ed.).
+            Wiley.</li>
+            <li>Simon, D. (2006). Optimal State Estimation: Kalman, H∞,
+            and Nonlinear Approaches. Wiley-Interscience.</li>
+            <li>Crassidis, J.L., &amp; Junkins, J.L. (2011). Optimal
+            Estimation of Dynamic Systems (2nd ed.). CRC Press.</li>
+            <li><a
+            href="https://soulhackerslabs.com/sensor-fusion-with-the-extended-kalman-filter-in-ros-2-d33dbab1829d">Sensor
+            Fusion with the Extended Kalman Filter in ROS 2</a></li>
+            <li><a
+            href="https://soulhackerslabs.com/the-unreasonable-power-of-the-unscented-kalman-filter-with-ros-2-d4c97d4b4bb9">The
+            Unreasonable Power of The Unscented Kalman Filter with ROS
+            2</a></li>
+            <li><a
+            href="https://medium.com/@sasha_przybylski/the-math-behind-extended-kalman-filtering-0df981a87453">The
+            math behind Extended Kalman Filtering</a> by Sasha
+            Przybylski. Check out the cool video:</li>
+            </ul>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/dFPCFmd5uJE?si=Iy8K0EeV6TP3amor" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
             </section>
             </section>
             </section>

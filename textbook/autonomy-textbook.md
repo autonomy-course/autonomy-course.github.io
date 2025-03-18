@@ -6604,25 +6604,19 @@ But the real world is actually **non-linear**! To deal with non-linear systems, 
 
 **References:**
 
-1. Kalman, R. E. (1960). [A New Approach to Linear Filtering and Prediction Problems](https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html). Journal of Basic Engineering, 82(1), 35-45.
-
-2. Bar-Shalom, Y., Li, X. R., & Kirubarajan, T. (2001). [Estimation with Applications to Tracking and Navigation](https://onlinelibrary.wiley.com/doi/book/10.1002/0471221279). Wiley-Interscience.
-
-3. Simon, D. (2006). [Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches](https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345). Wiley-Interscience.
-
-4. Thrun, S., Burgard, W., & Fox, D. (2005). [Probabilistic Robotics](https://mitpress.mit.edu/books/probabilistic-robotics). MIT Press.
-
-5. Welch, G., & Bishop, G. (2006). [An Introduction to the Kalman Filter](https://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf). University of North Carolina at Chapel Hill.
-
-6. Julier, S. J., & Uhlmann, J. K. (1997). [A New Extension of the Kalman Filter to Nonlinear Systems](https://www.cs.unc.edu/~welch/kalman/media/pdf/Julier1997_SPIE_KF.pdf). Proc. SPIE 3068, Signal Processing, Sensor Fusion, and Target Recognition VI.
-
-7. [Kalman Filter Tutorial](https://www.kalmanfilter.net) - A comprehensive online resource with examples and applications.
-
-8. [Kalman and Bayesian Filters in Python](https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python) - A free interactive book and Python library by Roger Labbe.
-
-9. [FilterPy](https://filterpy.readthedocs.io) - A Python library for Kalman filtering and optimal estimation.
-
-10. Särkkä, S. (2013). [Bayesian Filtering and Smoothing](https://www.cambridge.org/core/books/bayesian-filtering-and-smoothing/C372FB31C5D9A100F8476C1A41A5B700). Cambridge University Press.<!--rel="stylesheet" href="./custom.sibin.css"-->
+- Kalman, R. E. (1960). [A New Approach to Linear Filtering and Prediction Problems](https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html). Journal of Basic Engineering, 82(1), 35-45.
+- Bar-Shalom, Y., Li, X. R., & Kirubarajan, T. (2001). [Estimation with Applications to Tracking and Navigation](https://onlinelibrary.wiley.com/doi/book/10.1002/0471221279). Wiley-Interscience.
+- Simon, D. (2006). [Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches](https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345). Wiley-Interscience.
+- Thrun, S., Burgard, W., & Fox, D. (2005). [Probabilistic Robotics](https://mitpress.mit.edu/books/probabilistic-robotics). MIT Press.
+- Welch, G., & Bishop, G. (2006). [An Introduction to the Kalman Filter](https://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf). University of North Carolina at Chapel Hill.
+- Julier, S. J., & Uhlmann, J. K. (1997). [A New Extension of the Kalman Filter to Nonlinear Systems](https://www.cs.unc.edu/~welch/kalman/media/pdf/Julier1997_SPIE_KF.pdf). Proc. SPIE 3068, Signal Processing, Sensor Fusion, and Target Recognition VI.
+- [Kalman Filter Tutorial](https://www.kalmanfilter.net) - A comprehensive online resource with examples and applications.
+- [Kalman and Bayesian Filters in Python](https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python) - A free interactive book and Python library by Roger Labbe.
+- [FilterPy](https://filterpy.readthedocs.io) - A Python library for Kalman filtering and optimal estimation.
+- Särkkä, S. (2013). [Bayesian Filtering and Smoothing](https://www.cambridge.org/core/books/bayesian-filtering-and-smoothing/C372FB31C5D9A100F8476C1A41A5B700). Cambridge University Press.
+- [How a Kalman filter works, in pictures](https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/)
+- [#2: The Kalman Filter](https://engineeringmedia.com/controlblog/the-kalman-filter) by Brian Douglas
+- [The multivariate gaussian distribution](https://web.mat.upc.edu/josep.fabrega/pipe/gaussianes_ndim-e-handout-4pp.pdf) by Josep FÀBREGA<!--rel="stylesheet" href="./custom.sibin.css"-->
 
 # Sensor Fusion 
 
@@ -7052,13 +7046,119 @@ The following graph shows a typical position tracking result comparing:
 
 <br>
 
+### Miscellaneous and Advanced Topics
+
+**Best Practices** when implementing EKF for sensor fusion,
+
+| **best practices** | description |
+|:-------------------|:------------|
+| **careful state selection** | include only necessary states to avoid computational burden |
+| **proper initialization** | set initial covariance to reflect actual uncertainty |
+| **tuning noise parameters** | adjust $Q$ and $R$ based on empirical data |
+| **consistency monitoring** | check filter consistency using normalized innovation squared (NIS) |
+| **fault detection** | implement mechanisms to detect sensor failures |
+| **numerical stability** | use square-root or UD factorization for improved numerical properties |
+||
+
+<br>
+
+**Handling Non-Gaussian Noise**
+
+EKF assumes that both process and measurement noise are Gaussian. For systems with non-Gaussian noise, consider:
+| **method** | description |
+|:-----------|:------------|
+| **particle filters** | represent the probability distribution using samples |
+| **robust kalman filters** | use heavy-tailed distributions to model outliers |
+| **pre-filtering** | apply outlier rejection before using EKF |
+||
+
+
+The Extended Kalman Filter is a powerful tool for sensor fusion in nonlinear systems. It provides a principled approach for combining measurements from multiple sensors with different characteristics, rates and accuracies.
+
+Despite its limitations with highly nonlinear systems, EKF remains the workhorse of many practical sensor fusion applications due to its relatively simple implementation and computational efficiency.
+
+For more complex scenarios, consider alternatives like the [Unscented Kalman Filter](#unscented-kalman-filter-comparison), [Particle Filters[(https://en.wikipedia.org/wiki/Monte_Carlo_localization)] or more recent developments in factor graph-based fusion.
 
 
 
 
+### Unscented Kalman Filter Comparison
+
+The EKF uses first-order linearization, which can introduce significant errors for highly nonlinear systems. The **[Unscented Kalman Filter (UKF)](https://soulhackerslabs.com/the-unreasonable-power-of-the-unscented-kalman-filter-with-ros-2-d4c97d4b4bb9)** is an alternative that:
+
+1. selects a set of sigma points around the current state estimate
+2. propagates these points through the nonlinear functions
+3. computes a weighted mean and covariance from the transformed points
+
+This **avoids the need for explicit Jacobian calculations** and can **handle nonlinearities better**. The computational complexity is similar to EKF for most practical applications.
+
+**Example**: Target Tracking with Radar
+
+To illustrate the difference between EKF and UKF performance, consider a radar-based target tracking scenario:
+
+**System Configuration:**
+
+- single radar measuring range, azimuth, and range-rate to a target
+- target following a coordinated turn trajectory (highly nonlinear dynamics)
+- measurement frequency: 1 Hz
+- state vector: $[x, y, velocity_x, velocity_y, turn\_rate]$
+
+**Nonlinearity Challenges:**
+
+1. coordinate conversion (polar to Cartesian)
+2. rotational motion during turns
+3. range-dependent measurement noise
+
+**Testing Methodology:**
+
+- 100 Monte Carlo simulations of 120-second trajectories
+- Process noise: Medium (acceleration uncertainty σ = 0.5 m/s²)
+- Measurement noise: Range (σ = 25m), Azimuth (σ = 0.5°), Range-rate (σ = 3m/s)
+
+
+Comparison of EKF vs UKF error performance:
+
+<img src="img/fusion/ekf/ukf-radar-diagram.svg" width="300">
+
+<br>
+
+| Parameter | EKF Error | UKF Error | Improvement |
+|-----------|-----------|-----------|-------------|
+| Position  | 1.45 m    | 0.95 m    | 34.5%       |
+| Velocity  | 0.32 m/s  | 0.25 m/s  | 21.9%       |
+| Heading   | 2.1 deg   | 1.7 deg   | 19.0%       |
+||
+
+**Analysis:**
+
+- UKF **outperforms** the EKF in all state variables
+- most significant improvement is in **position estimation** (34.5%)
+- improvement becomes more pronounced during **high-rate turns**
+- **computational load increased** by approximately $15\%$ for the UKF
+
+**When to Use UKF Instead of EKF:**
+
+- dealing with highly nonlinear system or measurement models
+- high accuracy is needed during rapid maneuvers
+- Jacobian matrices are difficult to derive or implement
+- the additional computational cost is acceptable
+
+The UKF's ability to better capture nonlinear transformations makes it particularly valuable for aerospace, underwater navigation and other domains with complex motion models.
 
 
 
+**References**:
+
+- Thrun, S., Burgard, W., & Fox, D. (2005). [Probabilistic Robotics](http://www.probabilistic-robotics.org). MIT Press. [Slides](http://probabilistic-robotics.informatik.uni-freiburg.de/ppt/)
+- Bar-Shalom, Y., Li, X.R., & Kirubarajan, T. (2001). Estimation with Applications to Tracking and Navigation. Wiley-Interscience.
+- Grewal, M.S., & Andrews, A.P. (2014). Kalman Filtering: Theory and Practice Using MATLAB (4th ed.). Wiley.
+- Simon, D. (2006). Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches. Wiley-Interscience.
+- Crassidis, J.L., & Junkins, J.L. (2011). Optimal Estimation of Dynamic Systems (2nd ed.). CRC Press.
+- [Sensor Fusion with the Extended Kalman Filter in ROS 2](https://soulhackerslabs.com/sensor-fusion-with-the-extended-kalman-filter-in-ros-2-d33dbab1829d)
+- [The Unreasonable Power of The Unscented Kalman Filter with ROS 2](https://soulhackerslabs.com/the-unreasonable-power-of-the-unscented-kalman-filter-with-ros-2-d4c97d4b4bb9)
+- [The math behind Extended Kalman Filtering](https://medium.com/@sasha_przybylski/the-math-behind-extended-kalman-filtering-0df981a87453) by Sasha Przybylski. Check out the cool video:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dFPCFmd5uJE?si=Iy8K0EeV6TP3amor" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 
