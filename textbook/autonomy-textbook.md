@@ -5558,7 +5558,7 @@ Now we can write the posterior as:
 
 (since $\sigma^{2} =\frac{\sigma_{1}^{2} \sigma_{2}^{2}}{\sigma_{1}^{2}+\sigma_{2}^{2}}$).
 
-*Note:** **higher K** &rarr; **more certainty**!
+**Note:** **higher K** &rarr; **more certainty**!
 
 ### Kalman Filter | **Summary**
 
@@ -6675,7 +6675,7 @@ z_{\text {Odom }}
 1 / 0.3048 & 0
 \end{array}\right]\left[\begin{array}{l}
 \bar{x} \\
-\bar{x}
+\bar{\dot{x}}
 \end{array}\right] } \\
 \mathbf{x}= & \overline{\mathbf{x}}+{\mathbf{K} \mathbf{y}} \\
 \end{aligned}
@@ -6715,6 +6715,8 @@ Of course, we can try to compute an equivalent of a Gaussian using,
 - [Monte Carlo simulations](https://en.wikipedia.org/wiki/Monte_Carlo_method) that uses **repeated random sampling** to obtain numerical results
 
 <img src="img/fusion/ekf/monte_carlo_wiki.gif" width="300" title="Monte Carlo Animation By Titouan Christophe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=30599003">
+
+<br>
 
 The problem is that this is **not a closed form**, _i.e.,_ it **cannot** be represented as s combination of,
 
@@ -6765,17 +6767,8 @@ Where $\nabla f(\mathbf{a})$ is the gradient of $f$ evaluated at $\mathbf{a}$, c
 **Example**: Consider a simple nonlinear function $f(x) = x^2$ expanded around $a = 1$:
 1. $f(1) = 1$
 2. $f'(x) = 2x$, so $f'(1) = 2$
-3. First-order Taylor approximation: $f(x) \approx 1 + 2(x-1)$
-4. This gives us a linear approximation: $f(x) \approx 2x - 1$
-
-This linear approximation is accurate near $x = 1$ but becomes less accurate as we move away from this point.
-
-**Example 1**: Consider a simple nonlinear function $f(x) = x^2$ expanded around $a = 1$:
-
-1. $f(1) = 1$
-2. $f'(x) = 2x$, so $f'(1) = 2$
-3. First-order Taylor approximation: $f(x) \approx 1 + 2(x-1)$
-4. This gives us a linear approximation: $f(x) \approx 2x - 1$
+3. first-order Taylor approximation: $f(x) \approx 1 + 2(x-1)$
+4. this gives us a linear approximation: $f(x) \approx 2x - 1$
 
 This linear approximation is accurate near $x = 1$ but becomes less accurate as we move away from this point.
 
@@ -6789,7 +6782,7 @@ $$
 g = \cos(3 * (\frac{x}{2} + 0.7)) * \sin(1.3 * x) — 1.6 * x
 $$
 
-The first-order Taylor expansion of g at a point a is shown below in red. It clearly **does not provide a good approximation** &rarr; if we observe it over a large range of values for $x$.
+The first-order Taylor expansion of $g$ at a point $a$ is shown below in red. It clearly **does not provide a good approximation** &rarr; if we observe it over a large range of values for $x$.
 
 <img src="img/fusion/ekf/taylor.1.webp" width="300">
 
@@ -6821,11 +6814,37 @@ $z_k = h(x_k) + v_k$
 The EKF linearizes these equations using first-order Taylor series expansions:
 
 $f(x_{k-1}, u_k) \approx f(\hat{x}_{k-1|k-1}, u_k) + F_k(x_{k-1} - \hat{x}_{k-1|k-1})$
+
 $h(x_k) \approx h(\hat{x}_{k|k-1}) + H_k(x_k - \hat{x}_{k|k-1})$
 
 Where:
 - $F_k = \left.\frac{\partial f}{\partial x}\right|_{\hat{x}_{k-1|k-1},u_k}$ is the Jacobian of $f$ with respect to $x$
 - $H_k = \left.\frac{\partial h}{\partial x}\right|_{\hat{x}_{k|k-1}}$ is the Jacobian of $h$ with respect to $x$
+
+<br>
+
+<details>
+<summary>subscripts explained</summary>
+
+The notation $\hat x_{k−1∣k−1}$:
+
+- $x_{k−1∣k−1}$​ in the equation represents a specific type of state estimate in Kalman filtering
+- $\hat x$ symbol indicates it's an estimate of the true state xx
+x
+- The first subscript $k−1$ indicates the time step of the state being estimated
+- The second subscript $k−1|k-1$ (after the vertical bar) indicates that this estimate is based on all measurements up to and including time step $k−1$
+- So $\hat x_{k−1∣k−1}$, specifically means "the estimate of the state at time $k−1$ given all measurements up to time $k−1$
+- This is also called the a posteriori (or updated/corrected) state estimate from the previous time step.
+
+In Kalman filter terminology:
+
+- $\hat x_{k∣k−1}$ would be the a priori estimate (prediction before measurement update)
+- $\hat x_{k∣k}$ would be the a posteriori estimate (after measurement update)
+
+The equation is linearizing the nonlinear state transition function $f$ around the best estimate we have of the previous state ($\hat{x}_{k-1|k-1}$) which makes sense since that's our most accurate knowledge of where the system was at the previous time step.
+</details>
+
+<br>
 
 These Jacobian matrices contain all the partial derivatives of the nonlinear functions with respect to each state variable, evaluated at the current estimate. They represent the sensitivity of the functions to small changes in the state.
 
@@ -6866,7 +6885,7 @@ $$P_{k|k} = (I - K_kH_k)P_{k|k-1}$$
 
 The key difference compared to the linear Kalman filter is that we use the **nonlinear functions**,
 - $f$ &rarr; state
-- $h$ directly &rarr; measurement prediction
+- $h$ &rarr; measurement prediction
 
 but use their **linearized versions** (Jacobians) for &rarr; covariance calculation.
 
@@ -7159,6 +7178,467 @@ The UKF's ability to better capture nonlinear transformations makes it particula
 - [The math behind Extended Kalman Filtering](https://medium.com/@sasha_przybylski/the-math-behind-extended-kalman-filtering-0df981a87453) by Sasha Przybylski. Check out the cool video:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/dFPCFmd5uJE?si=Iy8K0EeV6TP3amor" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
+
+
+<!--rel="stylesheet" href="./custom.sibin.css"-->
+
+# Simultaneous Localization and Mapping (SLAM)
+
+Consider a robot (a Roomba vacuum cleaner, say) trying to navigate inside a room. Now, it can do this in one of two ways:
+
+- **randomly** move around the room, hoping that it will _eventually_ cover the whole place and
+- **map** out the room, figure out where it is and _systematically_ ensure that it cover the entire room.
+
+<img src="img/slam/roomba_random.png" width="200"> &nbsp;&nbsp;
+<img src="img/slam/roomba_slam.png" width="200">
+
+<br>
+
+This is particulalry effective when the system has **obstacles** in it, _e.g.,_ a couch and other furniture. This requires the robot to do do things:
+
+|||
+|---|---|
+|create a **map** of its surroundings | **locate** itself within that map|
+| <img src="img/slam/mapping.png"> |<img src="img/slam/truck.png"> |
+||
+
+Enter **simultaneous localization and mapping** (SLAM) which represents one of the fundamental challenges in mobile robotics. As the name suggests, SLAM involves solving two interconnected problems at once: building a map of an unknown environment while simultaneously tracking the robot's position within that environment. The need for SLAM arises from a seemingly paradoxical situation: to build an accurate map, a robot needs to know its precise location, but to determine its precise location, the robot needs an accurate map. This chicken-and-egg problem is what makes SLAM challenging and fascinating.
+
+SLAM is also crucial for autonomous mobile robots operating in **unknown environments** where external positioning systems (like GPS) are unavailable or unreliable, such as:
+
+- indoor environments
+- underground mines and caves
+- underwater exploration
+- planetary exploration
+- dense urban areas with GPS signal blockage.
+
+SLAM is more of a concept than a single algorithm. There are many approaches to implementing SLAM, varying in complexity, accuracy and computational requirements.
+
+Some examples of SLAM output:
+
+1. **grid maps** or **scans**
+
+<img src="img/slam/grid_map.1.png" width="200">
+<img src="img/slam/grid_map.2.jpg" width="200">
+<img src="img/slam/grid_map.3.png" width="200">
+
+2. **landmark**-based
+
+<img src="img/slam/landmark.1.png" width="200">
+<img src="img/slam/landmark.2.png" width="200">
+<img src="img/slam/landmark.3.png" width="200">
+
+We can also classify SLAM based on the type of sensor (and corresponding outputs), 
+
+a. **visual slam** that uses &rarr; cameras
+
+- sparse methods match feature points of images [PTAM, ORB_SLAM]
+- dense methods use overall brightness of images [DTAM, LSD- SLAM, DSO, SVO]
+
+<img src="img/slam/visual_slam.1.png" width="300">
+<img src="img/slam/visual_slam.2.png" width="300">
+
+
+b. **LiDAR SLAM**
+
+- laser point cloud provides high-precision distance measurements
+- not as finely detailed as camera images
+- environments with fewer obstacles &rarr; less precision
+- may require fusion with other sensors (e.g., GPS, odometry)
+
+<img src="img/slam/lidar_slam.1.png" width="300">
+<img src="img/slam/lidar_slam.2.png" width="300">
+
+
+## SLAM Problem Definition
+
+At its core, SLAM is a state estimation problem. Given,
+
+- the robot's control inputs (odometry)
+- observations of nearby features/landmarks
+- no prior map
+
+The objective is to estimate,
+
+- the **map** of the environment
+- the **path** (or current position) of the robot
+
+So why is SLAM a hard problem?
+
+In the real world, the mapping between observations and landmarks is unknown. Picking wrong data associations can have catastrophic consequences. Pose error correlates data associations.
+
+> In robotics and computer vision, **"pose"** refers to the position and orientation of an object or a robot in a given space.
+>
+> For instance, 2D Pose (in planar systems)
+>
+>- position: (x, y)
+>- orientation: $\theta$ (rotation around the z-axis)
+
+The various parts of SLAM:
+
+<img src="img/slam/slam_workflow.4.png" width="400">
+
+<br>
+
+Let’s go over each component:
+
+1. **Sensor Data**
+    - the input to SLAM comes from sensors, such as:
+	    - camera (for visual SLAM, extracting features from images)
+	    - a LiDAR or depth sensor (for distance and obstacle detection)
+    - the sensors provide raw data about the environment.
+
+
+2. **Front End** (sensor-dependent processing)
+	- front end is responsible for data association and motion estimation
+	- it processes sensor-specific information to extract meaningful features. It includes:
+	    - motion estimation: Determines how the robot is moving by tracking sensor data over time
+	    - obstacle location estimation: Identifies objects and landmarks in the environment
+	- goal of the front end &rarr; preprocess sensor data and reduce noise before passing it to the back end.
+
+
+3. **Back End** (sensor-independent processing)
+	- back end performs global optimization of the estimated trajectory
+	- it is **sensor-independent**, meaning it can work with data from different sensors as long as it receives processed pose and landmark information. It includes:
+	    - **register pose graphs** &rarr; combines different pose estimates into a coherent structure
+	    - graph optimization &rarr; uses mathematical optimization techniques (e.g., bundle adjustment, factor graphs) to refine the trajectory and correct drift
+	- back end **corrects errors** that accumulate over time, leading to a more accurate map.
+
+4. **Pose Graph and Map Information**
+	- **final output** of SLAM is a pose graph (a representation of the robot’s trajectory) and a map of the environment
+	- map is constructed using optimized pose estimates from the back end
+	- map can be used for navigation, obstacle avoidance, and autonomous decision-making.
+
+Hence, 
+| component | description |
+|---|---|
+| front end (sensor-dependent) | processes raw sensor data (motion estimation, obstacle detection) |
+| back end (sensor-independent) | optimizes the trajectory and map |
+| final output | a refined pose graph and map for accurate navigation |
+||
+
+This structured approach ensures real-time and accurate localization while reducing computational complexity. 
+
+We can distill all of the above "steps" into the following. Each has its own drawbacks but we can deal with them.
+
+| step |description  | challenge  |
+|-------|--------|--------|
+| **prediction step**  | update the robot's position estimate using odometry data (motion model) | **correlated errors** in position estimation affect the map |
+| **landmark extraction** | identify landmarks or features from sensor measurements | **environmental dynamics** may cause landmarks to change |
+| **data association** | match observed landmarks with previously mapped landmarks | **incorrect associations** lead to mapping errors |
+| **update step** | update robot position and landmark estimates based on observations | **computational complexity** increases with more data |
+| **map expansion** | add newly observed landmarks to the map | loop closure is required to recognize **revisited** places |
+
+## Mathematical Formulations
+
+First, let's define some terms,
+
+| symbol   | meaning  |
+|----------|-----------|
+| $x_{1:t}$ | robot path |
+| $m$ | map |
+| $z_{1:t}$ | sensor observations |
+| $u_{1:t}$ | control inputs|
+||
+
+1. **Full SLAM** &rarr; estimates the **entire** robot path and map
+
+
+
+<img src="img/slam/full_slam_graphical.png" width="300">
+
+### full slam
+
+- the model estimates the **entire trajectory** $x_{1:t}$ along with the map $m$
+- the equation:
+$$
+p(x_{1:t}, m | z_{1:t}, u_{1:t})
+$$ 
+- indicates that we compute the joint probability over all past and current poses, rather than marginalizing them out
+- gray-shaded area (fromt he figure) covers all past poses $x_{1:t}$, indicating that they are explicitly maintained in the estimation
+- this approach provides **smoothing**, allowing the system to refine past estimates when new observations are received
+
+**Interpretation**:
+
+- full slam is useful when all sensor data is available after execution (batch processing)
+- allows for loop closure corrections, where the **trajectory can be optimized** retrospectively
+- used in graph-based slam and optimization-based slam techniques like gtsam and pose graph optimization
+
+2. **Online SLAM**: &rarr; estimates only the **most recent** robot pose and the map
+
+- the model estimates only the most recent pose $x_t$ and the map $m$
+- the equation:
+  $$
+  p(x_t, m \mid z_{1:t}, u_{1:t}) = \int\int...\int p(x_{1:t}, m \mid z_{1:t}, u_{1:t}) dx_1 dx_2...dx_{t-1}
+  $$
+  shows that all past poses $x_{1:t-1}$ are marginalized out, leaving only the current pose and the map
+- gray-shaded area in the graphical model highlights that only the current pose is maintained explicitly
+- this approach is **computationally efficient** and suitable for real-time applications
+
+### interpretation
+
+- online slam is designed for real-time operation, where storing the entire trajectory is infeasible
+- it relies on filtering methods such as the extended kalman filter (ekf) and particle filters
+- used in applications where **fast localization and mapping** are required, such as autonomous navigation and robotics
+
+<img src="img/slam/online_slam_graphical.png" width="300">
+
+
+**Comparison** of the two methods:
+
+### key differences between full slam and online slam
+
+| feature          | full slam | online slam |
+|-----------------|-----------|------------|
+| **estimates**   | entire trajectory $x_{1:t}$ and map $m$ | only current pose $x_t$ and map $m$ |
+| **past poses**  | explicitly maintained | marginalized out |
+| **computational complexity** | higher (batch processing) | lower (real-time feasible) |
+| **approach**    | smoothing-based (e.g., graph-based slam) | filtering-based (e.g., ekf-slam, fastslam) |
+| **application** | useful for post-processing and high-accuracy mapping | used in real-time robotics, drones, autonomous vehicles |
+||
+
+## SLAM Hardware
+
+The main hardare for SLAM consists of 
+
+- a robot
+- a range measurement device
+
+For SLAM implementation, a mobile robot requires,
+
+- wheel encoders for odometry estimation
+- a processor for calculation
+- appropriate motion capabilities for the environment
+
+Several sensing technologies can be used for SLAM:
+
+- **Laser Scanners** &rarr; provide high-precision measurements with minimal processing required.
+
+- **Sonar** &rarr; less expensive than laser scanners but provide lower quality measurements with wider beam width (up to $30\degree$ compared to $0.25\degree$ for laser scanners).
+
+3. **Vision** &rarr; cameras provide rich environmental information but require more computational processing. Stereo vision can provide depth information similar to range finders.
+
+Each sensing technology has advantages and limitations depending on the environment and application.
+
+
+## Landmark Identification
+
+Identifying **landmarks** is a crucial step in SLAM. Without this, it will be hard for a robot to place itself in its surroundings. 
+
+A landmark is,
+
+> a feature that can be **re-observed** and **distinguished from environment**
+
+Landmarks are:
+
+- used by robot to find out where it is &rarr; localize itself
+- types of landmarks depend on the environment
+
+
+Good landmarks for SLAM should have the following properties:
+
+- easily **re-observable** from different positions and angles
+- **distinguishable** from other landmarks
+- **stationary** (not moving objects)
+- **plentiful** in the environment
+
+The advantages of **indoor landmarks**,
+
+- lots of **straight lines**
+- well defined corners
+
+The _common_ methods to find/distinguish landmarks use thes properties,
+
+1. [spikes](#landmarks--spikes)
+2. [RANSAC](#ransac-random-sample-consensus)
+3. [scan matching]()
+
+### Landmarks | Spikes
+
+The main idea is &rarr; detecting **significant changes** in range measurements that indicate distinctive features.
+
+This technique,
+
+- uses **extrema** to find landmarks
+- if two values differ > certain amount [e.g. `0.5`]
+- detects **big changes**
+- some beams reflect from walls, others don’t
+
+Here is a sample output from such an algorithm:
+
+<img src="img/slam/landmark_spikes.png" width="300">
+
+<br>
+
+### RANSAC (Random Sample Consensus)
+
+A robust method for extracting lines from laser scans, useful for detecting walls in indoor environments.
+
+# RANSAC Algorithm: Detailed Analysis and Explanation
+
+RANSAC (Random Sample Consensus) is a robust iterative method for estimating mathematical model parameters from a set of observed data that contains outliers. Developed by Fischler and Bolles in 1981, it's widely used in computer vision and image processing tasks.
+
+## Core Concept
+
+The fundamental insight behind RANSAC is that most estimation techniques work well when fitting a model to data containing only inliers (data points that follow the model) but break down when outliers (data points that don't fit the model) are present. RANSAC addresses this by:
+
+1. **randomly sampling** the minimum number of points required to determine model parameters
+2. **fitting** a model to those points
+3. checking which other data points are **consistent** with this model
+4. keeping the model if it has **sufficient support** (enough inliers)
+5. repeating until finding a model with **adequate consensus** or reaching iteration limits
+
+**Algorithm Steps**
+
+1. **select randomly** &rarr; choose a random subset of the original data (the minimum needed to fit the model)
+2. **fit model** &rarr; compute model parameters using only this subset
+3. **determine consensus** &rarr; count how many data points from the entire dataset are consistent with the model (within a specified error threshold)
+4. **evaluate quality** &rarr; if enough points agree with the model, consider it a good fit
+5. **refine model** &rarr; optionally recompute the model using all identified inliers
+6. **repeat** &rarr; try again with new random samples until a sufficiently good model is found or iteration limit is reached
+
+The following demonstrates RANSAC at a high level,
+
+<img src="img/slam/ransac.3.png" width="300">
+<img src="img/slam/ransac.4.png" width="300">
+
+**Important question**: how many readings lie close to best fit line?
+
+
+**Mathematical Formulation**
+
+For a dataset with,
+
+- $n$ `total points
+- a hypothesized probability $\epsilon$ of a point being an **inlier**
+- a **minimum** of $m$ points needed to fit the model
+- a desired probability $p$ of finding at least one good sample
+
+The number of iterations k needed is:
+
+$$
+k = log(1 - p) / log(1 - (1 - ε)^m)
+$$
+
+**Key Parameters**
+
+1. **Inlier threshold**: The maximum distance a point can be from the model to be considered an inlier
+2. **Iteration count**: Maximum number of iterations to attempt
+3. **Consensus threshold**: Minimum number of inliers required to accept a model
+4. **Probability threshold**: Confidence level for finding an optimal model
+
+**Advantages**
+
+- **Robustness**: Highly resistant to outliers, even when they compose the majority of the data
+- **Versatility**: Applicable to many different model types (lines, planes, homographies, etc.)
+- **Simplicity**: Conceptually straightforward and relatively easy to implement
+- **Efficiency**: Often performs well with fewer computations than exhaustive methods
+
+**Limitations**
+
+- **Non-deterministic**: Produces different results on different runs
+- **Parameter sensitivity**: Performance depends heavily on tuning threshold parameters
+- **Computational cost**: May require many iterations for complex models or high outlier ratios
+- **No guarantee**: Can fail to find the optimal solution, especially with poor parameter selection
+
+## Applications
+
+- **Feature matching**: Robust matching of image features across multiple views
+- **Homography estimation**: Computing transformations between images
+- **3D reconstruction**: Estimating camera poses and scene structure
+- **Line/curve fitting**: Finding geometric primitives in noisy data
+- **Object recognition**: Matching object models to observed data
+
+## Implementation Example (Pseudocode)
+
+```
+function RANSAC(data, model, n, k, t, d):
+    best_model = null
+    best_consensus_set = null
+    best_error = infinity
+    
+    for i from 1 to k:
+        maybe_inliers = randomly select n points from data
+        maybe_model = model parameters fitted to maybe_inliers
+        consensus_set = maybe_inliers
+        
+        for point in data not in maybe_inliers:
+            if point fits maybe_model with error < t:
+                add point to consensus_set
+        
+        if size of consensus_set > d:
+            better_model = model parameters fitted to all points in consensus_set
+            this_error = measure of how well better_model fits consensus_set
+            
+            if this_error < best_error:
+                best_model = better_model
+                best_consensus_set = consensus_set
+                best_error = this_error
+    
+    return best_model, best_consensus_set
+```
+
+## Variations and Extensions
+
+- **PROSAC**: Progressive sampling that prioritizes more promising matches
+- **MLESAC**: Maximum Likelihood Estimation version that improves the cost function
+- **LMEDS**: Least Median of Squares, a related robust estimation approach
+- **Preemptive RANSAC**: Early termination strategies to improve efficiency
+- **Multi-RANSAC**: Finding multiple models simultaneously in the same dataset
+
+RANSAC's ability to produce reasonable results even with a significant percentage of outliers makes it a cornerstone algorithm in modern computer vision and many other fields requiring robust model fitting.
+
+##Visual Example**
+
+I'd be happy to add some visual illustrations to help explain RANSAC. Let me create some diagrams that will make the algorithm more intuitive.
+
+# RANSAC Algorithm: Understanding Through Visualization
+
+<img src="img/slam/ransac_visualization.full.svg" width="500">
+
+The diagrams illustrate the key concepts of RANSAC to help better understand how this robust estimation algorithm works:
+
+Fig. **1** &rarr; **Initial Dataset**
+
+- green points represent inliers that follow the true model
+- red points represent outliers that don't fit the model
+- this shows the challenge RANSAC addresses &rarr; finding the correct model despite contamination
+
+Fig. **2** &rarr; **Random Sampling & Bad Model Fit**
+
+- blue circles highlight randomly selected points (including an outlier)
+- the orange dashed line shows a poor model fit resulting from including outliers
+- this demonstrates why random sampling alone isn't enough
+
+Fig. **3** &rarr; **Better Random Sampling**
+- blue circles highlight a better random selection (both inliers)
+- the solid green line shows a much better model fit
+- this illustrates how RANSAC can find good models through multiple random attempts
+
+Fig. **4** &rarr; **Consensus Set Identification**
+
+- gray dashed lines show the error threshold boundaries
+- green points are the identified inliers (consensus set)
+- faded red points are rejected outliers
+- this shows how RANSAC determines which points support the model
+
+Fig. **5** &rarr; **RANSAC Process Flow**
+- flowchart showing the iterative nature of RANSAC:
+- random sampling → Model fitting → Counting inliers → Keeping best model
+- repeat until meeting termination criteria
+
+**Key Insights** from the Visualizations
+
+- RANSAC's power comes from its iterative approach &rarr; if one random sample contains outliers (as in figure 2), future iterations can find better samples (as in figure 3)
+- The error threshold (shown in figure 4) is crucial &rarr; it determines which points are considered inliers
+- the consensus step is what makes RANSAC robust &rarr; it measures how many points support each model
+- the iterative process (figure 5) ensures that with enough attempts, RANSAC can find a good model even with significant outlier contamination
+
+These visualizations help demonstrate why RANSAC is so effective for computer vision tasks like image registration, feature matching and 3D reconstruction where **data often contains many outliers**.
+
+
 
 
 

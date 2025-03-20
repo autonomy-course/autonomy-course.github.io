@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Styles -->
+  <style>
+    text {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+    .title {
+      font-size: 16px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .subtitle {
+      font-size: 12px;
+      font-style: italic;
+      text-anchor: middle;
+    }
+    .label {
+      font-size: 12px;
+      text-anchor: middle;
+    }
+    .inlier {
+      fill: #4CAF50;
+      stroke: #2E7D32;
+      stroke-width: 1;
+    }
+    .outlier {
+      fill: #F44336;
+      stroke: #B71C1C;
+      stroke-width: 1;
+    }
+    .highlight {
+      fill: #2196F3;
+      stroke: #0D47A1;
+      stroke-width: 2;
+    }
+    .model-line {
+      stroke: #000000;
+      stroke-width: 2;
+    }
+    .model-line-bad {
+      stroke: #FF9800;
+      stroke-width: 2;
+      stroke-dasharray: 5,3;
+    }
+    .model-line-good {
+      stroke: #4CAF50;
+      stroke-width: 3;
+    }
+    .threshold-line {
+      stroke: #9E9E9E;
+      stroke-width: 1;
+      stroke-dasharray: 3,3;
+    }
+    .arrow {
+      fill: none;
+      stroke: #616161;
+      stroke-width: 1.5;
+      marker-end: url(#arrowhead);
+    }
+    .box {
+      fill: #FFFFFF;
+      stroke: #9E9E9E;
+      stroke-width: 1;
+    }
+    .legend-box {
+      fill: #FFFFFF;
+      stroke: #9E9E9E;
+      stroke-width: 1;
+      rx: 5;
+      ry: 5;
+    }
+  </style>
+
+  <!-- Markers -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#616161"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="400" y="30" class="title">RANSAC Algorithm: Visual Explanation</text>
+
+  <!-- First diagram: Initial dataset with outliers -->
+  <g transform="translate(0, 0)">
+    <rect x="50" y="50" width="300" height="250" class="box"/>
+    <text x="200" y="75" class="subtitle">1. Data with Outliers</text>
+    
+    <!-- Coordinate system -->
+    <line x1="80" y1="250" x2="320" y2="250" stroke="#000000" stroke-width="1"/>
+    <line x1="80" y1="250" x2="80" y2="100" stroke="#000000" stroke-width="1"/>
+    <text x="200" y="270" class="label">x</text>
+    <text x="60" y="170" class="label">y</text>
+    
+    <!-- Data points - inliers -->
+    <circle cx="100" cy="220" r="4" class="inlier"/>
+    <circle cx="120" cy="210" r="4" class="inlier"/>
+    <circle cx="140" cy="200" r="4" class="inlier"/>
+    <circle cx="160" cy="190" r="4" class="inlier"/>
+    <circle cx="180" cy="180" r="4" class="inlier"/>
+    <circle cx="200" cy="170" r="4" class="inlier"/>
+    <circle cx="220" cy="160" r="4" class="inlier"/>
+    <circle cx="240" cy="150" r="4" class="inlier"/>
+    <circle cx="260" cy="140" r="4" class="inlier"/>
+    <circle cx="280" cy="130" r="4" class="inlier"/>
+    <circle cx="300" cy="120" r="4" class="inlier"/>
+    
+    <!-- Data points - outliers -->
+    <circle cx="110" cy="150" r="4" class="outlier"/>
+    <circle cx="145" cy="230" r="4" class="outlier"/>
+    <circle cx="170" cy="130" r="4" class="outlier"/>
+    <circle cx="210" cy="210" r="4" class="outlier"/>
+    <circle cx="250" cy="190" r="4" class="outlier"/>
+    <circle cx="270" cy="180" r="4" class="outlier"/>
+    <circle cx="290" cy="210" r="4" class="outlier"/>
+    
+    <!-- Legend -->
+    <rect x="100" y="90" width="100" height="50" class="legend-box"/>
+    <circle cx="120" cy="105" r="4" class="inlier"/>
+    <text x="150" y="108" class="label">Inliers</text>
+    <circle cx="120" cy="125" r="4" class="outlier"/>
+    <text x="150" y="128" class="label">Outliers</text>
+  </g>
+
+  <!-- Second diagram: Random sampling -->
+  <g transform="translate(400, 0)">
+    <rect x="50" y="50" width="300" height="250" class="box"/>
+    <text x="200" y="75" class="subtitle">2. Random Sampling &amp; Model Fitting</text>
+    
+    <!-- Coordinate system -->
+    <line x1="80" y1="250" x2="320" y2="250" stroke="#000000" stroke-width="1"/>
+    <line x1="80" y1="250" x2="80" y2="100" stroke="#000000" stroke-width="1"/>
+    <text x="200" y="270" class="label">x</text>
+    <text x="60" y="170" class="label">y</text>
+    
+    <!-- Data points - inliers -->
+    <circle cx="100" cy="220" r="4" class="inlier"/>
+    <circle cx="120" cy="210" r="4" class="inlier"/>
+    <circle cx="140" cy="200" r="4" class="inlier"/>
+    <circle cx="160" cy="190" r="4" class="inlier"/>
+    <circle cx="180" cy="180" r="4" class="inlier"/>
+    <circle cx="200" cy="170" r="4" class="inlier"/>
+    <circle cx="220" cy="160" r="4" class="inlier"/>
+    <circle cx="240" cy="150" r="4" class="inlier"/>
+    <circle cx="260" cy="140" r="4" class="inlier"/>
+    <circle cx="280" cy="130" r="4" class="inlier"/>
+    <circle cx="300" cy="120" r="4" class="inlier"/>
+    
+    <!-- Data points - outliers -->
+    <circle cx="110" cy="150" r="4" class="outlier"/>
+    <circle cx="145" cy="230" r="4" class="outlier"/>
+    <circle cx="170" cy="130" r="4" class="outlier"/>
+    <circle cx="210" cy="210" r="4" class="outlier"/>
+    <circle cx="250" cy="190" r="4" class="outlier"/>
+    <circle cx="270" cy="180" r="4" class="outlier"/>
+    <circle cx="290" cy="210" r="4" class="outlier"/>
+    
+    <!-- Highlighted random samples (bad) -->
+    <circle cx="110" cy="150" r="6" class="highlight"/>
+    <circle cx="210" cy="210" r="6" class="highlight"/>
+    
+    <!-- Bad model -->
+    <line x1="80" y1="130" x2="320" y2="230" class="model-line-bad"/>
+    
+    <!-- Legend -->
+    <rect x="100" y="90" width="150" height="50" class="legend-box"/>
+    <circle cx="120" cy="105" r="6" class="highlight"/>
+    <text x="180" y="108" class="label">Random samples</text>
+    <line x1="110" y1="125" x2="130" y2="125" class="model-line-bad"/>
+    <text x="180" y="128" class="label">Fitted model</text>
+  </g>
+
+  <!-- Third diagram: Better sampling -->
+  <g transform="translate(0, 300)">
+    <rect x="50" y="50" width="300" height="250" class="box"/>
+    <text x="200" y="75" class="subtitle">3. Better Random Sampling</text>
+    
+    <!-- Coordinate system -->
+    <line x1="80" y1="250" x2="320" y2="250" stroke="#000000" stroke-width="1"/>
+    <line x1="80" y1="250" x2="80" y2="100" stroke="#000000" stroke-width="1"/>
+    <text x="200" y="270" class="label">x</text>
+    <text x="60" y="170" class="label">y</text>
+    
+    <!-- Data points - inliers -->
+    <circle cx="100" cy="220" r="4" class="inlier"/>
+    <circle cx="120" cy="210" r="4" class="inlier"/>
+    <circle cx="140" cy="200" r="4" class="inlier"/>
+    <circle cx="160" cy="190" r="4" class="inlier"/>
+    <circle cx="180" cy="180" r="4" class="inlier"/>
+    <circle cx="200" cy="170" r="4" class="inlier"/>
+    <circle cx="220" cy="160" r="4" class="inlier"/>
+    <circle cx="240" cy="150" r="4" class="inlier"/>
+    <circle cx="260" cy="140" r="4" class="inlier"/>
+    <circle cx="280" cy="130" r="4" class="inlier"/>
+    <circle cx="300" cy="120" r="4" class="inlier"/>
+    
+    <!-- Data points - outliers -->
+    <circle cx="110" cy="150" r="4" class="outlier"/>
+    <circle cx="145" cy="230" r="4" class="outlier"/>
+    <circle cx="170" cy="130" r="4" class="outlier"/>
+    <circle cx="210" cy="210" r="4" class="outlier"/>
+    <circle cx="250" cy="190" r="4" class="outlier"/>
+    <circle cx="270" cy="180" r="4" class="outlier"/>
+    <circle cx="290" cy="210" r="4" class="outlier"/>
+    
+    <!-- Highlighted random samples (good) -->
+    <circle cx="120" cy="210" r="6" class="highlight"/>
+    <circle cx="260" cy="140" r="6" class="highlight"/>
+    
+    <!-- Good model line -->
+    <line x1="80" y1="230" x2="320" y2="110" class="model-line-good"/>
+    
+    <!-- Legend -->
+    <rect x="100" y="90" width="150" height="50" class="legend-box"/>
+    <circle cx="120" cy="105" r="6" class="highlight"/>
+    <text x="180" y="108" class="label">Random samples</text>
+    <line x1="110" y1="125" x2="130" y2="125" class="model-line-good"/>
+    <text x="180" y="128" class="label">Better model fit</text>
+  </g>
+
+  <!-- Fourth diagram: Consensus set -->
+  <g transform="translate(400, 300)">
+    <rect x="50" y="50" width="300" height="250" class="box"/>
+    <text x="200" y="75" class="subtitle">4. Finding Consensus Set</text>
+    
+    <!-- Coordinate system -->
+    <line x1="80" y1="250" x2="320" y2="250" stroke="#000000" stroke-width="1"/>
+    <line x1="80" y1="250" x2="80" y2="100" stroke="#000000" stroke-width="1"/>
+    <text x="200" y="270" class="label">x</text>
+    <text x="60" y="170" class="label">y</text>
+    
+    <!-- Good model line -->
+    <line x1="80" y1="230" x2="320" y2="110" class="model-line-good"/>
+    
+    <!-- Threshold lines -->
+    <line x1="80" y1="240" x2="320" y2="120" class="threshold-line"/>
+    <line x1="80" y1="220" x2="320" y2="100" class="threshold-line"/>
+    
+    <!-- Data points - inliers (highlighted) -->
+    <circle cx="100" cy="220" r="5" class="inlier"/>
+    <circle cx="120" cy="210" r="5" class="inlier"/>
+    <circle cx="140" cy="200" r="5" class="inlier"/>
+    <circle cx="160" cy="190" r="5" class="inlier"/>
+    <circle cx="180" cy="180" r="5" class="inlier"/>
+    <circle cx="200" cy="170" r="5" class="inlier"/>
+    <circle cx="220" cy="160" r="5" class="inlier"/>
+    <circle cx="240" cy="150" r="5" class="inlier"/>
+    <circle cx="260" cy="140" r="5" class="inlier"/>
+    <circle cx="280" cy="130" r="5" class="inlier"/>
+    <circle cx="300" cy="120" r="5" class="inlier"/>
+    
+    <!-- Data points - outliers (faded) -->
+    <circle cx="110" cy="150" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    <circle cx="145" cy="230" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    <circle cx="170" cy="130" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    <circle cx="210" cy="210" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    <circle cx="250" cy="190" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    <circle cx="270" cy="180" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    <circle cx="290" cy="210" r="4" fill="#FFCDD2" stroke="#FFCDD2"/>
+    
+    <!-- Legend -->
+    <rect x="100" y="90" width="150" height="70" class="legend-box"/>
+    <line x1="110" y1="105" x2="130" y2="105" class="model-line-good"/>
+    <text x="180" y="108" class="label">Best model</text>
+    <line x1="110" y1="125" x2="130" y2="125" class="threshold-line"/>
+    <text x="180" y="128" class="label">Error threshold</text>
+    <circle cx="120" cy="145" r="5" class="inlier"/>
+    <text x="180" y="148" class="label">Consensus set</text>
+  </g>
+
+  <!-- Fifth diagram: Final result -->
+  <g transform="translate(0, 600)">
+    <rect x="50" y="50" width="700" height="150" class="box"/>
+    <text x="400" y="75" class="subtitle">5. RANSAC Process Flow</text>
+    
+    <!-- Process flow -->
+    <rect x="80" y="100" width="100" height="50" rx="10" ry="10" fill="#E3F2FD" stroke="#1565C0"/>
+    <text x="130" y="130" class="label">Random Sample</text>
+    
+    <rect x="230" y="100" width="100" height="50" rx="10" ry="10" fill="#E8F5E9" stroke="#2E7D32"/>
+    <text x="280" y="130" class="label">Fit Model</text>
+    
+    <rect x="380" y="100" width="100" height="50" rx="10" ry="10" fill="#FFF3E0" stroke="#E65100"/>
+    <text x="430" y="123" class="label">Count Inliers</text>
+    <text x="430" y="138" class="label">(Consensus)</text>
+    
+    <rect x="530" y="100" width="100" height="50" rx="10" ry="10" fill="#F3E5F5" stroke="#6A1B9A"/>
+    <text x="580" y="123" class="label">Keep Best</text>
+    <text x="580" y="138" class="label">Model</text>
+    
+    <!-- Arrows -->
+    <path d="M 180 125 L 230 125" class="arrow"/>
+    <path d="M 330 125 L 380 125" class="arrow"/>
+    <path d="M 480 125 L 530 125" class="arrow"/>
+    <path d="M 580 160 A 50 50 0 0 1 530 200 L 130 200 A 50 50 0 0 1 80 160" class="arrow" stroke-dasharray="5,3"/>
+    <text x="300" y="185" class="label">Repeat until consensus threshold or max iterations</text>
+ 
+  </g>
+</svg>
