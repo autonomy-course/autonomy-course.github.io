@@ -606,10 +606,8 @@ George Washington University</p></li>
         Comparison</a></li>
         </ul></li>
         </ul></li>
-        <li><a href="#simultaneous-localization-and-mapping-slam"
-        id="toc-simultaneous-localization-and-mapping-slam"><span
-        class="toc-section-number">10</span> Simultaneous Localization
-        and Mapping (SLAM)</a>
+        <li><a href="#slam-1" id="toc-slam-1"><span
+        class="toc-section-number">10</span> SLAM</a>
         <ul>
         <li><a href="#slam-problem-definition"
         id="toc-slam-problem-definition"><span
@@ -643,32 +641,15 @@ George Washington University</p></li>
         id="toc-ransac-random-sample-consensus"><span
         class="toc-section-number">10.4.2</span> RANSAC (Random Sample
         Consensus)</a></li>
-        </ul></li>
-        </ul></li>
-        <li><a
-        href="#ransac-algorithm-detailed-analysis-and-explanation"
-        id="toc-ransac-algorithm-detailed-analysis-and-explanation"><span
-        class="toc-section-number">11</span> RANSAC Algorithm: Detailed
-        Analysis and Explanation</a>
-        <ul>
-        <li><a href="#core-concept" id="toc-core-concept"><span
-        class="toc-section-number">11.1</span> Core Concept</a></li>
-        <li><a href="#applications" id="toc-applications"><span
-        class="toc-section-number">11.2</span> Applications</a></li>
         <li><a href="#implementation-example-pseudocode"
         id="toc-implementation-example-pseudocode"><span
-        class="toc-section-number">11.3</span> Implementation Example
+        class="toc-section-number">10.4.3</span> Implementation Example
         (Pseudocode)</a></li>
-        <li><a href="#variations-and-extensions"
-        id="toc-variations-and-extensions"><span
-        class="toc-section-number">11.4</span> Variations and
-        Extensions</a></li>
+        <li><a href="#visual-example" id="toc-visual-example"><span
+        class="toc-section-number">10.4.4</span> Visual
+        Example**</a></li>
         </ul></li>
-        <li><a
-        href="#ransac-algorithm-understanding-through-visualization"
-        id="toc-ransac-algorithm-understanding-through-visualization"><span
-        class="toc-section-number">12</span> RANSAC Algorithm:
-        Understanding Through Visualization</a></li>
+        </ul></li>
         </ul>
 
         </div>
@@ -13894,11 +13875,9 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             </section>
             </section>
             </section>
-            <section id="simultaneous-localization-and-mapping-slam"
-            class="level1" data-number="10">
+            <section id="slam-1" class="level1" data-number="10">
             <h1 data-number="10"><span
-            class="header-section-number">10</span> Simultaneous
-            Localization and Mapping (SLAM)</h1>
+            class="header-section-number">10</span> SLAM</h1>
             <p>Consider a robot (a Roomba vacuum cleaner, say) trying to
             navigate inside a room. Now, it can do this in one of two
             ways:</p>
@@ -14440,24 +14419,11 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             Sample Consensus)</h3>
             <p>A robust method for extracting lines from laser scans,
             useful for detecting walls in indoor environments.</p>
-            </section>
-            </section>
-            </section>
-            <section
-            id="ransac-algorithm-detailed-analysis-and-explanation"
-            class="level1" data-number="11">
-            <h1 data-number="11"><span
-            class="header-section-number">11</span> RANSAC Algorithm:
-            Detailed Analysis and Explanation</h1>
             <p>RANSAC (Random Sample Consensus) is a robust iterative
             method for estimating mathematical model parameters from a
             set of observed data that contains outliers. Developed by
             Fischler and Bolles in 1981, it’s widely used in computer
             vision and image processing tasks.</p>
-            <section id="core-concept" class="level2"
-            data-number="11.1">
-            <h2 data-number="11.1"><span
-            class="header-section-number">11.1</span> Core Concept</h2>
             <p>The fundamental insight behind RANSAC is that most
             estimation techniques work well when fitting a model to data
             containing only inliers (data points that follow the model)
@@ -14552,11 +14518,7 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             optimal solution, especially with poor parameter
             selection</li>
             </ul>
-            </section>
-            <section id="applications" class="level2"
-            data-number="11.2">
-            <h2 data-number="11.2"><span
-            class="header-section-number">11.2</span> Applications</h2>
+            <p><strong>Applications</strong></p>
             <ul>
             <li><strong>Feature matching</strong>: Robust matching of
             image features across multiple views</li>
@@ -14571,10 +14533,10 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             </ul>
             </section>
             <section id="implementation-example-pseudocode"
-            class="level2" data-number="11.3">
-            <h2 data-number="11.3"><span
-            class="header-section-number">11.3</span> Implementation
-            Example (Pseudocode)</h2>
+            class="level3" data-number="10.4.3">
+            <h3 data-number="10.4.3"><span
+            class="header-section-number">10.4.3</span> Implementation
+            Example (Pseudocode)</h3>
             <pre><code>function RANSAC(data, model, n, k, t, d):
     best_model = null
     best_consensus_set = null
@@ -14599,12 +14561,7 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
                 best_error = this_error
     
     return best_model, best_consensus_set</code></pre>
-            </section>
-            <section id="variations-and-extensions" class="level2"
-            data-number="11.4">
-            <h2 data-number="11.4"><span
-            class="header-section-number">11.4</span> Variations and
-            Extensions</h2>
+            <p><strong>Variations and Extensions</strong></p>
             <ul>
             <li><strong>PROSAC</strong>: Progressive sampling that
             prioritizes more promising matches</li>
@@ -14621,18 +14578,12 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             a significant percentage of outliers makes it a cornerstone
             algorithm in modern computer vision and many other fields
             requiring robust model fitting.</p>
-            <p>##Visual Example**</p>
-            <p>I’d be happy to add some visual illustrations to help
-            explain RANSAC. Let me create some diagrams that will make
-            the algorithm more intuitive.</p>
             </section>
-            </section>
-            <section
-            id="ransac-algorithm-understanding-through-visualization"
-            class="level1" data-number="12">
-            <h1 data-number="12"><span
-            class="header-section-number">12</span> RANSAC Algorithm:
-            Understanding Through Visualization</h1>
+            <section id="visual-example" class="level3"
+            data-number="10.4.4">
+            <h3 data-number="10.4.4"><span
+            class="header-section-number">10.4.4</span> Visual
+            Example**</h3>
             <p><img src="img/slam/ransac_visualization.full.svg" width="500"></p>
             <p>The diagrams illustrate the key concepts of RANSAC to
             help better understand how this robust estimation algorithm
@@ -14695,6 +14646,8 @@ analogWrite(PWM_PIN, 255);  // 100% Duty Cycle or full speed</code></pre>
             effective for computer vision tasks like image registration,
             feature matching and 3D reconstruction where <strong>data
             often contains many outliers</strong>.</p>
+            </section>
+            </section>
             </section>
             <section id="footnotes"
             class="footnotes footnotes-end-of-document"

@@ -7184,7 +7184,7 @@ The UKF's ability to better capture nonlinear transformations makes it particula
 
 <!--rel="stylesheet" href="./custom.sibin.css"-->
 
-# Simultaneous Localization and Mapping (SLAM)
+# SLAM
 
 Consider a robot (a Roomba vacuum cleaner, say) trying to navigate inside a room. Now, it can do this in one of two ways:
 
@@ -7476,11 +7476,7 @@ Here is a sample output from such an algorithm:
 
 A robust method for extracting lines from laser scans, useful for detecting walls in indoor environments.
 
-# RANSAC Algorithm: Detailed Analysis and Explanation
-
 RANSAC (Random Sample Consensus) is a robust iterative method for estimating mathematical model parameters from a set of observed data that contains outliers. Developed by Fischler and Bolles in 1981, it's widely used in computer vision and image processing tasks.
-
-## Core Concept
 
 The fundamental insight behind RANSAC is that most estimation techniques work well when fitting a model to data containing only inliers (data points that follow the model) but break down when outliers (data points that don't fit the model) are present. RANSAC addresses this by:
 
@@ -7543,7 +7539,7 @@ $$
 - **Computational cost**: May require many iterations for complex models or high outlier ratios
 - **No guarantee**: Can fail to find the optimal solution, especially with poor parameter selection
 
-## Applications
+**Applications**
 
 - **Feature matching**: Robust matching of image features across multiple views
 - **Homography estimation**: Computing transformations between images
@@ -7551,7 +7547,7 @@ $$
 - **Line/curve fitting**: Finding geometric primitives in noisy data
 - **Object recognition**: Matching object models to observed data
 
-## Implementation Example (Pseudocode)
+### Implementation Example (Pseudocode)
 
 ```
 function RANSAC(data, model, n, k, t, d):
@@ -7580,7 +7576,7 @@ function RANSAC(data, model, n, k, t, d):
     return best_model, best_consensus_set
 ```
 
-## Variations and Extensions
+**Variations and Extensions**
 
 - **PROSAC**: Progressive sampling that prioritizes more promising matches
 - **MLESAC**: Maximum Likelihood Estimation version that improves the cost function
@@ -7590,11 +7586,7 @@ function RANSAC(data, model, n, k, t, d):
 
 RANSAC's ability to produce reasonable results even with a significant percentage of outliers makes it a cornerstone algorithm in modern computer vision and many other fields requiring robust model fitting.
 
-##Visual Example**
-
-I'd be happy to add some visual illustrations to help explain RANSAC. Let me create some diagrams that will make the algorithm more intuitive.
-
-# RANSAC Algorithm: Understanding Through Visualization
+### Visual Example**
 
 <img src="img/slam/ransac_visualization.full.svg" width="500">
 
