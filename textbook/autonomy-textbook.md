@@ -7586,7 +7586,7 @@ function RANSAC(data, model, n, k, t, d):
 
 RANSAC's ability to produce reasonable results even with a significant percentage of outliers makes it a cornerstone algorithm in modern computer vision and many other fields requiring robust model fitting.
 
-### Visual Example**
+### Visual Example
 
 <img src="img/slam/ransac_visualization.full.svg" width="500">
 
