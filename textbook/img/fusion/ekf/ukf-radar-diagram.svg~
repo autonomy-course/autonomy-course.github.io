@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
   <!-- Background -->
-  <rect x="0" y="0" width="800" height="500" fill="white"/>
+  <rect x="0" y="0" width="800" height="500" fill="#f8f9fa"/>
   
   <!-- Grid lines -->
   <g stroke="#DDDDDD" stroke-width="1">
@@ -162,10 +162,10 @@
   <text x="625" y="155" font-size="14" text-anchor="start">True Trajectory</text>
   
   <circle cx="590" cy="180" r="6" fill="#CC0000"/>
-  <text x="625" y="185" font-size="14" text-anchor="start">EKF Estimate</text>
+  <text x="700" y="185" font-size="14" text-anchor="start">EKF Estimate</text>
   
   <circle cx="590" cy="210" r="6" fill="#0066CC"/>
-  <text x="625" y="215" font-size="14" text-anchor="start">UKF Estimate</text>
+  <text x="700" y="215" font-size="14" text-anchor="start">UKF Estimate</text>
   
   <!-- Inset diagram showing sigma points concept -->
   <rect x="550" y="240" width="200" height="140" fill="white" stroke="#AAAAAA" stroke-width="1"/>

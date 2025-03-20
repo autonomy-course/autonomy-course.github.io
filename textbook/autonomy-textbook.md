@@ -7117,9 +7117,9 @@ To illustrate the difference between EKF and UKF performance, consider a radar-b
 
 **System Configuration:**
 
-- single radar measuring range, azimuth, and range-rate to a target
+- single radar measuring range, azimuth and range-rate to a target
 - target following a coordinated turn trajectory (highly nonlinear dynamics)
-- measurement frequency: 1 Hz
+- measurement frequency: $1$ Hz
 - state vector: $[x, y, velocity_x, velocity_y, turn\_rate]$
 
 **Nonlinearity Challenges:**
