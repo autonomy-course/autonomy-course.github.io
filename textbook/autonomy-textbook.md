@@ -7046,6 +7046,8 @@ while True:
         P = (np.eye(5) - K @ H_gps) @ P
 ```
 
+
+
 **Analysis**
 
 1. **high-frequency updates** &rarr; IMU provides updates at $100-1000$ Hz, allowing for **smooth tracking**
@@ -7064,6 +7066,116 @@ The following graph shows a typical position tracking result comparing:
 <img src="img/fusion/ekf/positional-tracking.svg" width="300">
 
 <br>
+
+<details>
+<summary>Why does the EKF follow the GPS line more closely even though the IMU updates more frequently and (seemingly) starts with lower error?</summary>
+
+From the code, we see:
+
+```
+# Measurement noise covariance
+R_gps = np.diag([5.0, 5.0])  # GPS position accuracy (in meters)
+R_imu = np.diag([0.5, 0.5, 0.1])  # IMU velocity and heading accuracy
+```
+
+This might _seem_ counterintuitive, but there are several important reasons for this behavior:
+
+1. **complementary error characteristics**: GPS provides **absolute position measurements with bounded error**, while IMU measures **relative changes** (acceleration and angular velocity) that suffer from **unbounded error accumulation** (drift). The Kalman filter weights these complementary information sources.
+
+2. **different types of uncertainty**: although IMU updates more frequently, its measurements must be **integrated** once or even twice (for angular position and linear position respectively) to obtain position estimates. This integration process significantly **amplifies errors over time**, resulting in **drift**.
+
+3. **Observability concerns**: position is **directly observable** from GPS but only **indirectly observable** from IMU via double integration. The EKF tends to give more weight to directly observable states when determining the optimal fusion.
+
+4. **Bias and scale factor errors**: IMUs typically suffer from bias and scale factor errors that, while small initially, **compound over time through the integration** process, making their long-term position estimates less reliable.
+
+5. **Anchoring effect**: GPS provides "ground truth" position fixes that anchor the estimated trajectory, while IMU primarily contributes to tracking short-term dynamics between GPS updates.
+
+This behavior is actually **desirable** in navigation systems -- the fusion algorithm,
+
+- leverages the IMU's excellent short-term accuracy and high update rate to track dynamic movements while 
+- using the GPS's long-term stability to periodically correct the accumulated drift. 
+
+This is why in the visualization, during GPS outages, the EKF fusion trajectory _initially_ follows the IMU-only path but _gradually converges_ back to the GPS trajectory once GPS measurements become available again.
+
+Let's work through the equations using **concrete** values. First, let's understand the key mathematical reason for IMU drift versus GPS stability:
+
+**1.** Integration Error Analysis for IMU
+
+For an IMU, we integrate acceleration twice to get position:
+
+```
+velocity(t) = ∫ Acceleration(τ) dτ
+position(t) = ∫∫ Acceleration(τ) dτ²
+```
+
+Let's assume a constant acceleration bias error of ε in an IMU. After time t, the position error becomes:
+
+```
+position error = (ε·t²)/2
+```
+
+This shows the error grows quadratically with time - a fundamental problem with inertial navigation.
+
+**2.** GPS Error Characteristics
+
+GPS error is relatively constant over time and doesn't accumulate:
+
+```
+position error(GPS) ≈ constant
+```
+
+**3.** Quantitative Analysis Based on the Example
+
+Looking at the code in the document:
+
+```python
+# Process noise covariance
+Q = np.diag([0.1, 0.1, 1.0, 1.0, 0.01])
+
+# Measurement noise covariance
+R_gps = np.diag([5.0, 5.0])  # GPS position accuracy (in meters)
+R_imu = np.diag([0.5, 0.5, 0.1])  # IMU velocity and heading accuracy
+```
+
+Let's calculate how errors propagate:
+
+1. **IMU velocity error after $10$ seconds**:
+   - initial uncertainty: $0.5 m/s$ (from $R_{imu}$)
+   - process noise: $1.0 m/s²$ (from $Q$ for velocity)
+   - After $10s$: $\sqrt{(0.5)^2 + (1.0 \cdot 10)^2} \approx 10.01 \text{ m/s}$
+
+2. **Position error from IMU after 10 seconds**:
+   - From velocity error: $10.01 m/s \cdot \frac{10s}{2} \approx 50.05 m$
+   - From position process noise: $0.1 m \cdot 10s \approx 1 m$
+   - Total IMU-derived position error $\approx 51.05 m$
+
+3. **GPS position error**:
+   - Constant: $5.0 m$ (from $R_{gps}$)
+
+The Kalman gain K is calculated as:
+
+$$K_k = P_{k|k-1} H_k^T (H_k P_{k|k-1} H_k^T + R_k)^{-1}$$
+
+After 10 seconds, the predicted error covariance P for position from IMU-only would be dominated by the integrated errors (~51 m), while the GPS measurement error remains at 5 m. This leads to:
+
+$$K \approx \frac{51^2}{51^2 + 5^2} \approx 0.99$$
+
+for GPS updates.
+
+This means the filter will weigh the GPS measurement at about $99\%$ and the IMU-propagated position at only about $1 \%$ when a GPS measurement arrives after $10$ seconds of IMU-only navigation.
+
+**4.** Visual Evidence from the Graph
+
+In the position tracking visualization, you can see:
+
+1. where GPS is available, the green EKF line closely follows the blue GPS points
+2. during the GPS outage region (red shaded area), the EKF initially follows the orange IMU track
+3. the IMU-only orange line progressively deviates from the ground truth (black dashed line)
+4. when GPS becomes available again, the EKF quickly converges back to GPS measurements
+
+This behavior directly confirms our mathematical analysis. The Kalman filter is doing exactly what it should: using high-frequency IMU data for short-term tracking but relying more heavily on GPS for long-term stability due to the fundamentally different error accumulation characteristics of the two sensors.
+</details>
+
 
 ### Miscellaneous and Advanced Topics
 
