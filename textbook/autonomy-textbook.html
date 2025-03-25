@@ -13871,13 +13871,43 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <p><br></p>
             <p><strong>Handling Non-Gaussian Noise</strong></p>
             <p>EKF assumes that both process and measurement noise are
-            Gaussian. For systems with non-Gaussian noise, consider: |
-            <strong>method</strong> | description | |:———–|:————| |
-            <strong>particle filters</strong> | represent the
-            probability distribution using samples | | <strong>robust
-            kalman filters</strong> | use heavy-tailed distributions to
-            model outliers | | <strong>pre-filtering</strong> | apply
-            outlier rejection before using EKF | ||</p>
+            Gaussian. For systems with non-Gaussian noise, consider:</p>
+            <table>
+            <colgroup>
+            <col style="width: 48%" />
+            <col style="width: 52%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;"><strong>method</strong></th>
+            <th style="text-align: left;">description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><strong>particle
+            filters</strong></td>
+            <td style="text-align: left;">represent the probability
+            distribution using samples</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>robust kalman
+            filters</strong></td>
+            <td style="text-align: left;">use heavy-tailed distributions
+            to model outliers</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>pre-filtering</strong></td>
+            <td style="text-align: left;">apply outlier rejection before
+            using EKF</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
             <p>The Extended Kalman Filter is a powerful tool for sensor
             fusion in nonlinear systems. It provides a principled
             approach for combining measurements from multiple sensors
@@ -14075,8 +14105,8 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <td><strong>locate</strong> itself within that map</td>
             </tr>
             <tr>
-            <td><img src="img/slam/mapping.png"></td>
-            <td><img src="img/slam/truck.png"></td>
+            <td><img src="img/slam/mapping.png" width="100"></td>
+            <td><img src="img/slam/truck.png" width="100"></td>
             </tr>
             <tr>
             <td></td>
@@ -14245,12 +14275,39 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             autonomous decision-making.</li>
             </ul></li>
             </ol>
-            <p>Hence, | component | description | |—|—| | front end
-            (sensor-dependent) | processes raw sensor data (motion
-            estimation, obstacle detection) | | back end
-            (sensor-independent) | optimizes the trajectory and map | |
-            final output | a refined pose graph and map for accurate
-            navigation | ||</p>
+            <p>Hence,</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>component</th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>front end (sensor-dependent)</td>
+            <td>processes raw sensor data (motion estimation, obstacle
+            detection)</td>
+            </tr>
+            <tr>
+            <td>back end (sensor-independent)</td>
+            <td>optimizes the trajectory and map</td>
+            </tr>
+            <tr>
+            <td>final output</td>
+            <td>a refined pose graph and map for accurate
+            navigation</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             <p>This structured approach ensures real-time and accurate
             localization while reducing computational complexity.</p>
             <p>We can distill all of the above “steps” into the
@@ -14360,8 +14417,11 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             class="math inline"><em>x</em><sub>1 : <em>t</em></sub></span>
             along with the map <span
             class="math inline"><em>m</em></span></li>
-            <li>the equation: <span
-            class="math display"><em>p</em>(<em>x</em><sub>1 : <em>t</em></sub>, <em>m</em>|<em>z</em><sub>1 : <em>t</em></sub>, <em>u</em><sub>1 : <em>t</em></sub>)</span></li>
+            <li>the equation:</li>
+            </ul>
+            <p><span
+            class="math display"><em>p</em>(<em>x</em><sub>1 : <em>t</em></sub>, <em>m</em>|<em>z</em><sub>1 : <em>t</em></sub>, <em>u</em><sub>1 : <em>t</em></sub>)</span></p>
+            <ul>
             <li>indicates that we compute the joint probability over all
             past and current poses, rather than marginalizing them
             out</li>
@@ -14392,18 +14452,17 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <li>the model estimates only the most recent pose <span
             class="math inline"><em>x</em><sub><em>t</em></sub></span>
             and the map <span class="math inline"><em>m</em></span></li>
-            <li>the equation: <span
-            class="math display"><em>p</em>(<em>x</em><sub><em>t</em></sub>, <em>m</em> ∣ <em>z</em><sub>1 : <em>t</em></sub>, <em>u</em><sub>1 : <em>t</em></sub>) = ∫∫...∫<em>p</em>(<em>x</em><sub>1 : <em>t</em></sub>, <em>m</em> ∣ <em>z</em><sub>1 : <em>t</em></sub>, <em>u</em><sub>1 : <em>t</em></sub>)<em>d</em><em>x</em><sub>1</sub><em>d</em><em>x</em><sub>2</sub>...<em>d</em><em>x</em><sub><em>t</em> − 1</sub></span>
-            shows that all past poses <span
+            <li>the equation:</li>
+            </ul>
+            <p><span
+            class="math display"><em>p</em>(<em>x</em><sub><em>t</em></sub>, <em>m</em> ∣ <em>z</em><sub>1 : <em>t</em></sub>, <em>u</em><sub>1 : <em>t</em></sub>) = ∫∫...∫<em>p</em>(<em>x</em><sub>1 : <em>t</em></sub>, <em>m</em> ∣ <em>z</em><sub>1 : <em>t</em></sub>, <em>u</em><sub>1 : <em>t</em></sub>)<em>d</em><em>x</em><sub>1</sub><em>d</em><em>x</em><sub>2</sub>...<em>d</em><em>x</em><sub><em>t</em> − 1</sub></span></p>
+            <p>shows that all past poses <span
             class="math inline"><em>x</em><sub>1 : <em>t</em> − 1</sub></span>
             are marginalized out, leaving only the current pose and the
-            map</li>
-            <li>gray-shaded area in the graphical model highlights that
-            only the current pose is maintained explicitly</li>
-            <li>this approach is <strong>computationally
-            efficient</strong> and suitable for real-time
-            applications</li>
-            </ul>
+            map - gray-shaded area in the graphical model highlights
+            that only the current pose is maintained explicitly - this
+            approach is <strong>computationally efficient</strong> and
+            suitable for real-time applications</p>
             </section>
             <section id="interpretation" class="level3"
             data-number="10.2.2">
@@ -14709,8 +14768,8 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <strong>robust against people</strong>!</p>
             <p>Here is an example of an RANSAC output obtained from a
             LiDAR scan:</p>
-            <p><img src="img/slam/ransac_lidar_output.1.png" height="200">
-            <img src="img/slam/ransac_lidar_output.2.png" height="200"></p>
+            <p><img src="img/slam/ransac_lidar_output.1.png" width="200">
+            <img src="img/slam/ransac_lidar_output.2.png" width="200"></p>
             </section>
             <section id="pseudocode" class="level3"
             data-number="10.4.3">

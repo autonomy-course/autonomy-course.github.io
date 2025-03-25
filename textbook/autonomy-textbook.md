@@ -7196,6 +7196,7 @@ This behavior directly confirms our mathematical analysis. The Kalman filter is 
 **Handling Non-Gaussian Noise**
 
 EKF assumes that both process and measurement noise are Gaussian. For systems with non-Gaussian noise, consider:
+
 | **method** | description |
 |:-----------|:------------|
 | **particle filters** | represent the probability distribution using samples |
@@ -7313,7 +7314,7 @@ This is particulalry effective when the system has **obstacles** in it, _e.g.,_ 
 |||
 |---|---|
 |create a **map** of its surroundings | **locate** itself within that map|
-| <img src="img/slam/mapping.png"> |<img src="img/slam/truck.png"> |
+| <img src="img/slam/mapping.png" width="100"> |<img src="img/slam/truck.png" width="100"> |
 ||
 
 Enter **simultaneous localization and mapping** (SLAM) which represents one of the fundamental challenges in mobile robotics. As the name suggests, SLAM involves solving two interconnected problems at once: building a map of an unknown environment while simultaneously tracking the robot's position within that environment. The need for SLAM arises from a seemingly paradoxical situation: to build an accurate map, a robot needs to know its precise location, but to determine its precise location, the robot needs an accurate map. This chicken-and-egg problem is what makes SLAM challenging and fascinating.
@@ -7383,6 +7384,7 @@ In the real world, the mapping between observations and landmarks is unknown. Pi
 
 > In robotics and computer vision, **"pose"** refers to the position and orientation of an object or a robot in a given space.
 >
+> 
 > For instance, 2D Pose (in planar systems)
 >
 >- position: (x, y)
@@ -7424,6 +7426,7 @@ Let’s go over each component:
 	- map can be used for navigation, obstacle avoidance, and autonomous decision-making.
 
 Hence, 
+
 | component | description |
 |---|---|
 | front end (sensor-dependent) | processes raw sensor data (motion estimation, obstacle detection) |
@@ -7465,9 +7468,11 @@ First, let's define some terms,
 
 - the model estimates the **entire trajectory** $x_{1:t}$ along with the map $m$
 - the equation:
+
 $$
 p(x_{1:t}, m | z_{1:t}, u_{1:t})
-$$ 
+$$
+
 - indicates that we compute the joint probability over all past and current poses, rather than marginalizing them out
 - gray-shaded area (fromt he figure) covers all past poses $x_{1:t}$, indicating that they are explicitly maintained in the estimation
 - this approach provides **smoothing**, allowing the system to refine past estimates when new observations are received
@@ -7482,9 +7487,11 @@ $$
 
 - the model estimates only the most recent pose $x_t$ and the map $m$
 - the equation:
-  $$
-  p(x_t, m \mid z_{1:t}, u_{1:t}) = \int\int...\int p(x_{1:t}, m \mid z_{1:t}, u_{1:t}) dx_1 dx_2...dx_{t-1}
-  $$
+
+$$
+p(x_t, m \mid z_{1:t}, u_{1:t}) = \int\int...\int p(x_{1:t}, m \mid z_{1:t}, u_{1:t}) dx_1 dx_2...dx_{t-1}
+$$
+
   shows that all past poses $x_{1:t-1}$ are marginalized out, leaving only the current pose and the map
 - gray-shaded area in the graphical model highlights that only the current pose is maintained explicitly
 - this approach is **computationally efficient** and suitable for real-time applications
@@ -7667,8 +7674,8 @@ One of the main advantages of RANSAC is that it is **robust against people**!
 
 Here is an example of an RANSAC output obtained from a LiDAR scan:
 
-<img src="img/slam/ransac_lidar_output.1.png" height="200">
-<img src="img/slam/ransac_lidar_output.2.png" height="200">
+<img src="img/slam/ransac_lidar_output.1.png" width="200">
+<img src="img/slam/ransac_lidar_output.2.png" width="200">
 
 ### Pseudocode
 
