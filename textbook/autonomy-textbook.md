@@ -7926,23 +7926,13 @@ Please read **Chapter 11** in the [SLAM for Dummies](https://dspace.mit.edu/bits
 
 There exist various implementations of SLAM. It is one of the most studied areas in robotics and autonomous systems.  
 
-1. **[Scan matching](https://link.springer.com/chapter/10.1007/978-3-642-13408-1_14)** &rarr; can also be used a generic SLAM method. It attempts to align consecutive laser scans to determine robot displacement. It maximizes the likelihood:
-
-$$
-\hat x_t = \arg\max_{x_t} \{p(z_t | x_t, \hat m^{[t-1]}) \cdot p(x_t | u_{t-1}, \hat x_{t-1})\}
-$$
-
-This approach is computationally efficient but may accumulate errors over time.
+1. **[Scan matching](https://link.springer.com/chapter/10.1007/978-3-642-13408-1_14)** &rarr; can also be used a generic SLAM method. It attempts to align consecutive laser scans to determine robot displacement. This approach is computationally efficient but may accumulate errors over time.
 
 2. **[Submaps Approach](https://www.atlantis-press.com/proceedings/icaic-24/126003458)** &rarr; to manage computational complexity, large environments can be **divided into smaller submaps**. Each submap is built using standard SLAM techniques and then the submaps are connected. This divide-and-conquer approach reduces the computational burden and has been successfully applied in large environments.
 
 3. **[Sparse Extended Information Filters](http://robots.stanford.edu/papers/thrun.seif.pdf)** (SEIF) &rarr;  SEIF is the **information form** of EKF, which maintains the information matrix (inverse of covariance matrix). The information matrix naturally becomes sparse in SLAM, allowing for efficient algorithms.
 
-4. **[FastSLAM](http://robots.stanford.edu/papers/Thrun03g.pdf)** &rarr; uses **particle filters** to represent the robot's path and maintains separate EKFs for each landmark. This factorization takes advantage of conditional independence properties:
-
-$$p(x_{1:t}, m | z_{1:t}, u_{1:t}) = p(x_{1:t} | z_{1:t}, u_{1:t}) \prod_{i=1}^n p(m_i | x_{1:t}, z_{1:t})$$
-
-This approach scales better than standard EKF-SLAM, with complexity $O(M\cdot log N)$ where $M$ is the number of particles and $N$ is number of landmarks.
+4. **[FastSLAM](http://robots.stanford.edu/papers/Thrun03g.pdf)** &rarr; uses **particle filters** to represent the robot's path and maintains separate EKFs for each landmark. This factorization takes advantage of conditional independence properties. This approach scales better than standard EKF-SLAM, with complexity $O(M\cdot log N)$ where $M$ is the number of particles and $N$ is number of landmarks.
 
 
 **References**

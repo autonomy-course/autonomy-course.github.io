@@ -15299,18 +15299,13 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             the most studied areas in robotics and autonomous
             systems.</p>
             <ol type="1">
-            <li><strong><a
+            <li><p><strong><a
             href="https://link.springer.com/chapter/10.1007/978-3-642-13408-1_14">Scan
             matching</a></strong> → can also be used a generic SLAM
             method. It attempts to align consecutive laser scans to
-            determine robot displacement. It maximizes the
-            likelihood:</li>
-            </ol>
-            <p><span
-            class="math display"><em>x̂</em><sub><em>t</em></sub> = arg max<sub><em>x</em><sub><em>t</em></sub></sub>{<em>p</em>(<em>z</em><sub><em>t</em></sub>|<em>x</em><sub><em>t</em></sub>, <em>m̂</em><sup>[<em>t</em> − 1]</sup>) ⋅ <em>p</em>(<em>x</em><sub><em>t</em></sub>|<em>u</em><sub><em>t</em> − 1</sub>, <em>x̂</em><sub><em>t</em> − 1</sub>)}</span></p>
-            <p>This approach is computationally efficient but may
-            accumulate errors over time.</p>
-            <ol start="2" type="1">
+            determine robot displacement. This approach is
+            computationally efficient but may accumulate errors over
+            time.</p></li>
             <li><p><strong><a
             href="https://www.atlantis-press.com/proceedings/icaic-24/126003458">Submaps
             Approach</a></strong> → to manage computational complexity,
@@ -15332,18 +15327,14 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             → uses <strong>particle filters</strong> to represent the
             robot’s path and maintains separate EKFs for each landmark.
             This factorization takes advantage of conditional
-            independence properties:</p></li>
-            </ol>
-            <p><span class="math display">$$p(x_{1:t}, m | z_{1:t},
-            u_{1:t}) = p(x_{1:t} | z_{1:t}, u_{1:t}) \prod_{i=1}^n p(m_i
-            | x_{1:t}, z_{1:t})$$</span></p>
-            <p>This approach scales better than standard EKF-SLAM, with
-            complexity <span
+            independence properties. This approach scales better than
+            standard EKF-SLAM, with complexity <span
             class="math inline"><em>O</em>(<em>M</em> ⋅ <em>l</em><em>o</em><em>g</em><em>N</em>)</span>
             where <span class="math inline"><em>M</em></span> is the
             number of particles and <span
             class="math inline"><em>N</em></span> is number of
-            landmarks.</p>
+            landmarks.</p></li>
+            </ol>
             <p><strong>References</strong></p>
             <ul>
             <li><a
