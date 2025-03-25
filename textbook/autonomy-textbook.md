@@ -7564,8 +7564,8 @@ The advantages of **indoor landmarks**,
 The _common_ methods to find/distinguish landmarks use thes properties,
 
 1. [spikes](#landmarks--spikes)
-2. [RANSAC](#ransac-random-sample-consensus)
-3. [scan matching]()
+2. [RANSAC](#landmarks--ransac-random-sample-consensus)
+3. [scan matching](#landmarks--scan-matching)
 
 ### Landmarks | Spikes
 
@@ -7584,7 +7584,7 @@ Here is a sample output from such an algorithm:
 
 <br>
 
-### RANSAC (Random Sample Consensus)
+### Landmarks | RANSAC (Random Sample Consensus)
 
 A robust method for extracting lines from laser scans, useful for detecting walls in indoor environments.
 
@@ -7612,6 +7612,8 @@ The following demonstrates RANSAC at a high level,
 <img src="img/slam/ransac.3.png" width="300">
 <img src="img/slam/ransac.4.png" width="300">
 
+<br>
+
 **Important question**: how many readings lie close to best fit line?
 
 
@@ -7619,12 +7621,12 @@ The following demonstrates RANSAC at a high level,
 
 For a dataset with,
 
-- $n$ `total points
+- $n$ total points
 - a hypothesized probability $\epsilon$ of a point being an **inlier**
 - a **minimum** of $m$ points needed to fit the model
 - a desired probability $p$ of finding at least one good sample
 
-The number of iterations k needed is:
+The number of iterations needed ($k$) is:
 
 $$
 k = log(1 - p) / log(1 - (1 - ε)^m)
@@ -7632,71 +7634,83 @@ $$
 
 **Key Parameters**
 
-1. **Inlier threshold**: The maximum distance a point can be from the model to be considered an inlier
-2. **Iteration count**: Maximum number of iterations to attempt
-3. **Consensus threshold**: Minimum number of inliers required to accept a model
-4. **Probability threshold**: Confidence level for finding an optimal model
+1. **inlier threshold** &rarr; the maximum distance a point can be from the model to be considered an inlier
+2. **iteration count** &rarr; maximum number of iterations to attempt
+3. **consensus threshold** &rarr; minimum number of inliers required to accept a model
+4. **probability threshold** &rarr; confidence level for finding an optimal model
 
 **Advantages**
 
-- **Robustness**: Highly resistant to outliers, even when they compose the majority of the data
-- **Versatility**: Applicable to many different model types (lines, planes, homographies, etc.)
-- **Simplicity**: Conceptually straightforward and relatively easy to implement
-- **Efficiency**: Often performs well with fewer computations than exhaustive methods
+- **robustness** &rarr; highly resistant to outliers, even when they compose the majority of the data
+- **versatility** &rarr; applicable to many different model types (lines, planes, homographies, etc.)
+- **simplicity** &rarr; conceptually straightforward and relatively easy to implement
+- **efficiency** &rarr; often performs well with fewer computations than exhaustive methods
 
 **Limitations**
 
-- **Non-deterministic**: Produces different results on different runs
-- **Parameter sensitivity**: Performance depends heavily on tuning threshold parameters
-- **Computational cost**: May require many iterations for complex models or high outlier ratios
-- **No guarantee**: Can fail to find the optimal solution, especially with poor parameter selection
+- **non-deterministic** &rarr; produces different results on different runs
+- **parameter sensitivity** &rarr; performance depends heavily on tuning threshold parameters
+- **computational cost** &rarr; may require many iterations for complex models or high outlier ratios
+- **no guarantee** &rarr; can fail to find the optimal solution, especially with poor parameter selection
 
 **Applications**
 
-- **Feature matching**: Robust matching of image features across multiple views
-- **Homography estimation**: Computing transformations between images
-- **3D reconstruction**: Estimating camera poses and scene structure
-- **Line/curve fitting**: Finding geometric primitives in noisy data
-- **Object recognition**: Matching object models to observed data
+- **feature matching** &rarr; robust matching of image features across multiple views
+- **homography estimation** &rarr; computing transformations between images
+- **3D reconstruction** &rarr; estimating camera poses and scene structure
+- **line/curve fitting** &rarr; finding geometric primitives in noisy data
+- **object recognition** &rarr; matching object models to observed data
 
-### Implementation Example (Pseudocode)
+Another interesting property of RANSAC is that it can **extrapolate lines as dots** as well &rarr; easier calculations.
+
+One of the main advantages of RANSAC is that it is **robust against people**!
+
+Here is an example of an RANSAC output obtained from a LiDAR scan:
+
+<img src="img/slam/ransac_lidar_output.1.png" height="200">
+<img src="img/slam/ransac_lidar_output.2.png" height="200">
+
+### Pseudocode
+
+Let,
+
+| symbol | description |
+|--------|-------------|
+| **N** | max number of attempts |
+| **S** | number of samples to compute initial line |
+| **D** | degrees from initial reading to sample from |
+| **X** | max distance reading may be from line |
+| **C** | number of points that must line on line |
+||
 
 ```
-function RANSAC(data, model, n, k, t, d):
-    best_model = null
-    best_consensus_set = null
-    best_error = infinity
-    
-    for i from 1 to k:
-        maybe_inliers = randomly select n points from data
-        maybe_model = model parameters fitted to maybe_inliers
-        consensus_set = maybe_inliers
-        
-        for point in data not in maybe_inliers:
-            if point fits maybe_model with error < t:
-                add point to consensus_set
-        
-        if size of consensus_set > d:
-            better_model = model parameters fitted to all points in consensus_set
-            this_error = measure of how well better_model fits consensus_set
-            
-            if this_error < best_error:
-                best_model = better_model
-                best_consensus_set = consensus_set
-                best_error = this_error
-    
-    return best_model, best_consensus_set
+1 function RANSAC( N, S, D, X, C )
+
+2 while 
+3    there are still unassociated laser readings
+4    number of readings > consensus C
+5    completed < N trials
+
+6 do
+7    select random laser data reading, R
+8    random sample S data readings within D degrees of R
+
+9    calculate least_squares_best_fit_line(S,R)
+
+10   how many readings within X cm of best fit line
+
+11   if num of readings on best fit line > consensus C
+12      calculate new least squares best fit line
+13          based on all readings that lie on old line
+
+14      add new best fit line to lines extracted so far
+
+15      remove number of readings lying on this line
+17          from total set of unassociated readings
 ```
 
-**Variations and Extensions**
 
-- **PROSAC**: Progressive sampling that prioritizes more promising matches
-- **MLESAC**: Maximum Likelihood Estimation version that improves the cost function
-- **LMEDS**: Least Median of Squares, a related robust estimation approach
-- **Preemptive RANSAC**: Early termination strategies to improve efficiency
-- **Multi-RANSAC**: Finding multiple models simultaneously in the same dataset
-
-RANSAC's ability to produce reasonable results even with a significant percentage of outliers makes it a cornerstone algorithm in modern computer vision and many other fields requiring robust model fitting.
+RANSAC's ability to produce reasonable results even with a significant percentage of outliers makes it an important algorithm in modern computer vision and many other fields.
 
 ### Visual Example
 
@@ -7708,12 +7722,12 @@ Fig. **1** &rarr; **Initial Dataset**
 
 - green points represent inliers that follow the true model
 - red points represent outliers that don't fit the model
-- this shows the challenge RANSAC addresses &rarr; finding the correct model despite contamination
+- this shows the challenge RANSAC addresses &rarr; finding the correct model despite the presence of outliers
 
 Fig. **2** &rarr; **Random Sampling & Bad Model Fit**
 
 - blue circles highlight randomly selected points (including an outlier)
-- the orange dashed line shows a poor model fit resulting from including outliers
+- the orange dashed line shows a **poor model** fit resulting from including outliers
 - this demonstrates why random sampling alone isn't enough
 
 Fig. **3** &rarr; **Better Random Sampling**
@@ -7726,7 +7740,6 @@ Fig. **4** &rarr; **Consensus Set Identification**
 - gray dashed lines show the error threshold boundaries
 - green points are the identified inliers (consensus set)
 - faded red points are rejected outliers
-- this shows how RANSAC determines which points support the model
 
 Fig. **5** &rarr; **RANSAC Process Flow**
 - flowchart showing the iterative nature of RANSAC:
@@ -7735,14 +7748,205 @@ Fig. **5** &rarr; **RANSAC Process Flow**
 
 **Key Insights** from the Visualizations
 
-- RANSAC's power comes from its iterative approach &rarr; if one random sample contains outliers (as in figure 2), future iterations can find better samples (as in figure 3)
-- The error threshold (shown in figure 4) is crucial &rarr; it determines which points are considered inliers
-- the consensus step is what makes RANSAC robust &rarr; it measures how many points support each model
-- the iterative process (figure 5) ensures that with enough attempts, RANSAC can find a good model even with significant outlier contamination
+RANSAC's power comes from its iterative approach &rarr; if one random sample contains outliers (as in figure 2), future iterations can find better samples (as in figure 3). The error threshold (shown in figure 4) is crucial &rarr; it determines which points are considered inliers. The consensus step is what makes RANSAC robust &rarr; it measures how many points support each model. The iterative process (figure 5) ensures that with enough attempts, RANSAC can find a good model even with significant outlier contamination.
 
 These visualizations help demonstrate why RANSAC is so effective for computer vision tasks like image registration, feature matching and 3D reconstruction where **data often contains many outliers**.
 
 
+**Variations and Extensions**
+
+There are various updates and variations of RANSAC in use:
+
+- **PROSAC**: progressive sampling that prioritizes more promising matches
+- **MLESAC**: maximum Likelihood Estimation version that improves the cost function
+- **LMEDS**: least Median of Squares, a related robust estimation approach
+- **Preemptive RANSAC**: early termination strategies to improve efficiency
+- **Multi-RANSAC**: finding multiple models simultaneously in the same dataset
+
+
+### Landmarks | Scan Matching
+
+Scan matching is the process of **aligning** current sensor readings with previous scans to determine position changes. It is also used for **landmark association** (see below).
+
+Here is a list of the **top five** SCAN matching algorithms:
+
+- **Iterative Closest Point (ICP)** &rarr; iteratively aligns point clouds by finding closest point correspondences and computing optimal rigid transformations [[Besl & McKay, 1992](https://ieeexplore.ieee.org/document/121791)].
+
+- **Normal Distributions Transform (NDT)** &rarr; represents point clouds as collections of normal distributions for registration, offering better noise handling than ICP [[Biber & Straßer, 2003](https://ieeexplore.ieee.org/document/1249285)].
+
+- **LOAM** &rarr; lidar Odometry and Mapping that extracts and tracks edge and planar features for efficient and accurate real-time mapping [[Zhang & Singh, 2014](https://www.ri.cmu.edu/pub_files/2014/7/Ji_LidarMapping_RSS2014_v8.pdf)].
+
+- **Generalized ICP (GICP)** &rarr; unifies point-to-point and point-to-plane approaches using a probabilistic framework that handles uncertainty [[Segal et al., 2009](https://www.robots.ox.ac.uk/~avsegal/resources/papers/Generalized_ICP.pdf)].
+
+- **Correlative Scan Matching (CSM)** &rarr; searches for the best alignment using correlation between grid representations, handling large initial misalignments better than iterative methods [[Olson, 2009](https://april.eecs.umich.edu/papers/details.php?name=olson2009icra)].
+
+
+### Comparison of Spike, RANSAC and Scan Matching
+
+| feature | spike | ransac | scan matching |
+|---------|-------|--------|---------------|
+| **primary purpose** | sudden changes (or spikes) in readings | outlier rejection and model fitting from data that's mixed | alignment of point clouds/scans to determine relative transformation |
+| **core mechanism** | creates histogram "spikes" of feature parameters to identify consistent patterns | randomly samples minimal data subsets to fit models and evaluates consensus | aligns sensor data by finding the transformation that best aligns current scan with reference |
+| **application in slam** | feature detection in point clouds and images | robust estimation of transformation from noisy feature matches | direct alignment of consecutive sensor measurements |
+| **computational complexity** | medium to high (depends on resolution) | variable (depends on ratio of regular to outliers and model complexity) | high (especially for dense point clouds) |
+| **robustness to noise** | good (naturally filters noise) | excellent (explicitly designed for outlier rejection) | varies by method (ICP is sensitive, NDT is more robust) |
+| **initial estimate required** | no (can work without prior knowledge) | no (global approach) | often yes (especially for ICP) |
+| **best use case** | environments with distinctive geometric features | data with high number of outliers | sequential pose estimation with good initial guess |
+| **limitations** | less effective in feature-poor environments | may be computationally expensive for complex models | often susceptible to local minima |
+| **example** | [Spike](https://dl.acm.org/doi/10.1145/882262.882310) (Körtgen et al.) | [RANSAC](https://dl.acm.org/doi/10.1145/358669.358692) (Fischler & Bolles) | [ICP](https://ieeexplore.ieee.org/document/121791), [NDT](https://ieeexplore.ieee.org/document/1249285), [correlative scan matching](https://april.eecs.umich.edu/papers/details.php?name=olson2009icra) |
+| **parameters** | histogram bin size, peak detection threshold | inlier threshold, iteration count, consensus size | convergence criteria, correspondence method, error metric |
+| **output** | features | model parameters and inlier set | rigid transformation (rotation and translation) |
+||
+
+
+## Data Association
+
+As we see from Scan matching and in working with landmarks in general, **matching** an observed landmark from **different** scans is important! And what happens with landmarks are **"reobserved"**?
+
+This is not as simple as it looks.
+
+Consider the followint [example](https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf):
+
+Let's consider a chair a landmark. Let us say we are in a room and see a specific chair. 
+
+<img src="img/slam/chair.jpg" width="300">
+
+<br>
+
+Now we leave the room and then at some later point subsequently return to the room. If we then see a chair in the room and say that it is the same chair we previously saw then we have associated this chair to the old chair.
+
+This may seem simple but data association is hard to do well. Say the room had **two chairs** that looked practically **identical**! 
+
+<img src="img/slam/2_chair.png" width="300">
+
+<br>
+
+When we subsequently return to the room we might not be able to distinguish accurately which of the chairs were which of the chairs we originally saw (as they all look the same!). Our best bet is to say that the one to the left must be the one we previously saw to the left, and the one to the right must be the one we previously saw on the right.
+
+So we need a way to distinguish between previously seen landmarks and new ones.
+
+In practice, we may encounter the following issues:
+
+- you might not re-observe landmarks every time step
+- you might observe something as being a landmark but fail to ever see it again
+- you might wrongly associate a landmark to a previously seen landmark.
+
+Recall that it should be **easy** to re-observe landmarks. The first two cases are not acceptable for for this purpose; rather they're bad landmarks. Even with a very good landmark extraction algorithm you may run into these &rarr; it is best to define a suitable **data-association policy** to minimize this.
+
+The final point (wrong association of landmark to a previously seen one) can be really problematic &rarr; the robot thinks it is at a different location than where it is!
+
+At a high level, here's a **SLAM data association policy**:
+
+- assume a **database of previously seen landmarks** &rarr; initially empty
+- don’t consider a landmark &rarr; unless seen **N** times
+
+To find the landmark, we use the **nearest neighbor approach**:
+
+```
+1   landmark_extraction(...) to extract all visible landmarks
+2   associate each extracted landmark to closest landmark 
+3       seen > N times in database
+
+4   each association --> validation_gate(extracted, seen in database)
+5       if validation_gate(...) passes --> same landmark
+6           increment number in database
+7       if validation_gate(...) fails --> add as new landmark in database
+```
+
+The simplest way to calculate the "nearest landmark" is to calculate the **[Euclidean distance](https://hlab.stanford.edu/brian/euclidean_distance_in.html)**. Other methods include calculating the **[Mahalanobis distance](https://www.mathworks.com/help/stats/mahal.html#mw_c4c6cf50-a523-47ef-adaf-085c19dff68d)** which is better but more complicated. 
+
+**Validation Gate** &rarr; check if landmark lies **within area of uncertainty from EKF**. The validation gate uses the fact that an EKF implementation gives a bound on the uncertainty of an observation of a landmark. Thus we can determine if an observed landmark is a landmark in the database by checking if the landmark lies within the area of uncertainty. This area can actually be drawn graphically and is known as an **error ellipse**.
+By setting a constant $\lambda$ an observed landmark is associated to a landmark if the following formula holds:
+
+$$v_i^T S_i^{-1} v_i \leq \lambda$$
+
+This formula represents the validation gate condition where:
+
+| symbol | description |
+|--------|-------------|
+| $v_i$  | the innovation (difference between observed and predicted landmark measurement) |
+| $S_i$  | the innovation covariance matrix |
+| $\lambda$ | a constant threshold value |
+||
+
+This is the mathematical expression of the Mahalanobis distance test that determines whether an observed landmark should be associated with a previously seen landmark in the database.
+
+## EKF-SLAM
+
+Extended Kalman Filter is used to estimate the state (position) of the robot from odometry data and landmark observations. The EKF is usually described in terms of state estimation alone &rarr; the robot is given a "_perfect map_".
+
+But when carrying out SLAM, there needs to be a **map update** step since the robot is figuring out the map as it goes along.
+
+Most of the EKF is standard, (_i.e.,_ normal EKF) &rarr; once the matrices are set up, it is basically just a set of EKF equations. So the trick lies in setting up the right equations.
+
+Let's go over one such process &rarr; extracted from [SLAM for Dummies](https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf).
+
+Once the landmark extraction and the data association are complete, SLAM has three steps:
+
+1. update the current state estimate using the odometry data
+2. update the estimated state from re-observing landmarks.
+3. add new landmarks to the current state.
+
+The **first step** is easy &rarr; an addition of the controls of the robot to the old state estimate
+
+- the robot is at point $(x, y)$ 
+- with rotation $\theta$ 
+- controls are $(dx, dy)$ 
+- change in rotation is $d\theta$. 
+
+The result of the first step &rarr; the **new state** of the robot,
+
+$$(x+dx, y+dy) \text{ with rotation } (\theta+d\theta)$$
+
+In the **second step** &rarr; **re-observed landmarks**
+are considered. Using the estimate of the current position it is possible to estimate where the landmark should be. There is usually some difference &rarr; "**innovation**". The innovation is basically the difference between the estimated robot position and the actual robot position, based on what the robot is able to see. 
+ 
+In the second step the uncertainty of each observed landmark is also updated to reflect recent changes. An example could be if the uncertainty of the current landmark position is very low. Re-observing a landmark from this position with low uncertainty will increase the landmark certainty, _i.e.,_ the variance of the landmark with respect to the current position of the robot.
+
+**Third step** &rarr; new landmarks are added to the state, the robot map of the world. This is done using information about the current position and adding information about the relation between the new landmark and the old landmarks.
+
+Please read **Chapter 11** in the [SLAM for Dummies](https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf) book for all the details of the EKF modeling, materices and implementation details. 
+
+**Important properties** of EKF-SLAM include:
+
+1. computational complexity &rarr; **quadratic** in the number of landmarks: $O(n^2)$
+2. the determinant of any sub-matrix of the map covariance matrix &rarr; **decreases monotonically** as observations are made
+3. at the limit &rarr; landmark estimates become **fully correlated**
+4. EKF approach &rarr; **can diverge** if **nonlinearities** are significant
+
+
+## SLAM Implementations
+
+There exist various implementations of SLAM. It is one of the most studied areas in robotics and autonomous systems.  
+
+1. **Scan matching** &rarr; can also be used a generic SLAM method. It attempts to align consecutive laser scans to determine robot displacement. It maximizes the likelihood:
+
+$$\hat{x}_t = \arg\max_{x_t} \{p(z_t | x_t, \hat{m}^{[t-1]}) \cdot p(x_t | u_{t-1}, \hat{x}_{t-1})\}$$
+
+This approach is computationally efficient but may accumulate errors over time.
+
+2. **Submaps Approach** &rarr; to manage computational complexity, large environments can be **divided into smaller submaps**. Each submap is built using standard SLAM techniques and then the submaps are connected. This divide-and-conquer approach reduces the computational burden and has been successfully applied in large environments.
+
+3. **Sparse Extended Information Filters** (SEIF) &rarr;  SEIF is the **information form** of EKF, which maintains the information matrix (inverse of covariance matrix). The information matrix naturally becomes sparse in SLAM, allowing for efficient algorithms.
+
+4. **FastSLAM** &rarr; uses **particle filters** to represent the robot's path and maintains separate EKFs for each landmark. This factorization takes advantage of conditional independence properties:
+
+$$p(x_{1:t}, m | z_{1:t}, u_{1:t}) = p(x_{1:t} | z_{1:t}, u_{1:t}) \prod_{i=1}^n p(m_i | x_{1:t}, z_{1:t})$$
+
+This approach scales better than standard EKF-SLAM, with complexity $O(M\cdot log N)$ where $M$ is the number of particles and $N$ is number of landmarks.
+
+
+**References**
+
+- [SLAM for Dummies](https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf
+)
+- [SLAM Overview, MATLAB](https://www.mathworks.com/discovery/slam.html)
+- [SLAM Examples and MATLAB code](https://www.mathworks.com/help/nav/slam.html)
+- [SLAM Slides in Probabilistic Robotics](http://probabilistic-robotics.informatik.uni-freiburg.de/ppt/slam.ppt) by Thrun et al.
+- [Probabilistic Robotics Chapter 10](https://docs.ufpr.br/~danielsantos/ProbabilisticRobotics.pdf) by Thrun et al.
+- [SLAM using POSE Estimation](https://www.youtube.com/watch?v=saVZtgPyyJQ&list=PLn8PRpmsu08rLRGrnF-S6TyGrmcA2X7kg&index=4) by MATLAB:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/saVZtgPyyJQ?si=RDxScUQpWqC-7raB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 
