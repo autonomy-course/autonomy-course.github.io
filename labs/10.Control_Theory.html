@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 10** | Control Theory/Controlling Rover
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**
+
+---
+
+## **Objectives**
+
+- Understand the fundamentals of **control theory** and its role in autonomous systems.
+- Learn how to implement a **PID controller** for controlling an autonomous rover.
+- Apply control theory to navigate the rover using **Navio2** and **Raspberry Pi**.
+- Test and validate the control system in a simulated or real-world environment.
+
+---
+
+## **1. Introduction**
+
+Control theory is a fundamental aspect of autonomous systems, enabling precise control over a system's behavior
+
+---
+
+In this lab:
+- Learn the basics of control theory
+- Implement a PID controller
+- Apply it to a real rover using **Navio2 + Raspberry Pi**
+- Use **Python 2** and **ROS**
+
+---
+
+## **2. Control Theory Basics**
+
+Control theory governs how systems respond to inputs.
+It enables:
+- **Motion control**
+- **Error correction**
+- **System stability**
+
+---
+
+### **2.1 Open-Loop vs Closed-Loop Control**
+
+- **Open-Loop**: No feedback; outputs are not measured
+  - Example: Pre-programmed motor speeds
+- **Closed-Loop**: Uses feedback to adjust inputs
+  - Example: Adjusting motor based on encoder data
+
+---
+
+### **2.2 PID Controller**
+
+**PID = Proportional + Integral + Derivative**
+
+Used for precise control using feedback.
+
+---
+
+**Components**:
+- **P** (Proportional): Corrects current error
+- **I** (Integral): Corrects accumulated past error
+- **D** (Derivative): Predicts future error
+
+---
+
+## **3. Implementing a PID Controller**
+
+**PID Output Equation**:
+
+```
+u(t) = Kp * e(t) + Ki * ∫₀ᵗ e(τ)dτ + Kd * de(t)/dt
+```
+
+Where:
+- `e(t)` = error at time `t`
+- `Kp`, `Ki`, `Kd` = tuning gains
+
+---
+
+### **3.1 PID Controller Equations**
+
+- **P** = Kp * e(t)
+- **I** = Ki * ∫₀ᵗ e(τ)dτ
+- **D** = Kd * de(t)/dt
+
+**Combined Control Output**:
+```
+u(t) = P + I + D
+```
+
+---
+
+### **3.2 Tuning PID Parameters**
+
+- **Manual Tuning**
+  - Start with Kp
+  - Add Ki to reduce steady-state error
+  - Add Kd to reduce overshoot
+
+- **Ziegler-Nichols Method**
+  - Empirical method to get initial gain estimates
+
+---
+
+## **4. Simulating and Testing PID**
+
+Before deploying:
+- Test using a PID simulator
+- Understand behavior for various gain values
+
+---
+
+Try this interactive simulator:
+🔗 [https://grauonline.de/alexwww/ardumower/pid/pid.html](https://grauonline.de/alexwww/ardumower/pid/pid.html)
+
+Helps visualize:
+- Overshoot
+- Rise time
+- Steady-state error
+
+---
+
+## **5. Summary**
+
+- Control theory enables precise autonomous behavior.
+- PID controllers are widely used for feedback control.
+- Gain tuning is critical for balance between response and stability.
+- Simulators are valuable tools for verification before real-world testing.
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>

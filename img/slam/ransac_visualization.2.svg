@@ -80,8 +80,6 @@
     </marker>
   </defs>
 
-  <!-- Title -->
-  <text x="400" y="30" class="title">RANSAC Algorithm: Visual Explanation</text>
 
   <!-- Second diagram: Random sampling -->
   <g transform="translate(400, 0)">
