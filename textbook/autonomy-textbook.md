@@ -7673,7 +7673,7 @@ Here is an example of an RANSAC output obtained from a LiDAR scan:
 <img src="img/slam/ransac_lidar_output.1.png" width="200">
 <img src="img/slam/ransac_lidar_output.2.png" width="200">
 
-### Pseudocode
+#### Pseudocode
 
 Let,
 
@@ -7715,7 +7715,7 @@ Let,
 
 RANSAC's ability to produce reasonable results even with a significant percentage of outliers makes it an important algorithm in modern computer vision and many other fields.
 
-### Visual Example
+#### Visual Example
 
 <img src="img/slam/ransac_visualization.full.svg" width="500">
 
