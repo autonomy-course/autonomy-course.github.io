@@ -7921,7 +7921,9 @@ There exist various implementations of SLAM. It is one of the most studied areas
 
 1. **[Scan matching](https://link.springer.com/chapter/10.1007/978-3-642-13408-1_14)** &rarr; can also be used a generic SLAM method. It attempts to align consecutive laser scans to determine robot displacement. It maximizes the likelihood:
 
-$$\hat{x}_t = \arg\max_{x_t} \{p(z_t | x_t, \hat{m}^{[t-1]}) \cdot p(x_t | u_{t-1}, \hat{x}_{t-1})\}$$
+$$
+\hat x_t = \arg\max_{x_t} \{p(z_t | x_t, \hat m^{[t-1]}) \cdot p(x_t | u_{t-1}, \hat x_{t-1})\}
+$$
 
 This approach is computationally efficient but may accumulate errors over time.
 
