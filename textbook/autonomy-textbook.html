@@ -618,13 +618,11 @@ George Washington University</p></li>
         class="toc-section-number">10.2</span> Mathematical
         Formulations</a>
         <ul>
-        <li><a href="#full-slam" id="toc-full-slam"><span
-        class="toc-section-number">10.2.1</span> full slam</a></li>
         <li><a href="#interpretation" id="toc-interpretation"><span
-        class="toc-section-number">10.2.2</span> interpretation</a></li>
+        class="toc-section-number">10.2.1</span> interpretation</a></li>
         <li><a href="#key-differences-between-full-slam-and-online-slam"
         id="toc-key-differences-between-full-slam-and-online-slam"><span
-        class="toc-section-number">10.2.3</span> key differences between
+        class="toc-section-number">10.2.2</span> key differences between
         full slam and online slam</a></li>
         </ul></li>
         <li><a href="#slam-hardware" id="toc-slam-hardware"><span
@@ -14408,9 +14406,6 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <strong>entire</strong> robot path and map</li>
             </ol>
             <p><img src="img/slam/full_slam_graphical.png" width="300"></p>
-            <section id="full-slam" class="level3" data-number="10.2.1">
-            <h3 data-number="10.2.1"><span
-            class="header-section-number">10.2.1</span> full slam</h3>
             <ul>
             <li>the model estimates the <strong>entire
             trajectory</strong> <span
@@ -14425,7 +14420,7 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <li>indicates that we compute the joint probability over all
             past and current poses, rather than marginalizing them
             out</li>
-            <li>gray-shaded area (fromt he figure) covers all past poses
+            <li>gray-shaded area (from the figure) covers all past poses
             <span
             class="math inline"><em>x</em><sub>1 : <em>t</em></sub></span>,
             indicating that they are explicitly maintained in the
@@ -14463,11 +14458,10 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             that only the current pose is maintained explicitly - this
             approach is <strong>computationally efficient</strong> and
             suitable for real-time applications</p>
-            </section>
             <section id="interpretation" class="level3"
-            data-number="10.2.2">
-            <h3 data-number="10.2.2"><span
-            class="header-section-number">10.2.2</span>
+            data-number="10.2.1">
+            <h3 data-number="10.2.1"><span
+            class="header-section-number">10.2.1</span>
             interpretation</h3>
             <ul>
             <li>online slam is designed for real-time operation, where
@@ -14483,9 +14477,9 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             </section>
             <section
             id="key-differences-between-full-slam-and-online-slam"
-            class="level3" data-number="10.2.3">
-            <h3 data-number="10.2.3"><span
-            class="header-section-number">10.2.3</span> key differences
+            class="level3" data-number="10.2.2">
+            <h3 data-number="10.2.2"><span
+            class="header-section-number">10.2.2</span> key differences
             between full slam and online slam</h3>
             <table>
             <colgroup>
@@ -14567,13 +14561,11 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             class="math inline">$30\degree$</span> compared to <span
             class="math inline">$0.25\degree$</span> for laser
             scanners).</p></li>
-            </ul>
-            <ol start="3" type="1">
-            <li><strong>Vision</strong> → cameras provide rich
+            <li><p><strong>Vision</strong> → cameras provide rich
             environmental information but require more computational
             processing. Stereo vision can provide depth information
-            similar to range finders.</li>
-            </ol>
+            similar to range finders.</p></li>
+            </ul>
             <p>Each sensing technology has advantages and limitations
             depending on the environment and application.</p>
             </section>
@@ -14612,7 +14604,7 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <li>well defined corners</li>
             </ul>
             <p>The <em>common</em> methods to find/distinguish landmarks
-            use thes properties,</p>
+            use these properties,</p>
             <ol type="1">
             <li><a href="#landmarks--spikes">spikes</a></li>
             <li><a
@@ -14707,10 +14699,13 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             class="math inline"><em>p</em></span> of finding at least
             one good sample</li>
             </ul>
-            <p>The number of iterations needed (<span
+            <p>The <a
+            href="https://dl.acm.org/doi/pdf/10.1145/358669.358692">number
+            of iterations</a> needed (<span
             class="math inline"><em>k</em></span>) is:</p>
-            <p><span
-            class="math display"><em>k</em> = <em>l</em><em>o</em><em>g</em>(1 − <em>p</em>)/<em>l</em><em>o</em><em>g</em>(1 − (1 − <em>ε</em>)<sup><em>m</em></sup>)</span></p>
+            <p><span class="math display">$$
+            k = \frac{log(1 - p)}{log(1 - (1 - ε)^m)}
+            $$</span></p>
             <p><strong>Key Parameters</strong></p>
             <ol type="1">
             <li><strong>inlier threshold</strong> → the maximum distance
@@ -15352,6 +15347,12 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <li><a
             href="https://docs.ufpr.br/~danielsantos/ProbabilisticRobotics.pdf">Probabilistic
             Robotics Chapter 10</a> by Thrun et al.</li>
+            <li><a
+            href="https://dl.acm.org/doi/pdf/10.1145/358669.358692">“Random
+            sample consensus: a paradigm for odel fitting with
+            applications to image analysis and automated
+            cartography.”</a> by Fischler, Martin A. and Robert C.
+            Bolles. (Original RANSAC paper)</li>
             <li><a
             href="https://www.youtube.com/watch?v=saVZtgPyyJQ&amp;list=PLn8PRpmsu08rLRGrnF-S6TyGrmcA2X7kg&amp;index=4">SLAM
             using POSE Estimation</a> by MATLAB:</li>

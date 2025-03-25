@@ -7460,11 +7460,7 @@ First, let's define some terms,
 
 1. **Full SLAM** &rarr; estimates the **entire** robot path and map
 
-
-
 <img src="img/slam/full_slam_graphical.png" width="300">
-
-### full slam
 
 - the model estimates the **entire trajectory** $x_{1:t}$ along with the map $m$
 - the equation:
@@ -7474,7 +7470,7 @@ p(x_{1:t}, m | z_{1:t}, u_{1:t})
 $$
 
 - indicates that we compute the joint probability over all past and current poses, rather than marginalizing them out
-- gray-shaded area (fromt he figure) covers all past poses $x_{1:t}$, indicating that they are explicitly maintained in the estimation
+- gray-shaded area (from the figure) covers all past poses $x_{1:t}$, indicating that they are explicitly maintained in the estimation
 - this approach provides **smoothing**, allowing the system to refine past estimates when new observations are received
 
 **Interpretation**:
@@ -7537,7 +7533,7 @@ Several sensing technologies can be used for SLAM:
 
 - **Sonar** &rarr; less expensive than laser scanners but provide lower quality measurements with wider beam width (up to $30\degree$ compared to $0.25\degree$ for laser scanners).
 
-3. **Vision** &rarr; cameras provide rich environmental information but require more computational processing. Stereo vision can provide depth information similar to range finders.
+- **Vision** &rarr; cameras provide rich environmental information but require more computational processing. Stereo vision can provide depth information similar to range finders.
 
 Each sensing technology has advantages and limitations depending on the environment and application.
 
@@ -7568,7 +7564,7 @@ The advantages of **indoor landmarks**,
 - lots of **straight lines**
 - well defined corners
 
-The _common_ methods to find/distinguish landmarks use thes properties,
+The _common_ methods to find/distinguish landmarks use these properties,
 
 1. [spikes](#landmarks--spikes)
 2. [RANSAC](#landmarks--ransac-random-sample-consensus)
@@ -7633,10 +7629,10 @@ For a dataset with,
 - a **minimum** of $m$ points needed to fit the model
 - a desired probability $p$ of finding at least one good sample
 
-The number of iterations needed ($k$) is:
+The [number of iterations](https://dl.acm.org/doi/pdf/10.1145/358669.358692) needed ($k$) is:
 
 $$
-k = log(1 - p) / log(1 - (1 - ε)^m)
+k = \frac{log(1 - p)}{log(1 - (1 - ε)^m)}
 $$
 
 **Key Parameters**
@@ -7937,12 +7933,12 @@ There exist various implementations of SLAM. It is one of the most studied areas
 
 **References**
 
-- [SLAM for Dummies](https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf
-)
+- [SLAM for Dummies](https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf)
 - [SLAM Overview, MATLAB](https://www.mathworks.com/discovery/slam.html)
 - [SLAM Examples and MATLAB code](https://www.mathworks.com/help/nav/slam.html)
 - [SLAM Slides in Probabilistic Robotics](http://probabilistic-robotics.informatik.uni-freiburg.de/ppt/slam.ppt) by Thrun et al.
 - [Probabilistic Robotics Chapter 10](https://docs.ufpr.br/~danielsantos/ProbabilisticRobotics.pdf) by Thrun et al.
+- [ "Random sample consensus: a paradigm for odel fitting with applications to image analysis and automated cartography." ](https://dl.acm.org/doi/pdf/10.1145/358669.358692) by Fischler, Martin A. and Robert C. Bolles. (Original RANSAC paper)
 - [SLAM using POSE Estimation](https://www.youtube.com/watch?v=saVZtgPyyJQ&list=PLn8PRpmsu08rLRGrnF-S6TyGrmcA2X7kg&index=4) by MATLAB:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/saVZtgPyyJQ?si=RDxScUQpWqC-7raB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
