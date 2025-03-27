@@ -7946,3 +7946,264 @@ There exist various implementations of SLAM. It is one of the most studied areas
 
 
 
+<!--rel="stylesheet" href="./custom.sibin.css"-->
+
+# Path Planning
+
+Consider the following two options for the car,
+
+<img src="img/path/alternate_paths.png">
+
+<br>
+
+Which path should the car choose? Assume that the car **has** to choose one of the two paths.
+
+[Path planning](https://www.sapien.io/blog/path-planning-for-self-driving-cars) for self-driving cars is the process of determining an optimal trajectory for an autonomous vehicle from its current position to its intended destination. This process involves the use of sophisticated algorithms that account for various environmental factors such as road conditions, traffic laws, obstacles and potential hazards. 
+
+It typically involves:
+
+- decision-making and
+- predictions (of **other** cars, pedestrians, traffic signals, _etc._)
+
+Effective autonomous vehicle path planning is not just about following a pre-determined path, but also about making real-time adjustments based on immediate surroundings. Any routes that are picked must be,
+
+- safe
+- convenient
+- economically beneficial.
+
+Now, consider this example:
+
+<img src="img/path/car_lane.png" width="400">
+
+<br>
+
+What should the red car do?
+
+1. stay in lane, speed up
+2. stay in lane, slow down
+3. stay in lane, constant speed
+4. change lane 
+
+The idea is that each scenario &rarr; probability associated with it.
+
+Let's define a few terms. Consider the following scenario of a car traveling on a road.
+
+<img src="img/path/car.2.png" width="400">
+
+<br>
+
+We see the car in its **starting configuration** and its **final destination**.
+
+Now, there are many possible **intermediate configurations** possible &rarr; between the starting configuration and final destination. 
+
+<img src="img/path/car.3.png" width="400">
+
+<br>
+
+The objective is to pick a **sequence of configurations**.
+
+<img src="img/path/car.5.png" width="400">
+
+<br>
+
+This is the **path**, defined as
+
+> continuous sequence of configurations &rarr; starting/ending with boundary configurations. 
+
+<br>
+
+**Path planning** is then defined as, 
+
+> the process of finding a geometric path from initial to given config such that each configuration state is **feasible**.
+
+Of course, there is a possibility of **alternate paths** for the same starting and ending configurations.
+
+<img src="img/path/car.6.png" width="400">
+
+<br>
+
+Now, if another vehicle is present in this space, our car has to make some decisions, _e.g.,_ does it,
+
+1. continue going straight?
+2. change lanes
+3. _actively_ overtake?
+
+<img src="img/path/car.8.png" width="400">
+
+<br>
+
+So, the car has to execute a **maneuver** defined as,
+
+> a high-level characteristic of vehicle’s motion that encompasses position+speed of vehicle.
+
+<br>
+
+So then **maneuver planning** is defined as,
+
+> taking best high-level decision for vehicle.
+
+<img src="img/path/car.9.png" width="400">
+
+<br>
+
+In this case it could mean just changing the lanes since our objective is to get to the final destination. This involves some **maneuver planning**, _i.e.,_ 
+
+> take the best high-level decision for vehicle that accounts for the path from the planning algorithm.
+
+<img src="img/path/car.10.png" width="400">
+
+<br>
+
+Clearly the path is neither instantaneous not continuous. The car needs to go through a sequence of **discrete configurations*,
+
+<img src="img/path/car.11.png" width="400">
+
+<br>
+
+This is known as a **trajectory** which is,
+
+> sequence of states visited by vehicle &rarr; parameterized by time and velocity.
+
+<br>
+
+This leads us to **trajectory planning** that can e defined as,
+
+> **real-time planning** of vehicle’s move &rarr; from one feasible state to next.
+
+<img src="img/path/car.13.png" width="400">
+
+<br>
+
+An important aspect of trajectory planning is that it has to **satisfy the car's kinematics**, _i.e.,_ not break the laws of physics!
+
+
+To summarize the various definitions,
+
+
+| **term** | **definition** | **examples/notes** |
+|:---------|:---------------|:-------------------|
+| **path** | continuous sequence of configurations|  starting/ending with boundary configurations  |
+| **path planning** | find a geometric path from initial to given config  | each configuration and state on path is feasible |
+| **maneuver** | high-level characteristic of vehicle’s motion  | encompasses position and speed of vehicle on road <br> _e.g.,_ going straight, changing lanes, turning, overtaking |
+| **maneuver planning** | take best high-level decision for vehicle | take into account path specified by planning algorithm  |
+| **trajectory** | sequence of states visited by vehicle  |  parameterized by time and velocity|
+| **trajectory planning** | real-time planning of vehicle’s moves  |  from one feasible state to the next <br> satisfied by car’s kinematics|
+||
+
+<br>
+
+At its core, path planning involves the following components:
+
+- sensing
+- mapping
+- localization.
+
+
+## Path Planning | Approaches
+
+A lot of path planning involves **predicting** what the environment around us will do, a few seconds into the future. For instance, 
+
+- pedestrian will move (and direction)
+- traffic sign remains still
+
+At a high-level, there are [**three** types](https://www.sapien.io/blog/path-planning-for-self-driving-cars) of path planning:
+
+1. **Global Path Planning**: planning a route from starting point to the destination, typically over a **long distance**. This considers high-level road network constraints (_e.g._, available routes, traffic regulations and road conditions). Path planning algorithms must ensure that overall trajectory avoids major hazards and follows optimal paths, while adhering to traffic laws and minimizing fuel consumption.
+
+- To summarize &rarr; compute an **efficient** route for long-distance travel, which is then adjusted by local planning systems as needed.
+
+2. **Local/partial Path Planning** is responsible for **navigating** the vehicle through its **immediate surroundings** dealing with real-time adjustments, such as obstacle avoidance, managing intersections and handling other dynamic obstacles (_e.g.,_ pedestrians, cyclists and vehicles). Self-driving car routing involves adjusting the vehicle’s trajectory to respond to changing conditions and to ensure smooth and safe navigation.
+
+- In summary &rarr; requires vehicle to constantly re-evaluate its environment; typically using algorithms calculate the **best local trajectory** at any given moment, based on sensor data.
+
+3. **Behavioral Path Planning** focuses on **anticipating and responding** to the behavior of other road users. This approach simulate **human-like decision-making** to ensure **safe** interactions with pedestrians, cyclists and other vehicles. Behavioral path planning allows the vehicle to **adjust its actions** to prevent collisions and ensure smooth traffic flow.
+
+- In summary &rarr; plays a crucial role in **urban environments** (dense traffic) and vehicles must make **real-time decisions** to adapt to other drivers.
+
+<img src="img/path/path_planning_strucutre.png" width="400">
+
+As the figure shows, path planning uses a combination of known and unknown information in conjunction with the sensor and mapping. The **horizontal** planning is essentially the decision on what **trajectory** to follow while the **vertical** planning is to decide on **speed** (accelerate, constant speed, decelerate).
+
+
+## Path Planning | Predictions and Decision Making
+
+In order to predict what will happen in the immediate future, multiple aproaches have been developed:
+
+1. **machine-learning** based
+
+<img src="img/path/paths_ml.png" width="300">
+
+<br>
+
+The main idea has the following two phases:
+
+- **training** phase: 
+    - gather massive history of vehicles and paths
+    - hundreds/thousands of vehicles, different actions at intersection
+- **unsupervised** learning
+    - clustering algorithms 
+    - each cluster a typical trajectory for vehicle
+
+More driving leads to more data and **better estimates** &rarr; past behavior can affect current decisions.
+
+
+2. **model**-based
+
+This methods attempts to **imagine possible choices** for the vehicle.
+
+<img src="img/path/path_model.png" width="400">
+
+<br>
+
+In this example, the green car is attempting to merge into the highway but the red car's behavior can cause problems. So we imagine the four choices for the other car:
+
+- speed up
+- slow down
+- constant speed
+- change lanes
+
+And, as mentioned earlier, each has a **probability that changes with observations** &rarr; sensors work in real-time.
+
+This method,
+
+- implements feasibility of trajectory
+- eliminates _impossible behaviors_
+- focus on what’s possible, **not on past** (compare with ML-based approach).
+
+<br>
+
+Once we have an estimate of the immediate future, we need &rarr; a **decision**, _e.g.,_
+
+- brake if obstacle detected?
+- accelerate or change lanes?
+
+A lot of this depends on the **environment** (highway vs parking lot). We need to consider issues such as:
+
+- safety
+- feasibility
+- efficiency
+- legality
+- passenger comfort
+
+Enter **finite state machines**.
+
+First we need to defined a couple of things:
+
+|||
+|----|----|
+| define **states** of a car | **cost functions** to define *choice** of state |
+| <img src="img/path/fsm_car_states.png" width="100"> | <img src="img/path/fsm_calculator.png" width="100">
+||
+
+
+
+
+
+
+
+
+
+
+
+
+

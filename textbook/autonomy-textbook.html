@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-03-25" />
+  <meta name="date" content="2025-03-27" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">March 25,
+                              <li><p class="navbar-text">March 27,
 2025</p></li>
                   </ul>
       </div>
@@ -656,6 +656,18 @@ George Washington University</p></li>
         id="toc-slam-implementations"><span
         class="toc-section-number">10.7</span> SLAM
         Implementations</a></li>
+        </ul></li>
+        <li><a href="#path-planning-1" id="toc-path-planning-1"><span
+        class="toc-section-number">11</span> Path Planning</a>
+        <ul>
+        <li><a href="#path-planning-approaches"
+        id="toc-path-planning-approaches"><span
+        class="toc-section-number">11.1</span> Path Planning |
+        Approaches</a></li>
+        <li><a href="#path-planning-predictions-and-decision-making"
+        id="toc-path-planning-predictions-and-decision-making"><span
+        class="toc-section-number">11.2</span> Path Planning |
+        Predictions and Decision Making</a></li>
         </ul></li>
         </ul>
 
@@ -15356,6 +15368,390 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             </ul>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/saVZtgPyyJQ?si=RDxScUQpWqC-7raB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
             </iframe>
+            <!--rel="stylesheet" href="./custom.sibin.css"-->
+            </section>
+            </section>
+            <section id="path-planning-1" class="level1"
+            data-number="11">
+            <h1 data-number="11"><span
+            class="header-section-number">11</span> Path Planning</h1>
+            <p>Consider the following two options for the car,</p>
+            <p><img src="img/path/alternate_paths.png"></p>
+            <p><br></p>
+            <p>Which path should the car choose? Assume that the car
+            <strong>has</strong> to choose one of the two paths.</p>
+            <p><a
+            href="https://www.sapien.io/blog/path-planning-for-self-driving-cars">Path
+            planning</a> for self-driving cars is the process of
+            determining an optimal trajectory for an autonomous vehicle
+            from its current position to its intended destination. This
+            process involves the use of sophisticated algorithms that
+            account for various environmental factors such as road
+            conditions, traffic laws, obstacles and potential
+            hazards.</p>
+            <p>It typically involves:</p>
+            <ul>
+            <li>decision-making and</li>
+            <li>predictions (of <strong>other</strong> cars,
+            pedestrians, traffic signals, <em>etc.</em>)</li>
+            </ul>
+            <p>Effective autonomous vehicle path planning is not just
+            about following a pre-determined path, but also about making
+            real-time adjustments based on immediate surroundings. Any
+            routes that are picked must be,</p>
+            <ul>
+            <li>safe</li>
+            <li>convenient</li>
+            <li>economically beneficial.</li>
+            </ul>
+            <p>Now, consider this example:</p>
+            <p><img src="img/path/car_lane.png" width="400"></p>
+            <p><br></p>
+            <p>What should the red car do?</p>
+            <ol type="1">
+            <li>stay in lane, speed up</li>
+            <li>stay in lane, slow down</li>
+            <li>stay in lane, constant speed</li>
+            <li>change lane</li>
+            </ol>
+            <p>The idea is that each scenario → probability associated
+            with it.</p>
+            <p>Let’s define a few terms. Consider the following scenario
+            of a car traveling on a road.</p>
+            <p><img src="img/path/car.2.png" width="400"></p>
+            <p><br></p>
+            <p>We see the car in its <strong>starting
+            configuration</strong> and its <strong>final
+            destination</strong>.</p>
+            <p>Now, there are many possible <strong>intermediate
+            configurations</strong> possible → between the starting
+            configuration and final destination.</p>
+            <p><img src="img/path/car.3.png" width="400"></p>
+            <p><br></p>
+            <p>The objective is to pick a <strong>sequence of
+            configurations</strong>.</p>
+            <p><img src="img/path/car.5.png" width="400"></p>
+            <p><br></p>
+            <p>This is the <strong>path</strong>, defined as</p>
+            <blockquote>
+            <p>continuous sequence of configurations → starting/ending
+            with boundary configurations.</p>
+            </blockquote>
+            <p><br></p>
+            <p><strong>Path planning</strong> is then defined as,</p>
+            <blockquote>
+            <p>the process of finding a geometric path from initial to
+            given config such that each configuration state is
+            <strong>feasible</strong>.</p>
+            </blockquote>
+            <p>Of course, there is a possibility of <strong>alternate
+            paths</strong> for the same starting and ending
+            configurations.</p>
+            <p><img src="img/path/car.6.png" width="400"></p>
+            <p><br></p>
+            <p>Now, if another vehicle is present in this space, our car
+            has to make some decisions, <em>e.g.,</em> does it,</p>
+            <ol type="1">
+            <li>continue going straight?</li>
+            <li>change lanes</li>
+            <li><em>actively</em> overtake?</li>
+            </ol>
+            <p><img src="img/path/car.8.png" width="400"></p>
+            <p><br></p>
+            <p>So, the car has to execute a <strong>maneuver</strong>
+            defined as,</p>
+            <blockquote>
+            <p>a high-level characteristic of vehicle’s motion that
+            encompasses position+speed of vehicle.</p>
+            </blockquote>
+            <p><br></p>
+            <p>So then <strong>maneuver planning</strong> is defined
+            as,</p>
+            <blockquote>
+            <p>taking best high-level decision for vehicle.</p>
+            </blockquote>
+            <p><img src="img/path/car.9.png" width="400"></p>
+            <p><br></p>
+            <p>In this case it could mean just changing the lanes since
+            our objective is to get to the final destination. This
+            involves some <strong>maneuver planning</strong>,
+            <em>i.e.,</em></p>
+            <blockquote>
+            <p>take the best high-level decision for vehicle that
+            accounts for the path from the planning algorithm.</p>
+            </blockquote>
+            <p><img src="img/path/car.10.png" width="400"></p>
+            <p><br></p>
+            <p>Clearly the path is neither instantaneous not continuous.
+            The car needs to go through a sequence of **discrete
+            configurations*,</p>
+            <p><img src="img/path/car.11.png" width="400"></p>
+            <p><br></p>
+            <p>This is known as a <strong>trajectory</strong> which
+            is,</p>
+            <blockquote>
+            <p>sequence of states visited by vehicle → parameterized by
+            time and velocity.</p>
+            </blockquote>
+            <p><br></p>
+            <p>This leads us to <strong>trajectory planning</strong>
+            that can e defined as,</p>
+            <blockquote>
+            <p><strong>real-time planning</strong> of vehicle’s move →
+            from one feasible state to next.</p>
+            </blockquote>
+            <p><img src="img/path/car.13.png" width="400"></p>
+            <p><br></p>
+            <p>An important aspect of trajectory planning is that it has
+            to <strong>satisfy the car’s kinematics</strong>,
+            <em>i.e.,</em> not break the laws of physics!</p>
+            <p>To summarize the various definitions,</p>
+            <table>
+            <colgroup>
+            <col style="width: 21%" />
+            <col style="width: 34%" />
+            <col style="width: 43%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;"><strong>term</strong></th>
+            <th
+            style="text-align: left;"><strong>definition</strong></th>
+            <th
+            style="text-align: left;"><strong>examples/notes</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><strong>path</strong></td>
+            <td style="text-align: left;">continuous sequence of
+            configurations</td>
+            <td style="text-align: left;">starting/ending with boundary
+            configurations</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>path
+            planning</strong></td>
+            <td style="text-align: left;">find a geometric path from
+            initial to given config</td>
+            <td style="text-align: left;">each configuration and state
+            on path is feasible</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>maneuver</strong></td>
+            <td style="text-align: left;">high-level characteristic of
+            vehicle’s motion</td>
+            <td style="text-align: left;">encompasses position and speed
+            of vehicle on road <br> <em>e.g.,</em> going straight,
+            changing lanes, turning, overtaking</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>maneuver
+            planning</strong></td>
+            <td style="text-align: left;">take best high-level decision
+            for vehicle</td>
+            <td style="text-align: left;">take into account path
+            specified by planning algorithm</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>trajectory</strong></td>
+            <td style="text-align: left;">sequence of states visited by
+            vehicle</td>
+            <td style="text-align: left;">parameterized by time and
+            velocity</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>trajectory
+            planning</strong></td>
+            <td style="text-align: left;">real-time planning of
+            vehicle’s moves</td>
+            <td style="text-align: left;">from one feasible state to the
+            next <br> satisfied by car’s kinematics</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>At its core, path planning involves the following
+            components:</p>
+            <ul>
+            <li>sensing</li>
+            <li>mapping</li>
+            <li>localization.</li>
+            </ul>
+            <section id="path-planning-approaches" class="level2"
+            data-number="11.1">
+            <h2 data-number="11.1"><span
+            class="header-section-number">11.1</span> Path Planning |
+            Approaches</h2>
+            <p>A lot of path planning involves
+            <strong>predicting</strong> what the environment around us
+            will do, a few seconds into the future. For instance,</p>
+            <ul>
+            <li>pedestrian will move (and direction)</li>
+            <li>traffic sign remains still</li>
+            </ul>
+            <p>At a high-level, there are <a
+            href="https://www.sapien.io/blog/path-planning-for-self-driving-cars"><strong>three</strong>
+            types</a> of path planning:</p>
+            <ol type="1">
+            <li><strong>Global Path Planning</strong>: planning a route
+            from starting point to the destination, typically over a
+            <strong>long distance</strong>. This considers high-level
+            road network constraints (<em>e.g.</em>, available routes,
+            traffic regulations and road conditions). Path planning
+            algorithms must ensure that overall trajectory avoids major
+            hazards and follows optimal paths, while adhering to traffic
+            laws and minimizing fuel consumption.</li>
+            </ol>
+            <ul>
+            <li>To summarize → compute an <strong>efficient</strong>
+            route for long-distance travel, which is then adjusted by
+            local planning systems as needed.</li>
+            </ul>
+            <ol start="2" type="1">
+            <li><strong>Local/partial Path Planning</strong> is
+            responsible for <strong>navigating</strong> the vehicle
+            through its <strong>immediate surroundings</strong> dealing
+            with real-time adjustments, such as obstacle avoidance,
+            managing intersections and handling other dynamic obstacles
+            (<em>e.g.,</em> pedestrians, cyclists and vehicles).
+            Self-driving car routing involves adjusting the vehicle’s
+            trajectory to respond to changing conditions and to ensure
+            smooth and safe navigation.</li>
+            </ol>
+            <ul>
+            <li>In summary → requires vehicle to constantly re-evaluate
+            its environment; typically using algorithms calculate the
+            <strong>best local trajectory</strong> at any given moment,
+            based on sensor data.</li>
+            </ul>
+            <ol start="3" type="1">
+            <li><strong>Behavioral Path Planning</strong> focuses on
+            <strong>anticipating and responding</strong> to the behavior
+            of other road users. This approach simulate
+            <strong>human-like decision-making</strong> to ensure
+            <strong>safe</strong> interactions with pedestrians,
+            cyclists and other vehicles. Behavioral path planning allows
+            the vehicle to <strong>adjust its actions</strong> to
+            prevent collisions and ensure smooth traffic flow.</li>
+            </ol>
+            <ul>
+            <li>In summary → plays a crucial role in <strong>urban
+            environments</strong> (dense traffic) and vehicles must make
+            <strong>real-time decisions</strong> to adapt to other
+            drivers.</li>
+            </ul>
+            <p><img src="img/path/path_planning_strucutre.png" width="400"></p>
+            <p>As the figure shows, path planning uses a combination of
+            known and unknown information in conjunction with the sensor
+            and mapping. The <strong>horizontal</strong> planning is
+            essentially the decision on what <strong>trajectory</strong>
+            to follow while the <strong>vertical</strong> planning is to
+            decide on <strong>speed</strong> (accelerate, constant
+            speed, decelerate).</p>
+            </section>
+            <section id="path-planning-predictions-and-decision-making"
+            class="level2" data-number="11.2">
+            <h2 data-number="11.2"><span
+            class="header-section-number">11.2</span> Path Planning |
+            Predictions and Decision Making</h2>
+            <p>In order to predict what will happen in the immediate
+            future, multiple aproaches have been developed:</p>
+            <ol type="1">
+            <li><strong>machine-learning</strong> based</li>
+            </ol>
+            <p><img src="img/path/paths_ml.png" width="300"></p>
+            <p><br></p>
+            <p>The main idea has the following two phases:</p>
+            <ul>
+            <li><strong>training</strong> phase:
+            <ul>
+            <li>gather massive history of vehicles and paths</li>
+            <li>hundreds/thousands of vehicles, different actions at
+            intersection</li>
+            </ul></li>
+            <li><strong>unsupervised</strong> learning
+            <ul>
+            <li>clustering algorithms</li>
+            <li>each cluster a typical trajectory for vehicle</li>
+            </ul></li>
+            </ul>
+            <p>More driving leads to more data and <strong>better
+            estimates</strong> → past behavior can affect current
+            decisions.</p>
+            <ol start="2" type="1">
+            <li><strong>model</strong>-based</li>
+            </ol>
+            <p>This methods attempts to <strong>imagine possible
+            choices</strong> for the vehicle.</p>
+            <p><img src="img/path/path_model.png" width="400"></p>
+            <p><br></p>
+            <p>In this example, the green car is attempting to merge
+            into the highway but the red car’s behavior can cause
+            problems. So we imagine the four choices for the other
+            car:</p>
+            <ul>
+            <li>speed up</li>
+            <li>slow down</li>
+            <li>constant speed</li>
+            <li>change lanes</li>
+            </ul>
+            <p>And, as mentioned earlier, each has a <strong>probability
+            that changes with observations</strong> → sensors work in
+            real-time.</p>
+            <p>This method,</p>
+            <ul>
+            <li>implements feasibility of trajectory</li>
+            <li>eliminates <em>impossible behaviors</em></li>
+            <li>focus on what’s possible, <strong>not on past</strong>
+            (compare with ML-based approach).</li>
+            </ul>
+            <p><br></p>
+            <p>Once we have an estimate of the immediate future, we need
+            → a <strong>decision</strong>, <em>e.g.,</em></p>
+            <ul>
+            <li>brake if obstacle detected?</li>
+            <li>accelerate or change lanes?</li>
+            </ul>
+            <p>A lot of this depends on the <strong>environment</strong>
+            (highway vs parking lot). We need to consider issues such
+            as:</p>
+            <ul>
+            <li>safety</li>
+            <li>feasibility</li>
+            <li>efficiency</li>
+            <li>legality</li>
+            <li>passenger comfort</li>
+            </ul>
+            <p>Enter <strong>finite state machines</strong>.</p>
+            <p>First we need to defined a couple of things:</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td>define <strong>states</strong> of a car</td>
+            <td><strong>cost functions</strong> to define *choice** of
+            state</td>
+            </tr>
+            <tr>
+            <td><img src="img/path/fsm_car_states.png" width="100"></td>
+            <td><img src="img/path/fsm_calculator.png" width="100"></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
             </section>
             </section>
             <section id="footnotes"
