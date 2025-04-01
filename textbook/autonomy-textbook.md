@@ -8172,10 +8172,15 @@ This method,
 
 <br>
 
+### Decision Making
+
 Once we have an estimate of the immediate future, we need &rarr; a **decision**, _e.g.,_
 
 - brake if obstacle detected?
 - accelerate or change lanes?
+
+
+<img src="img/path/decision_making.jpg" height="200">
 
 A lot of this depends on the **environment** (highway vs parking lot). We need to consider issues such as:
 
@@ -8187,23 +8192,392 @@ A lot of this depends on the **environment** (highway vs parking lot). We need t
 
 Enter **finite state machines**.
 
-First we need to defined a couple of things:
+First we need to define a couple of things:
 
 |||
 |----|----|
 | define **states** of a car | **cost functions** to define *choice** of state |
 | <img src="img/path/fsm_car_states.png" width="100"> | <img src="img/path/fsm_calculator.png" width="100">
+| _e.g.,_ on highway, stationary, _etc._ | Computed (independently) for each possible scenario|
+| options &rarr; stay in lane, change to left lane, overtake a car|**lowest cost wins**|
 ||
 
+So how do we define this **cost**?
+
+The cost can be calculated using various factors, _e.g._, feasibility, security, legal, comfort, speed, _etc_.
+
+**One** way to estimate this could be:
+
+<img src="img/path/equations/pngs/equations-2.png">
+
+Each factor can either be defined using number or functions, _e.g.,_ the cost for speeding can be defined as:
+
+<img src="img/path/speed_cost.png" width="300">
+
+<br>
+
+The "_weight_" for each of the factors helps to define the _importance_ of that factor in the cost calculations.
 
 
+## Path Planning | Setup
+
+The main objective of path planning is to **generate a trajectory** &rarr; a polynomial that pass through **waypoints**. Essentially the trajectory is a _curve_ through a set of waypoints.
+
+Many path planning algorithms use the **[Frenet coordinate system](https://roboticsknowledgebase.com/wiki/planning/frenet-frame-planning)** which defines:
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/equations/pngs/equations-4.png" width="500">
+
+</div>
+
+<div>
+
+<img src="img/path/frenet.png" width="300">
+
+</div>
+
+</div>
+
+The idea is that the Frenet coordinate system is easier to use for trajectory and waypoint calculations since it is always relative to the center of the lane. A cartesian system would be absolute and be harder to manage with changing geographies (of the road).
+
+Once a decision has been made (_e.g.,_ overtake), a path planning algorithm &rarr; **generates multiple trajectories**,
+
+<img src="img/path/multiple_trajectories.png" width="400">
+
+<br>
+
+The idea is to choose one based on the criteria/costs that we have established so far. 
+
+[Trajectory planning](https://www.sciencedirect.com/science/article/pii/S0968090X15003447?via%3Dihub) (also known as trajectory generation) is the real-time planning of an actual vehicle’s transition from one feasible state to the next, satisfying the vehicle’s _kinematic limits_ based on,
+
+- vehicle dynamics and 
+- constrained by the navigation comfort.
+
+All this while respecting lane boundaries and traffic rules, while avoiding, at the same time, **obstacles** (other road users, ground conditions, ditches, _etc._). Trajectory planning is parameterized by $(time, acceleration, velocity)$ and is frequently referred to as **motion planning**. During each "planning cycle", a path planner module,
+
+- generates a number of trajectories from the vehicle’s current location
+- with a look-ahead distance, 
+- depending on the speed and line-of-sight of the vehicle’s on-board sensors and 
+- evaluating each trajectory w.r.t. some **cost function** i
+
+to determine an **optimal trajectory**. 
+
+Trajectory planning is scheduled at regular intervals &rarr; length of which largely depends on the frequency of receiving fresh sensor data. 
+
+Most existing trajectory planning algorithms follows two steps:
+
+1. trajectory generated on a low resolution/lower dimensional search spaced
+2. the resulting optimal trajectory smoothed out on a higher resolution/higher dimensional search space. 
+
+The planning module is integral to rendering complete autonomy to the vehicle with the outputs of the trajectory planner feeding into the low-level steering/manoeuvre control unit.
+
+### Graphs Used for Path Planning
+
+One of the challenges for finding a path is: **how to represent the search space?** Essentially, the environment should be represented so that we can query for paths, optimal or otherwise. Hence, the physical environment must be transformed into some sort of a state space, a **graph** even &rarr; discretizing it, for easier computations. Most methods start with the bare representation (lanes, road boundaries) and then convert them into higher-order graphical representations. 
+
+Here are some popular graphical representations used in path planning:
+
+1. **[Voronoi diagrams](https://ics.uci.edu/~goodrich/teach/geom/notes/Voronoi1.pdf)** (aka Dirichlet Tessellation) partitions a plane with $n$ points into convex polygons such that each polygon contains **exactly one** generating point and every point in a given polygon is closer to its generating point than to any other. In the simplest case, these objects are just finitely many points in the plane (called seeds, sites, or generators). For each seed there is a corresponding region, called a Voronoi cell, consisting of all points of the plane closer to that seed than to any other.
+
+<img src="img/path/path_voronoi.1.png" height="150">
+<img src="img/path/path_voronoi.2.png" height="150">
+
+<br>
+
+Voronoi Diagrams generate paths which **maximize** the [distance between the vehicle and surrounding obstacles](https://www.sciencedirect.com/science/article/pii/S0968090X15003447?via%3Dihub#b0535). Algorithms which are used for searching on Voronoi Diagrams are **complete* &rarr; _i.e.,_ if a path exists in the free space, it would also appear on the Voronoi Diagram.
+
+ Voronoi Diagrams are typically used for planning in static environments, such as parking lots. Voronoi diagrams on their own are not suitable for on-road path-planning, since Voronoi edges, along which a vehicle navigates, can potentially be discontinuous.
 
 
+ 2. **[Occupancy Grids](https://www.mathworks.com/help/robotics/ug/occupancy-grids.html)**  work in manner similar to that of Voronoi diagrams,
+ 
+- they discretise the state space into a grid and 
+- each cell of the grid is associated with a probability of the cell being occupied by an obstacle, or a cost proportional to the feasibility or risk of traversal. 
+
+<img src="img/path/path_occupancy_grid.png" height="150">
+
+Risk or feasibility is calculated by considering presence of obstacles, lane and road boundaries.
+
+While grid-based approaches require **low computational power**, they cannot handle:
+ 
+- **non-linear dynamics** or
+- obstacles.
 
 
+3. **[State lattices](https://www.cs.cmu.edu/~alonzo/pubs/papers/isairas05Planning.pdf)** is a _generalization_ of grids. They are built by the repetition of rectangles or squares to **discretize a continuous space**. Lattices are constructed by regularly repeating primitive paths which connect possible states for the vehicle &rarr; in terms of,
+
+- position, 
+- curvature or
+- time.
+
+<img src="img/path/path_state_lattices.png" height="150">
+
+<br>
+
+The problem of planning then reduces to a "[boundary value problem](https://www.sciencedirect.com/science/article/pii/S0968090X15003447?via%3Dihub#b0420)" &rarr; connecting original state with the required final state. This method overcomes the limitations of grid-based techniques without increasing the computational requirements. 
 
 
+4. **[Driving Corridors](https://ai.stanford.edu/~ddolgov/papers/dolgov_gpp_stair08.pdf)** operate in a manner that's similar to the [air corridors](https://pmc.ncbi.nlm.nih.gov/articles/PMC8624552/) air traffic control provides for modern aircraft. They represent a **continuous collision-free space**, bounded by road and lane boundaries as well as other obstacles, where a vehicle is expected to move. 
+
+<img src="img/path/path_driving_corridors.png" height="150">
+
+<br>
+
+Driving corridors are based on lane boundary information given by **detailed digital maps** or a map built using SLAM. Lane boundaries form the outer bound of the driving corridors, restricted in the presence of obstacles. A driving corridor is constructed for **each car**. 
+
+A major drawback is that intensive computational power is needed for planning for the entire range of coordinates regarding the road network, representation of roads or lanes and various vehicles. This could prove to be prohibitive. 
 
 
+## Path Planning | Algorithms
+
+So far we have set up the problem with,
+
+- a coordinate system
+- problem definition and setup and
+- representation of the state space.
+
+But we haven't _actually_ seen how to **find paths** (rather, trajectories)! Now let's look at some of the popular trajectory estimation strategies.
+
+There are **three** well-known classes of algorithms for this purpose:
+
+1. traditional/**physics**-based methods &rarr; _e.g.,_ [artificial potential field (APF)](#artificial-potential-field-apf) 
+2. **graph**-based &rarr; _e.g.,_ [A* and D*](#a-and-d-search)
+3. **heauristic random traversal**, _e.g.,_ [RRT](#rapidly-exploring-random-tree-rrt-algorithm)
 
 
+### Artificial Potential Field (APF)
+
+A (scalar) [potential field](https://en.wikipedia.org/wiki/Scalar_potential) describes the situation where the difference in the potential energies of an object in two different positions **depends only on the positions**, not upon the path taken by the object in traveling from one position to the other. One well-known example is potential energy due to **gravity**; others include magnetic and electric fields. 
+
+An **artificial potential field** (APF) algorithm uses the artificial potential field to understand the motion of a robot in a certain space. For instance, if we consider a space,
+
+- divided into a grid of cells 
+- with **obstacles** and a **goal node**.
+
+<img src="img/path/apf_2d.webp" width="200">
+
+<br>
+
+The algorithm assigns an **artificial potential field** to every point in the grid using "potential field functions" so that,
+
+- the robot simulates from the highest potential to the lowest potential
+- the goal node has the **lowest potential** 
+- starting node will have the **maximum potential**. 
+
+Hence, we can say that the autonomous vehicle &rarr; moves from lowest to the highest potential.
+
+[One view of the potential field functions](https://cerv.aut.ac.nz/wp-content/uploads/2021/12/A-Survey-of-Path-Planning-Algorithms-for-Autonomous-Vehicles.pdf) looks like,
+
+<img src="img/path/apf_functions.png" width="300">
+
+<br>
+
+In a 3D space, we can think of the problem as [finding a path](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08) through a set of obstacles (producing repulsive fields) while heading towards the goal (exhibiting attractive fields).
+
+<img src="img/path/apf_3d.webp" width="300">
+
+<br>
+
+[Read more](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08) about APF, the algorithms and implementation issues for more details.
+
+
+### A* and D* Search 
+
+Graph search algorithms generally represent a map based on the grid method, which is to decompose the map into interconnected and non-coincident grids. Search for an optimal path from the starting grid to the target grid therefore can avoid collisions.
+
+The [**A\* algorithm**](https://www.datacamp.com/tutorial/a-star-algorithm) is an informed search algorithm, meaning it leverages a **heuristic function to guide its search towards the goal**. This heuristic function estimates the cost of reaching the goal from a given node, allowing the algorithm to **prioritize promising paths** and **avoid exploring unnecessary ones**.
+
+The A∗ algorithm combines the Dijkstra algorithm with the Best First Search algorithm so as to obtain the optimal path through, establishing an open list and a closed list, where the grid points for selecting are placed in the open list and the selected path grid is placed in the closed list:
+
+- the starting grid number of the autonomous vehicles is placed in the open list
+- then we put the adjacent grids which it may pass through into the open list
+- the evaluation function $f(n)$ of the adjacent grid of the starting point in the open list is calculated
+- the starting point is moved into the closed list so as to set the grid point with the smallest value as the new starting point
+- the loop continues until the target point raster is placed in the open list
+- finally, the points in the closed list are connected in order to get the optimal path. 
+
+<br>
+
+The valuation function can be expressed as,
+
+$$
+f(n) = g(n) + h(n)
+$$
+
+where,
+
+|||
+|--------|:-----|
+| $g(n$) | actual cost of starting point &rarr; current point |
+| $h(n$) | **heuristic function**; estimated cost of current point &rarr; target point |
+||
+
+The cost function,
+
+- is usually expressed by using Euclidean distance
+- a change of cost function can effectively **improve the performance**. 
+
+Here is a [visual example]() of how A* works:
+
+<img src="img/path/a_star.avif" width="300">
+
+<br>
+
+And here is a [pseudocode](https://www.datacamp.com/tutorial/a-star-algorithm) for it
+
+```
+function A_Star(start, goal):
+    // Initialize open and closed lists
+    openList = [start]          // Nodes to be evaluated
+    closedList = []            // Nodes already evaluated
+    
+    // Initialize node properties
+    start.g = 0                // Cost from start to start is 0
+    start.h = heuristic(start, goal)  // Estimate to goal
+    start.f = start.g + start.h       // Total estimated cost
+    start.parent = null              // For path reconstruction
+    while openList is not empty:
+        // Get node with lowest f value - implement using a priority queue
+       // for faster retrieval of the best node
+        current = node in openList with lowest f value
+        
+        // Check if we've reached the goal
+        if current = goal:
+            return reconstruct_path(current)
+            
+        // Move current node from open to closed list
+        remove current from openList
+        add current to closedList
+        
+        // Check all neighboring nodes
+        for each neighbor of current:
+            if neighbor in closedList:
+                continue  // Skip already evaluated nodes
+                
+            // Calculate tentative g score
+            tentative_g = current.g + distance(current, neighbor)
+            
+            if neighbor not in openList:
+                add neighbor to openList
+            else if tentative_g >= neighbor.g:
+                continue  // This path is not better
+                
+            // This path is the best so far
+            neighbor.parent = current
+            neighbor.g = tentative_g
+            neighbor.h = heuristic(neighbor, goal)
+            neighbor.f = neighbor.g + neighbor.h
+    
+    return failure  // No path exists
+function reconstruct_path(current):
+    path = []
+    while current is not null:
+        add current to beginning of path
+        current = current.parent
+```
+
+<br>
+
+**Limitations of A\* Algorithm**
+
+| **issue**  | **description** |
+|:-----------|:----------------|
+| **performance in complex environments** | A* can struggle in large search spaces where the heuristic may provide inaccurate estimates, resulting in longer computation times |
+| **high memory usage** | the priority queue of nodes can consume significant memory, posing challenges in resource-constrained systems |
+| **heuristic dependence** | the algorithm’s effectiveness relies on the quality of the heuristic; a poor choice can lead to inefficient pathfinding |
+| **limited real-time responsiveness** | a* may not respond quickly enough in highly dynamic environments where obstacles frequently change, as it requires reevaluating paths based on prior calculations |
+||
+
+<br>
+
+**D\* Algorithm**
+
+The [**Dynamic A\***](https://ieeexplore.ieee.org/document/351061) algorithm is capable of planning paths in **unknown, partially known and changing environments** in an efficient, optimal and complete manner. It will continue using the original path after crossing the obstacle, which improves the efficiency of the secondary path planning. 
+
+It is specifically designed for dynamic environments where obstacles may appear or disappear during navigation. It is particularly effective for robotic applications that require **real-time adaptability** as the robot receives new information about its surroundings. By updating paths efficiently without recalculating from scratch, D* ensures timely responses to environmental changes.
+
+[Read more](https://engineering.miko.ai/path-planning-algorithms-a-comparative-study-between-a-and-d-lite-01133b28b8b4) about D* and its variants. 
+
+
+### Rapidly-exploring Random Tree (RRT) Algorithm
+
+The idea is to use the starting point as the root node and grow the tree randomly in the feasible space until it touches the end point (leaves). We then get a **collision-free path** from the starting point to the ending point.
+
+RRT uses **random sampling** and rapid expansion to explore the search space. It randomly generates sampling points and expands the tree according to specific rules, gradually approaching the target point. Through iteration and connection, a feasible path from the initial point to the target point is finally found. 
+
+<img src="img/path/rrt.1.webp" width="300">
+
+<br>
+
+The [algorithm](https://www.nature.com/articles/s41598-024-76299-9) for RRT,
+
+```
+Input: q_start, q_goal, n
+
+Output: T
+
+1: T.init (q_start);
+2: for i = 1 to n do
+3: q_rand <- Sample(i);
+4: q_nearest <- Nearest (q_rand, T);
+5: q_new <- Steer (q_nearest, q_rand);
+6:
+7: if CollisionFree()) then
+8:    T.addVertex(q_new);
+9:    T.addEdge(q_near, q_new, L);
+10: return T;
+```
+
+<br>
+
+Here is an [illustration of RRT](https://graham-clifford.com/rrt-algorithm/) trying to find a path to the red dot:
+
+<img src="img/path/rrt_animate.gif" width="400">
+
+
+The [**RRT\* Algorithm**](https://www.nature.com/articles/s41598-024-76299-9) is a **progressive** **optimal** path planning algorithm based on RRT. It improves existing paths through rewiring steps, shortens path segments through optimization steps, and takes node costs into account to generate high-quality and more optimized paths. Compared with RRT, RRT* has better path quality, because it can find a better path while ensuring search efficiency. 
+
+RRT* **does not choose the nearest node** as the parent node of the new node, but in a **certain range** around the new node, chooses the node with the best path (the least cost) as the parent node of the new node.
+
+<img src="img/path/rrt_star_example.webp" width="500">
+
+<br>
+
+the method is to **draw a circle** around $q_{nearest}$ and compare the distance between a point in the circle and $q_{new}$. If the distance between $q_{nearest}$ and $q_{new}$ is less than the distance between $q_{new}$ and $q_1$ or $q_2$, $q_{nearest}$ and $q_{new}$ are connected. Meanwhile, we need to compare the shortest distance between $q_{nearest}$ and $q_2$. If the distance between $q_{new}$ and $Q-2$ is shorter, we update the parent of $q_2$ to $q_{new}$. This step is called the **reconnect**.
+
+Compared with RRT, the RRT* algorithm has the advantage of re-selecting nearby nodes and reconnecting extended nodes of random trees, inheriting the Probabilistic completeness of the RRT algorithm and making the planned routes more optimized.
+
+There have been [various improvements to RRT\*](https://www.nature.com/articles/s41598-024-76299-9) over the years, _e.g.,_ G-RRT*, GPF-RRT*, APF-RRT*, Improved A_RRT*, _etc._
+
+The following figures provides insights into how these algorithms compare in terms of operations/performance:
+
+<img src="img/path/rrt_improvements.webp" width="500">
+
+
+<br>
+<br>
+
+Note that the graphical representation algorithms (_e.g.,_ Voronoi diagrams) are used **in conjunction with** the trajectory estimation algoritms (_e.g.,_ APF, RRT). 
+
+
+<br>
+
+**References**
+
+- [A Survey of Path Planning Algorithms for Autonomous Vehicles](https://cerv.aut.ac.nz/wp-content/uploads/2021/12/A-Survey-of-Path-Planning-Algorithms-for-Autonomous-Vehicles.pdf) by Ming et al. 
+- [Optimal and efficient path planning for partially-known environments](https://ieeexplore.ieee.org/document/351061) by Stentz et al.
+- [Path Planning Using Potential Field Algorithm](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08)
+- [Artificial Potential Field Algorithm Implementation for Quadrotor Path Planning](https://thesai.org/Downloads/Volume10No8/Paper_76-Artificial_Potential_Field_Algorithm_Implementation.pdf) by Iswanto et al.
+- [Robotic Motion Planning: A* and D* Search](https://www.cs.cmu.edu/~motionplanning/lecture/AppH-astar-dstar_howie.pdf) by Howie Choset, CMU
+- [The A* Algorithm: A Complete Guide](https://www.datacamp.com/tutorial/a-star-algorithm)
+- [Path-Planning Algorithms: A Comparative Study between A* and D*Lite](https://engineering.miko.ai/path-planning-algorithms-a-comparative-study-between-a-and-d-lite-01133b28b8b4)
+- [Anytime Dynamic A*: An Anytime, Replanning Algorithm](https://www.cs.cmu.edu/~ggordon/likhachev-etal.anytime-dstar.pdf)
+- [Efficient path planning for autonomous vehicles based on RRT* with variable probability strategy and artificial potential field approach](https://www.nature.com/articles/s41598-024-76299-9)
+- [Real-time motion planning methods for autonomous on-road driving: State-of-the-art and future research directions](https://www.sciencedirect.com/science/article/pii/S0968090X15003447?via%3Dihub)
+- [Path Planning for Autonomous Vehicles](https://intellias.com/path-planning-for-autonomous-vehicles-with-hyperloop-option/)
+- [Path Planning for Self-Driving Cars](https://www.thinkautonomous.ai/blog/path-planning-for-self-driving-cars/)
+- [A* Search Algorithm](https://www.youtube.com/watch?v=ySN5Wnu88nE):
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ySN5Wnu88nE?si=9DGfMp4xQzOBgx71" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
