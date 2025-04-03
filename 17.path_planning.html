@@ -1534,6 +1534,1330 @@ let's look at some popular graphical representations used in path planning
 <img src="img/path/path_voronoi.2.png" height="800">
 
 ---
+
+<!-- .slide: data-background="white" -->
+
+1. **Voronoi diagrams** 
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_voronoi.2.png" height="800">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+generates paths &rarr; **maximize distance** between vehicle and surrounding obstacles
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+1. **Voronoi diagrams** 
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_voronoi.2.png" height="800">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+generates paths &rarr; **maximize distance** between vehicle and surrounding obstacles
+
+</div>
+
+</div>
+
+typically used for planning in **static environments**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+2. **[occupancy grids](https://www.mathworks.com/help/robotics/ug/occupancy-grids.html)**  
+
+<br>
+
+<img src="img/path/path_occupancy_grid.png" height="750">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+2. **occupancy grids**  
+
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_occupancy_grid.png" height="750">
+
+</div>
+
+<div>
+
+<br>
+<br>
+<br>
+
+- similar to Voronoi diagrams
+- discretize state space &rarr; **grid**
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+2. **occupancy grids**  
+
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_occupancy_grid.png" height="750">
+
+</div>
+
+<div>
+
+<br>
+
+each cell 
+- probability of cell being occupied by obstacle
+- or a cost proportional to the feasibility or risk of traversal. 
+
+</div>
+
+</div>
+
+
+---
+
+2. **occupancy grids**
+
+<br>
+ 
+risk/feasibility &rarr; presence of obstacles, lane/road boundaries
+
+---
+
+2. **occupancy grids**
+
+<br>
+<br>
+ 
+|pros||
+|:-------|:------|
+|low computational power| |
+||
+
+
+---
+
+2. **occupancy grids**
+
+<br>
+<br>
+ 
+|pros|cons|
+|:-------|:------|
+|low computational power| cannot handle **non-linear dynamics** or obstacles|
+||
+
+---
+
+<!-- .slide: data-background="white" -->
+
+3. **[state lattices](https://www.cs.cmu.edu/~alonzo/pubs/papers/isairas05Planning.pdf)** 
+
+<br>
+
+<img src="img/path/path_state_lattices.png" height="750">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+3. **state lattices** 
+
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_state_lattices.png" height="750">
+
+</div>
+
+<div>
+
+<br>
+<br>
+
+- _generalization_ of grids
+- repetition of rectangles/squares
+- **discretize a continuous space**
+
+</div>
+
+</div>
+
+---
+
+3. **state lattices** 
+
+<br>
+<br>
+
+- constructed by regularly repeating primitive paths 
+
+---
+
+3. **state lattices** 
+
+<br>
+<br>
+
+
+- constructed by regularly repeating primitive paths 
+- that connect possible states for vehicle in terms of,
+    - position, 
+    - curvature or
+    - time
+
+---
+
+3. **state lattices** 
+
+<br>
+<br>
+
+reduces to &rarr; "[boundary value problem](https://www.sciencedirect.com/science/article/pii/S0968090X15003447?via%3Dihub#b0420)" 
+
+Note:
+- A BVP involves finding a solution to a differential equation that satisfies conditions (called boundary conditions) at the "boundaries" or endpoints of the independent variable's domain
+
+---
+
+3. **state lattices** 
+
+<br>
+<br>
+
+reduces to &rarr; "[boundary value problem](https://www.sciencedirect.com/science/article/pii/S0968090X15003447?via%3Dihub#b0420)" 
+
+connecting original state &rarr; required final state
+
+---
+
+3. **state lattices** 
+
+<br>
+<br>
+
+- overcomes limitations of grid-based techniques 
+
+---
+
+3. **state lattices** 
+
+<br>
+<br>
+
+- overcomes limitations of grid-based techniques 
+- without increasing computational requirements
+
+---
+
+<!-- .slide: data-background="white" -->
+
+4. **[driving corridors](https://ai.stanford.edu/~ddolgov/papers/dolgov_gpp_stair08.pdf)** 
+
+<br>
+
+<img src="img/path/path_driving_corridors.png" width="1300">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+4. **driving corridors** 
+
+<br>
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_driving_corridors.png" width="1300">
+
+</div>
+
+<div>
+
+- similar to [air corridors](https://pmc.ncbi.nlm.nih.gov/articles/PMC8624552/) 
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+4. **driving corridors** 
+
+<br>
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_driving_corridors.png" width="1300">
+
+</div>
+
+<div>
+
+- similar to [air corridors](https://pmc.ncbi.nlm.nih.gov/articles/PMC8624552/) 
+- **continuous** collision-free space
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: data-background="white" -->
+
+4. **driving corridors** 
+
+<br>
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/path_driving_corridors.png" width="1300">
+
+</div>
+
+<div>
+
+- similar to [air corridors](https://pmc.ncbi.nlm.nih.gov/articles/PMC8624552/) 
+- **continuous** collision-free space
+- bounded by road/lane boundaries and obstacles
+
+</div>
+
+</div>
+
+---
+
+4. **driving corridors** 
+
+based on lane boundary information given by,
+
+---
+
+4. **driving corridors** 
+
+based on lane boundary information given by,
+
+- **detailed digital maps** or
+- map built using SLAM 
+
+---
+
+lane boundaries 
+
+---
+
+lane boundaries 
+
+- outer bound of driving corridors
+
+---
+
+lane boundaries 
+
+- outer bound of driving corridors
+- restricted in the presence of obstacles
+
+---
+
+a driving corridor is constructed for **each car** 
+
+---
+
+4. **driving corridors** 
+
+major drawback &rarr; intensive computational power 
+
+---
+
+4. **driving corridors** 
+
+major drawback &rarr; intensive computational power 
+
+- for planning for entire range of coordinates 
+- road network, representation of roads/lanes/vehicles
+
+Note:
+- This could prove to be prohibitive. 
+
+---
+
+## Path Planning | Algorithms
+
+---
+
+so far we have defined,
+
+- a coordinate system
+- problem definition and setup and
+- representation of the state space
+
+---
+
+but how to **find paths** (rather, trajectories)?
+
+---
+
+**three** well-known classes of algorithms
+
+---
+
+**three** well-known classes of algorithms
+
+1. traditional/**physics**-based &rarr; _e.g.,_ [artificial potential field (APF)](#artificial-potential-field-apf) 
+2. **graph**-based &rarr; _e.g.,_ [A* and D*](#a-and-d-search)
+3. **heauristic random traversal**, _e.g.,_ [RRT](#rapidly-exploring-random-tree-rrt-algorithm)
+
+---
+
+### Artificial Potential Field (APF)
+
+---
+
+**[potential field](https://en.wikipedia.org/wiki/Scalar_potential)**
+
+---
+
+**potential field**
+
+<br>
+
+difference in **potential energies** of object &rarr; in two different positions 
+
+---
+
+**potential field**
+
+difference in **potential energies** of object &rarr; in two different positions 
+
+- **depends only on the positions**
+
+---
+
+**potential field**
+
+difference in **potential energies** of object &rarr; in two different positions 
+
+- **depends only on the positions**
+- not on path taken by object
+
+---
+
+**potential field**
+
+difference in **potential energies** of object &rarr; in two different positions 
+
+- **depends only on the positions**
+- not on path taken by object
+
+_e.g.,_ potential energy due to **gravity**, magnetic/electric fields
+
+---
+
+### Artificial Potential Field (APF)
+
+"artificial" potential field &rarr; capture motion of robot in certain space
+
+---
+
+### Artificial Potential Field (APF)
+
+consider a space,
+
+---
+
+### Artificial Potential Field (APF)
+
+consider a space,
+
+- divided into a grid of cells 
+
+---
+
+### Artificial Potential Field (APF)
+
+consider a space,
+
+- divided into a grid of cells 
+- with **obstacles** and a **goal node**
+
+---
+
+### Artificial Potential Field (APF)
+
+<div class="multicolumn">
+
+<div>
+
+<br>
+<br>
+
+consider a space,
+
+- divided into a grid of cells 
+- with **obstacles** and a **goal node**
+
+</div>
+
+<div>
+
+<img src="img/path/apf_2d.webp" width="700">
+
+</div>
+
+</div>
+
+
+---
+
+### Artificial Potential Field (APF)
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/apf_2d.webp" width="700">
+
+
+</div>
+
+<div>
+
+<br>
+<br>
+
+- assign **artificial potential field**
+
+</div>
+
+</div>
+
+---
+
+### Artificial Potential Field (APF)
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/apf_2d.webp" width="700">
+
+
+</div>
+
+<div>
+
+<br>
+<br>
+
+- assign **artificial potential field**
+- to every point in grid
+
+</div>
+
+</div>
+
+---
+
+### Artificial Potential Field (APF)
+
+<div class="multicolumn">
+
+<div>
+
+<img src="img/path/apf_2d.webp" width="700">
+
+
+</div>
+
+<div>
+
+<br>
+<br>
+
+- assign **artificial potential field**
+- to every point in grid
+- using "potential field functions"
+
+</div>
+
+</div>
+
+---
+
+- robot simulates &rarr; from highest potential to lowest potential
+
+---
+
+- robot simulates &rarr; from highest potential to lowest potential
+- goal node &rarr; **lowest potoential**
+
+---
+
+- robot simulates &rarr; from highest potential to lowest potential
+- goal node &rarr; **lowest potential** 
+- starting node &rarr; **maximum potential** 
+
+autonomous vehicle &rarr; moves from lowest to highest potential
+
+---
+
+<!-- .slide: data-background="white" -->
+
+one [example](https://cerv.aut.ac.nz/wp-content/uploads/2021/12/A-Survey-of-Path-Planning-Algorithms-for-Autonomous-Vehicles.pdf)  of potential field functions:
+
+<img src="img/path/apf_functions.png" width="1200">
+
+---
+
+in 3D space &rarr; [finding a path](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08) through,
+
+---
+
+in 3D space &rarr; [finding a path](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08) through,
+
+- a set of obstacles &rarr; producing **repulsive fields** 
+
+---
+
+in 3D space &rarr; [finding a path](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08) through,
+
+- a set of obstacles &rarr; producing **repulsive fields** 
+- while heading towards the goal &rarr; exhibiting **attractive fields**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+in 3D space &rarr; [finding a path](https://medium.com/@rymshasiddiqui/path-planning-using-potential-field-algorithm-a30ad12bdb08) through,
+
+<img src="img/path/apf_3d.webp" width="1200">
+
+---
+
+### A* and D* Search 
+
+---
+
+graph search algorithms 
+
+
+---
+
+graph search algorithms 
+
+- **decompose map** into interconnected and non-coincident grids
+
+---
+
+graph search algorithms 
+
+- **decompose map** into interconnected and non-coincident grids
+- search for **optimal path** &rarr; starting grid to target grid 
+
+---
+
+graph search algorithms 
+
+- **decompose map** into interconnected and non-coincident grids
+- search for **optimal path** &rarr; starting grid to target grid 
+    - avoid collisions
+
+---
+
+### [**A\* algorithm**](https://www.datacamp.com/tutorial/a-star-algorithm) 
+
+---
+
+### **A\* algorithm**
+
+informed search algorithm &rarr; leverages **heuristic function**.
+
+---
+
+**heuristic function**
+
+estimates &rarr; **cost** of reaching the goal from given node
+
+---
+
+**heuristic function**
+
+estimates &rarr; **cost** of reaching the goal from given node
+
+- **prioritize promising paths** and 
+
+---
+
+**heuristic function**
+
+estimates &rarr; **cost** of reaching the goal from given node
+
+- **prioritize promising paths** and 
+- **avoid exploring unnecessary ones**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### **A\* algorithm**
+
+<img src="img/path/Astarpathfinding.gif" width="1000">
+
+
+---
+
+### **A\* algorithm**
+
+combines Dijkstra and **best first search** algorithms
+
+Note:
+- Best-first search is a heuristic-based search algorithm that prioritizes expanding nodes that appear closest to the goal, using a heuristic function to estimate the cost of reaching the goal from a given node. 
+
+
+---
+
+### **A\* algorithm**
+
+combines Dijkstra and **best first search** algorithms
+
+obtain **optimal** path through &rarr; establishing two lists
+
+---
+
+### **A\* algorithm**
+
+combines Dijkstra and **best first search** algorithms
+
+obtain **optimal** path through &rarr; establishing two lists
+
+|open list | closed list|
+|:---------|:-----------|
+
+---
+
+### **A\* algorithm**
+
+combines Dijkstra and **best first search** algorithms
+
+obtain **optimal** path through &rarr; establishing two lists
+
+|open list | closed list|
+|:---------|:-----------|
+|grid points for selection | |
+||
+
+
+---
+
+### **A\* algorithm**
+
+combines Dijkstra and **best first search** algorithms
+
+obtain **optimal** path through &rarr; establishing two lists
+
+|open list | closed list|
+|:---------|:-----------|
+|grid points for selection | already selected points |
+||
+
+---
+
+### **A\* algorithm**
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+- put adjacent grids &rarr; open list
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+- put adjacent grids &rarr; open list
+- evaluation function, $f(n)$, applied to &rarr; adjacent grid in open list 
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+- put adjacent grids &rarr; open list
+- evaluation function, $f(n)$, applied to &rarr; adjacent grid in open list 
+- starting point &rarr; moved to closed list 
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+- put adjacent grids &rarr; open list
+- evaluation function, $f(n)$, applied to &rarr; adjacent grid in open list 
+- starting point &rarr; moved to closed list 
+- set grid point with smallest value &rarr; new starting point
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+- put adjacent grids &rarr; open list
+- evaluation function, $f(n)$, applied to &rarr; adjacent grid in open list 
+- starting point &rarr; moved to closed list 
+- set grid point with smallest value &rarr; new starting point
+- loop until &rarr; target point raster in open list
+
+---
+
+### **A\* algorithm**
+
+- starting grid number &rarr; open list
+- put adjacent grids &rarr; open list
+- evaluation function, $f(n)$, applied to &rarr; adjacent grid in open list 
+- starting point &rarr; moved to closed list 
+- set grid point with smallest value &rarr; new starting point
+- loop until &rarr; target point raster in open list
+
+final step &rarr; **connect** points in closed list for optimal path 
+
+---
+
+- **evaluation** function, $f(n)$, applied to &rarr; adjacent grid in open list 
+
+---
+
+evaluation function,
+
+$$
+f(n) = g(n) + h(n)
+$$
+
+---
+
+evaluation function,
+
+$$
+f(n) = g(n) + h(n)
+$$
+
+||||
+|--------|:-----|:----|
+| $g(n$) | actual cost | starting point &rarr; current point |
+
+---
+
+evaluation function,
+
+$$
+f(n) = g(n) + h(n)
+$$
+
+||||
+|--------|:-----|:----|
+| $g(n$) | actual cost | starting point &rarr; current point |
+| $h(n$) | **heuristic function** <br> estimated cost |  current point &rarr; target point |
+||
+
+---
+
+estimated cost function, $h(x)$,
+
+---
+
+estimated cost function, $h(x)$,
+
+- usually expressed using Euclidean distance
+
+---
+
+estimated cost function, $h(x)$,
+
+- usually expressed using Euclidean distance
+- change of cost function &rarr; **improves the performance**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+visual example of how A* works:
+
+<img src="img/path/a_star.avif" width="1300" border="1">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+A* with an **[obstacle](https://en.wikipedia.org/wiki/A*_search_algorithm#)**
+
+<img src="img/path/Astar_progress_animation.gif" height="800">
+
+Note:
+- The empty circles represent the nodes in the open set, i.e., those that remain to be explored, and the filled ones are in the closed set. Color on each closed node indicates the distance from the goal: the greener, the closer. One can first see the A* moving in a straight line in the direction of the goal, then when hitting the obstacle, it explores alternative routes through the nodes from the open set.
+
+---
+
+A* [pseudocode](https://www.datacamp.com/tutorial/a-star-algorithm)
+
+```[1|2-4|6-10|11|12-14|16-18|20-22|24-27|29-30|32-33|34-35|37-41|43|44-48]
+function A_Star(start, goal):
+    // Initialize open and closed lists
+    openList = [start]          // Nodes to be evaluated
+    closedList = []             // Nodes already evaluated
+    
+    // Initialize node properties
+    start.g = 0                // Cost from start to start is 0
+    start.h = heuristic(start, goal)  // Estimate to goal
+    start.f = start.g + start.h       // Total estimated cost
+    start.parent = null               // For path reconstruction
+    while openList is not empty:
+        // Get node with lowest f value - implement using a priority queue
+        // for faster retrieval of the best node
+        current = node in openList with lowest f value
+        
+        // Check if we've reached the goal
+        if current = goal:
+            return reconstruct_path(current)
+            
+        // Move current node from open to closed list
+        remove current from openList
+        add current to closedList
+        
+        // Check all neighboring nodes
+        for each neighbor of current:
+            if neighbor in closedList:
+                continue  // Skip already evaluated nodes
+                
+            // Calculate tentative g score
+            tentative_g = current.g + distance(current, neighbor)
+            
+            if neighbor not in openList:
+                add neighbor to openList
+            else if tentative_g >= neighbor.g:
+                continue  // This path is not better
+                
+            // This path is the best so far
+            neighbor.parent = current
+            neighbor.g = tentative_g
+            neighbor.h = heuristic(neighbor, goal)
+            neighbor.f = neighbor.g + neighbor.h
+    
+    return failure  // No path exists
+function reconstruct_path(current):
+    path = []
+    while current is not null:
+        add current to beginning of path
+        current = current.parent
+```
+
+---
+
+### **A\* algorithm**
+
+**guaranteed** to terminate and is complete &rarr; always find a solution 
+
+---
+
+### **A\* algorithm**
+
+**guaranteed** to terminate and is complete &rarr; always find a solution 
+
+_i.e.,_ a path from start to goal &rarr; if one exists
+
+---
+
+### **A\* algorithm**
+
+**guaranteed** to terminate and is complete &rarr; always find a solution 
+
+_i.e.,_ a path from start to goal &rarr; if one exists
+
+---
+
+only for _finite_ graphs...look up what happens for _infinite_ graphs
+
+---
+
+**limitations of A\* algorithm**
+
+---
+
+**limitations of A\* algorithm**
+
+| **issue**  | **description** |
+|:-----------|:----------------|
+| **complex environments** | struggles in large search spaces where heuristic provides inaccurate estimates <br> result &rarr; **longer computation times** |
+
+
+---
+
+**limitations of A\* algorithm**
+
+| **issue**  | **description** |
+|:-----------|:----------------|
+| **complex environments** | struggles in large search spaces where heuristic provides inaccurate estimates <br> result &rarr; **longer computation times** |
+| **high memory usage** | lists can consume **significant memory** |
+
+---
+
+**limitations of A\* algorithm** [contd.]
+
+| **issue**  | **description** |
+|:-----------|:----------------|
+| **heuristic dependence** | relies on **heuristic quality** <br> poor choices &rarr; inefficient pathfinding |
+
+
+---
+
+**limitations of A\* algorithm** [contd.]
+
+| **issue**  | **description** |
+|:-----------|:----------------|
+| **heuristic dependence** | the algorithm’s effectiveness relies on the quality of the heuristic; a poor choice can lead to inefficient pathfinding |
+| **limited real-time responsiveness** | may not respond quickly enough in **highly dynamic environments** &rarr; where obstacles frequently change <br> reevaluating paths takes time|
+||
+
+---
+
+### [**Dynamic A\* (D\*) Algorithm**](https://ieeexplore.ieee.org/document/351061)
+
+---
+
+### D* Algorithm
+
+planning paths in **unknown, partially known and changing environments** 
+
+---
+
+### D* Algorithm
+
+planning paths in **unknown, partially known and changing environments** 
+
+efficient, optimal and complete manner
+
+---
+
+### D* Algorithm
+
+**continue using original path** &rarr; after crossing the obstacle
+
+---
+
+### D* Algorithm
+
+**continue using original path** &rarr; after crossing the obstacle
+
+improves efficiency of path planning 
+
+---
+
+### D* Algorithm
+
+specifically designed for dynamic environments 
+
+
+---
+
+### D* Algorithm
+
+specifically designed for dynamic environments 
+
+- where obstacles may appear or disappear during navigation
+
+---
+
+### D* Algorithm
+
+specifically designed for dynamic environments 
+
+- where obstacles may appear or disappear during navigation
+- effective for robotic applications requiring **real-time adaptability** 
+
+---
+
+### D* Algorithm
+
+specifically designed for dynamic environments 
+
+- where obstacles may appear or disappear during navigation
+- effective for robotic applications requiring **real-time adaptability** 
+    - as robot receives new information about its surroundings
+
+---
+
+updating paths efficiently **without recalculating** from scratch 
+
+timely responses to changes
+
+---
+
+[textbook has links](https://autonomy-course.github.io/textbook/autonomy-textbook.html#path-planning-algorithms) about D* and its variants 
+
+---
+
+### Rapidly-exploring Random Tree (RRT) Algorithm
+
+---
+
+### RRT Algorithm
+
+- use the starting point as root node
+
+---
+
+### RRT Algorithm
+
+- use the starting point as root node
+- grow the **tree randomly** in the feasible space 
+
+---
+
+### RRT Algorithm
+
+- use the starting point as root node
+- grow the **tree randomly** in the feasible space 
+- until it touches the end point (leaves)
+
+---
+
+### RRT Algorithm
+
+**collision-free path** &rarr; from starting point to ending point
+
+---
+
+### RRT Algorithm
+
+to explore search space,
+
+
+---
+
+### RRT Algorithm
+
+to explore search space,
+
+- **random sampling** (using randomly generated points) and 
+
+---
+
+### RRT Algorithm
+
+to explore search space,
+
+- **random sampling** (using randomly generated points) and 
+- rapid expansion to explore the search space
+
+---
+
+### RRT Algorithm
+
+to explore search space,
+
+- **random sampling** (using randomly generated points) and 
+- rapid expansion to explore the search space
+- **gradually approaching** the target point
+
+---
+
+### RRT Algorithm
+
+to explore search space,
+
+- **random sampling** (using randomly generated points) and 
+- rapid expansion to explore the search space
+- **gradually approaching** the target point 
+- iteration and connection &rarr; finds a **feasible path**
+
+---
+
+<!-- .slide: data-background="white" -->
+
+
+### RRT Algorithm
+
+
+<img src="img/path/rrt.1.webp" width="1200" border="1">
+
+---
+
+[algorithm](https://www.nature.com/articles/s41598-024-76299-9) for RRT,
+
+```[1|5|6|7|8|9|11-13|14]
+input: q_start, q_goal, n
+
+output: T
+
+ T.init (q_start);
+ for i = 1 to n do
+ q_rand <- Sample(i);
+ q_nearest <- Nearest (q_rand, T);
+ q_new <- Steer (q_nearest, q_rand);
+
+ if CollisionFree()) then
+    T.addVertex(q_new);
+    T.addEdge(q_near, q_new, L);
+ return T;
+```
+
+---
+
+an [illustration of RRT](https://graham-clifford.com/rrt-algorithm/) trying to find a path to the red dot:
+
+<img src="img/path/rrt_animate.gif" height="800">
+
+---
+
+### [**RRT\* Algorithm**](https://www.nature.com/articles/s41598-024-76299-9)
+
+
+---
+
+### [**RRT\* Algorithm**](https://www.nature.com/articles/s41598-024-76299-9)
+
+- improves existing paths through rewiring steps
+
+---
+
+### [**RRT\* Algorithm**](https://www.nature.com/articles/s41598-024-76299-9)
+
+- improves existing paths through rewiring steps
+- shortens path segments through optimization steps
+
+---
+
+### [**RRT\* Algorithm**](https://www.nature.com/articles/s41598-024-76299-9)
+
+- improves existing paths through rewiring steps
+- shortens path segments through optimization steps
+- takes node costs into account 
+
+---
+
+### [**RRT\* Algorithm**](https://www.nature.com/articles/s41598-024-76299-9)
+
+- improves existing paths through rewiring steps
+- shortens path segments through optimization steps
+- takes node costs into account 
+
+generate **high-quality** and more **optimized** paths
+
+---
+
+**RRT vs RRT\***
+
+---
+
+**RRT vs RRT\***
+
+RRT* has **better path quality***
+
+---
+
+**RRT vs RRT\***
+
+RRT* has **better path quality***
+
+find a better path while ensuring search efficiency
+
+Note:
+- RRT* **does not choose the nearest node** as the parent node of the new node, but in a **certain range** around the new node, chooses the node with the best path (the least cost) as the parent node of the new node.
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### RRT* example
+
+<img src="img/path/rrt_star_example.webp" width="1400">
+
+Note:
+the method is to **draw a circle** around $q_{nearest}$ and compare the distance between a point in the circle and $q_{new}$. If the distance between $q_{nearest}$ and $q_{new}$ is less than the distance between $q_{new}$ and $q_1$ or $q_2$, $q_{nearest}$ and $q_{new}$ are connected. Meanwhile, we need to compare the shortest distance between $q_{nearest}$ and $q_2$. If the distance between $q_{new}$ and $Q-2$ is shorter, we update the parent of $q_2$ to $q_{new}$. This step is called the **reconnect**.
+
+Compared with RRT, the RRT* algorithm has the advantage of re-selecting nearby nodes and reconnecting extended nodes of random trees, inheriting the Probabilistic completeness of the RRT algorithm and making the planned routes more optimized.
+
+---
+
+[various improvements to RRT\*](https://www.nature.com/articles/s41598-024-76299-9) 
+
+_e.g.,_ G-RRT*, GPF-RRT*, APF-RRT*, Improved A_RRT*, _etc._
+
+---
+
+<!-- .slide: data-background="white" -->
+
+### comparisons of various implementations
+
+
+<img src="img/path/rrt_improvements.webp" width="1300">
+
+---
+
+graphical representation algorithms (_e.g.,_ Voronoi diagrams) 
+
+used **in conjunction with** the trajectory estimation algoritms (APF, RRT)
                     </textarea>
                 </section>
             </div>
