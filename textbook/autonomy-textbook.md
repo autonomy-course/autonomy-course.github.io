@@ -7994,7 +7994,7 @@ Let's define a few terms. Consider the following scenario of a car traveling on 
 
 We see the car in its **starting configuration** and its **final destination**.
 
-Now, there are many possible **intermediate configurations** possible &rarr; between the starting configuration and final destination. 
+Now, there are many possible **intermediate configurations** &rarr; between the starting configuration and final destination. 
 
 <img src="img/path/car.3.png" width="400">
 
@@ -8333,7 +8333,7 @@ A major drawback is that intensive computational power is needed for planning fo
 
 ## Path Planning | Algorithms
 
-So far we have set up the problem with,
+So far we have defined,
 
 - a coordinate system
 - problem definition and setup and
@@ -8420,7 +8420,7 @@ The cost function,
 - is usually expressed by using Euclidean distance
 - a change of cost function can effectively **improve the performance**. 
 
-Here is a [visual example]() of how A* works:
+Here is a visual example of how A* works:
 
 <img src="img/path/a_star.avif" width="300">
 
@@ -8580,4 +8580,292 @@ Note that the graphical representation algorithms (_e.g.,_ Voronoi diagrams) are
 - [Path Planning for Autonomous Vehicles](https://intellias.com/path-planning-for-autonomous-vehicles-with-hyperloop-option/)
 - [Path Planning for Self-Driving Cars](https://www.thinkautonomous.ai/blog/path-planning-for-self-driving-cars/)
 - [A* Search Algorithm](https://www.youtube.com/watch?v=ySN5Wnu88nE):
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ySN5Wnu88nE?si=9DGfMp4xQzOBgx71" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ySN5Wnu88nE?si=9DGfMp4xQzOBgx71" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><!--rel="stylesheet" href="./custom.sibin.css"-->
+
+# Object Detection and Avoidance
+
+An autonomous vehicle uses sensory input devices like cameras, radar and lasers to allow the car to perceive the world around it, creating a digital map. But **how** does it actually do the "perception" part? Perception involves not just identifying that an object exists, but also,
+
+|||
+|:-----|:------|
+|object **classification**| **what** is it?|
+|object **localization** | **where** is it?|
+||
+
+If we consider a camera (one of the most common types of sensors in autonomous vehicles these days), this translates to **recognizing** various objects (_e.g.,_ cars, traffic lights, pedestrians, _etc._) and generating **bounding boxes** for them, as seen below.
+
+<img src="img/object/camera_bounding_boxes.gif" width="400">
+
+<br>
+
+There are multiple classes of object detection and localization methods,
+
+1. Classical [**computer vision** methods](#computer-vision-methods)
+2. [**deep-learning** based methods](#deep-learning-methods)
+
+
+## Computer Vision Methods
+
+There is a large body of work in computer vision to identify objects. Some of the more common ones are:
+
+1. [Histogram of Gradient Objects](https://medium.com/analytics-vidhya/a-gentle-introduction-into-the-histogram-of-oriented-gradients-fdee9ed8f2aa) (HOG), mainly used for face and image detection, convert the image ($width \times height \times channels$) into a feature vector of length $n$ chosen by the user. It then uses a **histogram of gradients** that are then used as "features" of an image.
+
+<img src="img/object/hog.webp" width="500">
+
+<br>
+
+Gradients are important -- to check for edges and corners in an image (through regions of intensity changes) -- since they often pack much more information than flat regions.
+
+[Read the original paper](https://lear.inrialpes.fr/people/triggs/pubs/Dalal-cvpr05.pdf) by Dalal and Triggs for more information.
+
+2. [Scale Invariant Feature Transform](https://medium.com/@deepanshut041/introduction-to-sift-scale-invariant-feature-transform-65d7f3a72d40) (SIFT) is a method for extracting **distinctive invariant features** from images that can be used to perform **reliable matching** between different views of an object or scene.
+SIFT finds **keypoints** in an image that do not change based on:
+
+- scale
+- rotation
+- illumination.
+
+<img src="img/object/sift.png" width="400">
+
+<br>
+
+
+Image recognition matches individual features to a **database of features** from known objects using a fast nearest-neighbor algorithm. SIFT can robustly identify objects among clutter and occlusion while achieving near real-time performance.
+
+[Read the original paper](https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf) by Lowe for more details.
+
+
+3. [Viola-Jones Detector]() is used to accurately identify and analyze human faces.
+Given an image (it mainly works with grayscale images), the algorithm looks at many smaller subregions and tries to find a face by looking for **specific features in each subregion**. It needs to check many different positions and scales because an image can contain many faces of various sizes. It uses Haar-like features to detect faces in this algorithm.
+
+> In the 19th century a Hungarian mathematician, Alfred Haar gave the concepts of [Haar wavelets](https://en.wikipedia.org/wiki/Haar_wavelet), which are a sequence of rescaled “square-shaped” functions which together form a wavelet family or basis.
+
+<img src="img/object/viola_jones.webp" width="400">
+
+<br>
+
+[Read the original paper](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf) by Viola and Jones for more details.
+
+
+## Deep-Learning Methods
+
+Many modern techniques use [convolutional neural networks](https://medium.com/@kattarajesh2001/convolutional-neural-networks-in-depth-c2fb81ebc2b2) (CNNs) for object detection. 
+
+But first, a brief detour of CNNs...
+
+### Convolutional Neural Networks (camera_bounding_boxes)
+
+[Deep learning](https://en.wikipedia.org/wiki/Deep_learning) uses **neural networks** to perform tasks such as classification, regression, and representation learning. The field takes inspiration from biological neuroscience and is centered around stacking artificial neurons into layers and "training" them to process data. The adjective "deep" refers to the use of multiple layers (ranging from three to several hundred or thousands) in the network.
+
+<img src="img/object/deep_learning.png" width="400">
+
+<br>
+
+**CNNs** are a class of deep learning neural networks that learns "features" via a "filter" (or kernel) optimization. They perform **[convolution operations](https://en.wikipedia.org/wiki/Convolution)** at runtime &rarr; and are used in object detection to **classify** images from the camera. 
+
+<img src="img/object/cnn_intro.png" width="300">
+
+In mathematics, a "convolution" is an operation on two functions, $f$ and $g$ to produce a third function, $f \ast g$ &rarr; as the **integral of the product** of the two functions after one is **reflected** about the y-axis and shifted.
+
+<img src="img/object/equations/pngs/equations-1.png" width="700">
+
+Here is an [intuitive explanation of convolutions](https://betterexplained.com/articles/intuitive-convolution/) for more information. 
+
+Some [visual examples](https://en.wikipedia.org/wiki/Convolution) of convolutions:
+
+<img src="img/object/convolution.1.gif">
+<img src="img/object/convolution.2.gif">
+
+Though we are really interested in **discrete** convolutions &rarr; For complex-valued functions $f$ and $g$, defined on the set $\mathbb{Z}$ of integers, the discrete convolution of $f$ and $g$ is given by:
+
+$$
+(f * g)[n]=\sum_{m=-\infty}^{\infty} f[m] g[n-m],
+$$
+
+At a high level, this can be shown as:
+
+<img src="img/object/discrete_convolution.gif" width="400">
+
+<br>
+
+For discrete sequences, for instance in digital signal processing, convolution involves,
+
+- flipping one sequence
+- shifting it across another
+- multiplying corresponding elements and 
+- summing up the results over the range of overlap. 
+
+So, the main idea is that convolution **blends two functions** and **creates a third** function which represents &rarr; how one function modifies the other function.
+
+When applied to CNNs, this concept shows how **kernels** (that act as **filters**) alter or transform input data. Hence, a kernel (aka "convolution matrix" or "mask") is a small matrix used for certain operations, _e.g.,_
+
+|operation|kernel/matrix| result|
+|:--------|-------------|-------|
+| identity | $\left[\begin{array}{lll}0 & 0 & 0 \newline 0 & 1 & 0 \newline 0 & 0 & 0\end{array}\right]$ | <img src="img/object/kernel.1.png">|
+| ridge/edge detection| $\left[\begin{array}{rrr} -1 & -1 & -1 \newline -1 & 8 & -1 \newline -1 & -1 & -1\end{array}\right]$ | <img src="img/object/kernel.2.png">|
+| sharpen| $\left[\begin{array}{rrr}-1 & -1 & -1 \newline -1 & 8 & -1 \newline -1 & -1 & -1\end{array}\right]$ | <img src="img/object/kernel.3.png">|
+| gaussian blur| $\frac{1}{256}\left[\begin{array}{ccccc}1 & 4 & 6 & 4 & 1 \newline4 & 16 & 24 & 16 & 4 \newline6 & 24 & 36 & 24 & 6 \newline4 & 16 & 24 & 16 & 4 \newline1 & 4 & 6 & 4 & 1 \end{array}\right]$ | <img src="img/object/kernel.4.png">|
+| unsharp masking| $\frac{-1}{256}\left[\begin{array}{ccccc}1 & 4 & 6 & 4 & 1 \newline4 & 16 & 24 & 16 & 4 \newline6 & 24 & -476 & 24 & 6 \newline4 & 16 & 24 & 16 & 4 \newline1 & 4 & 6 & 4 & 1\end{array}\right]$ | <img src="img/object/kernel.5.png">|
+||
+
+Hence, in its simplest form, convolution is:
+
+> the process of adding each element of the image to its local neighbors, weighted by the kernel. 
+
+The values of a given pixel in the output image &rarr; calculated by **multiplying each kernel value by the corresponding input image pixel values** denoted by the following pseudocode:
+
+```
+for each image row in input image:
+    for each pixel in image row:
+
+        set accumulator to zero
+
+        for each kernel row in kernel:
+            for each element in kernel row:
+
+                if element position  corresponding* to pixel position then
+                    multiply element value  corresponding* to pixel value
+                    add result to accumulator
+                endif
+
+         set output image pixel to accumulator
+```
+
+The **general** form of a matrix convolution:
+
+$$
+\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n} \newline
+x_{21} & x_{22} & \cdots & x_{2 n} \newline
+\vdots & \vdots & \ddots & \vdots \newline
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right] *\left[\begin{array}{cccc}
+y_{11} & y_{12} & \cdots & y_{1 n} \newline
+y_{21} & y_{22} & \cdots & y_{2 n} \newline
+\vdots & \vdots & \ddots & \vdots \newline
+y_{m 1} & y_{m 2} & \cdots & y_{m n}
+\end{array}\right]=\sum_{i=0}^{m-1} \sum_{j=0}^{n-1} x_{(m-i)(n-j)} y_{(1+i)}
+$$
+
+When a specific kernel is applied to an image, it **modifies or transforms the image** in a way that highlights or emphasizes the feature that the kernel is specialized to detect. This transformation effectively creates a new representation of the original image, focusing on the specific feature encoded by the applied kernel.
+
+Kernels come in various shapes:
+
+<img src="img/object/kernel.6.png" width="500">
+
+**CNNs and kernels**
+
+In CNNs, we **do not hand code** these kernels to extract features. The neural network itself **learns these kernels** or filters to extract different features. The choice of which features to extract is up to the model &rarr; whatever feature it wants to extract, the CNN will **learn** the kernel that extracts that particular feature. 
+
+These "learned" kernels act as specialized filters that modify the input, highlighting specific patterns or structures, thereby enabling the network to learn and discern various features. This is essential for tasks like image recognition, object detection, _etc._
+
+Let's see a simple example. Consider a small patch of an image of a car:
+
+<img src="img/object/car.1.png" width="300">
+
+<br>
+
+This image consists of **three color channels** (R, G, B):
+
+<img src="img/object/car.rgb.png" width="300">
+
+<br>
+
+But, for simplicity, let's consider a **grayscale** image first:
+
+<img src="img/object/car.2.png" width="300">
+
+<br>
+
+This is what one version of a covolution could look like:
+
+<img src="img/object/car.grayscale.1.png" width="400">
+
+<br>
+
+If we run it forward, this is what the result looks like:
+
+<img src="img/object/car.convolution.gif" width="400">
+
+<br>
+
+But...we deal with **color** images and **three** channels!
+
+<img src="img/object/pencils.jpg" width="300">
+
+<br>
+
+So, we have to deal with,
+
+<img src="img/object/car.rgb.png" width="300">
+
+<br>
+
+The solution is simple...apply the kernel to **eah** of the channels!
+
+<img src="img/object/convolution.0.gif" width="400">
+
+<br>
+
+Then we need to **combine** them (usually **summed up**) to get a **single output value** for that position.
+
+<img src="img/object/car.rgb_output.gif" width="500">
+
+The "[bias](https://www.turing.com/kb/necessity-of-bias-in-neural-networks#)" helps in shifting the activation function and influences the feature maps’ outputs. This is a **constant** that is added to the product of features and weights. It is used to **offset the result**. It helps the models to shift the activation function towards the positive or negative side.
+
+**Additional Definitions**
+
+Let's quickly discuss some additional definitions that are relevant to CNNs.
+
+1. **convolutional layer** consists of **multiple convolutional neurons** &rarr; each neuron has it own filter. Each kernel corresponds to a specific feature or pattern the layer aims to detect within the input data. These kernels,
+    - slide spatially across the input data’s width and height
+    - independently across each input channel
+    - performing convolutions.
+
+<img src="img/object/convolution.3.gif" width="500">
+
+<br>
+
+2. **stride** describes the **step** for the movement of a kernel. This is best described by the following diagrams:
+
+<img src="img/object/stride.1.gif" width="300">
+<img src="img/object/stride.2.gif" width="300">
+
+<br>
+
+Effects of different stride value:
+
+- larger stride value increases step size &rarr; a smaller output size spatially
+- stride of $1$ &rarr; preserves spatial dimensions more accurately
+
+3. **padding** is the addition of **extra border pixels** around input data _before_ applying the convolutions. It helps to preserve the original spatial dimensions of the input data and retains the integrity of border pixels. 
+
+<img src="img/object/padding.gif" width="500">
+
+<br>
+
+4. **pooling** involves **downsampling** to reduce the spatial dimensions of feature maps obtained via convolutions &rarr; while **preserving essential information**. This reduces computational loads on the system. Several "pooling functions" exist, _e.g.,_ average of the rectangular neighborhood, L2 norm of the rectangular neighborhood and a weighted average based on the distance from the central pixel. The most popular one is **max pooling** &rarr; it extracts the **maximum value** from each local region within the input feature map, **highlighting the most prominent features**.
+
+<img src="img/object/max_pool.gif" width="400">
+
+<br>
+
+Coming back to our car example from before, we define a CNN with **multiple layers** of neurons that could look like,
+
+<img src="img/object/car_cnn_complete.png" width="700">
+
+<br>
+
+This begs the question &rarr; why multiple layers? Usually each layer has its own unique function,
+
+<img src="img/object/cnn_layers.png" height="200">
+
+The [Softmax function](https://en.wikipedia.org/wiki/Softmax_function) converts a vector of $K$ real numbers into a **probability distribution** of $K$ **possible outcomes**. The Softmax function is often used as the last activation function of a neural network to normalize the output of a network to a probability distribution over predicted output classes.
+
+The [fully connected (FC)](https://medium.com/swlh/fully-connected-vs-convolutional-neural-networks-813ca7bc6ee5) layer connect **every** neuron in one layer to every neuron in the other layer. The purpose of this is to combine our features into more attributes to predict the classes even better. In fact, combining more attributes (e.g. edge detect, blur detect, emboss detect) help to predict better the images.
+
+
+
+
+
+**Read more details about CNNs** &rarr; [1](https://medium.com/@kattarajesh2001/convolutional-neural-networks-in-depth-c2fb81ebc2b2), [2](https://medium.com/@kattarajesh2001/convolutional-neural-network-from-scratch-0d7513d62923).

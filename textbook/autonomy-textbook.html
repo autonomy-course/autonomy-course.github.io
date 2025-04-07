@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-04-01" />
+  <meta name="date" content="2025-04-07" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">April 01,
+                              <li><p class="navbar-text">April 07,
 2025</p></li>
                   </ul>
       </div>
@@ -698,6 +698,26 @@ George Washington University</p></li>
         id="toc-rapidly-exploring-random-tree-rrt-algorithm"><span
         class="toc-section-number">11.4.3</span> Rapidly-exploring
         Random Tree (RRT) Algorithm</a></li>
+        </ul></li>
+        </ul></li>
+        <li><a href="#object-detection-and-avoidance"
+        id="toc-object-detection-and-avoidance"><span
+        class="toc-section-number">12</span> Object Detection and
+        Avoidance</a>
+        <ul>
+        <li><a href="#computer-vision-methods"
+        id="toc-computer-vision-methods"><span
+        class="toc-section-number">12.1</span> Computer Vision
+        Methods</a></li>
+        <li><a href="#deep-learning-methods"
+        id="toc-deep-learning-methods"><span
+        class="toc-section-number">12.2</span> Deep-Learning Methods</a>
+        <ul>
+        <li><a
+        href="#convolutional-neural-networks-camera_bounding_boxes"
+        id="toc-convolutional-neural-networks-camera_bounding_boxes"><span
+        class="toc-section-number">12.2.1</span> Convolutional Neural
+        Networks (camera_bounding_boxes)</a></li>
         </ul></li>
         </ul></li>
         </ul>
@@ -15455,8 +15475,8 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             configuration</strong> and its <strong>final
             destination</strong>.</p>
             <p>Now, there are many possible <strong>intermediate
-            configurations</strong> possible → between the starting
-            configuration and final destination.</p>
+            configurations</strong> → between the starting configuration
+            and final destination.</p>
             <p><img src="img/path/car.3.png" width="400"></p>
             <p><br></p>
             <p>The objective is to pick a <strong>sequence of
@@ -16013,7 +16033,7 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <h2 data-number="11.4"><span
             class="header-section-number">11.4</span> Path Planning |
             Algorithms</h2>
-            <p>So far we have set up the problem with,</p>
+            <p>So far we have defined,</p>
             <ul>
             <li>a coordinate system</li>
             <li>problem definition and setup and</li>
@@ -16167,8 +16187,7 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             <li>a change of cost function can effectively
             <strong>improve the performance</strong>.</li>
             </ul>
-            <p>Here is a <a href="">visual example</a> of how A*
-            works:</p>
+            <p>Here is a visual example of how A* works:</p>
             <p><img src="img/path/a_star.avif" width="300"></p>
             <p><br></p>
             <p>And here is a <a
@@ -16446,8 +16465,477 @@ Output: T
             Planning for Self-Driving Cars</a></li>
             <li><a href="https://www.youtube.com/watch?v=ySN5Wnu88nE">A*
             Search Algorithm</a>:
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/ySN5Wnu88nE?si=9DGfMp4xQzOBgx71" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></li>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/ySN5Wnu88nE?si=9DGfMp4xQzOBgx71" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><!--rel="stylesheet" href="./custom.sibin.css"--></li>
             </ul>
+            </section>
+            </section>
+            </section>
+            <section id="object-detection-and-avoidance" class="level1"
+            data-number="12">
+            <h1 data-number="12"><span
+            class="header-section-number">12</span> Object Detection and
+            Avoidance</h1>
+            <p>An autonomous vehicle uses sensory input devices like
+            cameras, radar and lasers to allow the car to perceive the
+            world around it, creating a digital map. But
+            <strong>how</strong> does it actually do the “perception”
+            part? Perception involves not just identifying that an
+            object exists, but also,</p>
+            <table>
+            <tbody>
+            <tr>
+            <td style="text-align: left;">object
+            <strong>classification</strong></td>
+            <td style="text-align: left;"><strong>what</strong> is
+            it?</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">object
+            <strong>localization</strong></td>
+            <td style="text-align: left;"><strong>where</strong> is
+            it?</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>If we consider a camera (one of the most common types of
+            sensors in autonomous vehicles these days), this translates
+            to <strong>recognizing</strong> various objects
+            (<em>e.g.,</em> cars, traffic lights, pedestrians,
+            <em>etc.</em>) and generating <strong>bounding
+            boxes</strong> for them, as seen below.</p>
+            <p><img src="img/object/camera_bounding_boxes.gif" width="400"></p>
+            <p><br></p>
+            <p>There are multiple classes of object detection and
+            localization methods,</p>
+            <ol type="1">
+            <li>Classical <a
+            href="#computer-vision-methods"><strong>computer
+            vision</strong> methods</a></li>
+            <li><a
+            href="#deep-learning-methods"><strong>deep-learning</strong>
+            based methods</a></li>
+            </ol>
+            <section id="computer-vision-methods" class="level2"
+            data-number="12.1">
+            <h2 data-number="12.1"><span
+            class="header-section-number">12.1</span> Computer Vision
+            Methods</h2>
+            <p>There is a large body of work in computer vision to
+            identify objects. Some of the more common ones are:</p>
+            <ol type="1">
+            <li><a
+            href="https://medium.com/analytics-vidhya/a-gentle-introduction-into-the-histogram-of-oriented-gradients-fdee9ed8f2aa">Histogram
+            of Gradient Objects</a> (HOG), mainly used for face and
+            image detection, convert the image (<span
+            class="math inline"><em>w</em><em>i</em><em>d</em><em>t</em><em>h</em> × <em>h</em><em>e</em><em>i</em><em>g</em><em>h</em><em>t</em> × <em>c</em><em>h</em><em>a</em><em>n</em><em>n</em><em>e</em><em>l</em><em>s</em></span>)
+            into a feature vector of length <span
+            class="math inline"><em>n</em></span> chosen by the user. It
+            then uses a <strong>histogram of gradients</strong> that are
+            then used as “features” of an image.</li>
+            </ol>
+            <p><img src="img/object/hog.webp" width="500"></p>
+            <p><br></p>
+            <p>Gradients are important – to check for edges and corners
+            in an image (through regions of intensity changes) – since
+            they often pack much more information than flat regions.</p>
+            <p><a
+            href="https://lear.inrialpes.fr/people/triggs/pubs/Dalal-cvpr05.pdf">Read
+            the original paper</a> by Dalal and Triggs for more
+            information.</p>
+            <ol start="2" type="1">
+            <li><a
+            href="https://medium.com/@deepanshut041/introduction-to-sift-scale-invariant-feature-transform-65d7f3a72d40">Scale
+            Invariant Feature Transform</a> (SIFT) is a method for
+            extracting <strong>distinctive invariant features</strong>
+            from images that can be used to perform <strong>reliable
+            matching</strong> between different views of an object or
+            scene. SIFT finds <strong>keypoints</strong> in an image
+            that do not change based on:</li>
+            </ol>
+            <ul>
+            <li>scale</li>
+            <li>rotation</li>
+            <li>illumination.</li>
+            </ul>
+            <p><img src="img/object/sift.png" width="400"></p>
+            <p><br></p>
+            <p>Image recognition matches individual features to a
+            <strong>database of features</strong> from known objects
+            using a fast nearest-neighbor algorithm. SIFT can robustly
+            identify objects among clutter and occlusion while achieving
+            near real-time performance.</p>
+            <p><a
+            href="https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf">Read
+            the original paper</a> by Lowe for more details.</p>
+            <ol start="3" type="1">
+            <li><a href="">Viola-Jones Detector</a> is used to
+            accurately identify and analyze human faces. Given an image
+            (it mainly works with grayscale images), the algorithm looks
+            at many smaller subregions and tries to find a face by
+            looking for <strong>specific features in each
+            subregion</strong>. It needs to check many different
+            positions and scales because an image can contain many faces
+            of various sizes. It uses Haar-like features to detect faces
+            in this algorithm.</li>
+            </ol>
+            <blockquote>
+            <p>In the 19th century a Hungarian mathematician, Alfred
+            Haar gave the concepts of <a
+            href="https://en.wikipedia.org/wiki/Haar_wavelet">Haar
+            wavelets</a>, which are a sequence of rescaled
+            “square-shaped” functions which together form a wavelet
+            family or basis.</p>
+            </blockquote>
+            <p><img src="img/object/viola_jones.webp" width="400"></p>
+            <p><br></p>
+            <p><a
+            href="https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf">Read
+            the original paper</a> by Viola and Jones for more
+            details.</p>
+            </section>
+            <section id="deep-learning-methods" class="level2"
+            data-number="12.2">
+            <h2 data-number="12.2"><span
+            class="header-section-number">12.2</span> Deep-Learning
+            Methods</h2>
+            <p>Many modern techniques use <a
+            href="https://medium.com/@kattarajesh2001/convolutional-neural-networks-in-depth-c2fb81ebc2b2">convolutional
+            neural networks</a> (CNNs) for object detection.</p>
+            <p>But first, a brief detour of CNNs…</p>
+            <section
+            id="convolutional-neural-networks-camera_bounding_boxes"
+            class="level3" data-number="12.2.1">
+            <h3 data-number="12.2.1"><span
+            class="header-section-number">12.2.1</span> Convolutional
+            Neural Networks (camera_bounding_boxes)</h3>
+            <p><a
+            href="https://en.wikipedia.org/wiki/Deep_learning">Deep
+            learning</a> uses <strong>neural networks</strong> to
+            perform tasks such as classification, regression, and
+            representation learning. The field takes inspiration from
+            biological neuroscience and is centered around stacking
+            artificial neurons into layers and “training” them to
+            process data. The adjective “deep” refers to the use of
+            multiple layers (ranging from three to several hundred or
+            thousands) in the network.</p>
+            <p><img src="img/object/deep_learning.png" width="400"></p>
+            <p><br></p>
+            <p><strong>CNNs</strong> are a class of deep learning neural
+            networks that learns “features” via a “filter” (or kernel)
+            optimization. They perform <strong><a
+            href="https://en.wikipedia.org/wiki/Convolution">convolution
+            operations</a></strong> at runtime → and are used in object
+            detection to <strong>classify</strong> images from the
+            camera.</p>
+            <p><img src="img/object/cnn_intro.png" width="300"></p>
+            <p>In mathematics, a “convolution” is an operation on two
+            functions, <span class="math inline"><em>f</em></span> and
+            <span class="math inline"><em>g</em></span> to produce a
+            third function, <span
+            class="math inline"><em>f</em> * <em>g</em></span> → as the
+            <strong>integral of the product</strong> of the two
+            functions after one is <strong>reflected</strong> about the
+            y-axis and shifted.</p>
+            <p><img src="img/object/equations/pngs/equations-1.png" width="700"></p>
+            <p>Here is an <a
+            href="https://betterexplained.com/articles/intuitive-convolution/">intuitive
+            explanation of convolutions</a> for more information.</p>
+            <p>Some <a
+            href="https://en.wikipedia.org/wiki/Convolution">visual
+            examples</a> of convolutions:</p>
+            <p><img src="img/object/convolution.1.gif">
+            <img src="img/object/convolution.2.gif"></p>
+            <p>Though we are really interested in
+            <strong>discrete</strong> convolutions → For complex-valued
+            functions <span class="math inline"><em>f</em></span> and
+            <span class="math inline"><em>g</em></span>, defined on the
+            set <span class="math inline">ℤ</span> of integers, the
+            discrete convolution of <span
+            class="math inline"><em>f</em></span> and <span
+            class="math inline"><em>g</em></span> is given by:</p>
+            <p><span class="math display">$$
+            (f * g)[n]=\sum_{m=-\infty}^{\infty} f[m] g[n-m],
+            $$</span></p>
+            <p>At a high level, this can be shown as:</p>
+            <p><img src="img/object/discrete_convolution.gif" width="400"></p>
+            <p><br></p>
+            <p>For discrete sequences, for instance in digital signal
+            processing, convolution involves,</p>
+            <ul>
+            <li>flipping one sequence</li>
+            <li>shifting it across another</li>
+            <li>multiplying corresponding elements and</li>
+            <li>summing up the results over the range of overlap.</li>
+            </ul>
+            <p>So, the main idea is that convolution <strong>blends two
+            functions</strong> and <strong>creates a third</strong>
+            function which represents → how one function modifies the
+            other function.</p>
+            <p>When applied to CNNs, this concept shows how
+            <strong>kernels</strong> (that act as
+            <strong>filters</strong>) alter or transform input data.
+            Hence, a kernel (aka “convolution matrix” or “mask”) is a
+            small matrix used for certain operations, <em>e.g.,</em></p>
+            <table>
+            <colgroup>
+            <col style="width: 31%" />
+            <col style="width: 44%" />
+            <col style="width: 24%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">operation</th>
+            <th>kernel/matrix</th>
+            <th>result</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;">identity</td>
+            <td><span class="math inline">$\left[\begin{array}{lll}0
+            &amp; 0 &amp; 0 \newline 0 &amp; 1 &amp; 0 \newline 0 &amp;
+            0 &amp; 0\end{array}\right]$</span></td>
+            <td><img src="img/object/kernel.1.png"></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">ridge/edge detection</td>
+            <td><span class="math inline">$\left[\begin{array}{rrr} -1
+            &amp; -1 &amp; -1 \newline -1 &amp; 8 &amp; -1 \newline -1
+            &amp; -1 &amp; -1\end{array}\right]$</span></td>
+            <td><img src="img/object/kernel.2.png"></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">sharpen</td>
+            <td><span class="math inline">$\left[\begin{array}{rrr}-1
+            &amp; -1 &amp; -1 \newline -1 &amp; 8 &amp; -1 \newline -1
+            &amp; -1 &amp; -1\end{array}\right]$</span></td>
+            <td><img src="img/object/kernel.3.png"></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">gaussian blur</td>
+            <td><span
+            class="math inline">$\frac{1}{256}\left[\begin{array}{ccccc}1
+            &amp; 4 &amp; 6 &amp; 4 &amp; 1 \newline4 &amp; 16 &amp; 24
+            &amp; 16 &amp; 4 \newline6 &amp; 24 &amp; 36 &amp; 24 &amp;
+            6 \newline4 &amp; 16 &amp; 24 &amp; 16 &amp; 4 \newline1
+            &amp; 4 &amp; 6 &amp; 4 &amp; 1
+            \end{array}\right]$</span></td>
+            <td><img src="img/object/kernel.4.png"></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">unsharp masking</td>
+            <td><span
+            class="math inline">$\frac{-1}{256}\left[\begin{array}{ccccc}1
+            &amp; 4 &amp; 6 &amp; 4 &amp; 1 \newline4 &amp; 16 &amp; 24
+            &amp; 16 &amp; 4 \newline6 &amp; 24 &amp; -476 &amp; 24
+            &amp; 6 \newline4 &amp; 16 &amp; 24 &amp; 16 &amp; 4
+            \newline1 &amp; 4 &amp; 6 &amp; 4 &amp;
+            1\end{array}\right]$</span></td>
+            <td><img src="img/object/kernel.5.png"></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Hence, in its simplest form, convolution is:</p>
+            <blockquote>
+            <p>the process of adding each element of the image to its
+            local neighbors, weighted by the kernel.</p>
+            </blockquote>
+            <p>The values of a given pixel in the output image →
+            calculated by <strong>multiplying each kernel value by the
+            corresponding input image pixel values</strong> denoted by
+            the following pseudocode:</p>
+            <pre><code>for each image row in input image:
+    for each pixel in image row:
+
+        set accumulator to zero
+
+        for each kernel row in kernel:
+            for each element in kernel row:
+
+                if element position  corresponding* to pixel position then
+                    multiply element value  corresponding* to pixel value
+                    add result to accumulator
+                endif
+
+         set output image pixel to accumulator</code></pre>
+            <p>The <strong>general</strong> form of a matrix
+            convolution:</p>
+            <p><span class="math display">$$
+            \left[\begin{array}{cccc}
+            x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1 n} \newline
+            x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2 n} \newline
+            \vdots &amp; \vdots &amp; \ddots &amp; \vdots \newline
+            x_{m 1} &amp; x_{m 2} &amp; \cdots &amp; x_{m n}
+            \end{array}\right] *\left[\begin{array}{cccc}
+            y_{11} &amp; y_{12} &amp; \cdots &amp; y_{1 n} \newline
+            y_{21} &amp; y_{22} &amp; \cdots &amp; y_{2 n} \newline
+            \vdots &amp; \vdots &amp; \ddots &amp; \vdots \newline
+            y_{m 1} &amp; y_{m 2} &amp; \cdots &amp; y_{m n}
+            \end{array}\right]=\sum_{i=0}^{m-1} \sum_{j=0}^{n-1}
+            x_{(m-i)(n-j)} y_{(1+i)}
+            $$</span></p>
+            <p>When a specific kernel is applied to an image, it
+            <strong>modifies or transforms the image</strong> in a way
+            that highlights or emphasizes the feature that the kernel is
+            specialized to detect. This transformation effectively
+            creates a new representation of the original image, focusing
+            on the specific feature encoded by the applied kernel.</p>
+            <p>Kernels come in various shapes:</p>
+            <p><img src="img/object/kernel.6.png" width="500"></p>
+            <p><strong>CNNs and kernels</strong></p>
+            <p>In CNNs, we <strong>do not hand code</strong> these
+            kernels to extract features. The neural network itself
+            <strong>learns these kernels</strong> or filters to extract
+            different features. The choice of which features to extract
+            is up to the model → whatever feature it wants to extract,
+            the CNN will <strong>learn</strong> the kernel that extracts
+            that particular feature.</p>
+            <p>These “learned” kernels act as specialized filters that
+            modify the input, highlighting specific patterns or
+            structures, thereby enabling the network to learn and
+            discern various features. This is essential for tasks like
+            image recognition, object detection, <em>etc.</em></p>
+            <p>Let’s see a simple example. Consider a small patch of an
+            image of a car:</p>
+            <p><img src="img/object/car.1.png" width="300"></p>
+            <p><br></p>
+            <p>This image consists of <strong>three color
+            channels</strong> (R, G, B):</p>
+            <p><img src="img/object/car.rgb.png" width="300"></p>
+            <p><br></p>
+            <p>But, for simplicity, let’s consider a
+            <strong>grayscale</strong> image first:</p>
+            <p><img src="img/object/car.2.png" width="300"></p>
+            <p><br></p>
+            <p>This is what one version of a covolution could look
+            like:</p>
+            <p><img src="img/object/car.grayscale.1.png" width="400"></p>
+            <p><br></p>
+            <p>If we run it forward, this is what the result looks
+            like:</p>
+            <p><img src="img/object/car.convolution.gif" width="400"></p>
+            <p><br></p>
+            <p>But…we deal with <strong>color</strong> images and
+            <strong>three</strong> channels!</p>
+            <p><img src="img/object/pencils.jpg" width="300"></p>
+            <p><br></p>
+            <p>So, we have to deal with,</p>
+            <p><img src="img/object/car.rgb.png" width="300"></p>
+            <p><br></p>
+            <p>The solution is simple…apply the kernel to
+            <strong>eah</strong> of the channels!</p>
+            <p><img src="img/object/convolution.0.gif" width="400"></p>
+            <p><br></p>
+            <p>Then we need to <strong>combine</strong> them (usually
+            <strong>summed up</strong>) to get a <strong>single output
+            value</strong> for that position.</p>
+            <p><img src="img/object/car.rgb_output.gif" width="500"></p>
+            <p>The “<a
+            href="https://www.turing.com/kb/necessity-of-bias-in-neural-networks#">bias</a>”
+            helps in shifting the activation function and influences the
+            feature maps’ outputs. This is a <strong>constant</strong>
+            that is added to the product of features and weights. It is
+            used to <strong>offset the result</strong>. It helps the
+            models to shift the activation function towards the positive
+            or negative side.</p>
+            <p><strong>Additional Definitions</strong></p>
+            <p>Let’s quickly discuss some additional definitions that
+            are relevant to CNNs.</p>
+            <ol type="1">
+            <li><strong>convolutional layer</strong> consists of
+            <strong>multiple convolutional neurons</strong> → each
+            neuron has it own filter. Each kernel corresponds to a
+            specific feature or pattern the layer aims to detect within
+            the input data. These kernels,
+            <ul>
+            <li>slide spatially across the input data’s width and
+            height</li>
+            <li>independently across each input channel</li>
+            <li>performing convolutions.</li>
+            </ul></li>
+            </ol>
+            <p><img src="img/object/convolution.3.gif" width="500"></p>
+            <p><br></p>
+            <ol start="2" type="1">
+            <li><strong>stride</strong> describes the
+            <strong>step</strong> for the movement of a kernel. This is
+            best described by the following diagrams:</li>
+            </ol>
+            <p><img src="img/object/stride.1.gif" width="300">
+            <img src="img/object/stride.2.gif" width="300"></p>
+            <p><br></p>
+            <p>Effects of different stride value:</p>
+            <ul>
+            <li>larger stride value increases step size → a smaller
+            output size spatially</li>
+            <li>stride of <span class="math inline">1</span> → preserves
+            spatial dimensions more accurately</li>
+            </ul>
+            <ol start="3" type="1">
+            <li><strong>padding</strong> is the addition of
+            <strong>extra border pixels</strong> around input data
+            <em>before</em> applying the convolutions. It helps to
+            preserve the original spatial dimensions of the input data
+            and retains the integrity of border pixels.</li>
+            </ol>
+            <p><img src="img/object/padding.gif" width="500"></p>
+            <p><br></p>
+            <ol start="4" type="1">
+            <li><strong>pooling</strong> involves
+            <strong>downsampling</strong> to reduce the spatial
+            dimensions of feature maps obtained via convolutions → while
+            <strong>preserving essential information</strong>. This
+            reduces computational loads on the system. Several “pooling
+            functions” exist, <em>e.g.,</em> average of the rectangular
+            neighborhood, L2 norm of the rectangular neighborhood and a
+            weighted average based on the distance from the central
+            pixel. The most popular one is <strong>max pooling</strong>
+            → it extracts the <strong>maximum value</strong> from each
+            local region within the input feature map,
+            <strong>highlighting the most prominent
+            features</strong>.</li>
+            </ol>
+            <p><img src="img/object/max_pool.gif" width="400"></p>
+            <p><br></p>
+            <p>Coming back to our car example from before, we define a
+            CNN with <strong>multiple layers</strong> of neurons that
+            could look like,</p>
+            <p><img src="img/object/car_cnn_complete.png" width="700"></p>
+            <p><br></p>
+            <p>This begs the question → why multiple layers? Usually
+            each layer has its own unique function,</p>
+            <p><img src="img/object/cnn_layers.png" height="200"></p>
+            <p>The <a
+            href="https://en.wikipedia.org/wiki/Softmax_function">Softmax
+            function</a> converts a vector of <span
+            class="math inline"><em>K</em></span> real numbers into a
+            <strong>probability distribution</strong> of <span
+            class="math inline"><em>K</em></span> <strong>possible
+            outcomes</strong>. The Softmax function is often used as the
+            last activation function of a neural network to normalize
+            the output of a network to a probability distribution over
+            predicted output classes.</p>
+            <p>The <a
+            href="https://medium.com/swlh/fully-connected-vs-convolutional-neural-networks-813ca7bc6ee5">fully
+            connected (FC)</a> layer connect <strong>every</strong>
+            neuron in one layer to every neuron in the other layer. The
+            purpose of this is to combine our features into more
+            attributes to predict the classes even better. In fact,
+            combining more attributes (e.g. edge detect, blur detect,
+            emboss detect) help to predict better the images.</p>
+            <p><strong>Read more details about CNNs</strong> → <a
+            href="https://medium.com/@kattarajesh2001/convolutional-neural-networks-in-depth-c2fb81ebc2b2">1</a>,
+            <a
+            href="https://medium.com/@kattarajesh2001/convolutional-neural-network-from-scratch-0d7513d62923">2</a>.</p>
             </section>
             </section>
             </section>
