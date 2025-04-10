@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-04-07" />
+  <meta name="date" content="2025-04-10" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">April 07,
+                              <li><p class="navbar-text">April 10,
 2025</p></li>
                   </ul>
       </div>
@@ -604,6 +604,22 @@ George Washington University</p></li>
         id="toc-unscented-kalman-filter-comparison"><span
         class="toc-section-number">9.1.5</span> Unscented Kalman Filter
         Comparison</a></li>
+        </ul></li>
+        <li><a href="#high-order-sensor-fusions"
+        id="toc-high-order-sensor-fusions"><span
+        class="toc-section-number">9.2</span> High-Order Sensor
+        Fusions</a>
+        <ul>
+        <li><a href="#sensor-fusion-classes"
+        id="toc-sensor-fusion-classes"><span
+        class="toc-section-number">9.2.1</span> Sensor Fusion |
+        Classes</a></li>
+        <li><a href="#what-is-iou" id="toc-what-is-iou"><span
+        class="toc-section-number">9.2.2</span> What is “IOU”?</a></li>
+        <li><a href="#sensor-fusion-example-camera-and-lidar"
+        id="toc-sensor-fusion-example-camera-and-lidar"><span
+        class="toc-section-number">9.2.3</span> Sensor Fusion Example |
+        Camera and LiDAR</a></li>
         </ul></li>
         </ul></li>
         <li><a href="#slam-1" id="toc-slam-1"><span
@@ -14133,6 +14149,683 @@ position(t) = ∫∫ Acceleration(τ) dτ²</code></pre>
             </ul>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/dFPCFmd5uJE?si=Iy8K0EeV6TP3amor" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
             </iframe>
+            </section>
+            </section>
+            <section id="high-order-sensor-fusions" class="level2"
+            data-number="9.2">
+            <h2 data-number="9.2"><span
+            class="header-section-number">9.2</span> High-Order Sensor
+            Fusions</h2>
+            <p>What we’ve seen so far is <strong>low-level</strong>
+            sensor fusion where the sensor values are fused as soon as
+            the sensor readings are available. But we can imagine a
+            situation where,</p>
+            <ul>
+            <li>first, extract some “knowledge” out of the sensor values
+            → say, bounding boxes</li>
+            <li>next, “fuse” this higher-oder knowledge.</li>
+            </ul>
+            <p>Consider the following two scenarios of a car trying to
+            detect a pedestrian crossing the road using two different
+            sensors → a <strong>camera</strong> and a
+            <strong>lidar</strong>:</p>
+            <table>
+            <colgroup>
+            <col style="width: 47%" />
+            <col style="width: 52%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">camera</th>
+            <th style="text-align: left;">lidar</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td
+            style="text-align: left;"><img src="img/fusion/higher_fusion/fusion_camera.png" width="300"></td>
+            <td
+            style="text-align: left;"><img src="img/fusion/higher_fusion/fusion_lidar.jpeg" width="300"></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>2D</strong> bounding
+            box</td>
+            <td style="text-align: left;"><strong>3D</strong> bounding
+            box</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>The problem is that they generate very different types of
+            output (2D vs 3d bonding boxes). So how do we fuse them?</p>
+            <section id="sensor-fusion-classes" class="level3"
+            data-number="9.2.1">
+            <h3 data-number="9.2.1"><span
+            class="header-section-number">9.2.1</span> Sensor Fusion |
+            Classes</h3>
+            <p>Before we go ahead, let’s take a look at the various
+            <strong>classes of sensor fusion</strong>. The
+            classification tries to extract answers to the following
+            questions:</p>
+            <ol type="1">
+            <li><strong>abstraction</strong> level →
+            <strong>when</strong> should we carry out the fusion?</li>
+            <li><strong>centralization</strong> level →
+            <strong>where</strong> should we carry out the fusion?</li>
+            <li><strong>competition</strong> level →
+            <strong>what</strong> should the fusion do?</li>
+            </ol>
+            <p>Let’s briefly look at each one.</p>
+            <p><strong>1. Abstraction level fusion</strong></p>
+            <p>We try to answer the question → <strong>when</strong>
+            should we carry out the fusion, <em>i.e.,</em> should we do
+            it as soon as we get sensor values or after extracting some
+            knowledge from it?</p>
+            <p>There are three ways to classify sensor fusion based on
+            the abstraction levels:</p>
+            <table>
+            <colgroup>
+            <col style="width: 35%" />
+            <col style="width: 18%" />
+            <col style="width: 20%" />
+            <col style="width: 12%" />
+            <col style="width: 12%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">abstraction level</th>
+            <th style="text-align: left;">details</th>
+            <th style="text-align: left;">examples</th>
+            <th style="text-align: left;">pros</th>
+            <th style="text-align: left;">cons</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td
+            style="text-align: left;"><strong>low-level</strong></td>
+            <td style="text-align: left;">fuse the <strong>raw</strong>
+            sensor values → project 3D point clouds onto pixels</td>
+            <td style="text-align: left;">point clouds from LiDAR and
+            pixels from camera images</td>
+            <td style="text-align: left;">future proof</td>
+            <td style="text-align: left;">large computational
+            requirements</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>mid-level</strong></td>
+            <td style="text-align: left;">each sensor does its own
+            detection → project 3D bounding box onto 2D bounding
+            box</td>
+            <td style="text-align: left;">camera and LiDAR (separately)
+            detect objects that are fused</td>
+            <td style="text-align: left;">simplicity</td>
+            <td style="text-align: left;">loses some information</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>high-level</strong></td>
+            <td style="text-align: left;">fuse <strong>objects</strong>
+            and <strong>trajectories</strong> →
+            predictions+tracking</td>
+            <td style="text-align: left;">trajectories from camera and
+            from LiDAR (separately)</td>
+            <td style="text-align: left;">further simplicity</td>
+            <td style="text-align: left;">too much information loss</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/fusion/higher_fusion/abstraction_levels.png" height="300"></p>
+            <p><strong>2. centralization level</strong></p>
+            <p>We try to answer the question → <strong>where</strong>
+            should we carry out the fusion, <em>i.e.,</em></p>
+            <ul>
+            <li>central computer or</li>
+            <li>each sensor does it independently</li>
+            </ul>
+            <p>There are three high-level choices:</p>
+            <table>
+            <colgroup>
+            <col style="width: 74%" />
+            <col style="width: 25%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;"><strong>centralization
+            level</strong></th>
+            <th style="text-align: left;">details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td
+            style="text-align: left;"><strong>centralized</strong></td>
+            <td style="text-align: left;">one central unit deals with it
+            [low-level]</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>decentralized</strong></td>
+            <td style="text-align: left;">each sensor fuses data and
+            forwards to next one</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>distributed</strong></td>
+            <td style="text-align: left;">each sensor processes data
+            locally and sends to next unit [late]</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/fusion/higher_fusion/centralization_levels.png" width="400"></p>
+            <p>Recently automakers have started to use a
+            <strong>satellite</strong> architecture for the design of
+            computing elements interacting with sensors (and sensor
+            fusion). The process is:</p>
+            <ul>
+            <li>plug many sensors [satellites]</li>
+            <li>fuse together either on a single central unit [active
+            safety domain controller] or a bunch of separate
+            processors</li>
+            <li>360 degree fusion+detection on controller</li>
+            <li>sensors do not have to be extremely good → there is
+            redundancy to make up for it</li>
+            </ul>
+            <p><img src="img/fusion/higher_fusion/satellite_architecture.png" width="400"></p>
+            <p><strong>3. Competition level</strong></p>
+            <p>We try to answer <strong>what</strong> should the fusion
+            do? Again, there are <strong>three</strong>
+            possibilities,</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 25%" />
+            <col style="width: 25%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">competition level</th>
+            <th style="text-align: left;">meaning</th>
+            <th style="text-align: left;">example</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td
+            style="text-align: left;"><strong>competitive</strong></td>
+            <td style="text-align: left;">sensors meant for same
+            purpose</td>
+            <td style="text-align: left;">RADAR, LiDAR</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>complementary</strong></td>
+            <td style="text-align: left;">different sensors looking at
+            different scenes</td>
+            <td style="text-align: left;">multiple cameras → to create a
+            panorama</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>coordinated</strong></td>
+            <td style="text-align: left;">sensors produce a new scene
+            from same object</td>
+            <td style="text-align: left;">3D reconstruction</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Examples of each of the above:</p>
+            <ol type="1">
+            <li>competitive level</li>
+            </ol>
+            <p><img src="img/fusion/higher_fusion/3d_iou_matching.png" width="400"></p>
+            <ol start="2" type="1">
+            <li>complementary level</li>
+            </ol>
+            <p><img src="img/fusion/higher_fusion/panorama.png" width="400"></p>
+            <ol start="3" type="1">
+            <li>coordinated level</li>
+            </ol>
+            <p><img src="img/fusion/higher_fusion/3d_reconstruction.png" width="400"></p>
+            </section>
+            <section id="what-is-iou" class="level3"
+            data-number="9.2.2">
+            <h3 data-number="9.2.2"><span
+            class="header-section-number">9.2.2</span> What is
+            “IOU”?</h3>
+            <p>Recall that YOLO creates “bounding boxes”. But, it
+            usually starts by creating <strong>multiple</strong>
+            bounding boxes on/around an object, <em>e.g.,</em></p>
+            <p>So, one example could be,</p>
+            <p><img src="img/fusion/higher_fusion/yolo_multiple_bounding_boxes.png" width="300"></p>
+            <p><br></p>
+            <p>But what we really want is a <strong>single</strong>
+            bounding box that encapsulates the <strong>entire</strong>
+            object,</p>
+            <p><img src="img/fusion/higher_fusion/yolo_single_bounding_box.png" width="300"></p>
+            <p>So how do we get from one (multiple) to the other
+            (single)? We compute the <strong>IoU</strong> →
+            <strong>intersections over union</strong>, defined as:</p>
+            <p><span class="math display">$$
+            IoU = \frac{\text{area of \textbf{intersection} of bounding
+            boxes}}{\text{area of \textbf{union} of bounding boxes}}
+            $$</span></p>
+            <p>Visually, this can be seen as:</p>
+            <p><img src="img/fusion/higher_fusion/iou_visual.png" height="150"></p>
+            <p><br></p>
+            <p>The closer that an IoU is to <code>1</code>, the better
+            the bounding box, <em>e.g.,</em></p>
+            <p><img src="img/fusion/higher_fusion/iou_examples.png" width="400"></p>
+            <p><br></p>
+            <p>IoU also requires a notion of <strong>ground
+            truth</strong> → the <strong>precise</strong> bounding boxes
+            surrounding the items of interest in an image. <strong>Human
+            experts manually mark or label these boundary
+            boxes</strong>. The IoU score is calculated by comparing the
+            predicted bounding boxes produced by an object detection
+            model to the ground-truth bounding boxes during
+            evaluation.</p>
+            </section>
+            <section id="sensor-fusion-example-camera-and-lidar"
+            class="level3" data-number="9.2.3">
+            <h3 data-number="9.2.3"><span
+            class="header-section-number">9.2.3</span> Sensor Fusion
+            Example | Camera and LiDAR</h3>
+            <p>Let’s get back to our example, camera+LiDAR. So, we have
+            the following types of data:</p>
+            <p><img src="img/fusion/higher_fusion/yolo_single_bounding_box.png" height="200">
+            <img src="img/fusion/higher_fusion/car_lidar.jpeg" height="200"></p>
+            <ul>
+            <li>camera → excellent for <strong>object
+            classification</strong> and <strong>understanding
+            scenes</strong></li>
+            <li>LiDAR →good for <strong>estimating
+            distances</strong></li>
+            </ul>
+            <p>Here is a comparison of the strengths and weaknesses of
+            the two:</p>
+            <p><img src="img/fusion/higher_fusion/camera_vs_lidar.png" width="400"></p>
+            <p><br></p>
+            <p>So let’s look at this from the perspective of the three
+            classes we discussed earlier:</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: left;">class</th>
+            <th style="text-align: left;">notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><strong>what</strong>?</td>
+            <td style="text-align: left;">competition and
+            redundancy</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>where</strong>?</td>
+            <td style="text-align: left;">doesn’t matter → any of the
+            options work</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>when</strong>?</td>
+            <td style="text-align: left;">multiple options →
+            <strong>early</strong> or <strong>late</strong></td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p><strong>Early Fusion</strong></p>
+            <ul>
+            <li>fuse <strong>raw data</strong> as soon as sensors are
+            plugged</li>
+            <li><strong>project</strong> 3D LiDAR point clouds onto 2D
+            image</li>
+            <li>check whether point clouds belong to 2D bounding boxes
+            from camera</li>
+            </ul>
+            <p>The entire process looks like:</p>
+            <p><img src="img/fusion/higher_fusion/camera_lidar_early.final.png" width="400"></p>
+            <p><br></p>
+            <p>to translate 3D point cloud [LiDAR frame] → 2D projection
+            [camera frame],</p>
+            <ul>
+            <li>convert each 3D LiDAR point into <strong><a
+            href="https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/">homogeneous
+            coordinates</a></strong></li>
+            <li>apply <strong>projection equations</strong>
+            [translation/rotation] to convert from LiDAR to camera</li>
+            <li>transform back into Euclidean coordinates</li>
+            </ul>
+            <details>
+            <summary>
+            Homogenous coordinates
+            </summary>
+            <p>They are a <a
+            href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">system
+            of coordinates</a> used in projective geometry, just as
+            Cartesian coordinates are used in Euclidean geometry. They
+            have the advantage that the coordinates of points, including
+            points at infinity, can be represented using finite
+            coordinates. Formulas involving homogeneous coordinates are
+            often simpler and more symmetric than their Cartesian
+            counterparts. Homogeneous coordinates have a range of
+            applications, including computer graphics and 3D computer
+            vision, where they allow affine transformations and, in
+            general, projective transformations to be easily represented
+            by a matrix. They are also used in fundamental elliptic
+            curve cryptography algorithms.</p>
+            <p>Here is an example of a Rational Bézier curve –
+            polynomial curve defined in homogeneous coordinates (blue)
+            and its projection on plane – rational curve (red).</p>
+            <p><img src="img/fusion/higher_fusion/homogenous.png" width="300"></p>
+            <p><br></p>
+            <p>If homogeneous coordinates of a point are multiplied by a
+            non-zero scalar then the <strong>resulting coordinates
+            represent the same point</strong>. Since homogeneous
+            coordinates are also given to points at infinity, the
+            <strong>number of coordinates</strong> required to allow
+            this extension is <strong>one more than the dimension of the
+            projective space</strong> being considered. For example, two
+            homogeneous coordinates are required to specify a point on
+            the projective line and three homogeneous coordinates are
+            required to specify a point in the projective plane.</p>
+            <p><a
+            href="https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/">Read</a>
+            for a more detailed explanation with examples.</p>
+            </details>
+            <p>So, the output of this step looks like,</p>
+            <p><img src="img/fusion/higher_fusion/3d_to_2d.png" width="400"></p>
+            <p><br></p>
+            <p>For the object detection on the camera image → use
+            YOLO!</p>
+            <p>The next step is → <strong>region of interest (ROI)
+            mapping</strong>, where we must <strong>fuse</strong> the
+            objects inside each bounding box. We get the following
+            outputs:</p>
+            <ul>
+            <li>for each bounding box → camera gives us the
+            <strong>classification</strong></li>
+            <li>for each <strong>LiDAR projected point</strong> → we get
+            an <strong>accurate distance measure</strong></li>
+            </ul>
+            <p>There can be some problems though. Which point (in the
+            bounding box) do we pick for the <strong>distance</strong>?
+            Recall that we are projecting/capture a 3D object on a 2D
+            plane. So, distance measures could be one of:</p>
+            <ul>
+            <li>average</li>
+            <li>center point</li>
+            <li>closest?</li>
+            </ul>
+            <p>There are other issues, for instance, consider the yellow
+            region pointed to by the arrow,</p>
+            <p><img src="img/fusion/higher_fusion/roi_matching.png" width="300"></p>
+            <p><br></p>
+            <p>Do these points belong to the (shown) bounding box or a
+            different one?</p>
+            <p>We need to develop some <em>consistent</em> policies to
+            deal with such issues.</p>
+            <p><strong>Late Fusion</strong></p>
+            <p>Fusing results <strong>after</strong> independent
+            detection and there can be two ways to do it:</p>
+            <ul>
+            <li>get 3D bounding boxes on both ends → fuse results</li>
+            <li>get 2D bounding boxes on both sides → fuse results</li>
+            </ul>
+            <p><img src="img/fusion/higher_fusion/late_fusion_example.png" height="200"></p>
+            <p>For the first type (late fusion in 3D), the steps
+            are:</p>
+            <ol type="1">
+            <li><strong>3D obstacle detection for LiDAR</strong>. The
+            idea is to look at the point cloud and extract meaningful
+            information/bounding boxes for the objects. Various methods
+            have been developed over the years for this,
+            <ul>
+            <li>unsupervised machine learning</li>
+            <li>deep learning algorithms (<em>e.g.,</em> <a
+            href="https://github.com/QingyongHu/RandLA-Net?tab=readme-ov-file">RANDLA-NET</a>)</li>
+            </ul></li>
+            </ol>
+            <p><br></p>
+            <p><img src="img/fusion/higher_fusion/3d_obstacle_detection.png" width="400"></p>
+            <p><br></p>
+            <details>
+            <summary>
+            RANDLA-NET
+            </summary>
+            <p>This is a simple and efficient neural architecture for
+            semantic segmentation of large-scale 3D point clouds.</p>
+            <ul>
+            <li>link to the <a
+            href="https://arxiv.org/abs/1911.11236">paper</a></li>
+            <li>link to <a
+            href="https://github.com/QingyongHu/RandLA-Net?tab=readme-ov-file">gitHub
+            repo</a></li>
+            <li>the <a
+            href="https://www.mathworks.com/help/lidar/ref/randlanet.html">Matlab</a>
+            implementation</li>
+            </ul>
+            <p>Some examples:</p>
+            <p><img src="img/fusion/higher_fusion/randla_net.1.gif" width="400">
+            <img src="img/fusion/higher_fusion/randla_net.2.gif" width="400"></p>
+            </details>
+            <p><br></p>
+            <ol start="2" type="1">
+            <li><strong>3D Obstacle detection for Camera</strong>. We
+            want to take the 2D images from the camera and
+            <strong>extrapolate 3D</strong> bounding boxes from them.
+            This is much harder than the previous situation. Here are
+            the steps:</li>
+            </ol>
+            <p><img src="img/fusion/higher_fusion/2d_to_3d_extrpolation.png" width="400"></p>
+            <p><br></p>
+            <ul>
+            <li>2D object detection (say using YOLO)</li>
+            <li>3D projections from those bounding boxes → essentially
+            extract the size/shape/depth of the object:</li>
+            </ul>
+            <p><img src="img/fusion/higher_fusion/2d_to_3d_car.png" width="300"></p>
+            <p><br></p>
+            <p>One method is to use deep learning along with estimates
+            of the size/orientation of the vehicle.</p>
+            <p><br></p>
+            <ol start="3" type="1">
+            <li><strong>IoU matching in 3D space</strong> → find a way
+            to align the 3D bounding boxes in space.</li>
+            </ol>
+            <p><img src="img/fusion/higher_fusion/3d_iou_matching.png" width="500"></p>
+            <p><br></p>
+            <p>Numerous methods have been proposed in literature → <a
+            href="https://github.com/facebookresearch/votenet">votenet</a>,
+            <a
+            href="https://github.com/Na-Z/sess?tab=readme-ov-file">sess</a>
+            and <a
+            href="https://github.com/yezhen17/3DIoUMatch?tab=readme-ov-file">3dIoUmatch</a>.</p>
+            <p>Here is a high-level diagram that shows how SESS
+            works:</p>
+            <p><img src="img/fusion/higher_fusion/sess_3d_matching.jpg" width="400"></p>
+            <p><strong>IoU matching in Time</strong></p>
+            <p>So far, we have discussed how to match the IoU in
+            <strong>space</strong> but there is a <strong>time</strong>
+            element as well → we need ensure that the <strong>frames
+            match up in time</strong>! We need to evaluate the accuracy
+            of object bounding box predictions across consecutive frames
+            → basically associate objects in time, from frame to frame,
+            <em>i.e.,</em> associate temporal segments (events,
+            intervals, actions) based on their <strong>Intersection over
+            Union (IoU)</strong></p>
+            <p>We also need to <strong>predict future
+            positions</strong>!</p>
+            <p>On intuition is that if <strong>bounding boxes overlap
+            between consecutive frames</strong> → same obstacle.</p>
+            <p>Here are some well known algorithms:</p>
+            <ol type="1">
+            <li><strong>Greedy Matching</strong></li>
+            </ol>
+            <p>Greedy matching is a <strong>heuristic</strong> approach
+            where each predicted segment is matched to the best ground
+            truth interval based on IoU. Common in benchmarks like <a
+            href="https://github.com/activitynet/ActivityNet/tree/master"><strong>ActivityNet</strong></a>
+            and <a
+            href="https://cove.thecvf.com/datasets/593"><strong>THUMOS</strong></a>.</p>
+            <p>How it works:</p>
+            <ul>
+            <li>sort predictions by <strong>confidence
+            score</strong></li>
+            <li>for each prediction,
+            <ul>
+            <li>match with the <strong>highest-IoU unmatched</strong>
+            ground truth</li>
+            <li>if <span
+            class="math inline"><em>I</em><em>o</em><em>U</em> ≥ <em>t</em><em>h</em><em>r</em><em>e</em><em>s</em><em>h</em><em>o</em><em>l</em><em>d</em></span>
+            (<em>e.g.,</em> <code>0.5</code>)* → *true positive**</li>
+            </ul></li>
+            <li>unmatched predictions → <strong>false
+            positives</strong></li>
+            <li>unmatched ground truths → <strong>false
+            negatives</strong></li>
+            </ul>
+            <p><br> <br></p>
+            <ol start="2" type="1">
+            <li><strong>Hungarian Matching algorithm</strong> (Optimal
+            One-to-One)</li>
+            </ol>
+            <p>Uses the <strong><a
+            href="https://en.wikipedia.org/wiki/Hungarian_algorithm">Hungarian
+            algorithm</a></strong> to find an optimal one-to-one
+            matching between predictions and ground truths by maximizing
+            total IoU.</p>
+            <p>Methodology:</p>
+            <ul>
+            <li>build a <strong>cost matrix</strong>, <span
+            class="math inline">1 − <em>I</em><em>o</em><em>U</em></span>,
+            for each prediction-ground truth pair</li>
+            <li>solve <strong>assignment</strong> using the Hungarian
+            algorithm</li>
+            </ul>
+            <p><br> <br></p>
+            <ol start="3" type="1">
+            <li><strong>IoU Threshold Matching</strong></li>
+            </ol>
+            <p>Matches predictions to ground truths if <span
+            class="math inline"><em>I</em><em>o</em><em>U</em> ≥ <em>t</em><em>h</em><em>r</em><em>e</em><em>s</em><em>h</em><em>o</em><em>l</em><em>d</em></span>.
+            Can be,</p>
+            <ul>
+            <li>one-to-one</li>
+            <li>one-to-many</li>
+            <li>many-to-many.</li>
+            </ul>
+            <p>How it works,</p>
+            <ul>
+            <li>compute the IoU for <strong>all pairs</strong></li>
+            <li>match if the IoU exceeds threshold</li>
+            <li>we can create customizable matching policies</li>
+            </ul>
+            <p>Some frameworks that use this: <a
+            href="http://host.robots.ox.ac.uk/pascal/VOC/">PASCAL
+            VOC</a>.</p>
+            <p><br> <br></p>
+            <ol start="4" type="1">
+            <li><strong>Temporal Non-Maximum Suppression
+            (NMS)</strong></li>
+            </ol>
+            <p>Removes redundant overlapping predictions and keeps the
+            <strong>highest confidence prediction per overlapping
+            group</strong>,</p>
+            <ul>
+            <li>sort the predictions by <strong>confidence</strong></li>
+            <li>iteratively <strong>remove overlapping
+            predictions</strong> (<span
+            class="math inline"><em>I</em><em>o</em><em>U</em> &gt; <em>t</em><em>h</em><em>r</em><em>e</em><em>s</em><em>h</em><em>o</em><em>l</em><em>d</em></span>).</li>
+            </ul>
+            <p>Frameworks that use this method: <a
+            href="https://arxiv.org/abs/1504.08083">Fast R-CNN</a>.</p>
+            <p><br> <br></p>
+            <ol start="5" type="1">
+            <li><strong>Soft-NMS / Soft Matching</strong></li>
+            </ol>
+            <p>Instead of removing overlapping segments, Soft-NMS
+            <strong>decreases their scores</strong> based on IoU overlap
+            using a <strong>decay function</strong>. Basically apply a
+            decay to confidence scores such as,</p>
+            <p><span class="math display">$$
+            s = s * e^{\frac{-IoU^2}{\sigma}}
+            $$</span></p>
+            <p>Framework: <a
+            href="https://arxiv.org/abs/1704.04503">Soft-NMS</a>.</p>
+            <p>Here is a comparison between the various methods:</p>
+            <table>
+            <thead>
+            <tr>
+            <th style="text-align: left;">Method</th>
+            <th style="text-align: left;">Matching Type</th>
+            <th style="text-align: left;">Optimized?</th>
+            <th style="text-align: left;">Handles Overlaps?</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;">Greedy</td>
+            <td style="text-align: left;">One-to-one</td>
+            <td style="text-align: left;">No</td>
+            <td style="text-align: left;">Partially</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">Hungarian</td>
+            <td style="text-align: left;">One-to-one</td>
+            <td style="text-align: left;">Yes</td>
+            <td style="text-align: left;">Yes</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">IoU Threshold</td>
+            <td style="text-align: left;">Flexible</td>
+            <td style="text-align: left;">No</td>
+            <td style="text-align: left;">No</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">NMS</td>
+            <td style="text-align: left;">Pre/Post</td>
+            <td style="text-align: left;">No</td>
+            <td style="text-align: left;">Yes</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">Soft-NMS</td>
+            <td style="text-align: left;">Pre/Post</td>
+            <td style="text-align: left;">No (heuristic)</td>
+            <td style="text-align: left;">Yes</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
             <!--rel="stylesheet" href="./custom.sibin.css"-->
             </section>
             </section>
@@ -16579,16 +17272,18 @@ Output: T
             href="https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf">Read
             the original paper</a> by Lowe for more details.</p>
             <ol start="3" type="1">
-            <li><a href="">Viola-Jones Detector</a> is used to
-            accurately identify and analyze human faces. Given an image
-            (it mainly works with grayscale images), the algorithm looks
-            at many smaller subregions and tries to find a face by
-            looking for <strong>specific features in each
+            <li><a
+            href="https://www.mygreatlearning.com/blog/viola-jones-algorithm/">Viola-Jones
+            Detector</a> is used to accurately identify and analyze
+            human faces.</li>
+            </ol>
+            <p>Given an image (it mainly works with grayscale images),
+            the algorithm looks at many smaller subregions and tries to
+            find a face by looking for <strong>specific features in each
             subregion</strong>. It needs to check many different
             positions and scales because an image can contain many faces
             of various sizes. It uses Haar-like features to detect faces
-            in this algorithm.</li>
-            </ol>
+            in this algorithm.</p>
             <blockquote>
             <p>In the 19th century a Hungarian mathematician, Alfred
             Haar gave the concepts of <a
@@ -16612,16 +17307,10 @@ Output: T
             <p>Many modern techniques use <a
             href="https://medium.com/@kattarajesh2001/convolutional-neural-networks-in-depth-c2fb81ebc2b2">convolutional
             neural networks</a> (CNNs) for object detection.</p>
-            <p>But first, a brief detour of CNNs…</p>
-            <section id="convolutional-neural-networks-cnns"
-            class="level3" data-number="12.2.1">
-            <h3 data-number="12.2.1"><span
-            class="header-section-number">12.2.1</span> Convolutional
-            Neural Networks (CNNs)</h3>
             <p><a
             href="https://en.wikipedia.org/wiki/Deep_learning">Deep
             learning</a> uses <strong>neural networks</strong> to
-            perform tasks such as classification, regression, and
+            perform tasks such as classification, regression and
             representation learning. The field takes inspiration from
             biological neuroscience and is centered around stacking
             artificial neurons into layers and “training” them to
@@ -16629,6 +17318,12 @@ Output: T
             multiple layers (ranging from three to several hundred or
             thousands) in the network.</p>
             <p><img src="img/object/deep_learning.png" width="400"></p>
+            <p>But first, a brief detour of CNNs…</p>
+            <section id="convolutional-neural-networks-cnns"
+            class="level3" data-number="12.2.1">
+            <h3 data-number="12.2.1"><span
+            class="header-section-number">12.2.1</span> Convolutional
+            Neural Networks (CNNs)</h3>
             <p><br></p>
             <p><strong>CNNs</strong> are a class of deep learning neural
             networks that learns “features” via a “filter” (or kernel)

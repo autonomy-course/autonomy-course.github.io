@@ -7293,6 +7293,403 @@ The UKF's ability to better capture nonlinear transformations makes it particula
 <iframe width="560" height="315" src="https://www.youtube.com/embed/dFPCFmd5uJE?si=Iy8K0EeV6TP3amor" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
+## High-Order Sensor Fusions
+
+What we've seen so far is **low-level** sensor fusion where the sensor values are fused as soon as the sensor readings are available. But we can imagine a situation where,
+
+- first, extract some "knowledge" out of the sensor values &rarr; say, bounding boxes
+- next, "fuse" this higher-oder knowledge.
+
+Consider the following two scenarios of a car trying to detect a pedestrian crossing the road using two different sensors &rarr; a **camera** and a **lidar**:
+
+|camera|lidar|
+|:--------|:---------|
+|<img src="img/fusion/higher_fusion/fusion_camera.png" width="300">|<img src="img/fusion/higher_fusion/fusion_lidar.jpeg" width="300">|
+| **2D** bounding box | **3D** bounding box|
+||
+
+The problem is that they generate very different types of output (2D vs 3d bonding boxes). So how do we fuse them?
+
+
+### Sensor Fusion | Classes
+
+Before we go ahead, let's take a look at the various **classes of sensor fusion**. The classification tries to extract answers to the following questions:
+
+1. **abstraction** level &rarr; **when** should we carry out the fusion?
+2. **centralization** level &rarr; **where** should we carry out the fusion?
+3. **competition** level &rarr; **what** should the fusion do? 
+
+Let's briefly look at each one.
+
+**1. Abstraction level fusion**
+
+We try to answer the question &rarr; **when** should we carry out the fusion, _i.e.,_ should we do it as soon as we get sensor values or after extracting some knowledge from it?
+
+There are three ways to classify sensor fusion based on the abstraction levels:
+
+|abstraction level| details | examples | pros | cons|
+|:----------------|:--------|:---------|:-----|:-----|
+| **low-level** |fuse the **raw** sensor values &rarr; project 3D point clouds onto pixels | point clouds from LiDAR and pixels from camera images| future proof | large computational requirements|
+| **mid-level** | each sensor does its own detection &rarr; project 3D bounding box onto 2D bounding box| camera and LiDAR (separately) detect objects that are fused | simplicity | loses some information|
+| **high-level** | fuse **objects** and **trajectories** &rarr; predictions+tracking| trajectories from camera and from LiDAR (separately)|further simplicity |too much information loss|
+||
+
+<img src="img/fusion/higher_fusion/abstraction_levels.png" height="300">
+
+**2. centralization level** 
+
+We try to answer the question &rarr; **where** should we carry out the fusion, _i.e.,_
+
+- central computer or
+- each sensor does it independently
+
+There are three high-level choices:
+
+| **centralization level** | details |
+|:-------------------------|:--------|
+| **centralized** | one central unit deals with it [low-level] |
+| **decentralized** | each sensor fuses data and forwards to next one |
+| **distributed** | each sensor processes data locally and sends to next unit [late] |
+||
+
+<img src="img/fusion/higher_fusion/centralization_levels.png" width="400">
+
+Recently automakers have started to use a **satellite** architecture for the design of computing elements interacting with sensors (and sensor fusion). The process is:
+
+- plug many sensors [satellites]
+- fuse together either on a single central unit [active safety domain controller] or a bunch of separate processors
+- 360 degree fusion+detection on controller
+- sensors do not have to be extremely good &rarr; there is redundancy to make up for it
+
+<img src="img/fusion/higher_fusion/satellite_architecture.png" width="400">
+
+
+**3. Competition level** 
+
+We try to answer **what** should the fusion do? Again, there are **three** possibilities,
+
+|competition level | meaning | example |
+|:-----------------|:--------|:--------|
+|**competitive**|sensors meant for same purpose |RADAR, LiDAR |
+|**complementary**|different sensors looking at different scenes | multiple cameras &rarr; to create a panorama|
+|**coordinated**|sensors produce a new scene from same object | 3D reconstruction|
+||
+
+Examples of each of the above:
+
+1. competitive level
+
+<img src="img/fusion/higher_fusion/3d_iou_matching.png" width="400">
+
+2. complementary level
+
+<img src="img/fusion/higher_fusion/panorama.png" width="400">
+
+3. coordinated level 
+
+<img src="img/fusion/higher_fusion/3d_reconstruction.png" width="400">
+
+
+### What is "IOU"?
+
+Recall that YOLO creates "bounding boxes". But, it usually starts by creating **multiple** bounding boxes on/around an object, _e.g.,_
+
+So, one example could be,
+
+<img src="img/fusion/higher_fusion/yolo_multiple_bounding_boxes.png" width="300">
+
+<br>
+
+But what we really want is a **single** bounding box that encapsulates the **entire** object, 
+
+<img src="img/fusion/higher_fusion/yolo_single_bounding_box.png" width="300">
+
+So how do we get from one (multiple) to the other (single)? We compute the **IoU** &rarr; **intersections over union**, defined as:
+
+$$
+IoU = \frac{\text{area of \textbf{intersection} of bounding boxes}}{\text{area of \textbf{union} of bounding boxes}}
+$$
+
+Visually, this can be seen as:
+
+<img src="img/fusion/higher_fusion/iou_visual.png" height="150">
+
+<br>
+
+The closer that an IoU is to `1`, the better the bounding box, _e.g.,_
+
+<img src="img/fusion/higher_fusion/iou_examples.png" width="400">
+
+<br>
+
+IoU also requires a notion of **ground truth** &rarr; the **precise** bounding boxes surrounding the items of interest in an image. **Human experts manually mark or label these boundary boxes**. The IoU score is calculated by comparing the predicted bounding boxes produced by an object detection model to the ground-truth bounding boxes during evaluation.
+
+
+### Sensor Fusion Example | Camera and LiDAR
+
+Let's get back to our example, camera+LiDAR. So, we have the following types of data:
+
+<img src="img/fusion/higher_fusion/yolo_single_bounding_box.png" height="200">
+<img src="img/fusion/higher_fusion/car_lidar.jpeg" height="200">
+
+- camera &rarr; excellent for **object classification** and **understanding scenes**
+- LiDAR &rarr;good for **estimating distances** 
+
+Here is a comparison of the strengths and weaknesses of the two:
+
+<img src="img/fusion/higher_fusion/camera_vs_lidar.png" width="400">
+
+<br>
+
+So let's look at this from the perspective of the three classes we discussed earlier:
+
+|class|notes|
+|:----|:----|
+| **what**? | competition and redundancy|
+| **where**? | doesn't matter &rarr; any of the options work |
+| **when**? | multiple options &rarr; **early** or **late** |
+||
+
+<br>
+
+**Early Fusion**
+
+- fuse **raw data** as soon as sensors are plugged
+- **project** 3D LiDAR point clouds onto 2D image
+- check whether point clouds belong to 2D bounding boxes from camera
+
+The entire process looks like:
+
+<img src="img/fusion/higher_fusion/camera_lidar_early.final.png" width="400">
+
+<br>
+
+to translate 3D point cloud [LiDAR frame] &rarr;  2D projection [camera frame],
+
+- convert each 3D LiDAR point into **[homogeneous coordinates](https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/)**
+- apply **projection equations** [translation/rotation] to convert from LiDAR to camera
+- transform back into Euclidean coordinates
+
+<details>
+<summary>Homogenous coordinates</summary>
+
+They are a [system of coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates) used in projective geometry, just as Cartesian coordinates are used in Euclidean geometry. They have the advantage that the coordinates of points, including points at infinity, can be represented using finite coordinates. Formulas involving homogeneous coordinates are often simpler and more symmetric than their Cartesian counterparts. Homogeneous coordinates have a range of applications, including computer graphics and 3D computer vision, where they allow affine transformations and, in general, projective transformations to be easily represented by a matrix. They are also used in fundamental elliptic curve cryptography algorithms.
+
+Here is an example of a Rational Bézier curve – polynomial curve defined in homogeneous coordinates (blue) and its projection on plane – rational curve (red).
+
+<img src="img/fusion/higher_fusion/homogenous.png" width="300">
+
+<br>
+
+If homogeneous coordinates of a point are multiplied by a non-zero scalar then the **resulting coordinates represent the same point**. Since homogeneous coordinates are also given to points at infinity, the **number of coordinates** required to allow this extension is **one more than the dimension of the projective space** being considered. For example, two homogeneous coordinates are required to specify a point on the projective line and three homogeneous coordinates are required to specify a point in the projective plane.
+
+[Read](https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/) for a more detailed explanation with examples.
+
+</details>
+
+So, the output of this step looks like, 
+
+<img src="img/fusion/higher_fusion/3d_to_2d.png" width="400">
+
+<br>
+
+For the object detection on the camera image &rarr; use YOLO!
+
+The next step is &rarr; **region of interest (ROI) mapping**, where we must **fuse** the objects inside each bounding box. We get the following outputs:
+
+- for each bounding box &rarr; camera gives us the **classification**
+- for each **LiDAR projected point** &rarr; we get an **accurate distance measure**  
+
+There can be some problems though. Which point (in the bounding box) do we pick for the **distance**? Recall that we are projecting/capture a 3D object on a 2D plane. So, distance measures could be one of:
+
+- average
+- center point
+- closest?
+
+There are other issues, for instance, consider the yellow region pointed to by the arrow,
+
+<img src="img/fusion/higher_fusion/roi_matching.png" width="300">
+
+<br>
+
+Do these points belong to the (shown) bounding box or a different one?
+
+We need to develop some _consistent_ policies to deal with such issues. 
+
+
+**Late Fusion**
+
+Fusing results **after** independent detection and there can be two ways to do it:
+
+- get 3D bounding boxes on both ends &rarr; fuse results
+- get 2D bounding boxes on both sides &rarr; fuse results
+
+<img src="img/fusion/higher_fusion/late_fusion_example.png" height="200">
+
+For the first type (late fusion in 3D), the steps are:
+
+1. **3D obstacle detection for LiDAR**. The idea is to look at the point cloud and extract meaningful information/bounding boxes for the objects. Various methods have been developed over the years for this, 
+   -  unsupervised machine learning
+   - deep learning algorithms (_e.g.,_ [RANDLA-NET](https://github.com/QingyongHu/RandLA-Net?tab=readme-ov-file)) 
+
+<br>
+
+<img src="img/fusion/higher_fusion/3d_obstacle_detection.png" width="400">
+
+<br>
+
+<details>
+<summary>RANDLA-NET</summary>
+
+This is a simple and efficient neural architecture for semantic segmentation of large-scale 3D point clouds. 
+
+- link to the [paper](https://arxiv.org/abs/1911.11236)
+- link to [gitHub repo](https://github.com/QingyongHu/RandLA-Net?tab=readme-ov-file)
+- the [Matlab](https://www.mathworks.com/help/lidar/ref/randlanet.html) implementation
+
+Some examples:
+
+<img src="img/fusion/higher_fusion/randla_net.1.gif" width="400">
+<img src="img/fusion/higher_fusion/randla_net.2.gif" width="400">
+
+</details>
+
+<br>
+
+2. **3D Obstacle detection for Camera**. We want to take the 2D images from the camera and **extrapolate 3D** bounding boxes from them. This is much harder than the previous situation. Here are the steps:
+
+<img src="img/fusion/higher_fusion/2d_to_3d_extrpolation.png" width="400">
+
+<br>
+
+- 2D object detection (say using YOLO)
+- 3D projections from those bounding boxes &rarr; essentially extract the size/shape/depth of the object:
+
+<img src="img/fusion/higher_fusion/2d_to_3d_car.png" width="300">
+
+<br>
+
+One method is to use deep learning along with estimates of the size/orientation of the vehicle.
+
+<br>
+
+3. **IoU matching in 3D space** &rarr; find a way to align the 3D bounding boxes in space. 
+
+<img src="img/fusion/higher_fusion/3d_iou_matching.png" width="500">
+
+<br>
+
+Numerous methods have been proposed in literature &rarr; [votenet](https://github.com/facebookresearch/votenet), [sess](https://github.com/Na-Z/sess?tab=readme-ov-file) and [3dIoUmatch](https://github.com/yezhen17/3DIoUMatch?tab=readme-ov-file).
+
+Here is a high-level diagram that shows how SESS works:
+
+<img src="img/fusion/higher_fusion/sess_3d_matching.jpg" width="400">
+
+
+**IoU matching in Time**
+
+So far, we have discussed how to match the IoU in **space** but there is a **time** element as well &rarr; we need ensure that the **frames match up in time**! We need to evaluate the accuracy of object bounding box predictions across consecutive frames &rarr; basically associate objects in time, from frame to frame, _i.e.,_ associate temporal segments (events, intervals, actions) based on their **Intersection over Union (IoU)**
+
+We also need to **predict future positions**!
+
+On intuition is that if **bounding boxes overlap between consecutive frames** &rarr; same obstacle.
+
+Here are some well known algorithms:
+
+1. **Greedy Matching**
+
+Greedy matching is a **heuristic** approach where each predicted segment is matched to the best ground truth interval based on IoU. Common in benchmarks like [**ActivityNet**](https://github.com/activitynet/ActivityNet/tree/master) and [**THUMOS**](https://cove.thecvf.com/datasets/593).
+
+How it works:
+
+- sort predictions by **confidence score**
+- for each prediction,
+  - match with the **highest-IoU unmatched** ground truth
+  - if $IoU \ge threshold$ (_e.g.,_ `0.5`)* &rarr; *true positive**
+- unmatched predictions &rarr; **false positives**
+- unmatched ground truths &rarr; **false negatives**
+
+<br>
+<br>
+
+
+2. **Hungarian Matching algorithm** (Optimal One-to-One)
+
+Uses the **[Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm)** to find an optimal one-to-one matching between predictions and ground truths by maximizing total IoU.
+
+Methodology:
+
+- build a **cost matrix**, $1 - IoU$, for each prediction-ground truth pair
+- solve **assignment** using the Hungarian algorithm
+
+<br>
+<br>
+
+3. **IoU Threshold Matching**
+
+Matches predictions to ground truths if $IoU \ge threshold$. Can be,
+
+- one-to-one
+- one-to-many
+- many-to-many.
+
+How it works,
+
+- compute the IoU for **all pairs**
+- match if the IoU exceeds threshold
+- we can create customizable matching policies
+
+Some frameworks that use this: [PASCAL VOC](http://host.robots.ox.ac.uk/pascal/VOC/). 
+
+<br>
+<br>
+
+4. **Temporal Non-Maximum Suppression (NMS)**
+
+Removes redundant overlapping predictions and keeps the **highest confidence prediction per overlapping group**,
+
+- sort the predictions by **confidence**
+- iteratively **remove overlapping predictions** ($IoU \gt threshold$).
+
+Frameworks that use this method: [Fast R-CNN](https://arxiv.org/abs/1504.08083).
+
+<br>
+<br>
+
+5. **Soft-NMS / Soft Matching**
+
+Instead of removing overlapping segments, Soft-NMS **decreases their scores** based on IoU overlap using a **decay function**. Basically apply a decay to confidence scores such as,
+
+$$
+s = s * e^{\frac{-IoU^2}{\sigma}}
+$$
+
+
+Framework: [Soft-NMS](https://arxiv.org/abs/1704.04503).
+
+Here is a comparison between the various methods:
+
+| Method  | Matching Type  | Optimized? | Handles Overlaps? | 
+|:--------|:----------------|:------------|:-------------------|
+| Greedy  | One-to-one  | No | Partially   |
+| Hungarian | One-to-one | Yes  | Yes  |
+| IoU Threshold | Flexible  | No | No |
+| NMS  | Pre/Post| No | Yes |
+| Soft-NMS | Pre/Post | No (heuristic) | Yes | 
+||
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <!--rel="stylesheet" href="./custom.sibin.css"-->
@@ -8635,7 +9032,8 @@ Image recognition matches individual features to a **database of features** from
 [Read the original paper](https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf) by Lowe for more details.
 
 
-3. [Viola-Jones Detector]() is used to accurately identify and analyze human faces.
+3. [Viola-Jones Detector](https://www.mygreatlearning.com/blog/viola-jones-algorithm/) is used to accurately identify and analyze human faces.
+
 Given an image (it mainly works with grayscale images), the algorithm looks at many smaller subregions and tries to find a face by looking for **specific features in each subregion**. It needs to check many different positions and scales because an image can contain many faces of various sizes. It uses Haar-like features to detect faces in this algorithm.
 
 > In the 19th century a Hungarian mathematician, Alfred Haar gave the concepts of [Haar wavelets](https://en.wikipedia.org/wiki/Haar_wavelet), which are a sequence of rescaled “square-shaped” functions which together form a wavelet family or basis.
@@ -8651,13 +9049,13 @@ Given an image (it mainly works with grayscale images), the algorithm looks at m
 
 Many modern techniques use [convolutional neural networks](https://medium.com/@kattarajesh2001/convolutional-neural-networks-in-depth-c2fb81ebc2b2) (CNNs) for object detection. 
 
+[Deep learning](https://en.wikipedia.org/wiki/Deep_learning) uses **neural networks** to perform tasks such as classification, regression and representation learning. The field takes inspiration from biological neuroscience and is centered around stacking artificial neurons into layers and "training" them to process data. The adjective "deep" refers to the use of multiple layers (ranging from three to several hundred or thousands) in the network.
+
+<img src="img/object/deep_learning.png" width="400">
+
 But first, a brief detour of CNNs...
 
 ### Convolutional Neural Networks (CNNs)
-
-[Deep learning](https://en.wikipedia.org/wiki/Deep_learning) uses **neural networks** to perform tasks such as classification, regression, and representation learning. The field takes inspiration from biological neuroscience and is centered around stacking artificial neurons into layers and "training" them to process data. The adjective "deep" refers to the use of multiple layers (ranging from three to several hundred or thousands) in the network.
-
-<img src="img/object/deep_learning.png" width="400">
 
 <br>
 
