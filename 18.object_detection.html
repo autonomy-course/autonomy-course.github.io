@@ -636,7 +636,12 @@ for each image row in input image:
 
 ---
 
-**general** form of a matrix convolution:
+**general** form of a matrix convolution
+
+
+---
+
+**general** form of a matrix convolution
 
 
 $$
@@ -650,8 +655,241 @@ y_{11} & y_{12} & \cdots & y_{1 n} \newline
 y_{21} & y_{22} & \cdots & y_{2 n} \newline
 \vdots & \vdots & \ddots & \vdots \newline
 y_{m 1} & y_{m 2} & \cdots & y_{m n}
+\end{array}\right]
+$$
+
+---
+
+**general** form of a matrix convolution
+
+<font size="11">
+$$
+\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 n} \newline
+x_{21} & x_{22} & \cdots & x_{2 n} \newline
+\vdots & \vdots & \ddots & \vdots \newline
+x_{m 1} & x_{m 2} & \cdots & x_{m n}
+\end{array}\right] *\left[\begin{array}{cccc}
+y_{11} & y_{12} & \cdots & y_{1 n} \newline
+y_{21} & y_{22} & \cdots & y_{2 n} \newline
+\vdots & \vdots & \ddots & \vdots \newline
+y_{m 1} & y_{m 2} & \cdots & y_{m n}
 \end{array}\right]=\sum_{i=0}^{m-1} \sum_{j=0}^{n-1} x_{(m-i)(n-j)} y_{(1+i)}
 $$
+</font>
+
+---
+
+when specific kernel is applied to an image, 
+
+
+---
+
+when specific kernel is applied to an image, 
+
+- it **modifies or transforms the image** 
+
+---
+
+when specific kernel is applied to an image, 
+
+- it **modifies or transforms the image** 
+- highlights or emphasizes &rarr; feature that kernel is specialized to detect
+
+---
+
+when specific kernel is applied to an image, 
+
+- it **modifies or transforms the image** 
+- highlights or emphasizes &rarr; feature that kernel is specialized to detect
+- creates a **new representation** of original image
+
+---
+
+when specific kernel is applied to an image, 
+
+- it **modifies or transforms the image** 
+- highlights or emphasizes &rarr; feature that kernel is specialized to detect
+- creates a **new representation** of original image
+- focusing on specific feature &rarr; encoded by applied kernel
+
+---
+
+kernels come in various shapes
+
+<img src="img/object/kernel.6.png" width="1300">
+
+---
+
+### CNNs and kernels
+
+---
+
+### CNNs and kernels
+
+CNNs &rarr; **do not hand code** kernels to extract features
+
+---
+
+### CNNs and kernels
+
+CNNs &rarr; **do not hand code** kernels to extract features
+
+neural network **learns kernels** &rarr; extract different features
+
+---
+
+**which** kernel to learn?
+
+---
+
+**which** kernel to learn?
+
+up to the model! 
+
+---
+
+**which** kernel to learn?
+
+up to the model! 
+
+<br>
+<br>
+
+whatever feature it wants to extract &rarr; CNN will **learn** the kernel 
+
+---
+
+### "learned" kernels 
+
+---
+
+### "learned" kernels 
+
+- act as specialized filters that **modify input**
+
+---
+
+### "learned" kernels 
+
+- act as specialized filters that **modify input**
+- highlighting specific patterns or structures
+
+---
+
+### "learned" kernels 
+
+- act as specialized filters that **modify input**
+- highlighting specific patterns or structures
+- enabling network &rarr; learn and discern various features
+
+
+---
+
+### "learned" kernels 
+
+- act as specialized filters that **modify input**
+- highlighting specific patterns or structures
+- enabling network &rarr; learn and discern various features
+
+essential for &rarr; image recognition, object detection, _etc._
+
+---
+
+example: consider a small patch of image of a car
+
+<img src="img/object/car.1.png" width="1100">
+
+---
+
+**three color channels** (R, G, B)
+
+<img src="img/object/car.rgb.png" height="700">
+
+---
+
+s consider a **grayscale** image first (for simplicity):
+
+<img src="img/object/car.2.png" height="900">
+
+---
+
+**one version** of convolution
+
+<img src="img/object/car.grayscale.1.png" width="1300">
+
+---
+
+<!-- .slide: data-background="white" -->
+
+If we run it forward, this is what the result looks like:
+
+<img src="img/object/car.convolution.gif" width="1100">
+
+---
+
+<div class="multicolumn">
+
+<div style="vertical-align: text-top;">
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+but...we deal with **color** images and **three** channels!
+
+</div>
+
+<div>
+
+<img src="img/object/pencils.jpg" height="1000">
+
+</div>
+</div>
+
+---
+
+we have to deal with,
+
+<img src="img/object/car.rgb.png" width="1300">
+
+---
+
+solution is simple...apply kernel to **each** channel!
+
+---
+
+<!-- .slide: data-background="white" -->
+
+
+solution is simple...apply kernel to **each** channel!
+
+<img src="img/object/convolution.0.gif" width="1400">
+
+---
+
+**combine**$^+$ them &rarr; **single output value** for that position
+
+---
+
+**combine**$^+$ them &rarr; **single output value** for that position
+
+(+ usually **summed up**) 
+
+---
+
+<!-- .slide: data-background="white" -->
+
+**combine**$^+$ them &rarr; **single output value** for that position
+
+(+ usually **summed up**) 
+
+<img src="img/object/car.rgb_output.gif" width="1300">
+
+Note:
+The "[bias](https://www.turing.com/kb/necessity-of-bias-in-neural-networks#)" helps in shifting the activation function and influences the feature maps’ outputs. This is a **constant** that is added to the product of features and weights. It is used to **offset the result**. It helps the models to shift the activation function towards the positive or negative side.
 
 ---
                     </textarea>

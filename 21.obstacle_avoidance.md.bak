@@ -1,0 +1,581 @@
+---
+title: "Obstacle Avoidance"
+textbook: "#objectobstacle-avoidance"
+---
+
+# obstacle avoidance
+
+## **Design of Autonomous Systems**
+### csci 6907/4907-Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+so far...
+
+---
+
+methods to **detect** and **identify** objects
+
+<img src="img/object/camera_bounding_boxes.gif" width="1400">
+
+---
+
+main goal &rarr; **do not collide** with objects in our path
+
+<img src="img/object/avoidance/final_destination_logs.gif" width="1400">
+
+---
+
+two ways to achieve this goal
+
+---
+
+two ways to achieve this goal
+
+<div class="multicolumn">
+
+<div>
+
+<br>
+
+**stopping**
+
+<img src="img/object/avoidance/stopping-flintstone.gif" height="500">
+
+
+</div>
+
+<div>
+
+<br>
+
+**alternate paths**
+
+<img src="img/object/avoidance/racecar_overtake.gif" height="500">
+
+</div>
+
+
+</div>
+
+---
+
+### obstacle avoidance
+
+---
+
+### obstacle avoidance
+
+> capability of robot or autonomous system to **detect and circumvent obstacles** in its path to reach a **predefined destination**
+
+
+---
+
+simplest way...
+
+---
+
+simplest way...
+
+### use the **sensors**
+
+---
+
+### use the **sensors** 
+
+- actively react to obstacles 
+
+---
+
+### use the **sensors** 
+
+- actively react to obstacles 
+- recalculate new paths
+
+---
+
+### use the **sensors** 
+
+<br>
+
+<div class="multicolumn">
+
+<div>
+
+<br>
+
+- actively react to obstacles 
+- recalculate new paths
+
+</div>
+
+<div>
+
+<img src="img/object/avoidance/wiki_robot.gif" width="700" border="1">
+
+</div>
+
+</div>
+
+
+---
+
+**three simple steps**: 
+
+---
+
+**three simple steps**: 
+
+- sense
+
+---
+
+**three simple steps**: 
+
+- sense
+- "think"
+
+---
+
+**three simple steps**: 
+
+- sense
+- "think"
+- act
+
+Note:
+- inputs &rarr; distances of objects and provide the robot with data about its surroundings enabling it to detect obstacles and calculate their distances. The robot then adjusts its trajectory to navigate around obstacles while trying to reach its destination. This can be carried out in real-time 
+
+
+---
+
+**three simple steps**: 
+
+- sense
+- "think"
+- act
+
+works in "real-time" 
+
+---
+
+difficult in complex situations...
+
+---
+
+difficult in complex situations...
+
+_e.g.,_ autonomous car in urban environmen
+
+---
+
+**contemporary** obstacle detection methods
+
+---
+
+**contemporary** obstacle detection methods
+
+- reactive strategies
+- global planners
+- machine-learning based methods
+
+---
+
+obstacle avoidance &rarr; overlaps with the path planning 
+
+---
+
+obstacle avoidance &rarr; overlaps with the path planning 
+
+- artificial potential field (APF)
+- A* and D* searches
+- RRT 
+
+---
+
+obstacle avoidance &rarr; overlaps with the path planning 
+
+- artificial potential field (APF)
+- A* and D* searches
+- RRT 
+
+their main goal &rarr; find paths through obstacle fields
+
+---
+
+<!-- .slide: data-background="white" -->
+
+consider weighted A* example:
+
+<img src="img/object/avoidance/Weighted_A_star_with_eps_5.gif" height="500">
+
+---
+
+let's look at some **obstacle avoidance algorithms**
+
+---
+
+
+### Classical/Geometric Methods
+
+---
+
+### Classical/Geometric Methods
+
+**track the geometry** using "physics-based" concepts (\eg APF)
+
+---
+
+, _e.g.,_  the [APF](#artificial-potential-field-apf) method discussed earlier. Other well-known methods in this category include:
+
+**[Vector-Field Histogram (VFH)](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=88137)** &rarr; that builds a **histogram of obstacle densities** and chooses low-density paths.
+
+The algorithm:
+
+- computes obstacle-free steering directions for a robot based on range sensor readings
+
+<img src="img/object/avoidance/vfh.range_readings.png" width="300">
+
+---
+
+- readings are used to compute **polar density histograms** &rarr;  to identify obstacle location and proximity
+
+<img src="img/object/avoidance/vfh.histogram_density.png" width="300">
+
+---
+
+
+- based on specified parameters and thresholds, the histograms are converted to binary histograms &rarr; to indicate valid steering directions for the robot. 
+
+<img src="img/object/avoidance/vhf.histograms.png" width="300">
+
+---
+
+Read the [original paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=88137) and [more details](https://web.eecs.utk.edu/~leparker/Courses/CS594-fall08/Lectures/Oct-21-Obstacle-Avoidance-I.pdf).
+
+---
+
+**[Dynamic Window Approach](https://www.ri.cmu.edu/pub_files/pub1/fox_dieter_1997_1/fox_dieter_1997_1.pdf)** &rarr; this method **samples the velocity space** and selects safe trajectories based on dynamic constraints.
+
+This approach correctly, and in an elegant manner, incorporates the **dynamics** of the robot &rarr; by reducing the search space to the dynamic window, which consists of the **velocities reachable within a short time interval**. 
+
+Within this dynamic window the approach only considers admissible velocities yielding a trajectory on which the robot can **stop safely**. An objective function considers the **distance to the next obstacle approach**.
+
+Read the [original paper](https://www.ri.cmu.edu/pub_files/pub1/fox_dieter_1997_1/fox_dieter_1997_1.pdf) for more details.
+
+
+
+### Model Predictive Control (MPC)
+
+MPC is an advanced method of process control that is used to control a process while **satisfying a set of constraints**. It allows the **current timeslot** to be optimized, while keeping future timeslots in account. This is achieved by,
+
+- optimizing a **finite time-horizon** &rarr; but only implementing the current timeslot and 
+- then **optimizing again**, repeatedly.
+
+MPC can **predict future events** &rarr; and react accordingly (as opposed to plain PID).
+
+<img src="img/object/avoidance/MPC_scheme_basic.svg" width="400">
+
+---
+
+MPC is [based on](https://en.wikipedia.org/wiki/Model_predictive_control) **iterative, finite-horizon optimization** of a plant model. At time, $t$, 
+
+- the current plant state is sampled
+- a cost minimizing control strategy is computed (via a numerical minimization algorithm) 
+- for a relatively short time horizon in the future, $[t+T]$
+
+Specifically, an **online or on-the-fly calculation** is used to explore state trajectories that emanate from the current state and find (via the solution of [Euler–Lagrange equations](https://en.wikipedia.org/wiki/Euler–Lagrange_equation)) &rarr; a cost-minimizing control strategy until time $[t+T]$.
+
+- only the **first step of the control strategy is implemented**
+- plant state is **sampled again** 
+- calculations are **repeated starting from the new current state**
+- yielding a **new control** and **new predicted state path**. 
+
+The prediction **horizon keeps being shifted forward** (MPC is also called _receding horizon control_). 
+
+**Note:**  while MPC is not optimal, in practice it has shown very good results.
+
+**Applying MPC to obstacle avoidance** depends on the fact that &rarr; MPC systems rely on **dynamic models** of the process,
+
+<img src="img/object/avoidance/mpc.model.png" width="300">
+
+---
+
+Once a model has been established, we can set up a control loop as follows:
+
+<img src="img/object/avoidance/mpc.controller.png" width="300">
+
+---
+
+Given a reference command, $\mathbf{r}$, the controller generates high rate **vehicle commands**, $\mathbf{u}$ to close the loop with vehicle dynamics. 
+
+This computes the **predicted state trajectory**, $\mathbf{x}(t)$.
+
+The feasibility of this output is checked against **vehicle and environmental constraints**, such as rollover and obstacle avoidance constraints.
+
+MPC often works with path planning algorithms (such as RRT) &rarr; _e.g.,_  [CL-RRT](https://dspace.mit.edu/bitstream/handle/1721.1/52527/Kuwata-2009-Real-Time%20Motion%20Pla.pdf?sequence=1&isAllowed=y), 
+
+- the CL-RRT algorithm grows a **tree of feasible trajectories** (using RRT) &rarr;  originating from the current vehicle state
+- attempts to reach a specified goal set
+- at the end of the tree growing phase &rarr; **best trajectory** is chosen
+for execution
+- cycle repeats. 
+
+The quality of the results depends on the **sampling strategies**. Sampling
+the space in a purely random manner could result in large numbers of wasted samples due to the numerous constraints. Many methods have been proposed for this purpose. 
+
+Some examples:
+
+|situation| details | image|
+|:--------|:--------|:----:|
+| intersection | vehicle trying to make a right turn | <img src="img/object/avoidance/clrrt.left_turn.png" width="200">|
+| parking lot | goal is center right edge | <img src="img/object/avoidance/clrrt.parking_lot.png" width="200">|
+| u-turn| facing (red) road blockage --- white and blues samples are forward/back maneouvers| <img src="img/object/avoidance/clrrt.uturn.png" width="200">|
+||
+
+---
+
+Read the [original CLRRT paper](https://dspace.mit.edu/bitstream/handle/1721.1/52527/Kuwata-2009-Real-Time%20Motion%20Pla.pdf?sequence=1&isAllowed=y) for more details and references.
+
+---
+
+
+### Learning-Based Methods
+
+With the advent of ML/AI techniques, an autonomous vehicle can trace a path to its destination using massive amounts of data. It can also **adapt quickly** to changing scenarios/environments. It can achieve this using many testing stages on large data sets of obstacles and environmental conditions. 
+
+ML-based solutions can even be **[mapless](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8202134)**. Traditional motion planners for mobile ground robots with range sensors (_e.g.,_  LiDAR) mostly depend on the obstacle map of the navigation environment where both,
+
+- the highly precise laser sensor and 
+- the obstacle map building work of the environment 
+
+are indispensable.
+
+Using an asynchronous deep reinforcement learning method, a "mapless" motion planner can be trained end-to-end **without any manually designed features and prior demonstrations**!
+
+1. **[Reinforcement Learning](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf)** is a **computational approach** to **learning from interaction**. These methods are  focused on **goal-directed learning from interaction**.
+
+> Reinforcement learning problems involve learning what to do—how to map situations to actions -- so as to **maximize a numerical reward signal**. In an essential way they are **closed-loop** problems because the learning system’s actions influence its later inputs. Moreover, the **learner is not told which actions to take**, as in many forms of machine learning, but instead must **discover which actions yield the most reward by trying them out**. In the most interesting and challenging cases, actions may affect not only the immediate reward but also the next situation and, through that, **all subsequent rewards**.
+
+Three most important aspects of RL:
+
+1. **closed-loop** in an essential way
+2. **no direct instructions** as to what actions to take
+3. consequences of actions, including reward signals, play out over **extended time periods**.
+
+One of the challenges &rarr; the **trade-off between exploration and exploitation**. To obtain a lot of reward, a reinforcement learning agent must prefer actions that it has **tried in the past and found to be effective** in producing reward. But to discover such actions, it has to **try actions that it has not selected before**. The agent has to exploit what it already knows in order to obtain reward, but it also has to explore in order to make better action selections in the future. 
+
+
+A key feature of RL is that it explicitly considers the **whole problem** of a goal-directed agent interacting with an uncertain environment &rarr; this is a perfect analogy for path finding/obstacle detection. 
+
+RL is really an interdisciplinary area of machine learning and optimal control. 
+
+Consider this [example](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf):
+
+> a mobile robot decides whether it should enter a new room in search of more trash to collect or start trying to find its way back to its battery recharging station. It makes its decision based on the current charge level of its battery and how quickly and easily it has been able to find the recharger in the past.
+
+Here is a [typical framing of the RL problem](https://en.wikipedia.org/wiki/Reinforcement_learning):
+
+<img src="img/object/avoidance/Reinforcement_learning_diagram.svg" width="300">
+
+---
+
+In the above example, an agent takes actions in an environment, which is interpreted into a reward and a state representation, which are fed back to the agent.
+
+The simplest model for RL uses a [Markov Decision Process (MDP)](https://math.uchicago.edu/~may/REU2022/REUPapers/Wang,Yuzhou.pdf) &rarr; _i.e.,_  optimization models for modeling decision-making in situations where outcomes are random, _viz.,_ 
+
+- a set of **environment** and **agent states** (the state space), $S$
+- a set of **actions** (the action space), $A$, of the agent
+- $P_a\left(s, s^{\prime}\right)=\operatorname{Pr}\left(S_{t+1}=s^{\prime} \mid S_t=s, A_t=a\right)$ &rarr; the transition probability (at time $t$) from state $s$ to $s^{\prime}$ under action $a$
+- $R_a\left(s, s^{\prime}\right)$ &rarr; the immediate reward after transition from $s$ to $s^{\prime}$ under action $a$.
+
+The purpose of RL &rarr; agent to learn an optimal (or near-optimal) policy that **maximizes reward function** or other (user-provided) reinforcement signal that accumulates from immediate rewards.
+
+A basic reinforcement learning agent interacts with its environment in **discrete time steps**. At each time step $t$, 
+
+- the agent receives the current state $S_t$ and reward $R_t$
+- it chooses an action $A_t$ from the set of available actions
+    - subsequently sent to the environment
+- environment moves to a new state $S_{t+1}$
+- the reward $R_{t+1}$ associated with transition $\left(S_t, A_t, S_{t+1}\right)$ is determined
+
+---
+
+Hence, the main **goal** of RL is to **learn a "policy"**, 
+
+$$
+\pi: \mathcal{S} \times \mathcal{A} \rightarrow[0,1], \pi(s, a)=\operatorname{Pr}\left(A_t=a \mid S_t=s\right)
+$$
+
+that **maximizes the expected cumulative reward**.
+
+Read the book, ["Reinforcement Learning: An Introduction"](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf) by Sutton and Barto for a more detailed introduction to RL. 
+
+Here is a [primer on MDP](https://math.uchicago.edu/~may/REU2022/REUPapers/Wang,Yuzhou.pdf) by Wang. 
+
+---
+
+**RL Applied to Obstacle Detection**
+
+RL lends itself very nicely to the process of obstacle avoidance &rarr; _i.e.,_  finding a path through an area with multiple obstacles. It comes to defining the **right reward function**.
+
+The following image shows a high-level flow of using (asynchronous) RL &rarr; for a robot to find its way through unfamiliar terrain.  
+
+<img src="img/object/avoidance/rl.example.png" width="400">
+
+---
+
+Read the paper, ["Virtual-to-real Deep Reinforcement Learning: Continuous Control of Mobile Robots for Mapless Navigation](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8202134) by Tai et al. for more details.
+
+---
+
+2. **[Imitation Learning](https://arxiv.org/pdf/1604.07316)** attempts to learn policies **from human demonstrations**.
+
+For instance, a system **automatically learns internal representations** of the necessary processing steps (_e.g.,_  detecting useful road features) using **only human steering angles** as training signal!
+
+Here is a high-level diagram of the process:
+
+<img src="img/object/avoidance/imitation_learning.example.png" width="400">
+
+---
+
+The steps are:
+
+- images are fed into a CNN 
+- computes a proposed steering command
+- proposed command is compared to the desired command for that image
+- weights of the CNN are adjusted &rarr; to bring the CNN output closer to desired output
+- weight adjustment is accomplished using back propagation.
+
+Once trained, the network can generate steering from the video images of a **single center camera**!
+
+Read the paper, [End to End Learning for Self-Driving Cars](https://arxiv.org/pdf/1604.07316) by Bojarski et al. for more details.
+
+
+### Trajectory Calculations
+
+Let's look at one [example](https://ieeexplore.ieee.org/document/8519525) where mathematical ("sigmoid functions") are used to estimate a smooth trajectory for avoiding an obstacle &rarr; in this case a moving car that's ahead of you in the same lane.
+
+<details>
+<summary>Sigmoid functions</summary>
+
+A [Sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function) is an **S-shaped mathematical function** that **maps any input** value to an output between `0` and `1`. 
+
+<img src="img/object/avoidance/sigmoid.svg" width="300">
+
+---
+
+The most common sigmoid function is the logistic function:
+
+$$
+\sigma(x) = \frac{1}{1 + e^{-x}} = \frac{e^x}{1 + e^x} = 1 - \sigma(-x)
+$$
+
+Key properties of sigmoid functions:
+
+- smooth, continuous curve
+- utput range limited to $(0,1)$
+- approaches `0` as $x \rightarrow - \infty$ 
+- approaches `1` as $x \rightarrow + \infty$
+- has a derivative that is **always positive**
+- steepest slope occurs at $x = 0$
+
+</details>
+
+---
+
+This method avoids vehicles/obstacles by proposing a **smooth local modified trajectory** of a global path. They use a combination of,
+
+- a parametrized sigmoid function and 
+- a rolling horizon (a time-dependant model is solved repeatedly).
+
+The main idea is to react to the obstacles but also to ensure a **smooth** response/trajectory. This is a **local** method that can work in conjunction with a global path planning/obstacle avoidane method. The reference trajectory is calculated simultaneously when the displacement is started.
+
+One of the main considerations &rarr; **execution time** since it is imperative that the solution be calculated and implemented in a reall short amount of time.
+
+Consider the following Sigmoid function:
+
+$$
+y(x) = \frac{1}{1 + e^{(-a(x-c))}}
+$$
+
+where,
+
+|term|definition|
+|-----|:----|
+| $y(x)$| lateral offset of the vehicle |
+| $x$ | position in longitudinal direction |
+| $B# | the "way position", $P3$ --- to generate obstacle avoidance manoeuvre |
+| $c$ | modifies the shape of the function |
+| $a$ | slope of the sigmoid |
+||
+
+---
+
+The following figure shows the shape of the sigmoid ad curvature for various values of $a$,
+
+<img src="img/object/avoidance/sigmoid.1.png" width="500">
+
+---
+
+The idea us to get from $P1 \rightarrow P3$, **via** $P2$.
+
+- inputs &rarr; obstacle position and position of vehicle
+- lateral offset &rarr; calculated based on these parameters
+
+Hence, at a high level, the process looks like:
+
+<img src="img/object/avoidance/sigmoid.2.png" width="400">
+
+---
+
+1. find a **circular area** around he obstacle &rarr; so that we can compute a **safe** region to avoid and
+2. use the sigmoid functions to compute a **smooth trajectory** based on the circular region &rarr; make the transitions smoother and safer.
+
+---
+
+|||
+|----|:----|
+| $S$ | desired **lateral** safety distance |
+| $S_m$ | **longitudinal** safety distance |
+||
+
+---
+
+A "**horizon planning approach**" is used to compute the path by,
+
+- dividing the drivable space into convex regions
+- trajectory of each region is computed as the vehicle moves forward.
+
+---
+
+The various, incremental steps for the process,
+
+1. approaching another car/obstacle &rarr; too far away to be a problem
+
+<img src="img/object/avoidance/sigmoid.3.png" width="400">
+
+---
+
+2. object detected
+    - safety circle calculated
+    - smooth trajectory calculated
+    our car (red) moves to new trajectory
+
+<img src="img/object/avoidance/sigmoid.4.png" width="400">
+
+---
+
+**Note:**  the obstacle (blue car) has moved forward. So our calculations should account for this.
+
+3. move past obstacle
+    - we can start to move back to original path/lane
+    - complete the trajectory
+
+<img src="img/object/avoidance/sigmoid.5.png" width="400">
+
+---
+
+Read the full paper [Smooth Obstacle Avoidance Path Planning for Autonomous Vehicles](https://ieeexplore.ieee.org/document/8519525) by Ben-Messaoud et al for all the details.
+
