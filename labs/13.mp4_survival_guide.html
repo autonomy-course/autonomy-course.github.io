@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **MP4** | Survival Guide 
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**  
+### Spring '25 | SEH 4040
+
+---
+
+## 1. Why you should worry about batteries!!
+
+Battery fires are really bad! ⚠️
+
+- They’re not extinguishable!  
+- Fire extinguishers won’t work—they don’t need oxygen to burn  
+- Their heat can melt most stuff  
+- Toxic fumes—**never inhale** them!
+
+---
+
+**golden rules**:  
+
+- Never let battery drop below **10%**  
+- Check battery level every **10–15 minutes**  
+- Set timers ⏳ if you have to
+
+---
+
+## 2. How to know if my battery is good?
+
+- Put battery on a **flat surface** and check if it **spins**  
+  - If yes &rarr; **swollen** &rarr; **don’t use it**!
+- A good battery is **never warm** 
+
+<br>
+<br>
+
+<table bgcolor="orange" border="1" cellpadding="10">
+  <tr>
+    <td>warm &rarr; <b>danger!</b> call TA immediately! </td>
+  </tr>
+</table>
+
+
+---
+
+## 3. What to do if it’s on fire/warm/bulging?
+
+- Call a TA **immediately**  
+- Avoid inhaling fumes  
+- Don’t play hero — stay away from fire  
+- Place in sand bucket if possible (we will provide it!)
+
+<br>
+<br>
+
+<table bgcolor="orange" border="1" cellpadding="10">
+  <tr>
+    <td>no TA? call <b>GW Environmental Safety</b> &rarr; (202) 994-4347 </td>
+  </tr>
+</table>
+
+---
+
+## 4. Objectives of MP4
+
+MP4 is divided into 3 parts:  
+
+- **Part 1**: Assemble & test the rover  
+- **Part 2**: Write the **control algorithm**  
+- **Part 3**: Write **waypoint file**  
+  - Also: object detection, stop sign & traffic light detection
+
+---
+
+## 5. Part 1: Assembling
+
+- Easy 
+- Most of you have already done this
+
+---
+
+## 6. Part 2: Control Algorithm
+
+consider the following **four** steps:  
+
+- Calculate **error terms** PID will minimize 
+  - _e.g.,_  distance from next waypoint
+- Write the **PID class**  
+- Test rover with **existing waypoint** to make square  
+- Tune your PID
+
+---
+
+## 7. Part 3: Writing Waypoints
+
+3 sub-tasks:  
+1. Write waypoints that **actually work**  
+2. Add **object detection**  
+3. Add **traffic light/sign** detection  
+   - Don’t check them **too frequently**
+
+---
+
+## 8. Fin
+
+Stay safe, build smart and **ask for help** when needed!
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>

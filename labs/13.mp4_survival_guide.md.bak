@@ -1,0 +1,102 @@
+---
+title: "Lab 13 | MP4 Survival Guide"
+---
+
+## **MP4** | Survival Guide 
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**  
+### Spring '25 | SEH 4040
+
+---
+
+## 1. Why you should worry about batteries!!
+
+Battery fires are really bad! ⚠️
+
+- They’re not extinguishable!  
+- Fire extinguishers won’t work—they don’t need oxygen to burn  
+- Their heat can melt most stuff  
+- Toxic fumes—**never inhale** them!
+
+---
+
+**golden rules**:  
+
+- Never let battery drop below **10%**  
+- Check battery level every **10–15 minutes**  
+- Set timers ⏳ if you have to
+
+---
+
+## 2. How to know if my battery is good?
+
+- Put battery on a **flat surface** and check if it **spins**  
+  - If yes &rarr; **swollen** &rarr; **don’t use it **!
+- A good battery is **never warm** 
+  - Warm = danger &rarr; **Call TA immediately**
+
+---
+
+## 3. What to do if it’s on fire/warm/bulging?
+
+- Call a TA **immediately**  
+- Avoid inhaling fumes  
+- Don’t play hero — stay away from fire  
+- Place in sand bucket if possible (we will provide it!)
+
+<br>
+<br>
+
+<table bgcolor="orange" border="1" cellpadding="10">
+  <tr>
+    <td>no TA? call <b>GW Environmental Safety</b> &rarr; (202) 994-4347 </td>
+  </tr>
+</table>
+
+---
+
+## **4. Objectives of MP4**
+
+MP4 is divided into 3 parts:  
+
+- **Part 1**: Assemble & test the rover  
+- **Part 2**: Write the **control algorithm**  
+- **Part 3**: Write **waypoint file**  
+  - Also: object detection, stop sign & traffic light detection
+
+---
+
+## **5. Part 1: Assembling**
+
+- Easy 
+- Most of you have already done this
+
+---
+
+## **6. Part 2: Control Algorithm**
+
+Think of it in 4 steps:  
+
+1. Calculate **error terms** PID will minimize 
+  - \eg distance from next waypoint
+2. Write the **PID class**  
+3. Test rover with **existing waypoint** to make square  
+4. Tune your PID
+
+---
+
+## **7. Part 3: Writing Waypoints**
+
+3 sub-tasks:  
+1. Write waypoints that **actually work**  
+2. Add **object detection**  
+3. Add **traffic light/sign** detection  
+   - Don’t check them **too frequently**
+
+---
+
+## **8. Fin**
+
+Stay safe, build smart, and ask for help when needed.
