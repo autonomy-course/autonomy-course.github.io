@@ -9834,7 +9834,7 @@ Examples: highway pilot.
 
 <br>
 
-Examples: some of the modern electric cars, \eg Tesla.
+Examples: some of the modern electric cars, _e.g.,_  Tesla.
 
 - **level 4: high automation** &rarr; the system is **fully responsible** for driving tasks **within limited service areas** while occupants act only as passengers and do not need to be engaged. A human driver is not needed to operate the vehicle.
 
@@ -9875,12 +9875,12 @@ First, some definitions:
 | **[AUTOSAR](https://www.autosar.org)** | software technology platforms |
 ||
 
-\note the SAE J3016 standard **does not** provide _strict_ requirements; rather, its purpose is to be _descriptive_ and _broad_ about the evolution of such systems. The idea is to sketch an **incremental evolution** &rarr; from no automation (level `0`) to full automation (level `5`).
+**Note:**  the SAE J3016 standard **does not** provide _strict_ requirements; rather, its purpose is to be _descriptive_ and _broad_ about the evolution of such systems. The idea is to sketch an **incremental evolution** &rarr; from no automation (level `0`) to full automation (level `5`).
 
 This SAE standard defines some important terms (that have become somewhat standard in the industry):
 | **term** | **description** | **examples** |
 |----------|-----------------|--------------|
-| **Dynamic Driving Task (DDT)** | real-time operational and tactical functions required to operate a vehicle, excluding strategic functions such as trip scheduling or route planning. DDT includes actuator control  and tactical planning such as generating and following a trajectory, keeping the vehicle within the lanes, maintaining distance from other vehicles, \etc | steering, braking, lane keeping, trajectory planning |
+| **Dynamic Driving Task (DDT)** | real-time operational and tactical functions required to operate a vehicle, excluding strategic functions such as trip scheduling or route planning. DDT includes actuator control  and tactical planning such as generating and following a trajectory, keeping the vehicle within the lanes, maintaining distance from other vehicles, _etc._  | steering, braking, lane keeping, trajectory planning |
 | **Driving automation system** | hardware and software systems collectively capable of performing some parts or all of the DDT on a sustained basis. Driving automation systems are composed of design-specific functionality called features. Focus is on the interplay between software components to design systems capable of achieving full autonomy. | automated parking, lane keep assistance |
 | **Operational Design Domains (ODD)** | specific conditions under which a given driving automation system or feature is designed to function. Requirements vary based on the domain. Full autonomy requires operation in all weather and traffic conditions. | sunny city driving, winter mountain roads |
 | **DDT fall-back** | the response by the user or by an Automated Driving System (ADS) to either perform the DDT task or achieve a safety state after a DDT performance-relevant system failure or upon leaving the designated ODD. | user intervention, safety state activation |
@@ -9934,7 +9934,7 @@ As you may have noticed from all the material covered so far, the sensing &rarr;
 
 <br>
 
-The **world model** stored data (\eg  maps) maintain knowledge about,
+The **world model** stored data (_e.g.,_   maps) maintain knowledge about,
 
 - images
 - maps
@@ -9959,7 +9959,7 @@ To map these back to the operational classes,
 - planning class &rarr; **tactical** 
 - behavior generation &rarr; **both** strategic and planning class of functions.
 
-In addition, there are **orthogonal classes**, \viz
+In addition, there are **orthogonal classes**, _viz.,_ 
 
 |orthogonal class| description|
 |:---------------|:-----------|
@@ -9971,7 +9971,7 @@ In addition, there are **orthogonal classes**, \viz
 
 <br>
 
-\note there is one other orthogonal class of functions \viz **security**. We will address that in the next chapter.
+**Note:**  there is one other orthogonal class of functions _viz.,_  **security**. We will address that in the next chapter.
 
 As you can imagine, this (closely) matches our initial course/system design:
 
@@ -10006,7 +10006,7 @@ The [key ideas](https://users.ece.cmu.edu/~koopman/ul4600/L109_UL4600.pdf) are:
 
 UL 4600 works towards generating &rarr; **[safety cases](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10109263)**. 
 
-The main difference between `4600` and other safety standards is that it is **not prescriptive** (\ie doesn't say "do X"). Rather, it is **goal-oriented**, \ie answering questions such as:
+The main difference between `4600` and other safety standards is that it is **not prescriptive** (_i.e.,_  doesn't say "do X"). Rather, it is **goal-oriented**, _i.e.,_  answering questions such as:
 
 > "what should a safety case address?"
 
@@ -10055,12 +10055,12 @@ Safety cases need to consider many things:
 
 **Safety Performance Indicator (SPI)**
 
-The idea is to provide metrics on the **validity** of safety cases. It is context-dependent and can include many aspects, \eg
+The idea is to provide metrics on the **validity** of safety cases. It is context-dependent and can include many aspects, _e.g.,_ 
 
 - **acceptable violation rate** of standoff to pedestrians
 - **gap tolerance** of up to X meters in lane markings
 - **false negative rate** for camera/LiDAR
-- \etc
+- _etc._ 
 
 Read the [full standard](https://www.shopulstandards.com/ProductDetail.aspx?productid=UL4600) online (select "digital view" and sign up for reading it for free). Here is a [draft version](https://users.ece.cmu.edu/~koopman/ul4600/191213_UL4600_VotingVersion.pdf). 
 
@@ -10092,7 +10092,7 @@ Is it,
 
 This is an active area of research and discussion especially in the legal community. There is a need for existing liability laws to evolve to reasonably identify the appropriate remedies for damage and injury. This become particularly problematic as higher levels of autonomy are implemented &rarr; what about levels `4` and `5`? 
 
-Various countries (the UK, France, Germany, Japan, \etc) have started to draft policies and laws to handle the issues of liability. 
+Various countries (the UK, France, Germany, Japan, _etc._ ) have started to draft policies and laws to handle the issues of liability. 
 
 In the US, there is a policy proposal that will rest the [liability with the **manufacturer**](https://digitalcommons.law.scu.edu/cgi/viewcontent.cgi?article=2731&context=lawreview) of the vehicles. 
 
@@ -10119,7 +10119,7 @@ The [NTSB investigation of the Tesla crash of 2016](https://www.ntsb.gov/investi
 
 - [ISO 26262 standard](https://www.iso.org/standard/68383.html)
 - [Standards relevant to automated driving system safety: A systematic assessment](https://www.sciencedirect.com/science/article/pii/S2666691X23000428)
-- [A Standard Driven Software Architecture for Fully Autonomous Vehicles](https://www.atlantis-press.com/journals/jase/125934832/view) bu Serban \etal
+- [A Standard Driven Software Architecture for Fully Autonomous Vehicles](https://www.atlantis-press.com/journals/jase/125934832/view) bu Serban _et al._ 
 - [UL 4600: Standard for Safety for the Evaluation of Autonomous Products](https://users.ece.cmu.edu/~koopman/ul4600/index.html) summary of resources page
 - [Key Ideas: UL 4600 Safety Standard for Autonomous Vehicles](https://users.ece.cmu.edu/~koopman/ul4600/L109_UL4600.pdf) by Philip Koopman
 - [UL 4600: What to Include in an Autonomous Vehicle Safety Case](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10109263) by Koopman
@@ -10132,6 +10132,6 @@ The [NTSB investigation of the Tesla crash of 2016](https://www.ntsb.gov/investi
 - [NIST Combinatorial Methods for Trust and Assurance](https://csrc.nist.gov/projects/automated-combinatorial-testing-for-software)
 - [Wikipedia Self-car Driving Liability](https://en.wikipedia.org/wiki/Self-driving_car_liability)
 - [H.R.3388 SELF DRIVE Act](https://www.congress.gov/bill/115th-congress/house-bill/3388#:~:text=The%20bill%20preempts%20states%20from,standards%20identical%20to%20federal%20standards.) -- Safely Ensuring Lives Future Deployment and Research In Vehicle Evolution Act
-- [The Coming Collision Between Autonomous Vehicles and the Liability System](https://digitalcommons.law.scu.edu/cgi/viewcontent.cgi?article=2731&context=lawreview) by Marchant \etal
+- [The Coming Collision Between Autonomous Vehicles and the Liability System](https://digitalcommons.law.scu.edu/cgi/viewcontent.cgi?article=2731&context=lawreview) by Marchant _et al._ 
 - [The Automated Highway System: an idea whose time has come](https://www.thefreelibrary.com/_/print/PrintArticle.aspx?id=16112768) by Transport Research International
 - [NTSB Report on 2016 Tesla Crash](https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1702.pdf) -- "Collision Between a Car Operating With Automated Vehicle Control Systems and a Tractor-Semitrailer Truck Near Williston, Florida", May 7, 2016.
