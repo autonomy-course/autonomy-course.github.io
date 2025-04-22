@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-04-15" />
+  <meta name="date" content="2025-04-22" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">April 15,
+                              <li><p class="navbar-text">April 22,
 2025</p></li>
                   </ul>
       </div>
@@ -764,6 +764,31 @@ George Washington University</p></li>
         class="toc-section-number">12.4.4</span> Trajectory
         Calculations</a></li>
         </ul></li>
+        </ul></li>
+        <li><a href="#safety-and-standards"
+        id="toc-safety-and-standards"><span
+        class="toc-section-number">13</span> Safety and Standards</a>
+        <ul>
+        <li><a href="#levels-of-automation"
+        id="toc-levels-of-automation"><span
+        class="toc-section-number">13.1</span> Levels of
+        Automation</a></li>
+        <li><a href="#sae-j3016-standard-for-functional-safety"
+        id="toc-sae-j3016-standard-for-functional-safety"><span
+        class="toc-section-number">13.2</span> SAE J3016 Standard for
+        Functional Safety</a></li>
+        <li><a href="#ansiul-4600-standard"
+        id="toc-ansiul-4600-standard"><span
+        class="toc-section-number">13.3</span> ANSI/UL 4600
+        Standard</a></li>
+        <li><a href="#other-standardsefforts"
+        id="toc-other-standardsefforts"><span
+        class="toc-section-number">13.4</span> Other
+        Standards/Efforts</a></li>
+        <li><a href="#self-driving-car-liability"
+        id="toc-self-driving-car-liability"><span
+        class="toc-section-number">13.5</span> Self-driving Car
+        Liability</a></li>
         </ul></li>
         </ul>
 
@@ -18600,9 +18625,745 @@ Output: T
             Learning: An Introduction</a></li>
             <li><a
             href="https://math.uchicago.edu/~may/REU2022/REUPapers/Wang,Yuzhou.pdf">MARKOV
-            CHAINS AND MARKOV DECISION PROCESSES</a></li>
+            CHAINS AND MARKOV DECISION
+            PROCESSES</a><!--rel="stylesheet" href="./custom.sibin.css"--></li>
             </ul>
             </section>
+            </section>
+            </section>
+            <section id="safety-and-standards" class="level1"
+            data-number="13">
+            <h1 data-number="13"><span
+            class="header-section-number">13</span> Safety and
+            Standards</h1>
+            <p>The <a
+            href="https://www.atlantis-press.com/journals/jase/125934832/view">development
+            of self-driving vehicles</a> adds layers of (software)
+            intelligence on top of regular vehicles. However, the amount
+            of software needed to achieve “autonomy” will <em>far</em>
+            exceed the current software deployments. This demands a
+            proper structure for such systems. Moreover, there will be a
+            shift from <strong>open, deterministic components</strong>
+            to more opaque, more probabilistic software components. This
+            will raise new challenges for system designers. It also
+            makes the analysis of <strong>safety guarantees</strong>
+            that much harder.</p>
+            <p>Multiple standards have been proposed (both domestically
+            in the US as well as internationally). Others are still in
+            development. As the (hardware and software) functionality
+            and complexities increase, the standards themselves will
+            likely have to be updated. One point to highlight is that
+            the <em>primary</em> motivation of autonomous car
+            technologies is reducing the frequency of traffic
+            collisions.</p>
+            <p>In this chapter, let’s take a look at some of the
+            <strong>functional safety</strong> requirements/standards
+            for autonomous systems.</p>
+            <section id="levels-of-automation" class="level2"
+            data-number="13.1">
+            <h2 data-number="13.1"><span
+            class="header-section-number">13.1</span> Levels of
+            Automation</h2>
+            <p>The <a
+            href="https://www.nhtsa.gov/vehicle-safety/automated-vehicles-safety#the-topic-safety-timeline">National
+            Highway Traffic Safety Administration(NHTSA)</a> defines
+            <strong>five levels of automation</strong> for vehicles,</p>
+            <ul>
+            <li><strong>level 0</strong>: <strong>momentary driver
+            assistance</strong> → the system provides momentary driving
+            assistance, like warnings and alerts or emergency safety
+            interventions while driver remains fully engaged and
+            attentive. The driver is fully responsible for driving the
+            vehicle.</li>
+            </ul>
+            <p><img src="img/safety/nhtsa.level.0.png" width="300"></p>
+            <p><br></p>
+            <p>Examples: automatic emergency braking, forward collision
+            warning, lane departure warning.</p>
+            <ul>
+            <li><strong>level 1: driver assistance</strong> → the system
+            provides continuous assistance with either
+            acceleration/braking <strong>or</strong> steering, while
+            driver remains fully engaged and attentive. Driver is fully
+            still responsible for driving the vehicle.</li>
+            </ul>
+            <p><img src="img/safety/nhtsa.level.1.png" width="300"></p>
+            <p><br></p>
+            <p>Examples: adaptive cruise control, lane keeping
+            assistance.</p>
+            <ul>
+            <li><strong>level 2: additional assistance</strong> → the
+            system provides <strong>continuous</strong> assistance with
+            both acceleration/braking <strong>and</strong> steering,
+            while driver remains fully engaged and attentive. The driver
+            is still responsible for driving the vehicle.</li>
+            </ul>
+            <p><img src="img/safety/nhtsa.level.2.png" width="300"></p>
+            <p><br></p>
+            <p>Examples: highway pilot.</p>
+            <ul>
+            <li><strong>level 3: conditional automation</strong> →
+            system actively performs driving tasks while <strong>driver
+            remains available</strong> to take over. When engaged, the
+            <strong>system handles all aspects of the driving
+            task</strong> while you, as the driver, are available to
+            take over driving if requested. If the system can no longer
+            operate and prompts the driver, the driver must be available
+            to resume all aspects of the driving task.</li>
+            </ul>
+            <p><img src="img/safety/nhtsa.level.3.png" width="300"></p>
+            <p><br></p>
+            <p>Examples: some of the modern electric cars, Tesla.</p>
+            <ul>
+            <li><strong>level 4: high automation</strong> → the system
+            is <strong>fully responsible</strong> for driving tasks
+            <strong>within limited service areas</strong> while
+            occupants act only as passengers and do not need to be
+            engaged. A human driver is not needed to operate the
+            vehicle.</li>
+            </ul>
+            <p><img src="img/safety/nhtsa.level.4.png" width="300"></p>
+            <p><br></p>
+            <p>Examples: maybe Waymo?</p>
+            <ul>
+            <li><strong>level 5: full automation</strong> → the system
+            is <strong>fully responsible</strong> for driving tasks
+            while occupants act only as passengers and <strong>do not
+            need to be engaged</strong>. The system can operate the
+            vehicle universally – under all conditions and on all
+            roadways. A human driver is not needed to operate the
+            vehicle.</li>
+            </ul>
+            <p>Examples: these technologies do not exist in today’s
+            vehicles.</p>
+            <p><img src="img/safety/nhtsa.level.5.png" width="300"></p>
+            <p><br></p>
+            <p>Here is a <a
+            href="https://www.nhtsa.gov/sites/nhtsa.gov/files/2022-05/Level-of-Automation-052522-tag.pdf">concise
+            chart</a> that summarizes all of the automation levels.</p>
+            </section>
+            <section id="sae-j3016-standard-for-functional-safety"
+            class="level2" data-number="13.2">
+            <h2 data-number="13.2"><span
+            class="header-section-number">13.2</span> SAE J3016 Standard
+            for Functional Safety</h2>
+            <p>The most well known standard is the <a
+            href="https://www.atlantis-press.com/journals/jase/125934832/view">SAE
+            J3016 standard</a> that has helped define some of the
+            <strong>functional architectures</strong> in use in modern
+            autonomous systems.</p>
+            <p>This notion of “functional architecture” is inspired by
+            the <a href="https://www.iso.org/standard/68383.html">ISO
+            26262</a> automotive standard that specifies the,</p>
+            <ul>
+            <li><strong>intended functionality</strong> and</li>
+            <li><strong>interactions</strong></li>
+            </ul>
+            <p>necessary for a vehicle to remain <strong>safe</strong>.
+            This matches the “functional views” in software
+            architectures – code is clustered into groups and
+            distributed to different teams in order to reason about
+            them. It closely aligns with the <a
+            href="https://dl.acm.org/doi/10.1145/1764810.1764814">V
+            Waterfall</a> model of software development.</p>
+            <p>First, some definitions:</p>
+            <table>
+            <colgroup>
+            <col style="width: 43%" />
+            <col style="width: 56%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th><strong>term</strong></th>
+            <th>description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td><strong>OEM</strong></td>
+            <td>original equipment manufacturers</td>
+            </tr>
+            <tr>
+            <td><strong>ECU</strong></td>
+            <td>electronic control units</td>
+            </tr>
+            <tr>
+            <td><strong><a
+            href="https://www.csselectronics.com/pages/can-bus-simple-intro-tutorial">CAN</a>,
+            <a
+            href="https://www.ni.com/en/shop/seamlessly-connect-to-third-party-devices-and-supervisory-system/flexray-automotive-communication-bus-overview.html?srsltid=AfmBOoqDL3Ir4GQ0bTWSjM2sK_NnTXp9N7MkCDX6o-wPPwi1YsDbqtz8">Flexray</a></strong></td>
+            <td>communication buses/standards</td>
+            </tr>
+            <tr>
+            <td><strong><a
+            href="https://www.autosar.org">AUTOSAR</a></strong></td>
+            <td>software technology platforms</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>the SAE J3016 standard <strong>does not</strong> provide
+            <em>strict</em> requirements; rather, its purpose is to be
+            <em>descriptive</em> and <em>broad</em> about the evolution
+            of such systems. The idea is to sketch an
+            <strong>incremental evolution</strong> → from no automation
+            (level <code>0</code>) to full automation (level
+            <code>5</code>).</p>
+            <p>This SAE standard defines some important terms (that have
+            become somewhat standard in the industry): |
+            <strong>term</strong> | <strong>description</strong> |
+            <strong>examples</strong> | |———-|—————–|————–| |
+            <strong>Dynamic Driving Task (DDT)</strong> | real-time
+            operational and tactical functions required to operate a
+            vehicle, excluding strategic functions such as trip
+            scheduling or route planning. DDT includes actuator control
+            and tactical planning such as generating and following a
+            trajectory, keeping the vehicle within the lanes,
+            maintaining distance from other vehicles, | steering,
+            braking, lane keeping, trajectory planning | |
+            <strong>Driving automation system</strong> | hardware and
+            software systems collectively capable of performing some
+            parts or all of the DDT on a sustained basis. Driving
+            automation systems are composed of design-specific
+            functionality called features. Focus is on the interplay
+            between software components to design systems capable of
+            achieving full autonomy. | automated parking, lane keep
+            assistance | | <strong>Operational Design Domains
+            (ODD)</strong> | specific conditions under which a given
+            driving automation system or feature is designed to
+            function. Requirements vary based on the domain. Full
+            autonomy requires operation in all weather and traffic
+            conditions. | sunny city driving, winter mountain roads | |
+            <strong>DDT fall-back</strong> | the response by the user or
+            by an Automated Driving System (ADS) to either perform the
+            DDT task or achieve a safety state after a DDT
+            performance-relevant system failure or upon leaving the
+            designated ODD. | user intervention, safety state activation
+            | | <strong>DDT fall-back-ready user</strong> | the user of
+            a vehicle equipped with an engaged ADS feature who is able
+            to operate the vehicle and is receptive to ADS-issued
+            requests to intervene and perform DDT tasks during a system
+            failure or when requested by the automated vehicle. | driver
+            ready to take control | | <strong>DDT feature</strong> | a
+            design-specific functionality at a specific level of driving
+            automation with a particular ODD. | lane assistance in sunny
+            weather | ||</p>
+            <p><br></p>
+            <p>These features/terms can be mapped to the five levels of
+            automation we described earlier:</p>
+            <p><img src="img/safety/sae_j3016_levels.png" width="400"></p>
+            <p><br></p>
+            <p>Notice,</p>
+            <ol type="1">
+            <li><p>who <strong>monitors</strong> the road → in the case
+            of no automation up to partial automation (levels 0-2), the
+            environment is monitored by a human driver, while for higher
+            degrees of automation (levels 3-5), the vehicle becomes
+            responsible for environmental monitoring.</p></li>
+            <li><p>who is the <strong>fall back</strong> in case of
+            failures/problems → intelligent driving automation systems
+            (levels 4-5) embed the responsibility for automation
+            fall-back constrained or not by operational domains, while
+            for low levels of automation (levels 0-3) a human driver is
+            fully responsible.</p></li>
+            </ol>
+            <p><br> <br></p>
+            <p>The SAE standard defines <strong>three classes of
+            components</strong>:</p>
+            <table>
+            <colgroup>
+            <col style="width: 36%" />
+            <col style="width: 63%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">class</th>
+            <th style="text-align: left;">definition</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td
+            style="text-align: left;"><strong>operational</strong></td>
+            <td style="text-align: left;">basic vehicle control</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>tactical</strong></td>
+            <td style="text-align: left;">planning and execution for
+            event or object avoidance and expedited route following</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>strategic</strong></td>
+            <td style="text-align: left;">destination and general route
+            planning</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Each of these classes has an <strong>incremental
+            role</strong> in the design of autonomous systems. The
+            various classes are connected as follows:</p>
+            <p><img src="img/safety/ddt.9.png" width="400"></p>
+            <p><br></p>
+            <p>Recall that this is a close analogue to the sensing →
+            control/planning → actuation pipeline from before,</p>
+            <p><img src="img/sense_planning_actuation.png" width="400"></p>
+            <p><br></p>
+            <p>Note that each OEM may choose to implement each of the
+            above components differently.</p>
+            <p>As you may have noticed from all the material covered so
+            far, the sensing → planning → actuation pipeline can be
+            <strong>decomposed</strong> into smaller components. The
+            following decomposition matches the SAE J3016 standard:</p>
+            <p><img src="img/safety/decomposition.7.png" width="500"></p>
+            <p><br></p>
+            <p>The <strong>world model</strong> stored data (maps)
+            maintain knowledge about,</p>
+            <ul>
+            <li>images</li>
+            <li>maps</li>
+            <li>entities</li>
+            <li>events</li>
+            </ul>
+            <p>and also <strong>relationships</strong> between
+            them. </p>
+            <p>World modeling stores and uses <strong>historical
+            information</strong> (from past processing loops) and
+            provides <strong>interfaces</strong> to query and filter its
+            content for other components</p>
+            <p><strong>Behavior generation</strong> → is the
+            <strong>highest cognitive class</strong> of functions in the
+            architecture. It develops a number of possible state
+            sequences from the current state and the behavior reasoning
+            module selects the best alternative.</p>
+            <p>The data in this decomposed functional diagram, flows
+            <strong>left → right</strong>.</p>
+            <p><img src="img/safety/decomposition.8.png" width="500"></p>
+            <p><br></p>
+            <p>To map these back to the operational classes,</p>
+            <ul>
+            <li>vehicle control and actuators interface →
+            <strong>operational</strong> class</li>
+            <li>planning class → <strong>tactical</strong></li>
+            <li>behavior generation → <strong>both</strong> strategic
+            and planning class of functions.</li>
+            </ul>
+            <p>In addition, there are <strong>orthogonal
+            classes</strong>, </p>
+            <table>
+            <colgroup>
+            <col style="width: 57%" />
+            <col style="width: 42%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">orthogonal class</th>
+            <th style="text-align: left;">description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;"><strong>data
+            management</strong></td>
+            <td style="text-align: left;">implement long term data
+            storage and retrieval</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>system and safety
+            management</strong></td>
+            <td style="text-align: left;">represent DDT fall-back
+            mechanisms or other safety concerns → they act in parallel
+            of normal control loops</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><img src="img/safety/orthogonal.3.png" width="500"></p>
+            <p><br></p>
+            <p>there is one other orthogonal class of functions
+            *security**. We will address that in the next chapter.</p>
+            <p>As you can imagine, this (closely) matches our initial
+            course/system design:</p>
+            <p><img src="img/stack_architecture/stack_overview.png" width="300"></p>
+            <p><br></p>
+            <p>The functional decomposition diagram shown earlier
+            matches the software components in <strong><a
+            href="https://www.autosar.org">AUTOSAR</a></strong> → a
+            software standardization architecture that is popular in
+            industry. The interfaces between the various components can
+            be implemented using AUTOSAR’s standardized interface
+            definitions.</p>
+            <p>The <em>actual</em> interaction between some of the
+            critical components may look like:</p>
+            <p><img src="img/safety/interactions.png" width="300"></p>
+            <p><br></p>
+            <p>Read the <a
+            href="https://sibin.github.io/teaching/csci6907_88-gwu/secure_autonomous/fall_2022/other_docs/J3016_201609.pdf">actual
+            standard</a> for a full understanding. Here is a <a
+            href="https://www.atlantis-press.com/journals/jase/125934832/view">good
+            explanation</a> and summary.</p>
+            </section>
+            <section id="ansiul-4600-standard" class="level2"
+            data-number="13.3">
+            <h2 data-number="13.3"><span
+            class="header-section-number">13.3</span> ANSI/UL 4600
+            Standard</h2>
+            <p>The <a
+            href="https://users.ece.cmu.edu/~koopman/ul4600/191213_UL4600_VotingVersion.pdf">ANSI/UL
+            4600</a> standard for Safety for the Evaluation of
+            Autonomous Products, provides an umbrella for
+            <strong>coordinating software development practices</strong>
+            and computer-based system safety standards to make sure
+            nothing is left out when <strong>assuring
+            safety</strong>.</p>
+            <p>This was the first comprehensive standard for public road
+            autonomous vehicle safety to cover both → urban and highway
+            use cases.</p>
+            <p>The <a
+            href="https://users.ece.cmu.edu/~koopman/ul4600/L109_UL4600.pdf">key
+            ideas</a> are:</p>
+            <ul>
+            <li>system-level safety case provides direction</li>
+            <li>vehicle as well as infrastructure and lifecycle
+            processes all matter</li>
+            <li>safety metrics used for feedback loops</li>
+            <li>third party component interface protects proprietary
+            info</li>
+            <li>4600 helps you know that you’ve done enough work on
+            safety</li>
+            </ul>
+            <p>UL 4600 works towards generating → <strong><a
+            href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10109263">safety
+            cases</a></strong>.</p>
+            <p>The main difference between <code>4600</code> and other
+            safety standards is that it is <strong>not
+            prescriptive</strong> (doesn’t say “do X”). Rather, it is
+            <strong>goal-oriented</strong>, answering questions such
+            as:</p>
+            <blockquote>
+            <p>“what should a safety case address?”</p>
+            </blockquote>
+            <p>So the idea is to avoid saying, “using this
+            engineering/software approach to solve problem X”.</p>
+            <p>What are the standards for how to assess a safety
+            case?</p>
+            <ul>
+            <li>minimum <strong>coverage</strong> requirement (what goes
+            in the safety case?)</li>
+            <li><strong>properties</strong> of a well-formed safety
+            case</li>
+            <li>objective <strong>assessment</strong> criteria</li>
+            </ul>
+            <p><br></p>
+            <p>Consider the following example of a safety case using the
+            notion of <strong>claims, arguments and
+            evidence</strong>.</p>
+            <table>
+            <colgroup>
+            <col style="width: 23%" />
+            <col style="width: 38%" />
+            <col style="width: 38%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th style="text-align: left;">claim/sub-claim <br>property
+            of system</th>
+            <th style="text-align: left;">argument <br> why is it
+            true?</th>
+            <th style="text-align: left;">evidence <br> supports
+            argument</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align: left;">“system avoids
+            pedestrians”</td>
+            <td style="text-align: left;">“detects and maneuver to
+            avoid”</td>
+            <td style="text-align: left;">tests, simulations, formal
+            analyses</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">“detect pedestrians”
+            (<strong>sub claim</strong>)</td>
+            <td style="text-align: left;">-</td>
+            <td style="text-align: left;">evidence</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">“maneuvers around pedestrians
+            (<strong>sub claim</strong>)</td>
+            <td style="text-align: left;">–</td>
+            <td style="text-align: left;">evidence</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">“stops if can’t maneuver”
+            (<strong>sub claim</strong>)</td>
+            <td style="text-align: left;">–</td>
+            <td style="text-align: left;">evidence</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;">…</td>
+            <td style="text-align: left;">…</td>
+            <td style="text-align: left;">…</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p>We can represent this diagrammatically as follows:</p>
+            <p><img src="img/safety/safety_cases.png" width="300"></p>
+            <p><br></p>
+            <p>Safety cases need to consider many things:</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <tbody>
+            <tr>
+            <td
+            style="text-align: left;"><strong>technology</strong></td>
+            <td style="text-align: left;">hw/sw, machine learning,
+            tools, …</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>lifecycle</strong></td>
+            <td style="text-align: left;">deployment, operation,
+            incidents, maintenance, …</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>infrastructure</strong></td>
+            <td style="text-align: left;">vehicle, roads, data networks,
+            cloud computing, …</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"><strong>road
+            users</strong></td>
+            <td style="text-align: left;">pedestrians, light mobility,
+            emergency responders, …</td>
+            </tr>
+            <tr>
+            <td
+            style="text-align: left;"><strong>environment</strong></td>
+            <td style="text-align: left;">operational design domain
+            (odd) definition</td>
+            </tr>
+            <tr>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p><br></p>
+            <p><strong>Safety Performance Indicator (SPI)</strong></p>
+            <p>The idea is to provide metrics on the
+            <strong>validity</strong> of safety cases. It is
+            context-dependent and can include many aspects, </p>
+            <ul>
+            <li><strong>acceptable violation rate</strong> of standoff
+            to pedestrians</li>
+            <li><strong>gap tolerance</strong> of up to X meters in lane
+            markings</li>
+            <li><strong>false negative rate</strong> for
+            camera/LiDAR</li>
+            <li></li>
+            </ul>
+            <p>Read the <a
+            href="https://www.shopulstandards.com/ProductDetail.aspx?productid=UL4600">full
+            standard</a> online (select “digital view” and sign up for
+            reading it for free). Here is a <a
+            href="https://users.ece.cmu.edu/~koopman/ul4600/191213_UL4600_VotingVersion.pdf">draft
+            version</a>.</p>
+            <p>Here is a video that provides a summary:</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/xOuQkf1yuW0?si=J9nt2v0Ob5dXqaJk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+            </section>
+            <section id="other-standardsefforts" class="level2"
+            data-number="13.4">
+            <h2 data-number="13.4"><span
+            class="header-section-number">13.4</span> Other
+            Standards/Efforts</h2>
+            <ol type="1">
+            <li>IEEE has a <a
+            href="https://standards.ieee.org/initiatives/autonomous-intelligence-systems/standards/">suite
+            of standards</a> that focus on <strong>autonomous and
+            intelligent systems</strong>.</li>
+            <li>NIST has many efforts on <a
+            href="https://www.nist.gov/programs-projects/autonomous-systems-assurance">autonomous
+            systems assurance</a> to <strong>verify</strong> that
+            autonomous systems function correctly in a wide range of
+            environments. One such is the <a
+            href="https://csrc.nist.gov/projects/automated-combinatorial-testing-for-software">Combinatorial
+            Methods for Trust and Assurance</a>.</li>
+            <li>Wikipedia has a good summary of various <a
+            href="https://en.wikipedia.org/wiki/Regulation_of_self-driving_cars">safety/standardization
+            efforts across the world</a>.</li>
+            </ol>
+            </section>
+            <section id="self-driving-car-liability" class="level2"
+            data-number="13.5">
+            <h2 data-number="13.5"><span
+            class="header-section-number">13.5</span> Self-driving Car
+            Liability</h2>
+            <p>One of the main issues that arises when designing
+            autonomous vehicles, especially ones that operate in the
+            real world, is:</p>
+            <blockquote>
+            <p>“who is <strong>liable</strong> for the actions of the
+            car?”</p>
+            </blockquote>
+            <p>Is it,</p>
+            <ul>
+            <li>the car <strong>owner</strong>?</li>
+            <li>the car <strong>manufacturer</strong>?</li>
+            <li>the <strong>software/hardware developers</strong>?</li>
+            <li>the <strong>city/state/federal
+            governments</strong>?</li>
+            <li>someone else?</li>
+            </ul>
+            <p>This is an active area of research and discussion
+            especially in the legal community. There is a need for
+            existing liability laws to evolve to reasonably identify the
+            appropriate remedies for damage and injury. This become
+            particularly problematic as higher levels of autonomy are
+            implemented → what about levels <code>4</code> and
+            <code>5</code>?</p>
+            <p>Various countries (the UK, France, Germany, Japan, ) have
+            started to draft policies and laws to handle the issues of
+            liability.</p>
+            <p>In the US, there is a policy proposal that will rest the
+            <a
+            href="https://digitalcommons.law.scu.edu/cgi/viewcontent.cgi?article=2731&amp;context=lawreview">liability
+            with the <strong>manufacturer</strong></a> of the
+            vehicles.</p>
+            <p>Some US-based efforts include,</p>
+            <ol type="1">
+            <li>NHTSA released a report, “<a
+            href="https://www.thefreelibrary.com/_/print/PrintArticle.aspx?id=16112768">the
+            Automated Highway System: an idea whose time has come</a>”
+            that provide initial guidelines for a regulatory framework.
+            Some important provisions:
+            <ul>
+            <li>states are responsible for determining liability rules
+            for autonomous vehicles. States should consider how to
+            allocate liability among owners, operators, passengers,
+            manufacturers, and others when a crash occurs.</li>
+            <li>determination of who or what is the
+            “<strong>driver</strong>” in a given circumstance
+            <strong>does not necessarily determine liability</strong>
+            for crashes involving that HAV.</li>
+            </ul></li>
+            <li><a
+            href="https://www.congress.gov/bill/115th-congress/house-bill/3388#:~:text=The%20bill%20preempts%20states%20from,standards%20identical%20to%20federal%20standards.">H.R.
+            3388, Self Drive Act</a> passed by the House of
+            Representatives in 2017. Some key ideas:
+            <ul>
+            <li>advance safety by <strong>prioritizing the protection of
+            consumers</strong></li>
+            <li>reaffirm role and responsibilities of federal and state
+            governments</li>
+            <li>update the Federal Motor Vehicle Safety Standards to
+            account for advances in technology and the evolution of
+            highly automated vehicles.</li>
+            </ul></li>
+            </ol>
+            <p>Interestingly, H.R. 3388 is <strong>limiting the role of
+            states</strong>!</p>
+            <p>There are also efforts to gauge the role of ML/AI in
+            autonomous systems and tracking the liability when such
+            agents are making choices. But since ML/AI is a fast moving
+            field, developing new policies/laws is quite
+            challenging.</p>
+            <p>The <a
+            href="https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1702.pdf">NTSB
+            investigation of the Tesla crash of 2016</a> makes for an
+            interesting read.</p>
+            <p><br></p>
+            <p><strong>References</strong></p>
+            <ul>
+            <li><a href="https://www.iso.org/standard/68383.html">ISO
+            26262 standard</a></li>
+            <li><a
+            href="https://www.sciencedirect.com/science/article/pii/S2666691X23000428">Standards
+            relevant to automated driving system safety: A systematic
+            assessment</a></li>
+            <li><a
+            href="https://www.atlantis-press.com/journals/jase/125934832/view">A
+            Standard Driven Software Architecture for Fully Autonomous
+            Vehicles</a> bu Serban </li>
+            <li><a
+            href="https://users.ece.cmu.edu/~koopman/ul4600/index.html">UL
+            4600: Standard for Safety for the Evaluation of Autonomous
+            Products</a> summary of resources page</li>
+            <li><a
+            href="https://users.ece.cmu.edu/~koopman/ul4600/L109_UL4600.pdf">Key
+            Ideas: UL 4600 Safety Standard for Autonomous Vehicles</a>
+            by Philip Koopman</li>
+            <li><a
+            href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10109263">UL
+            4600: What to Include in an Autonomous Vehicle Safety
+            Case</a> by Koopman</li>
+            <li><a
+            href="https://users.ece.cmu.edu/~koopman/ul4600/191213_UL4600_VotingVersion.pdf">Proposed
+            First Edition of the Standard for Safety for the Evaluation
+            of Autonomous Products, UL 4600</a></li>
+            <li><a
+            href="https://www.shopulstandards.com/ProductDetail.aspx?productid=UL4600">UL
+            4600 official standard site</a></li>
+            <li><a
+            href="https://www.nhtsa.gov/vehicle-safety/automated-vehicles-safety#the-topic-safety-timeline">NHTSA
+            Automated Vehicular Safety</a></li>
+            <li><a
+            href="https://www.nhtsa.gov/sites/nhtsa.gov/files/2022-05/Level-of-Automation-052522-tag.pdf">NHTSA
+            Levels of Automation sheet</a></li>
+            <li><a
+            href="https://standards.ieee.org/initiatives/autonomous-intelligence-systems/standards/">IEEE
+            portfolio of AIS technology and impact standards and
+            standards projects</a></li>
+            <li><a
+            href="https://www.nist.gov/programs-projects/autonomous-systems-assurance">NIST
+            Autonomous Systems Assurance</a></li>
+            <li><a
+            href="https://csrc.nist.gov/projects/automated-combinatorial-testing-for-software">NIST
+            Combinatorial Methods for Trust and Assurance</a></li>
+            <li><a
+            href="https://en.wikipedia.org/wiki/Self-driving_car_liability">Wikipedia
+            Self-car Driving Liability</a></li>
+            <li><a
+            href="https://www.congress.gov/bill/115th-congress/house-bill/3388#:~:text=The%20bill%20preempts%20states%20from,standards%20identical%20to%20federal%20standards.">H.R.3388
+            SELF DRIVE Act</a> – Safely Ensuring Lives Future Deployment
+            and Research In Vehicle Evolution Act</li>
+            <li><a
+            href="https://digitalcommons.law.scu.edu/cgi/viewcontent.cgi?article=2731&amp;context=lawreview">The
+            Coming Collision Between Autonomous Vehicles and the
+            Liability System</a> by Marchant </li>
+            <li><a
+            href="https://www.thefreelibrary.com/_/print/PrintArticle.aspx?id=16112768">The
+            Automated Highway System: an idea whose time has come</a> by
+            Transport Research International</li>
+            <li><a
+            href="https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1702.pdf">NTSB
+            Report on 2016 Tesla Crash</a> – “Collision Between a Car
+            Operating With Automated Vehicle Control Systems and a
+            Tractor-Semitrailer Truck Near Williston, Florida”, May 7,
+            2016.</li>
+            </ul>
             </section>
             </section>
             <section id="footnotes"
