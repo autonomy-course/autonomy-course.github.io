@@ -19507,6 +19507,19 @@ Output: T
             href="https://dl.acm.org/doi/pdf/10.1145/3337791">taxonomies
             of attacks</a> for autonomous systems but let’s focus on the
             following:</p>
+            <ol type="1">
+            <li><a
+            href="#sensor-based-attacks"><strong>sensor</strong>-based
+            attacks</a></li>
+            <li><a
+            href="#actuation-based-attacks"><strong>actuation</strong>-based
+            attacks</a></li>
+            <li><a href="#computing-softwarehardware-attacks">compute
+            <strong>software/hardware</strong> attacks</a></li>
+            <li><a
+            href="#miscellaneouscommunication-attacks"><strong>miscellaneous/communication</strong>
+            attacks</a></li>
+            </ol>
             <section id="sensor-based-attacks" class="level3"
             data-number="14.1.1">
             <h3 data-number="14.1.1"><span
@@ -19526,7 +19539,7 @@ Output: T
             tampering with the physical circuitry on/around sensors.</p>
             <p>One recent, interesting attack that targets the cameras
             of autonomous vehicles, is using <a
-            href="https://ieeexplore.ieee.org/abstract/document/9519394?casa_token=q0hmx8m-n2wAAAAA:WuBNY-P49Hx4Uibam2a_iaY0SG_j0yE6MPuJoplLwwKzT_KRH3l24sVNmeF921OwahC2u50U5A">accoustic
+            href="https://ieeexplore.ieee.org/abstract/document/9519394?casa_token=q0hmx8m-n2wAAAAA:WuBNY-P49Hx4Uibam2a_iaY0SG_j0yE6MPuJoplLwwKzT_KRH3l24sVNmeF921OwahC2u50U5A">acoustic
             manipulation</a> to <strong>control the output</strong> of a
             camera to become blurred. This can result in
             <strong>misclassifications</strong> that can have serious
@@ -19556,7 +19569,7 @@ Output: T
             R-CNN. It is a similar idea to the previous paper where
             <strong>small perturbations are added</strong> to input
             images so that the ML algorithms (<em>e.g.,</em> YOLO) will
-            either misclassify it or completely faily to recognize the
+            either misclassify it or completely fail to recognize the
             image.</p>
             <p>In this case, they generate a seemingly random color
             patch that could look like this:</p>
@@ -19651,6 +19664,55 @@ Output: T
             <p><strong>Note:</strong> this attack relies on the fact
             that the underlying software/tasks follow a <strong>periodic
             real-time</strong> computation model.</p>
+            <p><br></p>
+            <p>One other famous attack (that pretty much changed the
+            landscape of CPS security) → <a
+            href="https://spectrum.ieee.org/the-real-story-of-stuxnet"><strong>Stuxnet</strong></a>.</p>
+            <p>An Iranian power plant (supposedly enriching nuclear
+            fuel) <strong>exploded</strong> without any warning. It is
+            considered one of the first examples of → a <strong>cyber
+            attack resulting in physical damage</strong>.</p>
+            <p>The power plant was using a Siemens SCADA controller:</p>
+            <p><img src="img/security/stuxnet.JPG" width="300"></p>
+            <p><br></p>
+            <p>Attackers were able to,</p>
+            <ul>
+            <li>intrude into the <strong>air-gapped</strong>
+            system!</li>
+            <li>observe the state for a while</li>
+            <li>send data back</li>
+            <li>craft a <strong>specific malware payload</strong></li>
+            </ul>
+            <p>The malware did the following:</p>
+            <ol type="1">
+            <li>change the <strong>operational frequency</strong> →
+            sometimes <strong>high</strong>, other times
+            <strong>low</strong>
+            <ul>
+            <li>induces <strong>wear and tear</strong></li>
+            </ul></li>
+            <li><strong>intercept</strong> logs and engineering data →
+            replace with seemingly benign(yet, fake) data
+            <ul>
+            <li>operators don’t notice anything untoward in the
+            logs</li>
+            </ul></li>
+            </ol>
+            <p><img src="img/security/mission_impossible.gif" width="400"></p>
+            <p><br></p>
+            <p>Very Mission Impossible-esque.</p>
+            <p>They first discovered a problem when the <strong>entire
+            plant blew up</strong>!</p>
+            <p>How does this relate to autonomous systems? Well similar
+            attacks can be launched against critical components, </p>
+            <ul>
+            <li>engines</li>
+            <li>brakes</li>
+            <li>sensors/actuators</li>
+            </ul>
+            <p>The (cyber-induced) wear and tear can be hard to
+            track/detect and often is only noticed
+            <strong>after</strong> the system has failed!</p>
             </section>
             <section id="computing-softwarehardware-attacks"
             class="level3" data-number="14.1.3">
@@ -20142,6 +20204,9 @@ Output: T
             real-time systems (most also relevant to autonomous systems)
             and compares the solutions to each other by proposing a new
             metric, “<strong>attacker’s burden</strong>”.</p>
+            <p><br></p>
+            <p><strong>References</strong></p>
+            <p>[TBD]</p>
             </section>
             </section>
             </section>

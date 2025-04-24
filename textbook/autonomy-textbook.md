@@ -10173,13 +10173,18 @@ In autonomous/cyber-physical systems, we are more concerned with the second cate
 
 There exist many [taxonomies of attacks](https://dl.acm.org/doi/pdf/10.1145/3337791) for autonomous systems but let's focus on the following:
 
+1. [**sensor**-based attacks](#sensor-based-attacks)
+2. [**actuation**-based attacks](#actuation-based-attacks)
+3. [compute **software/hardware** attacks](#computing-softwarehardware-attacks)
+4. [**miscellaneous/communication** attacks](#miscellaneouscommunication-attacks)
+
 ### Sensor-based Attacks 
 
 By corrupting the **inputs** to an autonomous systems, adversaries can prevent the system from working correctly. Recall that [sensors](#sensors-and-sensing) are the "eyes and ears" for an autonomous system &rarr; this is often the only way that the system can perceive the external world. If the sensor data is either corrupted or jammed, then the system cannot operate correctly. 
 
 There is a large body of work on [physical attacks on sensor](https://ieeexplore.ieee.org/document/9152711) aka by either jamming the signals or tampering with the physical circuitry on/around sensors. 
 
-One recent, interesting attack that targets the cameras of autonomous vehicles, is using [accoustic manipulation](https://ieeexplore.ieee.org/abstract/document/9519394?casa_token=q0hmx8m-n2wAAAAA:WuBNY-P49Hx4Uibam2a_iaY0SG_j0yE6MPuJoplLwwKzT_KRH3l24sVNmeF921OwahC2u50U5A) to **control the output** of a camera to become blurred. This can result in **misclassifications** that can have serious repercussions.
+One recent, interesting attack that targets the cameras of autonomous vehicles, is using [acoustic manipulation](https://ieeexplore.ieee.org/abstract/document/9519394?casa_token=q0hmx8m-n2wAAAAA:WuBNY-P49Hx4Uibam2a_iaY0SG_j0yE6MPuJoplLwwKzT_KRH3l24sVNmeF921OwahC2u50U5A) to **control the output** of a camera to become blurred. This can result in **misclassifications** that can have serious repercussions.
 
 <img src="img/security/poltergeist.gif" width="400">
 
@@ -10198,7 +10203,7 @@ The entire attack process:
 
 <br>
 
-Other work [targets _specific_ software components](https://arxiv.org/pdf/1806.02299) such as YOLO and R-CNN. It is a similar idea to the previous paper where **small perturbations are added** to input images so that the ML algorithms (_e.g.,_  YOLO) will either misclassify it or completely faily to recognize the image.
+Other work [targets _specific_ software components](https://arxiv.org/pdf/1806.02299) such as YOLO and R-CNN. It is a similar idea to the previous paper where **small perturbations are added** to input images so that the ML algorithms (_e.g.,_  YOLO) will either misclassify it or completely fail to recognize the image.
 
 In this case, they generate a seemingly random color patch that could look like this:
 
@@ -10270,6 +10275,48 @@ Here is a video that demonstrates the attack:
 Check out [more attacks using ScheduLeak](https://scheduleak.github.io).
 
 **Note:**  this attack relies on the fact that the underlying software/tasks follow a **periodic real-time** computation model. 
+
+<br>
+
+One other famous attack (that pretty much changed the landscape of CPS security) &rarr; [**Stuxnet**](https://spectrum.ieee.org/the-real-story-of-stuxnet). 
+
+An Iranian power plant (supposedly enriching nuclear fuel) **exploded** without any warning. It is considered one of the first examples of &rarr; a **cyber attack resulting in physical damage**. 
+
+The power plant was using a Siemens SCADA controller:
+
+<img src="img/security/stuxnet.JPG" width="300">
+
+<br>
+
+Attackers were able to,
+
+- intrude into the **air-gapped** system!
+- observe the state for a while
+- send data back
+- craft a **specific malware payload**
+
+The malware did the following:
+
+1. change the **operational frequency** &rarr; sometimes **high**, other times **low**
+    - induces **wear and tear**
+2. **intercept** logs and engineering data &rarr; replace with seemingly benign(yet, fake) data 
+    - operators don't notice anything untoward in the logs
+
+<img src="img/security/mission_impossible.gif" width="400">
+
+<br>
+
+Very Mission Impossible-esque.
+
+They first discovered a problem when the **entire plant blew up**!
+
+How does this relate to autonomous systems? Well similar attacks can be launched against critical components, \eg
+
+- engines
+- brakes
+- sensors/actuators
+
+The (cyber-induced) wear and tear can be hard to track/detect and often is only noticed **after** the system has failed!
 
 
 ### Computing Software/Hardware Attacks
@@ -10536,3 +10583,9 @@ Security should be treated as a **first-class principle** &rarr; it should be co
 One should consider the burdens of security integration in autonomous systems. 
 
 This [SoK paper](https://sibin.github.io/papers/2024_ACM_CSUR_RTSecuritySoK_MonowarHasan.pdf) classifies the various security methods in real-time systems (most also relevant to autonomous systems) and compares the solutions to each other by proposing a new metric, "**attacker's burden**".
+
+<br>
+
+**References**
+
+[TBD]
