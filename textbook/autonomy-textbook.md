@@ -10134,4 +10134,139 @@ The [NTSB investigation of the Tesla crash of 2016](https://www.ntsb.gov/investi
 - [H.R.3388 SELF DRIVE Act](https://www.congress.gov/bill/115th-congress/house-bill/3388#:~:text=The%20bill%20preempts%20states%20from,standards%20identical%20to%20federal%20standards.) -- Safely Ensuring Lives Future Deployment and Research In Vehicle Evolution Act
 - [The Coming Collision Between Autonomous Vehicles and the Liability System](https://digitalcommons.law.scu.edu/cgi/viewcontent.cgi?article=2731&context=lawreview) by Marchant _et al._ 
 - [The Automated Highway System: an idea whose time has come](https://www.thefreelibrary.com/_/print/PrintArticle.aspx?id=16112768) by Transport Research International
-- [NTSB Report on 2016 Tesla Crash](https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1702.pdf) -- "Collision Between a Car Operating With Automated Vehicle Control Systems and a Tractor-Semitrailer Truck Near Williston, Florida", May 7, 2016.
+- [NTSB Report on 2016 Tesla Crash](https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1702.pdf) -- "Collision Between a Car Operating With Automated Vehicle Control Systems and a Tractor-Semitrailer Truck Near Williston, Florida", May 7, 2016.<!--rel="stylesheet" href="./custom.sibin.css"-->
+
+# Security and Privacy
+
+Security for autonomous systems significantly overlaps with similar issues for embedded, cyber-physical and _automotive_ security. There is a lot of work on security for such systems -- the added complexity is that use of ML/AI algorithms that can generate some [unique attack vectors](https://spectrum.ieee.org/slight-street-sign-modifications-can-fool-machine-learning-algorithms)!
+
+In this chapter we will summarize many of the topics/issues that can lead to security and privacy problems in autonomous vehicles.
+
+\note that it is nearly impossible to summarize all of the work on security and privacy for autonomous systems so this chapter will touch upon some of the most relevant/interesting work in the area.
+
+The first issue is &rarr; how do you **define** or **classify** security issues? Is it...
+
+|||
+|--------|--------|
+|attacks| ? |
+|defenses| ? |
+|something else| ? |
+||
+
+
+## Attacks
+
+One important thing to consider when discussing attacks in _any_ system is the **threat model** \ie gain and understanding of,
+
+1. the **method** of entry/attack
+2. the **target** of the attack
+3. the **capabilities** of the attacker &rarr; \eg how much computing power do they have?
+
+One way to reason about attacks on autonomous systems (or any system really) is,
+
+|passive|active|
+|--------|--------|
+|stealing data| <font style="background-color: #FFEC8B;">causing physical harm</font>|
+||
+
+In autonomous/cyber-physical systems, we are more concerned with the second category, \ie active, since we care for the integrity of the system and **safety** -- of the users, the systems and the environment. Note that stealing data (proprietary information like system designs, software, user information, \etc) is important but there is a large body of work on how to deal with such issues. We will focus more on the **active** attacks.
+
+There exist many [taxonomies of attacks](https://dl.acm.org/doi/pdf/10.1145/3337791) for autonomous systems but let's focus on the following:
+
+### Sensor-based Attacks 
+
+By corrupting the **inputs** to an autonomous systems, adversaries can prevent the system from working correctly. Recall that [sensors](#sensors-and-sensing) are the "eyes and ears" for an autonomous system &rarr; this is often the only way that the system can perceive the external world. If the sensor data is either corrupted or jammed, then the system cannot operate correctly. 
+
+There is a large body of work on [physical attacks on sensor](https://ieeexplore.ieee.org/document/9152711) aka by either jamming the signals or tampering with the physical circuitry on/around sensors. 
+
+One recent, interesting attack that targets the cameras of autonomous vehicles, is using [accoustic manipulation](https://ieeexplore.ieee.org/abstract/document/9519394?casa_token=q0hmx8m-n2wAAAAA:WuBNY-P49Hx4Uibam2a_iaY0SG_j0yE6MPuJoplLwwKzT_KRH3l24sVNmeF921OwahC2u50U5A) to **control the output** of a camera to become blurred. This can result in **misclassifications** that can have serious repercussions.
+
+<img src="img/security/poltergeist.gif" width="400">
+
+<br>
+
+As we see from the image, the acoustic waves perturb the camera so that it doesn't recognize the car in front and can lead to a crash!
+
+
+More recently, there is work that targets the sensor in more unique ways -- **without physical methods** -- \ie targeting the ML/vision algorithms by feeding it incorrect data or using ML to **subtly** change sensors values in software. 
+
+For instance, imagine [placing small stickers/splotches of paint](https://arxiv.org/pdf/1707.08945) on a stop sign so that the vision algorithm misclassifies it as a speed limit sign -- leading to serious consequence!
+
+The entire attack process:
+
+<img src="img/security/stop.4.png" width="400">
+
+<br>
+
+Other work [targets _specific_ software components](https://arxiv.org/pdf/1806.02299) such as YOLO and R-CNN. It is a similar idea to the previous paper where **small perturbations are added** to input images so that the ML algorithms (\eg YOLO) will either misclassify it or completely faily to recognize the image.
+
+In this case, they generate a seemingly random color patch that could look like this:
+
+<img src="img/security/dpatch.1.png" width="200">
+
+<br>
+
+When we see the results side-by-side (without/with patch), we see that the object detector (YOLO in this case) can recognize the bicycle and generate a good bounding box around it in the first case and completely missed the object in the second case.
+
+<img src="img/security/dpatch.2.png" width="300">
+<img src="img/security/dpatch.3.png" width="300">
+
+One interesting thing to note &rarr; the size of the patch relative to the actual image. This can be really small and hence is easily missed by a casual observer.
+
+<br>
+
+More recent work injects [small changes to sensor data](https://sibin.github.io/papers/2024_ArXiv_Requiem_KyoKim.pdf) so that the autonomous vehicle is led astray. The idea is to use ML algorithms to compute minor perturbations that can be added to the sensor values (in software) before they're fed into the EKF algorithm. This results in,
+
+- EKF **incorrectly assessing the current state** of the system 
+- the autonomous system moving away from its expected path
+
+The following figures show the effect of the attach on two missions -- climbing straight up and hovering in a circle.
+
+<img src="img/security/requiem.1.png" width="200">
+<img src="img/security/requiem.2.png" width="200">
+
+<br>
+
+\note an important objective is to ensure that the **anomaly detector does not detect** the attack. To acheive this, the "spoofed" data should be **indistinguishable** from the real sensor data. If we look at the distributions of the two, 
+
+<img src="img/security/requiem.3.png" width="300">
+
+<br>
+
+The main method used in the paper is machine learning (specifically [GANs](https://en.wikipedia.org/wiki/Generative_adversarial_network)) to generate the spoofed data. 
+
+
+### Actuation-based Attacks
+
+Another attack _vector_ is to attack the [**actuation**](#actuation) side -- recall that the eventual "control" of the vehicle is carried out by actuation commands that are sent out, often via PWM signals. 
+
+There is quite a bit of work in the space of [actuation-based attacks](https://arxiv.org/pdf/1708.01834) in literature. It is one of the more [active areas of research in control systems security](https://www.sciencedirect.com/science/article/abs/pii/S0925231217316351). 
+
+One interesting attack, [ScheduLeak](https://sibin.github.io/papers/2019_rtas_scheduleak_cy.pdf), does something different:
+
+- **overrides the actuation command** (rather the PWM register)
+- at a **precise point in time**
+
+<img src="img/security/scheduleak.1.png" width="400">
+
+<br>
+
+This allows the attacker to either cause the system to go into disarray or **precisely** take control of it.
+ 
+As the figure shows, overriding the PWM value at the **right moment in time** matters &rarr; if it is done too early or in a random fashion, then the attack may not be successful.
+
+The paper demonstrates multiple attack that can be launched using ScheduLeak. Here is one of them (taking control of an autonomous rover).
+
+<img src="img/security/scheduleak.2.png" width="300">
+
+<br>
+
+Here is a video that demonstrates the attack:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/g12Zk1MboyE?si=ilx4ubbMnsJzjPQC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+Check out [more attacks using ScheduLeak](https://scheduleak.github.io).
+
+\note this attack relies on the fact that the underlying software/tasks follow a **periodic real-time** computation model. 

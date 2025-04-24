@@ -48,7 +48,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <meta name="generator" content="pandoc" />
   <meta name="author" content="Prof. Sibin Mohan, The George Washington University" />
-  <meta name="date" content="2025-04-22" />
+  <meta name="date" content="2025-04-24" />
   <title>Design of Autonomous Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <ul class="nav pull-right doc-info">
                     <li><p class="navbar-text">Prof. Sibin Mohan, The
 George Washington University</p></li>
-                              <li><p class="navbar-text">April 22,
+                              <li><p class="navbar-text">April 24,
 2025</p></li>
                   </ul>
       </div>
@@ -789,6 +789,23 @@ George Washington University</p></li>
         id="toc-self-driving-car-liability"><span
         class="toc-section-number">13.5</span> Self-driving Car
         Liability</a></li>
+        </ul></li>
+        <li><a href="#security-and-privacy"
+        id="toc-security-and-privacy"><span
+        class="toc-section-number">14</span> Security and Privacy</a>
+        <ul>
+        <li><a href="#attacks" id="toc-attacks"><span
+        class="toc-section-number">14.1</span> Attacks</a>
+        <ul>
+        <li><a href="#sensor-based-attacks"
+        id="toc-sensor-based-attacks"><span
+        class="toc-section-number">14.1.1</span> Sensor-based
+        Attacks</a></li>
+        <li><a href="#actuation-based-attacks"
+        id="toc-actuation-based-attacks"><span
+        class="toc-section-number">14.1.2</span> Actuation-based
+        Attacks</a></li>
+        </ul></li>
         </ul></li>
         </ul>
 
@@ -19366,8 +19383,243 @@ Output: T
             Report on 2016 Tesla Crash</a> – “Collision Between a Car
             Operating With Automated Vehicle Control Systems and a
             Tractor-Semitrailer Truck Near Williston, Florida”, May 7,
-            2016.</li>
+            2016.<!--rel="stylesheet" href="./custom.sibin.css"--></li>
             </ul>
+            </section>
+            </section>
+            <section id="security-and-privacy" class="level1"
+            data-number="14">
+            <h1 data-number="14"><span
+            class="header-section-number">14</span> Security and
+            Privacy</h1>
+            <p>Security for autonomous systems significantly overlaps
+            with similar issues for embedded, cyber-physical and
+            <em>automotive</em> security. There is a lot of work on
+            security for such systems – the added complexity is that use
+            of ML/AI algorithms that can generate some <a
+            href="https://spectrum.ieee.org/slight-street-sign-modifications-can-fool-machine-learning-algorithms">unique
+            attack vectors</a>!</p>
+            <p>In this chapter we will summarize many of the
+            topics/issues that can lead to security and privacy problems
+            in autonomous vehicles.</p>
+            <p>that it is nearly impossible to summarize all of the work
+            on security and privacy for autonomous systems so this
+            chapter will touch upon some of the most
+            relevant/interesting work in the area.</p>
+            <p>The first issue is → how do you <strong>define</strong>
+            or <strong>classify</strong> security issues? Is it…</p>
+            <table>
+            <tbody>
+            <tr>
+            <td>attacks</td>
+            <td>?</td>
+            </tr>
+            <tr>
+            <td>defenses</td>
+            <td>?</td>
+            </tr>
+            <tr>
+            <td>something else</td>
+            <td>?</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <section id="attacks" class="level2" data-number="14.1">
+            <h2 data-number="14.1"><span
+            class="header-section-number">14.1</span> Attacks</h2>
+            <p>One important thing to consider when discussing attacks
+            in <em>any</em> system is the <strong>threat model</strong>
+            gain and understanding of,</p>
+            <ol type="1">
+            <li>the <strong>method</strong> of entry/attack</li>
+            <li>the <strong>target</strong> of the attack</li>
+            <li>the <strong>capabilities</strong> of the attacker → how
+            much computing power do they have?</li>
+            </ol>
+            <p>One way to reason about attacks on autonomous systems (or
+            any system really) is,</p>
+            <table>
+            <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+            </colgroup>
+            <thead>
+            <tr>
+            <th>passive</th>
+            <th>active</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>stealing data</td>
+            <td><font style="background-color: #FFEC8B;">causing
+            physical harm</font></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>In autonomous/cyber-physical systems, we are more
+            concerned with the second category, active, since we care
+            for the integrity of the system and <strong>safety</strong>
+            – of the users, the systems and the environment. Note that
+            stealing data (proprietary information like system designs,
+            software, user information, ) is important but there is a
+            large body of work on how to deal with such issues. We will
+            focus more on the <strong>active</strong> attacks.</p>
+            <p>There exist many <a
+            href="https://dl.acm.org/doi/pdf/10.1145/3337791">taxonomies
+            of attacks</a> for autonomous systems but let’s focus on the
+            following:</p>
+            <section id="sensor-based-attacks" class="level3"
+            data-number="14.1.1">
+            <h3 data-number="14.1.1"><span
+            class="header-section-number">14.1.1</span> Sensor-based
+            Attacks</h3>
+            <p>By corrupting the <strong>inputs</strong> to an
+            autonomous systems, adversaries can prevent the system from
+            working correctly. Recall that <a
+            href="#sensors-and-sensing">sensors</a> are the “eyes and
+            ears” for an autonomous system → this is often the only way
+            that the system can perceive the external world. If the
+            sensor data is either corrupted or jammed, then the system
+            cannot operate correctly.</p>
+            <p>There is a large body of work on <a
+            href="https://ieeexplore.ieee.org/document/9152711">physical
+            attacks on sensor</a> aka by either jamming the signals or
+            tampering with the physical circuitry on/around sensors.</p>
+            <p>One recent, interesting attack that targets the cameras
+            of autonomous vehicles, is using <a
+            href="https://ieeexplore.ieee.org/abstract/document/9519394?casa_token=q0hmx8m-n2wAAAAA:WuBNY-P49Hx4Uibam2a_iaY0SG_j0yE6MPuJoplLwwKzT_KRH3l24sVNmeF921OwahC2u50U5A">accoustic
+            manipulation</a> to <strong>control the output</strong> of a
+            camera to become blurred. This can result in
+            <strong>misclassifications</strong> that can have serious
+            repercussions.</p>
+            <p><img src="img/security/poltergeist.gif" width="400"></p>
+            <p><br></p>
+            <p>As we see from the image, the acoustic waves perturb the
+            camera so that it doesn’t recognize the car in front and can
+            lead to a crash!</p>
+            <p>More recently, there is work that targets the sensor in
+            more unique ways – <strong>without physical methods</strong>
+            – targeting the ML/vision algorithms by feeding it incorrect
+            data or using ML to <strong>subtly</strong> change sensors
+            values in software.</p>
+            <p>For instance, imagine <a
+            href="https://arxiv.org/pdf/1707.08945">placing small
+            stickers/splotches of paint</a> on a stop sign so that the
+            vision algorithm misclassifies it as a speed limit sign –
+            leading to serious consequence!</p>
+            <p>The entire attack process:</p>
+            <p><img src="img/security/stop.4.png" width="400"></p>
+            <p><br></p>
+            <p>Other work <a
+            href="https://arxiv.org/pdf/1806.02299">targets
+            <em>specific</em> software components</a> such as YOLO and
+            R-CNN. It is a similar idea to the previous paper where
+            <strong>small perturbations are added</strong> to input
+            images so that the ML algorithms (YOLO) will either
+            misclassify it or completely faily to recognize the
+            image.</p>
+            <p>In this case, they generate a seemingly random color
+            patch that could look like this:</p>
+            <p><img src="img/security/dpatch.1.png" width="200"></p>
+            <p><br></p>
+            <p>When we see the results side-by-side (without/with
+            patch), we see that the object detector (YOLO in this case)
+            can recognize the bicycle and generate a good bounding box
+            around it in the first case and completely missed the object
+            in the second case.</p>
+            <p><img src="img/security/dpatch.2.png" width="300">
+            <img src="img/security/dpatch.3.png" width="300"></p>
+            <p>One interesting thing to note → the size of the patch
+            relative to the actual image. This can be really small and
+            hence is easily missed by a casual observer.</p>
+            <p><br></p>
+            <p>More recent work injects <a
+            href="https://sibin.github.io/papers/2024_ArXiv_Requiem_KyoKim.pdf">small
+            changes to sensor data</a> so that the autonomous vehicle is
+            led astray. The idea is to use ML algorithms to compute
+            minor perturbations that can be added to the sensor values
+            (in software) before they’re fed into the EKF algorithm.
+            This results in,</p>
+            <ul>
+            <li>EKF <strong>incorrectly assessing the current
+            state</strong> of the system</li>
+            <li>the autonomous system moving away from its expected
+            path</li>
+            </ul>
+            <p>The following figures show the effect of the attach on
+            two missions – climbing straight up and hovering in a
+            circle.</p>
+            <p><img src="img/security/requiem.1.png" width="200">
+            <img src="img/security/requiem.2.png" width="200"></p>
+            <p><br></p>
+            <p>an important objective is to ensure that the
+            <strong>anomaly detector does not detect</strong> the
+            attack. To acheive this, the “spoofed” data should be
+            <strong>indistinguishable</strong> from the real sensor
+            data. If we look at the distributions of the two,</p>
+            <p><img src="img/security/requiem.3.png" width="300"></p>
+            <p><br></p>
+            <p>The main method used in the paper is machine learning
+            (specifically <a
+            href="https://en.wikipedia.org/wiki/Generative_adversarial_network">GANs</a>)
+            to generate the spoofed data.</p>
+            </section>
+            <section id="actuation-based-attacks" class="level3"
+            data-number="14.1.2">
+            <h3 data-number="14.1.2"><span
+            class="header-section-number">14.1.2</span> Actuation-based
+            Attacks</h3>
+            <p>Another attack <em>vector</em> is to attack the <a
+            href="#actuation"><strong>actuation</strong></a> side –
+            recall that the eventual “control” of the vehicle is carried
+            out by actuation commands that are sent out, often via PWM
+            signals.</p>
+            <p>There is quite a bit of work in the space of <a
+            href="https://arxiv.org/pdf/1708.01834">actuation-based
+            attacks</a> in literature. It is one of the more <a
+            href="https://www.sciencedirect.com/science/article/abs/pii/S0925231217316351">active
+            areas of research in control systems security</a>.</p>
+            <p>One interesting attack, <a
+            href="https://sibin.github.io/papers/2019_rtas_scheduleak_cy.pdf">ScheduLeak</a>,
+            does something different:</p>
+            <ul>
+            <li><strong>overrides the actuation command</strong> (rather
+            the PWM register)</li>
+            <li>at a <strong>precise point in time</strong></li>
+            </ul>
+            <p><img src="img/security/scheduleak.1.png" width="400"></p>
+            <p><br></p>
+            <p>This allows the attacker to either cause the system to go
+            into disarray or <strong>precisely</strong> take control of
+            it.</p>
+            <p>As the figure shows, overriding the PWM value at the
+            <strong>right moment in time</strong> matters → if it is
+            done too early or in a random fashion, then the attack may
+            not be successful.</p>
+            <p>The paper demonstrates multiple attack that can be
+            launched using ScheduLeak. Here is one of them (taking
+            control of an autonomous rover).</p>
+            <p><img src="img/security/scheduleak.2.png" width="300"></p>
+            <p><br></p>
+            <p>Here is a video that demonstrates the attack:</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/g12Zk1MboyE?si=ilx4ubbMnsJzjPQC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+            <p><br></p>
+            <p>Check out <a href="https://scheduleak.github.io">more
+            attacks using ScheduLeak</a>.</p>
+            <p>this attack relies on the fact that the underlying
+            software/tasks follow a <strong>periodic real-time</strong>
+            computation model.</p>
+            </section>
             </section>
             </section>
             <section id="footnotes"
