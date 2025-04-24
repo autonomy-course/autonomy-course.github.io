@@ -10310,6 +10310,12 @@ Very Mission Impossible-esque.
 
 They first discovered a problem when the **entire plant blew up**!
 
+The entire process, summarized:
+
+<img src="img/security/stuxnet.2.webp" width="500">
+
+<br>
+
 How does this relate to autonomous systems? Well similar attacks can be launched against critical components, \eg
 
 - engines
