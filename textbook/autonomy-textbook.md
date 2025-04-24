@@ -10136,13 +10136,13 @@ The [NTSB investigation of the Tesla crash of 2016](https://www.ntsb.gov/investi
 - [The Automated Highway System: an idea whose time has come](https://www.thefreelibrary.com/_/print/PrintArticle.aspx?id=16112768) by Transport Research International
 - [NTSB Report on 2016 Tesla Crash](https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1702.pdf) -- "Collision Between a Car Operating With Automated Vehicle Control Systems and a Tractor-Semitrailer Truck Near Williston, Florida", May 7, 2016.<!--rel="stylesheet" href="./custom.sibin.css"-->
 
-# Security and Privacy
+# Security for Autonomous Systems
 
 Security for autonomous systems significantly overlaps with similar issues for embedded, cyber-physical and _automotive_ security. There is a lot of work on security for such systems -- the added complexity is that use of ML/AI algorithms that can generate some [unique attack vectors](https://spectrum.ieee.org/slight-street-sign-modifications-can-fool-machine-learning-algorithms)!
 
 In this chapter we will summarize many of the topics/issues that can lead to security and privacy problems in autonomous vehicles.
 
-\note that it is nearly impossible to summarize all of the work on security and privacy for autonomous systems so this chapter will touch upon some of the most relevant/interesting work in the area.
+**Note:**  that it is nearly impossible to summarize all of the work on security and privacy for autonomous systems so this chapter will touch upon some of the most relevant/interesting work in the area.
 
 The first issue is &rarr; how do you **define** or **classify** security issues? Is it...
 
@@ -10156,11 +10156,11 @@ The first issue is &rarr; how do you **define** or **classify** security issues?
 
 ## Attacks
 
-One important thing to consider when discussing attacks in _any_ system is the **threat model** \ie gain and understanding of,
+One important thing to consider when discussing attacks in _any_ system is the **[threat model](https://arxiv.org/pdf/2412.15348)** _i.e.,_  gain an understanding of,
 
 1. the **method** of entry/attack
 2. the **target** of the attack
-3. the **capabilities** of the attacker &rarr; \eg how much computing power do they have?
+3. the **capabilities** of the attacker &rarr; _e.g.,_  how much computing power do they have?
 
 One way to reason about attacks on autonomous systems (or any system really) is,
 
@@ -10169,7 +10169,7 @@ One way to reason about attacks on autonomous systems (or any system really) is,
 |stealing data| <font style="background-color: #FFEC8B;">causing physical harm</font>|
 ||
 
-In autonomous/cyber-physical systems, we are more concerned with the second category, \ie active, since we care for the integrity of the system and **safety** -- of the users, the systems and the environment. Note that stealing data (proprietary information like system designs, software, user information, \etc) is important but there is a large body of work on how to deal with such issues. We will focus more on the **active** attacks.
+In autonomous/cyber-physical systems, we are more concerned with the second category, _i.e.,_  active, since we care for the integrity of the system and **safety** -- of the users, the systems and the environment. Note that stealing data (proprietary information like system designs, software, user information, _etc._ ) is important but there is a large body of work on how to deal with such issues. We will focus more on the **active** attacks.
 
 There exist many [taxonomies of attacks](https://dl.acm.org/doi/pdf/10.1145/3337791) for autonomous systems but let's focus on the following:
 
@@ -10188,7 +10188,7 @@ One recent, interesting attack that targets the cameras of autonomous vehicles, 
 As we see from the image, the acoustic waves perturb the camera so that it doesn't recognize the car in front and can lead to a crash!
 
 
-More recently, there is work that targets the sensor in more unique ways -- **without physical methods** -- \ie targeting the ML/vision algorithms by feeding it incorrect data or using ML to **subtly** change sensors values in software. 
+More recently, there is work that targets the sensor in more unique ways -- **without physical methods** -- _i.e.,_  targeting the ML/vision algorithms by feeding it incorrect data or using ML to **subtly** change sensors values in software. 
 
 For instance, imagine [placing small stickers/splotches of paint](https://arxiv.org/pdf/1707.08945) on a stop sign so that the vision algorithm misclassifies it as a speed limit sign -- leading to serious consequence!
 
@@ -10198,7 +10198,7 @@ The entire attack process:
 
 <br>
 
-Other work [targets _specific_ software components](https://arxiv.org/pdf/1806.02299) such as YOLO and R-CNN. It is a similar idea to the previous paper where **small perturbations are added** to input images so that the ML algorithms (\eg YOLO) will either misclassify it or completely faily to recognize the image.
+Other work [targets _specific_ software components](https://arxiv.org/pdf/1806.02299) such as YOLO and R-CNN. It is a similar idea to the previous paper where **small perturbations are added** to input images so that the ML algorithms (_e.g.,_  YOLO) will either misclassify it or completely faily to recognize the image.
 
 In this case, they generate a seemingly random color patch that could look like this:
 
@@ -10227,7 +10227,7 @@ The following figures show the effect of the attach on two missions -- climbing 
 
 <br>
 
-\note an important objective is to ensure that the **anomaly detector does not detect** the attack. To acheive this, the "spoofed" data should be **indistinguishable** from the real sensor data. If we look at the distributions of the two, 
+**Note:**  an important objective is to ensure that the **anomaly detector does not detect** the attack. To acheive this, the "spoofed" data should be **indistinguishable** from the real sensor data. If we look at the distributions of the two, 
 
 <img src="img/security/requiem.3.png" width="300">
 
@@ -10269,4 +10269,270 @@ Here is a video that demonstrates the attack:
 
 Check out [more attacks using ScheduLeak](https://scheduleak.github.io).
 
-\note this attack relies on the fact that the underlying software/tasks follow a **periodic real-time** computation model. 
+**Note:**  this attack relies on the fact that the underlying software/tasks follow a **periodic real-time** computation model. 
+
+
+### Computing Software/Hardware Attacks
+
+There is a large body of work on security/attacks against computing hardware and software -- both, for general purpose systems as well as embedded/[cyber-physical](https://dl.acm.org/doi/full/10.1145/3649499)/[automotive systems](https://www.usenix.org/conference/usenix-security-11/comprehensive-experimental-analyses-automotive-attack-surfaces). 
+
+A brief summary of the various computing components that can be attacked:
+
+|software|hardware|
+|--------|--------|
+|operating system| microprocessors |
+|entire software stack <br> e.g., EKF, planning algorithms, vision algorithms, sensor fusion|hidden backdoors in chips/hardware units|
+||
+
+In fact, these maps to almost all of the elements of the autonomous system that we have discussed so far:
+
+<img src="img/stack_architecture/stack_overview.png" width="300">
+
+<br>
+
+A lof of the **entry methods** for the software-based attack involves [**malware injection**](https://dl.acm.org/doi/abs/10.1145/3329786). 
+
+
+### Miscellaneous/Communication Attacks
+
+Autonomous vehicles are also prone to **remote** attacks -- _i.e.,_  via communication protocols (CAN, cellular, V2X, _etc._ ).
+
+Some influential work in the area of [automotive security](https://www.usenix.org/conference/usenix-security-11/comprehensive-experimental-analyses-automotive-attack-surfaces) is directly applicable here as well.
+
+A [real world demonstration](https://www.wired.com/2015/07/hackers-remotely-kill-jeep-highway/) of this was demonstrated a few years ago &rarr; hackers took control of a Jeep driving on a highway (with the knowledge of the journalist driving the car). They showed that a (remote) hacker can take control of the brakes and steering, leaving the drivers and passengers helpless!
+
+<br>
+
+<img src="img/security/tesla.webp" width="300">
+
+<br>
+
+Multiple efforts have shown Tesla cars (and their surrounding infrastructure) to be vulnerable to cyberattacks: [1](https://www.npr.org/sections/alltechconsidered/2015/08/06/429907506/tesla-model-s-can-be-hacked-and-fixed-which-is-the-real-news/), [2](https://www.livescience.com/technology/electric-vehicles/white-hat-hackers-carjacked-a-tesla-using-cheap-legal-hardware-exposing-major-security-flaws-in-the-vehicle), [3](https://www.darkreading.com/vulnerabilities-threats/tesla-gear-hacked-multiple-times-pwn2own-contests). 
+
+
+<br>
+
+There also exists a lot of work on attacks that use the [**"vehicle to everything" (V2X)**](https://sibin.github.io/papers/2020_T-IV_V2X_Security_Survey_Monowar.pdf) communication protocols. 
+
+Read more about [attacks on unmanned aerial vehicles (UAVs)](https://www.sciencedirect.com/science/article/pii/S1570870520306788).
+
+
+## Defenses
+
+Again, this is a vast area of research and many of the existing defensive techniques in cybersecurity (especially those related to embedded/cyber-physical/automotive systems) applies to autonomous vehicles as well.
+
+Defensive techniques can be classified into:
+
+|passive|active|
+|--------|--------|
+|only detect/raise alarms| take action |
+|*e.g.*, intrusion detection| *e.g.*, eject attacker|
+||
+
+We can classify the active methods into the following categories:
+
+|reactive|proactive|
+|--------|--------|
+|take action *on* detection| action *without* detection |
+|*e.g.*, eject attacker/sanitize system| *e.g.*, restart-based methods |
+||
+
+Let's look at a **few**, relevant, defensive strategies since it will be quite difficult to go over everything.
+
+
+### Detecting/Reacting to (possible) Attacks
+
+Some attacks are hard to detect, _e.g.,_  the [Requiem](https://sibin.github.io/papers/2024_ArXiv_Requiem_KyoKim.pdf) attack that spoofs sensors values. It has been shown that the attack does such a good job that the intrusion detection modules on the devices are unable to detect it!
+
+In such scenarios, **additional resources** are required _e.g.,_ 
+
+- **redundant** sensors &rarr; that measure the same quantities (_e.g.,_  position), ideally separated from the communication pathways that the original/attacked sensors used
+- **external resources**, _e.g.,_  other drones in the flock &rarr; thy can observe each other and try to identify irregular behavior
+
+<br>
+
+There is quite a bit of work to detect intrusions into such systems but we have to deal with certain challenges first,
+
+> embedded systems may not have enough compute power or memory to add security mechanisms on top.
+
+<img src="img/security/jessop_truth.gif" width="300">
+
+<br>
+
+Hence, **careful design** is required so that,
+
+- all the **applications continue to run** &rarr; they aren't blocked/diminished by ny security/pribacy mechanisms
+- the security components work correctly.
+
+[SecureCore](https://sibin.github.io/papers/2013_RTAS_SecureCore-ManKiYoon.pdf) detects intrusions by checking for the **effects** of malware -- _i.e.,_  did the extra code that's running use up additional [CPU cycles](https://sibin.github.io/papers/2013_RTAS_SecureCore-ManKiYoon.pdf), [memory](https://sibin.github.io/papers/2015_DAC_MemoryHeatMapSecureCore_ManKiYoon.pdf) or [system calls](https://sibin.github.io/papers/2017_IoTDI_SecureCoreSyscall_ManKiYoon.pdf)?
+
+So, any of these could be symptoms of malware:
+
+<img src="img/security/securecore.1.png" width="400">
+
+<br>
+
+SecureCore uses one or more cores (a "**secure core**") to **observe** the main cores and if it detects any signs of intrusions, switches control to the secure core. The secure core can then actuate the system in a safe manner of initiate a **graceful shutdown** that ensure the system doesn't come to harm.
+
+<img src="img/security/securecore.2.png" width="400">
+
+<br>
+
+This method,
+
+- is able to **quickly** detect intrusions and
+- keep the system **safe**.
+
+**Note:**  it doesn't take any additional actions -- _e.g.,_  to remove the attacker -- that is something left up to the system designer who can develop a policy to work with the SecureCore architecture.
+
+<br>
+
+Another method, [SCATE](https://sibin.github.io/papers/2023_ISORC_SCATE_Monowar.pdf), **checks outgoing actuation commands** &rarr; to verify that they don't put the system into an unsafe state. If they do, then the actuation command is blocked.
+
+<img src="img/security/scate.1.png" width="400">
+
+<br>
+
+The checks are carried out by switching into a trusted execution environment (_e.g.,_  [ARM TrustZone](https://www.trustonic.com/technical-articles/what-is-trustzone/) or [Intel SGX](https://eprint.iacr.org/2016/086.pdf)). 
+
+The problems with such an approach are,
+
+- checking **every** actuation commands may be too onerous
+- the delays could add up and cause the system to miss critical ting deadlines
+    - (switching to TEE &rarr; checking actuation command &rarr; switching back to main normal world)  
+
+Hence, SCATE only checks a **subset** of the actuation commands. To prevent an adversary from tracking which commands are checked, SCATE uses, **game theory**
+
+- to **randomly** pick a subset of commands to be checked
+- make it **seem** like all commands are checked.
+
+<img src="img/security/scate.2.png" width="400">
+
+<br>
+
+Now,
+
+> what if the attacker is really smart and evades detection?
+
+Or, worse, is able to disable the detection mechanisms? So, we need a way to ensure that the system remains safe and
+
+- we **don't rely on an external signal** (intrusion detection) 
+- not check to see if something has been modified, like actuation commands in SCATE.
+
+We need to be4 **proactive** and not _reactive_.
+
+[ReSecure](https://sibin.github.io/papers/2018_iccps_restart_fardin.pdf) aims to avoid the problem of **detecting** an attack while still **keeping the system safe**. It does this by,
+
+- **active reboots** of the system
+- reloading the software from a **trusted state**.
+
+<img src="img/security/resecure.1.png" width="400">
+
+<br>
+
+**Note:**  the reboot intervals cannot be deterministic (_e.g.,_  periodic) since an adversary can figure this out and then launch an attack that is limited to the time interval between reboots. Similarly, the reboot cannot be related to the detection of an intrusion &rarr; since it might be too late to prevent the negative effects of the attacks.
+
+ReSecure avoids this problem by,
+
+- observing the state of the system and initiating a reboot when the system gets **close to an unsafe state** &rarr; _e.g.,_  below a certain threshold for a drone
+- calculating a **minimum** time, $T$, to the next reboot &rarr; the value of $T$ depends on how close the system is to becoming "unsafe". If it is close, then $T$ will be small, if not $T$ can be longer. 
+
+<img src="img/security/resecure.2.png" width="500">
+
+<br>
+
+|color| meaning|
+|:----|:-------|
+| **white** |mission controller is in charge and platform is not compromised|
+| **yellow** | system is undergoing a restart |
+| **green**| a "secure execution interval" (SEI) is running |
+| **range**| adversary is in charge |
+| **blue**| **RoT** accepts new restart time|
+| **gray** | RoT **does not** accept new restart time|
+| **red arrow**| RoT triggers a restart |
+| **blue arrow** | SEI ends, the next restart time is scheduled in RoT and the mission controller starts|
+||
+
+<br>
+
+But, what if the attacker blocks the system from rebooting? 
+
+To prevent this, ReSecure uses a **hardware root of trust** (RoT), _i.e.,_  a set of hardware components (timer, interrupt handler, reset handler) that are **separate** from the main system and **cannot be reprogrammed** once the system has started up.
+
+<img src="img/security/resecure.3.png" width="400">
+
+
+### Software-Based Security Solutions
+
+While traditional software-security methods, _e.g.,_  **isolation** (VMs, containers, _etc._ ) and **security through obscurity** can definitely improve the security of such systems, recall that we may have **resource** and **timing constraints**. So we need specific solutions to specific problems (_e.g.,_  ScheduLeak).
+
+One of the main problems with such systems, especially ones that had **real-time constraints** is that they're **predictable** &rarr; by design. For instance, a periodic real-time task keeps (infinitely) repeating across hyperperiods.
+
+<img src="img/security/epsilon.1.png" width="400">
+
+<br>
+
+ScheduLeak (and other attacks) take advantage of this to **predict** when critical tasks will run in the future.
+
+Hence, we need to **obfuscate** the execution patterns so that,
+
+- attackers **cannot determine** when tasks will execute
+- the real-time constraints (**deadlines**) are still met.
+
+<img src="img/security/epsilon.2.png" width="400">
+
+<br>
+
+Hence, we developed the notion of **indistinguishability** and an [**$\epsilon-scheduler$**](https://sibin.github.io/papers/2021_CCS_ScheduleIndistinguishability_CY.pdf) that can achieve both of these goals:
+
+<img src="img/security/epsilon.3.png" width="500">
+
+<br>
+
+The $\epsilon-scheduler$ borrows ideas from [**Differential Privacy**](https://digitalprivacy.ieee.org/publications/topics/what-is-differential-privacy#:~:text=At%20its%20roots%2C%20differential%20privacy,a%20result%20of%20providing%20data) to introduce **noise** into the execution patterns of the system.
+
+We see the effectiveness of this method when applied to a rover:
+
+<img src="img/security/epsilon.4.png" width="400">
+
+<br>
+
+The rover is able to,
+
+- follow the path faithfully
+- not miss many deadlines.
+
+
+### Miscellaneous Methods
+
+We can also improve the security of autonomous systems by **reducing the number of communication endpoints**. The idea being that if an adversary cannot easily get on to the device, then the chances of a successful attack are less.
+
+But the problem is that there are a lot of reasons for having multiple communication endpoints, 
+
+- other vehicles/traffic signs/infrastructure [v2x]
+- network updates (os/software stack/security)
+- entertainment systems
+
+So, there is a tension between &rarr; security and functionality.
+
+<br>
+
+Adding stronger/additional **encryption/authentication** could also deter would-be attackers. But this requires the use of a **public-key infrastructure** (PKI) and also increases,
+
+- computational and memory overheads
+- power consumption
+
+both of which will likely increase the loads on the (limited) embedded system. So it needs to be carried out carefully. 
+
+<br>
+
+There is also work in [V2X security](https://sibin.github.io/papers/2020_T-IV_V2X_Security_Survey_Monowar.pdf).
+
+
+### Holistic View
+
+Security should be treated as a **first-class principle** &rarr; it should be considered during the **entire** design, implementation and testing processes. Retrofitting it after the fact will most surely fail or, at the very least, lead to serious problems. 
+
+One should consider the burdens of security integration in autonomous systems. 
+
+This [SoK paper](https://sibin.github.io/papers/2024_ACM_CSUR_RTSecuritySoK_MonowarHasan.pdf) classifies the various security methods in real-time systems (most also relevant to autonomous systems) and compares the solutions to each other by proposing a new metric, "**attacker's burden**".
