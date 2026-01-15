@@ -288,7 +288,7 @@ at a high-level, the execution time distributions of applications:
 
 <img src="./img/embedded_arch/wcet_wilhelm.png" height="550" style="display: inline-block;" title="https://www.inf.ed.ac.uk/teaching/courses/es/PDFs/lecture_11.pdf" />
 
-Note: we see that the various methods either underestimate or overestime the wcet. the former affects the safety, the latter wastes resources
+Note: we see that the various methods either underestimate or overestimate the wcet. the former affects the safety, the latter wastes resources
 
 ---
 
@@ -358,7 +358,7 @@ first, define the **processor** it runs on &rarr; say, "**P**"
 first, define the **processor** it runs on &rarr; say, "**P**"
 - how long each instruction takes to execute on P
 - how many loop iterations?
-- what is the startup/cleanup times for the program on P?  
+- what are the startup/cleanup times for the program on P?  
 
 ---
 
@@ -546,17 +546,44 @@ Note: pause and ask students what, if anything can go wrong?
 
 ---
 
-program will _constantly_ sufffer cache misses!
+program will _constantly_ suffer cache misses!
 
 ---
 
-program will _constantly_ sufffer cache misses!
+program will _constantly_ suffer cache misses!
 
 ### loop's execution time blows up!
 
 ---
 
-program will _constantly_ sufffer cache misses!
+### loop's execution time blows up!
+
+```c [11-18]
+#define VERY_LARGE_ARRAY+SIZE 1>>18
+
+void main()
+{
+    int first_array[VERY_LARGE_ARRAY_SIZE] ;
+    int second_array[VERY_LARGE_ARRAY_SIZE] ;
+
+    int sum_first = 0;
+    int sum_second = 0;
+    for( int i = 0 ; i < VERY_LARGE_ARRAY_SIZE * 2 ; ++i)
+    {
+        if( i%2 )
+            first_sum += first_array[i/2] ;     
+            // 20 cycles + cache miss time (100s of cycles)
+        else
+            second_sum += second_array[(int)((i/2)+1)] ; 
+            // 20 cycles + cache miss time (100s of cycles)
+    }
+}
+```
+
+
+---
+
+program will _constantly_ suffer cache misses!
 
 ### loop's execution time blows up!
 
@@ -594,7 +621,7 @@ processor feature &rarr; improves performance &rarr; *bad for wcet analysis*!
 
 ## embedded processors 
 
-come im myriad shapes and sizes:
+come in myriad shapes and sizes:
 1. Microcontrollers
 2. Digital Signal Processors
 3. Microprocessors
@@ -606,7 +633,7 @@ come im myriad shapes and sizes:
 
 so, we focus on:
 
-<img src="./img/stack_architecture/stack_overview.15.png" height="700">
+<img src="./img/stack_architecture/stack_overview.15.png" height="800">
 
 ---
 
@@ -660,14 +687,8 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | one CPU core | typically simple `4` or `8` bit chips |
 
---- 
-
-## microcontroller hardware features
-
-| component | details |
-|-----------|---------|
-| one CPU core | typically simple `4` or `8` bit chips |
-| small pipelined architectues | sometimes `2` or `4` stage pipelines |
+Note: 
+Processor bit width refers to the amount of data (in bits) a CPU can process in a single operation, determining its data handling capacity and memory addressing ability, with 32-bit and 64-bit being common standards, where 64-bit CPUs handle larger chunks of data (8 bytes) and access vastly more RAM than 32-bit ones (4 bytes)
 
 --- 
 
@@ -676,7 +697,16 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 | component | details |
 |-----------|---------|
 | one CPU core | typically simple `4` or `8` bit chips |
-| small pipelined architectues | sometimes `2` or `4` stage pipelines |
+| small pipelined architectures | sometimes `2` or `4` stage pipelines |
+
+--- 
+
+## microcontroller hardware features
+
+| component | details |
+|-----------|---------|
+| one CPU core | typically simple `4` or `8` bit chips |
+| small pipelined architectures | sometimes `2` or `4` stage pipelines |
 | some limited memory | typically a few hundred kilobytes, perhaps in the form of EEPROMs or FLASH |
 
 --- 
@@ -686,7 +716,7 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 | component | details |
 |-----------|---------|
 | one CPU core | typically simple `4` or `8` bit chips |
-| small pipelined architectues | sometimes `2` or `4` stage pipelines |
+| small pipelined architectures | sometimes `2` or `4` stage pipelines |
 | some limited memory | typically a few hundred kilobytes, perhaps in the form of EEPROMs or FLASH |
 | programmable I/O | to interact with the real world |
 
@@ -698,14 +728,8 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
 
----
-
-## microcontroller hardware features [contd.]
-
-| component | details |
-|-----------|---------|
-| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
-| low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
+Note: 
+processor "frequency is the rate at which a CPU executes basic operations, measured in gigahertz (GHz), indicating billions of cycles per second, essentially how many "ticks" the processor makes to process instructions; 
 
 ---
 
@@ -715,7 +739,6 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
 | low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
-| interrupts (some programmable) | often _real-time_ (ficed/low latency) |
 
 ---
 
@@ -725,7 +748,20 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
 | low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
-| interrupts (some programmable) | often _real-time_ (ficed/low latency) |
+| interrupts (some programmable) | often _real-time_ (fixed/low latency) |
+
+Note:
+this is the **crux** of how we can implement "real-time" behavior. Low latency/deterministic interrupts
+
+---
+
+## microcontroller hardware features [contd.]
+
+| component | details |
+|-----------|---------|
+| low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
+| low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
+| interrupts (some programmable) | often _real-time_ (fixed/low latency) |
 | general-purpose I/O (GPIO) pins | for I/O |
 
 ---
@@ -736,7 +772,7 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | low operating frequencies | e.g., `4 KHz`; simpler/older processors, yet more predictable |
 | low power consumption | in the **milliwatts** or **microwatts** ranges; might even be **nanowatts** when the system is _sleeping_ |
-| interrupts (some programmable) | often _real-time_ (ficed/low latency) |
+| interrupts (some programmable) | often _real-time_ (fixed/low latency) |
 | several general-purpose I/O (GPIO) pins | for I/O |
 | timers | e.g., a programmable interval timer (PIT) |
 ||
@@ -753,6 +789,9 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | analog to digital (ADC) convertors | to convert incoming (real-world, sensor) data to a digital form that the uC can operate on |
 
+Note: 
+- because the real world is "analog"/continuous
+
 ---
 
 ### **Additional features** found on some microcontrollers:
@@ -761,6 +800,9 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 |-----------|---------|
 | analog to digital (ADC) convertors | to convert incoming (real-world, sensor) data to a digital form that the uC can operate on |
 | digital-to-analog (DAC) convertor | to do the opposite, convert from digital to analog signals to send outputs in that form |
+
+Note: 
+- because the real world is "analog"/continuous
 
 ---
 
@@ -787,7 +829,7 @@ from [Wikipedia](https://en.wikipedia.org/wiki/Microcontroller),
 | component | details |
 |-----------|---------|
 | pulse width modulation (PWM) | so that the CPU can control **motors** (significant for us in autonomous/automotive systems), power systems, resistive loads, etc. |
-| JTAG interace | debugging interface |
+| JTAG interface | debugging interface |
 ||
 
 ---
@@ -836,6 +878,9 @@ Note: hand-tuning is for both, performance as well as fitting into the limited m
 - **C** is another popular language
 - **no operating systems** (or very rare)!
 
+Note: 
+- "**bare metal execution"
+
 ---
 
 ### Microcontroller programs and data
@@ -871,6 +916,14 @@ Note: hand-tuning is for both, performance as well as fitting into the limited m
 
 ## what is a dsp?
 
+- specialized microcontrollers optimized for **digital signal processing**
+
+<img src="./img/embedded_arch/dsp_example.avif" height="500" title="dsp signal example">
+
+---
+
+## what is a dsp?
+
 - specialized microcontrollers optimized for digital signal processing
 - widely used in:
     - audio processing
@@ -884,12 +937,14 @@ Note: hand-tuning is for both, performance as well as fitting into the limited m
 
 ---
 
-## main goals of dsps
+## main goals of dsp
 
 - **isolate**, **measure**, **compress**, filter analog signals in the real world
 - often have **stringent real-time constraints**
 
 ---
+
+<!-- .slide: data-background="white" -->
 
 ## example
 
@@ -897,7 +952,7 @@ Note: hand-tuning is for both, performance as well as fitting into the limited m
 - one of the most famous examples of dsp systems
 
 <br>
-<img src="./img/embedded_arch/TI_DSP.jpg" height="300" title="Texas Instruments DSP Chip">
+<img src="./img/embedded_arch/TI_DSP.jpg" height="500" title="Texas Instruments DSP Chip">
 
 ---
 
@@ -914,6 +969,41 @@ Note: hand-tuning is for both, performance as well as fitting into the limited m
 - **repetitive mathematical operations** 
     - over a large number of samples
     - in real-time
+
+<br>
+<br>
+
+
+### "**multiply-accumulate**" (mac) algorithm
+
+Note:
+Imagine you are reading a sensor that measures temperature every second. The signal is "noisy" (it jumps around erratically). To smooth it, you don't just look at the current number; you look at the average of the current number and the previous two numbers.
+
+This requires two repetitive steps that are the heart of DSP:
+
+Multiplication: Weighting the data points.
+
+Accumulation: Adding them together.
+
+---
+
+### "**multiply-accumulate**" (mac) algorithm
+
+```python [1-3|4-6|7-10|11-14]
+signal = [10, 22, 10, 12]
+weights = [0.5, 0.25, 0.25]
+output = []
+
+# This loop is the "repetitive" nature of DSP
+for i in range(2, len(signal)):
+    # The MAC (Multiply-Accumulate) Operation
+    val = (signal[i]   * weights[0]) + \
+          (signal[i-1] * weights[1]) + \
+          (signal[i-2] * weights[2])
+    output.append(val)
+
+print(output) # Result: [13.5, 14.0]
+```
 
 ---
 
@@ -957,7 +1047,9 @@ Note: hardware is faster, more predictable, low latency/jitter
 - custom instructions 
     - _e.g.,_ `saturate`, `ed`, `multiply-and-accumulate`
 
-Note: caps the minimum or maximum value that can be held in a fixed-point representation, euclidian distance, a+b*c
+Note: 
+- caps the minimum or maximum value that can be held in a fixed-point representation (e.g., moving audio knob past 100 &rarr; shouldn't "wrap around" to 0), 
+- Euclidean distance, a+b*c
 
 
 ---
@@ -1139,11 +1231,11 @@ ARM M-85
 
 ---
 
-most microprpcessors **do not** include &rarr;  DSPs, ADCs, DACs, etc. 
+most microprocessors **do not** include &rarr;  DSPs, ADCs, DACs, etc. 
 
 ---
 
-most microprpcessors **do not** include &rarr;  DSPs, ADCs, DACs, etc. 
+most microprocessors **do not** include &rarr;  DSPs, ADCs, DACs, etc. 
 
 possible to _augment_ microprocessor &rarr; _connecting microcontrollers_!
 
