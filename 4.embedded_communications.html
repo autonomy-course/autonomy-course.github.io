@@ -401,8 +401,8 @@ Inter-Integrated Circuit (I<sup>2</sup>C/I2C/IIC)
 
 | condition | description |
 |-----------------|-------|
-| I2C `START`| controller first pulls SDA low, then pulls SCL low |
-| I2C `STOP` | SCL releases high, then SDA releases high |
+| I2C `START`| controller first pulls SDL low, then pulls SCL low |
+| I2C `STOP` | SCL releases high, then SDL releases high |
 ||
 
 
@@ -412,8 +412,8 @@ Inter-Integrated Circuit (I<sup>2</sup>C/I2C/IIC)
 
 | condition | description |
 |-----------------|-------|
-| I2C `START`| controller first pulls SDA low, then pulls SCL low |
-| I2C `STOP` | SCL releases high, then SDA releases high |
+| I2C `START`| controller first pulls SDL low, then pulls SCL low |
+| I2C `STOP` | SCL releases high, then SDL releases high |
 ||
 
 <img src="img/embedded_arch/comms/i2c_start_stop.png" width="700">
@@ -932,6 +932,8 @@ read [**online textbook**](https://autonomy-course.github.io/textbook/autonomy-t
 
 ---
 
+<!-- .slide: data-background="white" -->
+
 ## raspberry Pi
 
 includes many components/standards discussed so far...
@@ -1034,6 +1036,8 @@ a "hat" &rarr; adds to Pi:
 - multiple sensors
 
 ---
+
+<!-- .slide: data-background="white" -->
 
 ## navio2 | architecture
 
