@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 3** | Working with Sensors in Practice
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**
+
+---
+
+## **Lab Overview**
+
+you will implement,
+
+- a simple but realistic **sensor–decision–actuation loop**
+- similar to those used in embedded and autonomous systems
+
+---
+
+**this task involves:**
+
+- continuously reading data from ultrasonic distance sensor 
+    - in real time
+- making a decision based on that data
+    - flash LED 
+    - measured distance &rarr; falls below a specified threshold
+
+---
+
+## **what's new in this lab**
+
+- does adding LED toggle code to previous implementation work?
+- this lab requires LED to flash **continuously**
+    - not just turn on or off
+
+---
+
+## the challenge:
+
+- flashing requires &rarr; repeatedly toggling LED with fixed delay
+- at the same time &rarr; distance measurements continue uninterrupted
+
+---
+
+single-threaded, blocking implementation,
+
+prevents one task from running while other sleeps/waits
+
+---
+
+**solution** &rarr; system performs concurrent operations (_e.g.,_ using threads)
+
+---
+
+## concurrency and shared data
+
+concurrency introduces &rarr; **shared state**
+
+---
+
+## In this lab
+
+- one task updates the shared distance value
+- another task reads that value to control the LED
+
+---
+
+uncoordinated access &rarr; **race conditions** and inconsistent behavior
+
+---
+
+traditional solutions &rarr; **synchronization primitives**
+
+- locks or mutexes (covered in MP-4)
+
+---
+
+## **Using Atomic Variables**
+
+Here, we take a simpler approach by storing distance in an **atomic variable**.
+
+**Why Atomic Variables?**
+
+Atomic variables guarantee that reads and writes occur as single, indivisible operations, preventing partial updates and race conditions without explicit locking.
+
+**This is appropriate because:**
+- Only one simple variable is shared
+- Operations are limited to small reads and writes
+- Low overhead and responsiveness are important
+
+---
+
+## **How Atomics Work**
+
+Atomic operations are enforced at the **hardware level**, ensuring that updates either complete fully or not at all. This makes them fast and predictable for small shared values.
+
+**Important Note:**  
+Atomics are not a replacement for locks in general—complex data structures still require explicit synchronization—but they are well-suited for simple shared state like a sensor reading.
+
+---
+
+## **System Design**
+
+<p align="center">
+<img src="system_overview.png" width="70%">
+</p>
+
+The diagram illustrates a simple multithreaded system design where two threads run concurrently and share data safely.
+
+---
+
+## **System Design: Thread Architecture**
+
+**Thread #1 (Main Thread):**  
+Continuously reads sensor data from the ultrasonic sensor, computes the distance, and writes the latest value to a shared variable (distance)
+
+**Thread #2 (LED Thread):**  
+Runs independently, repeatedly reading this shared distance and blinking an LED when the value falls below a predefined threshold
+
+By separating sensing and actuation into different threads, the system avoids blocking behavior and more closely resembles real-time and autonomous systems.
+
+---
+
+## **Choice of Programming Language: C++**
+
+For this lab, you must implement the system in **C++**.
+
+**Why C++?**
+- Better support for multithreading and atomic operations compared to Python
+- C++ 11 and later standards include built-in support for threads and atomic variables
+- No overhead of external libraries
+- Our autonomous rover's software stack is primarily written in C++
+
+---
+
+## **Why Not Python?**
+
+Python is quite slow compared to manually memory-managed compiled languages.
+
+**Performance Issues:**
+- Python's interpreter and garbage collection create overhead
+- Unpredictable latency in real-time systems
+- Unacceptable for tasks requiring timely responses
+
+**C++ Benefits:**
+- Efficient memory management
+- Faster execution
+- Better choice for real-time applications where performance is critical
+
+---
+
+## **Code Overview**
+
+The code is split into **4 main parts**:
+
+1. Setting up shared atomic variable and PIN IDs
+2. Reading from the Ultrasonic Sensor
+3. Flashing the LED
+4. Main Function to Start Threads
+
+Let's examine each part in detail.
+
+---
+
+## **Part 1: Setting Up Atomic Variable**
+
+```cpp
+#include <atomic>
+
+std::atomic<float> distance(0.0); // Shared variable for distance measurement
+```
+
+This line declares a shared atomic variable named `distance` of type `float`, initialized to `0.0`. 
+
+This variable will be:
+- Updated by the sensor-reading thread
+- Read by the LED-flashing thread
+- Thread-safe without the need for locks
+
+---
+
+## **Part 2: Reading from the Ultrasonic Sensor**
+
+The code for reading from the ultrasonic sensor remains similar to Lab 2, but in C++.
+
+**Key Points:**
+- Set up the GPIO pins
+- Use a loop to continuously read distance measurements
+- All code wrapped in a function for use in a thread
+
+---
+
+## **Part 2: Sensor Reading Code (1/2)**
+
+```cpp
+void readSensor() {
+    while (true) {
+        // Trigger the ultrasonic sensor
+        write_pin(ULTRASONIC_TRIG, 1);
+        usleep(10); // Trigger pulse
+        write_pin(ULTRASONIC_TRIG, 0);
+
+        // Wait for echo and calculate distance
+        auto startTime = std::chrono::high_resolution_clock::now();
+        auto endTime = startTime;
+        
+        while (!read_pin(ULTRASONIC_ECHO)) { // Wait for echo to go high
+            startTime = std::chrono::high_resolution_clock::now();
+        }
+```
+
+---
+
+## **Part 2: Sensor Reading Code (2/2)**
+
+```cpp
+        while (read_pin(ULTRASONIC_ECHO)); { // Wait for echo to go low
+            endTime = std::chrono::high_resolution_clock::now();
+        }
+
+        // Calculate distance and update atomic variable
+        auto delta = endTime - startTime;
+        float distanceValue = std::chrono::duration_cast<std::chrono::microseconds>(delta).count() * 0.034 / 2;
+
+        distance.store(distanceValue); // Update the shared atomic variable
+    }
+}
+```
+
+---
+
+## **Part 3: Flashing the LED**
+
+The LED flashing logic is implemented in a **separate thread**.
+
+**Behavior:**
+- Continuously checks the shared distance variable
+- Toggles the LED on and off with a delay when distance is below threshold
+
+---
+
+## **Part 3: LED Flashing Code**
+
+```cpp
+void flashLED() {
+    const float threshold = 20.0; // Distance threshold in cm
+    
+    while (true) {
+        float currentDistance = distance.load(); // Read the shared atomic variable
+        
+        if (currentDistance < threshold) {
+            // Flash the LED
+            write_pin(GPIO_RED, 1); // Turn on red LED
+            usleep(500000); // Wait for 500ms
+            write_pin(GPIO_RED, 0); // Turn off red LED
+            usleep(500000); // Wait for 500ms
+        }
+    }
+}
+```
+
+---
+
+## **Part 4: Main Function to Start Threads**
+
+In the `main` function, you will create and start both threads:
+
+```cpp
+int main() {
+    // Initialize GPIO pins and any necessary setup
+
+    // Start the sensor reading thread
+    std::thread sensorThread(readSensor);
+
+    // Start the LED flashing thread
+    std::thread ledThread(flashLED);
+
+    // Join threads (optional, as they run indefinitely)
+    sensorThread.join();
+    ledThread.join();
+
+    return 0;
+}
+```
+
+---
+
+## **How It All Works Together**
+
+All these pieces together form the core of the concurrent system:
+
+- Reads from the ultrasonic sensor continuously
+- Controls the LED based on distance measurement
+- Uses atomic variables for thread-safe access
+- Both threads can safely access and update shared distance without conflicts
+
+**Alternative Approach:**  
+This system could be designed with a single thread using non-blocking I/O, but threads provide clearer separation of concerns.
+
+---
+
+## **Full Code and Compilation**
+
+**Full Code Available:**  
+[Lab 3 Full Code](https://gist.github.com/ubdussamad/2ab5a127e43ad72f8dd1cea329dcf614)
+
+**Note:** The full code includes additional guards and error handling for production use.
+
+**To compile:**
+```bash
+g++ -std=c++11 -o lab3 lab3_full_code.cpp -lpthread
+```
+
+**To run:**
+```bash
+./lab3
+```
+
+---
+
+## **Testing Your Implementation**
+
+When running the full code:
+
+1. Play with the distance threshold value
+2. Observe how the LED responds to changes in measured distance
+3. Move objects closer and farther from the sensor
+4. Verify that sensor readings continue while LED flashes
+
+**Expected Behavior:**  
+LED should flash continuously when an object is within the threshold distance.
+
+---
+
+## **Key Takeaways**
+
+- Learned how to design a simple concurrent system integrating sensing and actuation using threads
+- Gained understanding of working with sensors and actuators in a real-time context
+- Introduced to atomic variables for safe concurrent access to shared data without locks
+- Prepared for more complex multithreaded programming and synchronization techniques
+
+---
+
+## **Mini Homework (Not Graded)**
+
+**Challenge 1:**  
+Modify the code to use fewer threads. The example above uses 3 threads (main + 2 worker threads).
+
+**Challenge 2:**  
+Add a signal catcher to gracefully exit the program when:
+- A specific signal (e.g., SIGINT) is received, OR
+- A key (say 'Q') is pressed
+
+---
+
+## **Questions?**
+
+**Resources:**
+- Full code: [GitHub Gist](https://gist.github.com/ubdussamad/2ab5a127e43ad72f8dd1cea329dcf614)
+- Office Hours: Check course website
+- Discussion Forum: Post your questions
+
+**Good luck with your implementation!**
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
