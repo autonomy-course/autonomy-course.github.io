@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 3** | Working with Sensors in Practice
+
+### Design of Autonomous Systems  
+### CSCI 6907/4907 - Section 86  
+### Prof. **Sibin Mohan**
+
+---
+
+## **Lab Overview**
+
+In this Lab session, we will,
+
+- debug a simple multithreded **sensor–decision–actuation loop** from Lab 3
+- learn about complexities of even the most simple looking multithreaded code
+
+---
+
+**this task involves:**
+
+- continuously reading data from ultrasonic distance sensor 
+    - in real time
+- making a decision based on that data
+    - flash LED 
+    - measured distance &rarr; falls below a specified threshold
+
+---
+
+## **what's new in this lab**
+
+- does adding LED toggle code to previous implementation work?
+- this lab requires LED to flash **continuously**
+    - not just turn on or off
+
+---
+
+## the challenge:
+
+- flashing requires &rarr; repeatedly toggling LED with fixed delay
+- at the same time &rarr; distance measurements continue uninterrupted
+
+---
+
+single-threaded, blocking implementation,
+
+prevents one task from running while other sleeps/waits
+
+---
+
+**solution** &rarr; system performs concurrent operations (_e.g.,_ using threads)
+
+---
+
+## concurrency and shared data
+
+concurrency introduces &rarr; **shared state**
+
+---
+
+## In this lab
+
+- one task updates the shared distance value
+- another task reads that value to control the LED
+
+---
+
+uncoordinated access &rarr; **race conditions** and inconsistent behavior
+
+---
+
+traditional solutions &rarr; **synchronization primitives**
+
+- locks or mutexes (covered in MP-4)
+
+---
+
+## using atomic variables
+
+we take a simpler approach &rarr; storing distance in an **atomic variable**
+
+---
+
+## why atomic variables?
+
+- guarantee that reads and writes &rarr; **single**, **indivisible** operations
+- preventing partial updates and race conditions 
+- without explicit locking
+
+---
+
+## How Atomics Work
+
+- atomic operations &rarr; are enforced at the **hardware level**
+- ensuring that updates either complete fully or not at all
+- fast and predictable for small shared values
+
+---
+
+<!-- .slide: data-background="white" -->
+
+## **System Design**
+
+<p align="center">
+<img src="system_overview.png" width="70%">
+</p>
+
+- diagram illustrates a simple multithreaded system design
+- two threads run **concurrently** and **share data safely**
+
+---
+
+## **Code Overview**
+
+code is split into **4 main parts**:
+
+1. setting up shared atomic variable and PIN IDs
+2. reading from the Ultrasonic Sensor
+3. flashing the LED
+4. main function to start threads
+---
+
+## Part 1: Setting Up Atomic Variable
+
+```cpp
+#include <atomic>
+
+// Shared variable for distance measurement
+std::atomic<float> distance(0.0); 
+```
+
+declare a shared atomic variable,
+- named `distance`
+- type `float`
+- initialized to `0.0`
+
+---
+
+this variable will be:
+
+- updated by the sensor-reading thread
+- read by the LED-flashing thread
+- thread-safe without the need for locks
+
+---
+
+## Part 2: Reading from Ultrasonic Sensor
+
+code for reading ultrasonic sensor &rarr; similar to Lab 2, but in C++
+
+---
+
+**key points**
+
+- set up the GPIO pins
+- use a loop to continuously read distance measurements
+- all code wrapped in a function for use in a thread
+
+---
+
+## Part 2: Sensor Reading Code (1/2)
+
+```cpp
+void readSensor() {
+    while (true) {
+        // Trigger the ultrasonic sensor
+        write_pin(ULTRASONIC_TRIG, 1);
+        usleep(10); // Trigger pulse
+        write_pin(ULTRASONIC_TRIG, 0);
+
+        // Wait for echo and calculate distance
+        auto startTime = std::chrono::high_resolution_clock::now();
+        auto endTime = startTime;
+        
+        while (!read_pin(ULTRASONIC_ECHO)) { // Wait for echo to go high
+            startTime = std::chrono::high_resolution_clock::now();
+        }
+```
+
+---
+
+## Part 2: Sensor Reading Code (2/2)
+
+```cpp
+        while (read_pin(ULTRASONIC_ECHO)); { // Wait for echo to go low
+            endTime = std::chrono::high_resolution_clock::now();
+        }
+
+        // Calculate distance and update atomic variable
+        auto delta = endTime - startTime;
+        float distanceValue = std::chrono::duration_cast<std::chrono::microseconds>(delta).count() * 0.034 / 2;
+
+        distance.store(distanceValue); // Update the shared atomic variable
+    }
+}
+```
+
+---
+
+## Part 3: Flashing the LED
+
+LED flashing logic &rarr; implemented in a **separate thread**
+
+---
+
+**behavior:**
+
+- continuously checks the shared distance variable
+- toggles the LED on and off with a delay 
+    - when distance is below threshold
+
+---
+
+## Part 3: LED Flashing Code
+
+```cpp
+void flashLED() {
+    const float threshold = 20.0; // Distance threshold in cm
+    
+    while (true) {
+        float currentDistance = distance.load(); // Read the shared atomic variable
+        
+        if (currentDistance < threshold) {
+            // Flash the LED
+            write_pin(GPIO_RED, 1); // Turn on red LED
+            usleep(500000); // Wait for 500ms
+            write_pin(GPIO_RED, 0); // Turn off red LED
+            usleep(500000); // Wait for 500ms
+        }
+    }
+}
+```
+
+---
+
+## Part 4: Main Function to Start Threads
+
+in the `main` function, you will create and start both threads:
+
+```cpp
+int main() {
+    // Initialize GPIO pins and any necessary setup
+
+    // Start the sensor reading thread
+    std::thread sensorThread(readSensor);
+
+    // Start the LED flashing thread
+    std::thread ledThread(flashLED);
+
+    // Join threads (optional, as they run indefinitely)
+    sensorThread.join();
+    ledThread.join();
+
+    return 0;
+}
+```
+
+---
+
+## How It All Works Together
+
+- reads from the ultrasonic sensor continuously
+- controls the LED based on distance measurement
+- uses atomic variables for thread-safe access
+- both threads &rarr; safely access/update shared distance 
+    - without conflicts
+
+---
+
+## Full Code and Compilation
+
+[Lab 3 Full Code](https://gist.github.com/ubdussamad/2ab5a127e43ad72f8dd1cea329dcf614)
+
+**to compile:**
+```bash
+g++ -std=c++11 -o lab3 lab3_full_code.cpp -lpthread
+```
+
+**to run:**
+```bash
+./lab3
+```
+
+---
+
+## Testing Your Implementation
+
+when running the full code:
+
+1. play with the distance threshold value
+2. observe how the LED responds to changes in measured distance
+3. move objects closer and farther from the sensor
+4. verify that sensor readings continue while LED flashes
+
+---
+
+**expected behavior:**  
+
+- LED should flash continuously 
+- when an object is within the threshold distance
+
+---
+
+## Mini Homework [not graded]
+
+**challenge 1:**  
+
+- modify the code to use **fewer threads**
+- example above uses 3 threads (main + 2 worker threads)
+
+---
+
+**challenge 2:**  
+
+add a signal catcher to gracefully exit the program when,
+
+- a specific signal (_e.g.,_ `SIGINT`) is received, OR
+- a key (say `Q`) is pressed
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>

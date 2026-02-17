@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+            <link rel="icon" href="../assets/sibin.integral.favicon.ico">
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/custom.sibin.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/monokai.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                    data-charset="utf-8"
+                
+                    data-auto-animate="True"
+                
+                >
+                    <textarea data-template>
+                        ## **Lab 1** | Raspberry Pi+RoverPiHAT
+
+### Design of Autonomous Systems
+### CSCI 6907/4907 - Section 86
+### Prof. **Sibin Mohan**
+
+---
+
+## Objectives
+
+- Configure a Raspberry Pi and RoverPiHAT
+- Understand the hardware and its components
+- Set up wireless and SSH connections
+
+---
+
+## Equipment Required
+
+- Raspberry Pi 4B (or similar)
+- RoverPiHAT
+- MicroSD Card (32GB or larger)
+- USB to UART Cable
+- Power Supply (USB-C)
+- A Computer
+- A Wifi Network (GW network)
+
+---
+
+## Raspberry Pi Overview
+
+<img src="../img/hw/pi.png" height="300">
+
+- **Processor (SoC):** ARM-based CPU
+- **GPIO Pins:** Interface for external electronics
+- **Ports:** USB, HDMI, Ethernet, Wi-Fi, Bluetooth
+- **MicroSD Card Slot:** Stores OS and data
+
+
+---
+
+## RoverPiHAT Overview
+
+<div class="multicolumn">
+<div>
+<img src="../img/hw/RoverPiHAT_TOP.png" height="600">
+</div>
+<div>
+
+| component | description|
+|-------------------|-----------------------------------------------------|
+| imu (mpu6050) | 3-axis accelerometer, 3-axis gyroscope, magnetometer |
+| rgb led | programmable rgb led |
+| rover connections | connect motors, servos, other components  |
+
+</div>
+</div>
+
+---
+
+## RoverPiHAT Overview [contd.]
+
+<div class="multicolumn">
+<div>
+<img src="../img/hw/RoverPiHAT_TOP.png" height="600">
+</div>
+<div>
+
+| component | description|
+|-------------------|-----------------------------------------------------|
+| uart port| direct uart connection to raspberry pi for shell access |
+| ultrasonic port | port for plugging in ultrasonic distance sensor     |
+
+</div>
+</div>
+
+---
+
+## Setup Steps
+
+### 1. Flash the SD Card
+- Download Pi OS image: [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/)
+- A guide to use RaspberryPiImager: [here](https://www.raspberrypi.com/documentation/computers/getting-started.html#raspberry-pi-imager)
+
+---
+
+### 2. Connect via UART
+
+- Edit `/boot/config.txt` to include `enable_uart=1`
+- Edit `/boot/cmdline.txt` to include `console=serial0,115200`
+- Connect UART cable to Raspberry Pi
+- Use `screen` or Putty to access the terminal
+
+---
+
+### 3. Connect to Wi-Fi
+
+- Configure GWDevice credentials: [GWDevice](http://mydevices.gwu.edu/)
+- Use `sudo raspi-config` to set up Wi-Fi:
+- Navigate to Wireless LAN
+- Enter SSID and password
+
+---
+
+### 4. Enable SSH
+
+- Use `sudo raspi-config`:
+- Navigate to Interfacing Options > SSH
+- Enable SSH
+
+---
+
+### 5. Find Raspberry Pi IP Address
+
+To find the Raspberry Pi IP address, 
+
+run the following command in the terminal:
+
+```bash
+$> ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1
+```
+
+---
+
+### 6. Install Navio Shield
+
+- Mount RoverPiHAT on Raspberry Pi GPIO pins
+- Secure with spacers and screws
+- Connect Raspberry Pi and RoverPiHAT to the mounting plate
+  
+---
+
+## Summary
+
+- Successfully set up Raspberry Pi and NRoverPiHAT
+- Configured wireless and SSH access
+- Ready for future labs on autonomous systems
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "fade",
+                    
+                        backgroundTransition: "slide",
+                    
+                        RevealMermaid: {"htmlLabels": true, "useMaxWidth": true},
+                    
+                
+                plugins: [
+                    RevealMarkdown,
+                    RevealHighlight,
+                    RevealZoom,
+                    RevealNotes,
+                    RevealMath,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
