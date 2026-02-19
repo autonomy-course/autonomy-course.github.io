@@ -40,7 +40,7 @@
                 
                 >
                     <textarea data-template>
-                        ## **Lab 3** | Working with Sensors in Practice
+                        ## **Lab 4** | Debugging Multithreaded Code from Lab 3
 
 ### Design of Autonomous Systems  
 ### CSCI 6907/4907 - Section 86  
@@ -52,310 +52,128 @@
 
 In this Lab session, we will,
 
-- debug a simple multithreded **sensor–decision–actuation loop** from Lab 3
-- learn about complexities of even the most simple looking multithreaded code
+- Debug Multithreaded Code
+    - Multithreading Safe vs Unsafe Functions
+    - Killing a Multithreaded program
+    - Using Delays (e.g., sleep ) and loops, practically 
+- Learn More about Synchronization
+    - Sharing big data structures (not just simple atomics)
+    - Printing and Flushing print Buffers
 
 ---
 
-**this task involves:**
+## **Multithreading Safe vs Unsafe Functions**
 
-- continuously reading data from ultrasonic distance sensor 
-    - in real time
-- making a decision based on that data
-    - flash LED 
-    - measured distance &rarr; falls below a specified threshold
-
----
-
-## **what's new in this lab**
-
-- does adding LED toggle code to previous implementation work?
-- this lab requires LED to flash **continuously**
-    - not just turn on or off
-
----
-
-## the challenge:
-
-- flashing requires &rarr; repeatedly toggling LED with fixed delay
-- at the same time &rarr; distance measurements continue uninterrupted
+- Not all function can be called simultaneously from multiple threads
+- E.g. the init() function as,
+- Initialization functions are typically,
+    - supposed to run once
+    - from any thread
+    - and update a global state (e.g., a file descriptor)
+- Furthermore, functions using this global state need,
+    - to wait for the initialization to finish
+- In Lab 3 code, the init function was,
+    - being called multiple times
+    - from 2 different threads
+    - thus init runs multiple times causing many problems
+- Many linux APIs are marked MT-Safe or UnSafe for this reason
+- Lets Jump into to see it getting fixed
 
 ---
 
-single-threaded, blocking implementation,
+## **Killing a Multithreaded Program**
 
-prevents one task from running while other sleeps/waits
+- Killing a multithreaded program isn’t simple
+    - especially when we need to do cleanup before quitting
+- Pressing Ctrl+C might not kill all the threads so,
+    - all threads must check an exit signal to stop
+    - this means no unbounded loops
+        - e.g., no   `while (true) { ...}`
+- A signal can simply be a global `std::atomic<bool>` running;
+- So every loop in every thread is bounded by this signal
+    - E.g.   `while (true) { running.load() || <other cotd.> }`
+- Furthermore, during exit
+    - it’s  best to do some cleanup e.g
+        - setting all the GPIOs to OFF
+        - freeing up some special files/registers in a certain way
+    - only one thread should do this clean-up
+- Lets jump into the code and see how that’s done
 
----
-
-**solution** &rarr; system performs concurrent operations (_e.g.,_ using threads)
-
----
-
-## concurrency and shared data
-
-concurrency introduces &rarr; **shared state**
-
----
-
-## In this lab
-
-- one task updates the shared distance value
-- another task reads that value to control the LED
 
 ---
 
-uncoordinated access &rarr; **race conditions** and inconsistent behavior
+## **Using delays and loops, practically!**
+
+- Apart from avoiding unbounded loops, it’s a good idea to,
+    - use timeouts — even for bounded loops
+        - e.g., waiting for echo from the ultrasonic
+- Most sensors don’t run at 2.4Ghz (CPU Speeds) so,
+    - find out (estimate) the frequency you need to read the sensor at
+    - find out what frequency the sensor can work at
+    - use the lower number from the two
+    - This,
+        - prevents sensor overuse (overheating)
+        - improves system speed
+        - reduces reading errors
+            - reading the sensor too fast means glitchy readings
+- Reading speed can be controlled by adding delays
+    - e.g., adding sleep(0.5) forces a reading loop  to <2Hz
+- Lets jump into the code and see how that’s done
+
 
 ---
 
-traditional solutions &rarr; **synchronization primitives**
+## **Takeaways**
 
-- locks or mutexes (covered in MP-4)
-
----
-
-## using atomic variables
-
-we take a simpler approach &rarr; storing distance in an **atomic variable**
+- Although it seems simple, multithreaded programs need careful design as,
+    - Simple functions aren’t simple in multithreaded environment
+    - Exiting cleanly matters when dealing with sensors and actuators
+    - Unbounded loops are a recipe for disaster
+    - Timeouts are critical to stable system
 
 ---
 
-## why atomic variables?
-
-- guarantee that reads and writes &rarr; **single**, **indivisible** operations
-- preventing partial updates and race conditions 
-- without explicit locking
+**More about Synchronization**
 
 ---
 
-## How Atomics Work
+## **Sharing big data structures**
 
-- atomic operations &rarr; are enforced at the **hardware level**
-- ensuring that updates either complete fully or not at all
-- fast and predictable for small shared values
+- Sharing data across multiple thread is easy when using atomics
+    - however, atomics are limited size (e.g a float or an int)
+- Thus, when we need to share bigger objects,
+    - e.g., a struct containing rover’s position, heading and velocity
+- we use locks (e.g., a mutex), this enables us to use
+    - big structures
+- Access can also be optimized by breaking up big structs into smaller ones
+    - e.g., if one thread doesn’t need all of the fields, have a separate lock
+- Access sequence can also be optimized to prioritize certain threads
+    - e.g., main control thread access priority supersedes other threads
+- Lets jump into the code and see how that’s done
 
----
-
-<!-- .slide: data-background="white" -->
-
-## **System Design**
-
-<p align="center">
-<img src="../img/labs/system_overview.png" width="70%">
-</p>
-
-- diagram illustrates a simple multithreaded system design
-- two threads run **concurrently** and **share data safely**
 
 ---
 
-## **Code Overview**
+## **Printing and Flushing print Buffers**
 
-code is split into **4 main parts**:
+- Printing is one of the fundamental ways to interact/understand prog. state
+- However, with multithreaded embedded systems one should be careful as,
+    - UART does not work as fast as ssh
+        - thus, printing and then flushing to UART slows the process down
+    - Multiple threads printing together makes everything jumbled and hard to debug
+        - i use different colored print to understand things better
+        - avoid printing without newlines
+    - Avoid printing too much and too many times
+        - printing a lot significantly slows down the system
+        - always avoid printing in hot paths
+        - 1Hz total printing rate is idea
 
-1. setting up shared atomic variable and PIN IDs
-2. reading from the Ultrasonic Sensor
-3. flashing the LED
-4. main function to start threads
----
-
-## Part 1: Setting Up Atomic Variable
-
-```cpp
-#include <atomic>
-
-// Shared variable for distance measurement
-std::atomic<float> distance(0.0); 
-```
-
-declare a shared atomic variable,
-- named `distance`
-- type `float`
-- initialized to `0.0`
 
 ---
 
-this variable will be:
-
-- updated by the sensor-reading thread
-- read by the LED-flashing thread
-- thread-safe without the need for locks
+**End of Lab-1**
 
 ---
-
-## Part 2: Reading from Ultrasonic Sensor
-
-code for reading ultrasonic sensor &rarr; similar to Lab 2, but in C++
-
----
-
-**key points**
-
-- set up the GPIO pins
-- use a loop to continuously read distance measurements
-- all code wrapped in a function for use in a thread
-
----
-
-## Part 2: Sensor Reading Code (1/2)
-
-```cpp
-void readSensor() {
-    while (true) {
-        // Trigger the ultrasonic sensor
-        write_pin(ULTRASONIC_TRIG, 1);
-        usleep(10); // Trigger pulse
-        write_pin(ULTRASONIC_TRIG, 0);
-
-        // Wait for echo and calculate distance
-        auto startTime = std::chrono::high_resolution_clock::now();
-        auto endTime = startTime;
-        
-        while (!read_pin(ULTRASONIC_ECHO)) { // Wait for echo to go high
-            startTime = std::chrono::high_resolution_clock::now();
-        }
-```
-
----
-
-## Part 2: Sensor Reading Code (2/2)
-
-```cpp
-        while (read_pin(ULTRASONIC_ECHO)); { // Wait for echo to go low
-            endTime = std::chrono::high_resolution_clock::now();
-        }
-
-        // Calculate distance and update atomic variable
-        auto delta = endTime - startTime;
-        float distanceValue = std::chrono::duration_cast<std::chrono::microseconds>(delta).count() * 0.034 / 2;
-
-        distance.store(distanceValue); // Update the shared atomic variable
-    }
-}
-```
-
----
-
-## Part 3: Flashing the LED
-
-LED flashing logic &rarr; implemented in a **separate thread**
-
----
-
-**behavior:**
-
-- continuously checks the shared distance variable
-- toggles the LED on and off with a delay 
-    - when distance is below threshold
-
----
-
-## Part 3: LED Flashing Code
-
-```cpp
-void flashLED() {
-    const float threshold = 20.0; // Distance threshold in cm
-    
-    while (true) {
-        float currentDistance = distance.load(); // Read the shared atomic variable
-        
-        if (currentDistance < threshold) {
-            // Flash the LED
-            write_pin(GPIO_RED, 1); // Turn on red LED
-            usleep(500000); // Wait for 500ms
-            write_pin(GPIO_RED, 0); // Turn off red LED
-            usleep(500000); // Wait for 500ms
-        }
-    }
-}
-```
-
----
-
-## Part 4: Main Function to Start Threads
-
-in the `main` function, you will create and start both threads:
-
-```cpp
-int main() {
-    // Initialize GPIO pins and any necessary setup
-
-    // Start the sensor reading thread
-    std::thread sensorThread(readSensor);
-
-    // Start the LED flashing thread
-    std::thread ledThread(flashLED);
-
-    // Join threads (optional, as they run indefinitely)
-    sensorThread.join();
-    ledThread.join();
-
-    return 0;
-}
-```
-
----
-
-## How It All Works Together
-
-- reads from the ultrasonic sensor continuously
-- controls the LED based on distance measurement
-- uses atomic variables for thread-safe access
-- both threads &rarr; safely access/update shared distance 
-    - without conflicts
-
----
-
-## Full Code and Compilation
-
-[Lab 3 Full Code](https://gist.github.com/ubdussamad/2ab5a127e43ad72f8dd1cea329dcf614)
-
-**to compile:**
-```bash
-g++ -std=c++11 -o lab3 lab3_full_code.cpp -lpthread
-```
-
-**to run:**
-```bash
-./lab3
-```
-
----
-
-## Testing Your Implementation
-
-when running the full code:
-
-1. play with the distance threshold value
-2. observe how the LED responds to changes in measured distance
-3. move objects closer and farther from the sensor
-4. verify that sensor readings continue while LED flashes
-
----
-
-**expected behavior:**  
-
-- LED should flash continuously 
-- when an object is within the threshold distance
-
----
-
-## Mini Homework [not graded]
-
-**challenge 1:**  
-
-- modify the code to use **fewer threads**
-- example above uses 3 threads (main + 2 worker threads)
-
----
-
-**challenge 2:**  
-
-add a signal catcher to gracefully exit the program when,
-
-- a specific signal (_e.g.,_ `SIGINT`) is received, OR
-- a key (say `Q`) is pressed
                     </textarea>
                 </section>
             </div>
