@@ -48,130 +48,175 @@
 
 ---
 
-## **Lab Overview**
+## lab overview
 
-In this Lab session, we will,
+in this lab session, we will,
 
-- Debug Multithreaded Code
-    - Multithreading Safe vs Unsafe Functions
-    - Killing a Multithreaded program
-    - Using Delays (e.g., sleep ) and loops, practically 
-- Learn More about Synchronization
-    - Sharing big data structures (not just simple atomics)
-    - Printing and Flushing print Buffers
+- debug multithreaded code
+    - multithreading safe vs unsafe functions
+    - killing a multithreaded program
+    - using delays (e.g., sleep) and loops, practically 
+- learn more about synchronization
+    - sharing big data structures (not just simple atomics)
+    - printing and flushing print buffers
 
 ---
 
-## **Multithreading Safe vs Unsafe Functions**
+## multithreading safe vs unsafe functions
 
-- Not all function can be called simultaneously from multiple threads
-- E.g. the init() function as,
-- Initialization functions are typically,
+- not all function can be called simultaneously from multiple threads
+- _e.g.,_ the `init()` &rarr; initialization functions are typically,
     - supposed to run once
     - from any thread
-    - and update a global state (e.g., a file descriptor)
-- Furthermore, functions using this global state need,
+    - and update a global state (_e.g.,_ a file descriptor)
+
+---
+
+## safe vs unsafe functions [contd.]
+
+- functions using this global state need,
     - to wait for the initialization to finish
-- In Lab 3 code, the init function was,
+- in lab 3 code, the init function was,
     - being called multiple times
     - from 2 different threads
     - thus init runs multiple times causing many problems
-- Many linux APIs are marked MT-Safe or UnSafe for this reason
-- Lets Jump into to see it getting fixed
 
 ---
 
-## **Killing a Multithreaded Program**
+## safe vs unsafe functions [contd.]
 
-- Killing a multithreaded program isn’t simple
+- many linux apis are marked `mt-safe` or unsafe for this reason
+
+lets jump into to &rarr; how to fix it?
+
+---
+
+## killing a multithreaded program
+
+- killing a multithreaded program isn’t simple
     - especially when we need to do cleanup before quitting
-- Pressing Ctrl+C might not kill all the threads so,
+- pressing `ctrl+c` might not kill all the threads so,
     - all threads must check an exit signal to stop
     - this means no unbounded loops
-        - e.g., no   `while (true) { ...}`
-- A signal can simply be a global `std::atomic<bool>` running;
-- So every loop in every thread is bounded by this signal
-    - E.g.   `while (true) { running.load() || <other cotd.> }`
-- Furthermore, during exit
-    - it’s  best to do some cleanup e.g
-        - setting all the GPIOs to OFF
-        - freeing up some special files/registers in a certain way
-    - only one thread should do this clean-up
-- Lets jump into the code and see how that’s done
+        - _e.g.,_ no   `while (true) { ... }`
 
 
 ---
 
-## **Using delays and loops, practically!**
+## killing a multithreaded program [contd.]
 
-- Apart from avoiding unbounded loops, it’s a good idea to,
-    - use timeouts — even for bounded loops
-        - e.g., waiting for echo from the ultrasonic
-- Most sensors don’t run at 2.4Ghz (CPU Speeds) so,
+
+- a signal can simply be a global `std::atomic<bool>` running
+- so every loop in every thread is bounded by this signal
+    - e.g.   `while (true) { running.load() || <other cotd.> }`
+
+---
+
+## killing a multithreaded program [contd.]
+
+- furthermore, during exit
+    - it’s  best to do some cleanup, _e.g.,_
+        - setting all the gpios to `off`
+        - freeing up some special files/registers in a certain way
+    - only one thread should do this clean-up
+
+---
+
+lets jump into the code and see how that’s done
+
+---
+
+## using delays and loops, **practically**!
+
+- apart from avoiding unbounded loops, it’s a good idea to,
+    - use **timeouts** &rarr; even for bounded loops
+        - _e.g.,_ waiting for echo from the ultrasonic
+- most sensors don’t run at `2.4 ghz` (cpu speeds) so,
     - find out (estimate) the frequency you need to read the sensor at
     - find out what frequency the sensor can work at
     - use the lower number from the two
-    - This,
-        - prevents sensor overuse (overheating)
-        - improves system speed
-        - reduces reading errors
-            - reading the sensor too fast means glitchy readings
-- Reading speed can be controlled by adding delays
-    - e.g., adding sleep(0.5) forces a reading loop  to <2Hz
-- Lets jump into the code and see how that’s done
+- this process,
+    - prevents sensor overuse (overheating)
+    - improves system speed
+    - reduces reading errors
 
 
 ---
 
-## **Takeaways**
+## using delays and loops, **practically**! [contd.]
 
-- Although it seems simple, multithreaded programs need careful design as,
-    - Simple functions aren’t simple in multithreaded environment
-    - Exiting cleanly matters when dealing with sensors and actuators
-    - Unbounded loops are a recipe for disaster
-    - Timeouts are critical to stable system
+- reading the sensor too fast means glitchy readings
+- reading speed can be controlled by adding delays
+    - _e.g._, adding sleep(`0.5`) forces a reading loop &rarr; less than `2hz`
 
 ---
 
-**More about Synchronization**
+lets jump into the code and see how that’s done
 
 ---
 
-## **Sharing big data structures**
-
-- Sharing data across multiple thread is easy when using atomics
-    - however, atomics are limited size (e.g a float or an int)
-- Thus, when we need to share bigger objects,
-    - e.g., a struct containing rover’s position, heading and velocity
-- we use locks (e.g., a mutex), this enables us to use
-    - big structures
-- Access can also be optimized by breaking up big structs into smaller ones
-    - e.g., if one thread doesn’t need all of the fields, have a separate lock
-- Access sequence can also be optimized to prioritize certain threads
-    - e.g., main control thread access priority supersedes other threads
-- Lets jump into the code and see how that’s done
-
+## takeaways
+- multithreaded programs need careful design as,
+    - "simple" functions aren’t simple in multithreaded environment
+    - exiting **cleanly** matters when dealing with sensors and actuators
+    - unbounded loops are a recipe for disaster
+    - **timeouts** are critical for system stability
 
 ---
 
-## **Printing and Flushing print Buffers**
+## more about synchronization
 
-- Printing is one of the fundamental ways to interact/understand prog. state
-- However, with multithreaded embedded systems one should be careful as,
+---
+
+## sharing big data structures
+
+- sharing data across multiple thread &rarr; easy when using **atomics**
+    - however, atomics are limited size (_e.g.,_ a `float`/`int`)
+- when we need to share bigger objects,
+    - _e.g.,_ a struct containing rover’s position, heading and velocity
+    - use **locks** (_e.g.,_ a mutex)
+    
+
+---
+
+## sharing big data structures | locks
+    
+    
+- locks enable &rarr; big structures
+- access optimized &rarr; breaking up big structs into smaller ones
+    - _e.g.,_ **separate locks** for different fields of a `struct`
+- access sequence &rarr; optimized to **prioritize** certain threads
+    - _e.g.,_ main control thread access priority supersedes other threads
+
+---
+
+lets jump into the code and see how that’s done
+
+---
+
+## **printing/flushing print buffers**
+
+- printing &rarr; fundamental was to interact/understand program state
+- multithreaded embedded systems &rarr; careful design
     - UART does not work as fast as ssh
-        - thus, printing and then flushing to UART slows the process down
-    - Multiple threads printing together makes everything jumbled and hard to debug
-        - i use different colored print to understand things better
-        - avoid printing without newlines
-    - Avoid printing too much and too many times
-        - printing a lot significantly slows down the system
-        - always avoid printing in hot paths
-        - 1Hz total printing rate is idea
-
+    - thus, printing and then flushing to UART slows the process down
 
 ---
 
-**End of Lab-1**
+## **printing/flushing print buffers** [contd.]
+
+- multiple threads printing &rarr; jumbled output+hard to debug
+    - use **different colored print** to understand things better
+- avoid printing without newlines
+- **avoid printing too much** and too many times
+    - significantly slows down the system
+    - always avoid printing in **hot paths**
+    - `1 hz` total printing rate &rarr; ideal for many systems
+
+---
+
+**end of lab-4**
+
 
 ---
                     </textarea>
