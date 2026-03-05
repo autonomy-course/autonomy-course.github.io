@@ -1302,6 +1302,12 @@ EKF &rarr; both process and measurement noise are Gaussian
 
 <img src="img/fusion/ekf/ukf-radar-diagram.svg" width="1300">
 
+Note:
+- UKF -- unscented kalman filter
+1. selects a set of sigma points around the current state estimate
+2. propagates these points through the nonlinear functions
+3. computes a weighted mean and covariance from the transformed points
+
 ---
 
 <!-- .slide: data-background="white" -->
@@ -1309,17 +1315,8 @@ EKF &rarr; both process and measurement noise are Gaussian
 
 ### EKF vs UKF 
 
-<div class="multicolumn">
 
-<div>
-
-<br>
-
-<img src="img/fusion/ekf/ukf-radar-diagram.svg" width="1100">
-
-</div>
-
-<div>
+<img src="img/fusion/ekf/ukf-radar-diagram.svg" width="800">
 
 <br>
 
@@ -1330,8 +1327,9 @@ EKF &rarr; both process and measurement noise are Gaussian
 | heading   | 2.1deg  | 1.7deg  | 19.0% |
 ||
 
-</div>
-</div>
+Note:
+
+- avoids the need for explicit Jacobian calculations and can handle nonlinearities better.
                     </textarea>
                 </section>
             </div>
