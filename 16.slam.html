@@ -2602,6 +2602,101 @@ see [textbook](https://autonomy-course.github.io/textbook/autonomy-textbook.html
 
 ---
 
+2. determinant of any sub-matrix of the map covariance matrix 
+    - **decreases monotonically** as observations are made
+    - increasing **similarity**
+
+<br>
+<br>
+
+**what does this mean**?
+
+---
+
+in EKF-SLAM,
+
+- covariance matrix, $P$ &rarr; **uncertainty** and **correlations**,
+
+---
+
+in EKF-SLAM,
+
+- covariance matrix, $P$ &rarr; **uncertainty** and **correlations**,
+    - diagnonal &rarr; variance (uncertainty) of individual landmarks
+
+---
+
+in EKF-SLAM,
+
+- covariance matrix, $P$ &rarr; **uncertainty** and **correlations**,
+    - diagnonal &rarr; variance (uncertainty) of individual landmarks
+    - off-diagonal &rarr; how error in landmark's position affects another
+
+---
+
+in EKF-SLAM,
+
+- covariance matrix, $P$ &rarr; **uncertainty** and **correlations**,
+    - diagnonal &rarr; variance (uncertainty) of individual landmarks
+    - off-diagonal &rarr; how error in landmark's position affects another
+- **determinant** &rarr; "volume of uncertainty"
+
+Note:
+The determinant is a scalar value calculated from a square matrix that represents its scaling factor in linear transformations
+
+---
+
+in EKF-SLAM,
+
+- covariance matrix, $P$ &rarr; **uncertainty** and **correlations**,
+    - diagnonal &rarr; variance (uncertainty) of individual landmarks
+    - off-diagonal &rarr; how error in landmark's position affects another
+- **determinant** &rarr; "volume of uncertainty"
+    - large &rarr; "cloud" of possible landmark positions is huge
+
+---
+
+in EKF-SLAM,
+
+- covariance matrix, $P$ &rarr; **uncertainty** and **correlations**,
+    - diagnonal &rarr; variance (uncertainty) of individual landmarks
+    - off-diagonal &rarr; how error in landmark's position affects another
+- **determinant** &rarr; "volume of uncertainty"
+    - large &rarr; "cloud" of possible landmark positions is huge
+    - small &rarr; cloud is shrinking, closer to _exact_ coords
+
+---
+
+why does it "decrease monotonically"?
+
+---
+
+why does it "decrease monotonically"?
+
+- adding new information with each step
+
+---
+
+why does it "decrease monotonically"?
+
+- adding new information with each step
+- EKF "discovers" how landmarks positioned w.r.t. **each other**
+
+
+---
+
+why does it "decrease monotonically"?
+
+- adding new information with each step
+- EKF "discovers" how landmarks positioned w.r.t. **each other**
+
+<br>
+<br>
+
+**note:** never goes down to $0$ &rarr; still some uncertainty
+
+---
+
 **properties** of EKF-SLAM
 
 1. computational complexity &rarr; **quadratic** in num. of landmarks: $O(n^2)$
