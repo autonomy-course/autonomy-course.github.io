@@ -735,43 +735,162 @@ this is what makes **backpropagation** possible
 
 ---
 
-### updating the graph
+<img src="img/yolo/update.png" width="1100">
+
+Note:
+- at some point we need to be able to send "feedback" to the neural net
+
+---
+
+### backpropagation
+
+---
+
+training a neural network...
+
+---
+
+training a neural network...
+- finding weight values $\vec{w}$
+
+---
+
+training a neural network...
+- finding weight values $\vec{w}$
+- make network's outputs $\hat{y}$ match &rarr; ground-truth labels $y$
+
+---
+
+measure **mismatch** between outputs and ground-truths
+
+---
+
+mismatch measured via &rarr; **loss function**
+
+---
+
+mismatch measured via &rarr; **loss function**
+
+$$\mathcal{L} = (y - \hat{y})^2$$
+
+(mean square error)
+
+---
+
+### training
+
+---
+
+### training
+
+- optimization problem 
+
+---
+
+### training
+
+- optimization problem 
+- minimise $\mathcal{L}$ over &rarr; weight space
+
+---
+
+### training
+
+- optimization problem 
+- minimise $\mathcal{L}$ over &rarr; weight space
+- iteratively moving weights 
+
+---
+
+### training
+
+- optimization problem 
+- minimise $\mathcal{L}$ over &rarr; weight space
+- iteratively moving weights 
+    - in the direction that **reduces loss**
+
+---
+
+so we need a way to **update** the graph...
+
+---
+
+so we need a way to **update** the graph...
+
+...rather the **weights**
+
+---
+
+### gradient descent | update rule
+
+---
+
+### gradient descent | update rule
+
+<img src="img/object/equations/pngs/equations-2.png" width="1700">
+
+---
+
+### gradient descent | update rule
+
+<img src="img/object/equations/pngs/equations-3.png" width="1700">
+
+---
+
+### "learning rate" | $LR$ 
+
+- **step size** your algorithm takes 
+- trying to find _bottom_ of a hill 
+    - point of **minimum error**
+
+---
+
+### "learning rate" | $LR$ 
+
+- **step size** your algorithm takes 
+- trying to find _bottom_ of a hill 
+    - point of **minimum error**
+
+<br>
+<br>
+typically very small positive number &rarr; $0.1-10^{-5}$
+
+Note:    
+When a model is learning, it calculates which direction it needs to move to make fewer mistakes. The learning rate is the dial that controls how far it moves in that direction during each update. It is typically a very small positive number, often between $0.1$ and $10^{-5}$.
+
+---
+
+### backpropagation | updating the graph
 
 $$ \vec{w} = \vec{w} - LR \cdot \nabla L$$
 
-<img src="img/yolo/update.png" width="800">
-
-
----
----
-
-## backpropagation
+<img src="img/yolo/update.png" width="1100">
 
 ---
 
-### linear regression
+<img src="img/yolo/update.png" width="1100">
 
-<img src="img/yolo/linear_graph.png" width="800">
+- key quantity &rarr; $\nabla \mathcal{L}$
+- gradient of loss w.r.t. **every weight** in the network
 
 ---
 
 ### multiplication &rarr; explicit
 
 <img src="img/yolo/linear_alt.png" width="800">
-
----
-
-### multiplication &rarr; explicit
-
-<img src="img/yolo/linear_alt.png" width="800">
-
-why?
 
 ---
 
 ### "simplified"
 
 <img src="img/yolo/linear_simple.png" width="800">
+
+---
+
+### chain rule
+
+- backpropagation &rarr; efficient application of **chain rule**
+- for a compos
 
 ---
 
@@ -1438,10 +1557,6 @@ each layer has a **unique function**
 each layer has a **unique function**
 
 <img src="img/object/cnn_layers/cnn_layers.6.png" width="1300">
-
----
-
-wait, what are "**artificial neurons**" and "**layers**"?
                     </textarea>
                 </section>
             </div>
